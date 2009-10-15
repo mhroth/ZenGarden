@@ -102,4 +102,4 @@ LOCAL_CFLAGS := \
 -I$(LOCAL_PATH)/../../libsndfile-1.0.20/src \
 -L$(LOCAL_PATH)/../../libsndfile-1.0.20/src/libs/
 
-include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_STATIC_LIBRARY)
