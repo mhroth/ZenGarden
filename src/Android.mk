@@ -98,6 +98,8 @@ LOCAL_SRC_FILES := \
 LOCAL_STATIC_LIBRARIES := sndfile
 #LOCAL_SHARED_LIBRARIES := sndfile
 
-LOCAL_CFLAGS := -I$(LOCAL_PATH)/../libsndfile-1.0.20/src -L$(LOCAL_PATH)/../libsndfile-1.0.20/src/libs/
+LOCAL_CFLAGS := \
+-I$(LOCAL_PATH)/../../libsndfile-1.0.20/src \
+-L$(LOCAL_PATH)/../../libsndfile-1.0.20/src/libs/
 
 include $(BUILD_STATIC_LIBRARY)

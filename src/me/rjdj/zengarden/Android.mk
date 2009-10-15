@@ -5,9 +5,9 @@ include $(CLEAR_VARS)
 LOCAL_MODULE    := libjnizengarden
 LOCAL_SRC_FILES := jnizengarden.cpp
 
-LOCAL_STATIC_LIBRARIES := sndfile zengarden
+LOCAL_STATIC_LIBRARIES := zengarden sndfile
 #LOCAL_SHARED_LIBRARIES := sndfile
 
-LOCAL_CFLAGS := -I$(LOCAL_PATH)/../libsndfile-1.0.20/src -L$(LOCAL_PATH)/../libsndfile-1.0.20/src/libs/
+LOCAL_CFLAGS := -I$(LOCAL_PATH)/../../../
 
 include $(BUILD_STATIC_LIBRARY)
