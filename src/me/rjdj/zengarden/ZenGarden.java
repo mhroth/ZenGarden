@@ -3,6 +3,13 @@ package me.rjdj.zengarden;
 import java.io.File;
 
 /**
+ * <code>ZenGarden</code> provides a Java interface to <code>libZenGarden</code>. It allows a Pd
+ * patch to be loaded, processed, and later unloaded. Garbage collection is handled automatically
+ * by the virtual machine, as usual, though it may be better to manually direct the unloading of
+ * the native component via <code>unloadNativeComponentIfStillLoaded()</code>. The JVM does not
+ * keep track of the memory occupied by native code, which may be substantial, and thus may not
+ * garbage collect the Java-side object (which is lightweight) in a timely fashion.
+ * 
  * @author Martin Roth (mhroth@rjdj.me)
  */
 public class ZenGarden {
