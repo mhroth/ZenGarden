@@ -51,8 +51,8 @@ public class ZenGarden {
           Integer.toString(numOutputChannels));
     }
     nativePtr = loadPdPatch(
-        patchFile.getParent() + File.separator, patchFile.getName(), 
-        libDirectory.toString() + File.separator, blockSize, numInputChannels, numOutputChannels, 
+        patchFile.getAbsoluteFile().getParent() + File.separator, patchFile.getName(), 
+        libDirectory.getAbsolutePath() + File.separator, blockSize, numInputChannels, numOutputChannels, 
         sampleRate);
   }
   
