@@ -1,0 +1,11 @@
+#ifndef _DSP_MESSAGE_PRESEDENCE_H_
+#define _DSP_MESSAGE_PRESEDENCE_H_
+
+enum DspMessagePresedence {
+  DSP_DSP = 0,
+  DSP_MESSAGE = 1,
+  MESSAGE_DSP = 2,
+  MESSAGE_MESSAGE = 3
+};
+
+#endif // _DSP_MESSAGE_PRESEDENCE_H_
