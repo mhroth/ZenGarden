@@ -11,25 +11,29 @@ public class ZenGarden {
 
   /**
    * 
-   * @param file  The Pd patch to load.
-   * @param rjlibDirectory  The location of additional auxiliary patches.
+   * @param patchFile  The patch to load.
+   * @param libDirectory  The directory location of additional auxiliary patches (besides the local
+   * directory of the patch itself).
    * @param blockSize  The audio block size which Pd should use.
    * @param numInputChannels  The number of input channels provided by the device's audio system. 
-   * Note that in this implementation the native audio system always has two input channels. 
-   * @param numOutputChannels  The number of output channels provided by the device's audio system. 
-   * Note that in this implementation the native audio system always has two output channels.
+   * This number must be 1 or 2. This is an arbitrary limit meant to cover most cases and simplify
+   * early development.
+   * @param numOutputChannels  The number of output channels provided by the device's audio system.
+   * This number must be 1 or 2. This is an arbitrary limit meant to cover most cases and simplify
+   * early development.
    * @param sampleRate  The sample rate at which Pd should run.
-   * @throws NativeLoadException  Thrown if the given scene cannot be loaded.
+   * @throws NativeLoadException  Thrown if the given scene cannot be loaded. An explanation is
+   * <i>ideally</i> given. Use <code>getMessage()</code>.
    */
-  public ZenGarden(File file, File rjlibDirectory, int blockSize, int numInputChannels, 
+  public ZenGarden(File patchFile, File libDirectory, int blockSize, int numInputChannels, 
       int numOutputChannels, int sampleRate) throws NativeLoadException {
-    if (!file.isFile()) {
+    if (!patchFile.isFile()) {
       throw new IllegalArgumentException("The file object must refer to a file: " + 
-          file.toString());
+          patchFile.toString());
     }
-    if (!rjlibDirectory.isDirectory()) {
+    if (!libDirectory.isDirectory()) {
       throw new IllegalArgumentException("The rjlibDirectory is not a directory: " + 
-          rjlibDirectory.toString());
+          libDirectory.toString());
     }
     if (!(numInputChannels == 1 || numInputChannels == 2)) {
       throw new IllegalArgumentException("The number of input channels must be 1 or 2: " + 
@@ -40,8 +44,8 @@ public class ZenGarden {
           Integer.toString(numOutputChannels));
     }
     nativePtr = loadPdPatch(
-        file.getParent() + File.separator, file.getName(), 
-        rjlibDirectory.toString() + File.separator, blockSize, numInputChannels, numOutputChannels, 
+        patchFile.getParent() + File.separator, patchFile.getName(), 
+        libDirectory.toString() + File.separator, blockSize, numInputChannels, numOutputChannels, 
         sampleRate);
   }
   
@@ -85,12 +89,12 @@ public class ZenGarden {
    */
   public synchronized void unloadNativeComponentIfStillLoaded() {
     if (isNativeComponentLoaded()) {
-      unloadPureData(nativePtr);
+      unloadPdPatch(nativePtr);
       nativePtr = 0;
     }
   }
   
-  private native void unloadPureData(long nativePointer);
+  private native void unloadPdPatch(long nativePointer);
   
   public synchronized boolean isNativeComponentLoaded() {
     return (nativePtr != 0);

@@ -25,10 +25,10 @@ JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZenGarden_process
 
 /*
  * Class:     me_rjdj_zengarden_ZenGarden
- * Method:    unloadPureData
+ * Method:    unloadPdPatch
  * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZenGarden_unloadPureData
+JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZenGarden_unloadPdPatch
   (JNIEnv *, jobject, jlong);
 
 #ifdef __cplusplus
