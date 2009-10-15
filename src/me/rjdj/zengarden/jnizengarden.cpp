@@ -31,7 +31,19 @@ inline float shortSampleToFloat(short s, PureDataMobileNativeVars *pdmnv) {
 JNIEXPORT jlong JNICALL Java_me_rjdj_dsp_puredatamobile_PureDataMobile_loadPureData(
     JNIEnv *env, jobject jobj, jstring jdirectory, jstring jfilename, jstring jlibraryDirectory, 
     jint blockSize, jint numInputChannels, jint numOutputChannels, jint sampleRate) {
-  
+  /*
+   * deal with this later
+  #ifdef ANDROID || UNIX
+    void *libptr = dlopen("libzengarden.so", RTLD_LAZY); // load the library
+    if (libptr == NULL) {
+      dlclose(libptr);
+      env->ThrowNew(
+          env->FindClass("me/rjdj/zengarden/NativeLoadException"),
+          "Could not dynamically link to libzengarden.");
+      return (jlong) 0;
+    }
+  #endif
+  */
   PdGraph *pdGraph = NULL;
   char *cdirectory = (char *) env->GetStringUTFChars(jdirectory, NULL);
   char *cfilename = (char *) env->GetStringUTFChars(jfilename, NULL);

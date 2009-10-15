@@ -57,7 +57,7 @@ public class ZenGarden {
   }
   
   static {
-    System.loadLibrary("zengarden");
+    System.loadLibrary("jnizengarden");
   }
   
   private native long loadPdPatch(
