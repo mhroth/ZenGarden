@@ -1,0 +1,144 @@
+#include <math.h>
+#include <string.h>
+#include "MessageExternalSend.h"
+#include "me_rjdj_zengarden_ZenGarden.h"
+#include "PdGraph.h"
+
+typedef struct {
+  PdGraph *pdGraph;
+  float *finputBuffer;
+  float *foutputBuffer;
+  int blockSize;
+  int numInputChannels; // the number of input channels supplied by the system
+  int numOutputChannels; // the number of input channels supplied by the system
+  float *shortToFloatLookupTable;
+  int numBytesInBlock;
+} PureDataMobileNativeVars;
+
+inline float shortSampleToFloat(short s, PureDataMobileNativeVars *pdmnv) {
+  //pdmnv->finputBuffer[z] = ((float) cinputBuffer[j]) / 32767.0f;
+  if (s >= 0) {
+    return pdmnv->shortToFloatLookupTable[s];
+  } else {
+    // short s is known to be a negative number. It is made positive by taking the 2's complement.
+    // The complement is then used to lookup the corresponding float value from the lookup table.
+    // The (positive) float is then made negative by setting the high bit to 1.
+    int floatAsInt = (*(int *)(pdmnv->shortToFloatLookupTable + (~s + 1))) | 0x80000000;
+    return *(float *)&floatAsInt;
+  }
+}
+
+JNIEXPORT jlong JNICALL Java_me_rjdj_dsp_puredatamobile_PureDataMobile_loadPureData(
+    JNIEnv *env, jobject jobj, jstring jdirectory, jstring jfilename, jstring jlibraryDirectory, 
+    jint blockSize, jint numInputChannels, jint numOutputChannels, jint sampleRate) {
+  
+  PdGraph *pdGraph = NULL;
+  char *cdirectory = (char *) env->GetStringUTFChars(jdirectory, NULL);
+  char *cfilename = (char *) env->GetStringUTFChars(jfilename, NULL);
+  char *clibraryDirectory = (char *) env->GetStringUTFChars(jlibraryDirectory, NULL);
+  pdGraph = PdGraph::newInstance(cdirectory, cfilename, clibraryDirectory, blockSize, 2, 2, sampleRate);
+  env->ReleaseStringUTFChars(jdirectory, cdirectory);
+  env->ReleaseStringUTFChars(jfilename, cfilename);
+  env->ReleaseStringUTFChars(jlibraryDirectory, clibraryDirectory);
+  
+  if (pdGraph == NULL) {
+    env->ThrowNew(
+        env->FindClass("me/rjdj/zengarden/NativeLoadException"),
+        "PdGraph is NULL. Is the filename correct? Does the file exist? Are all of the referenced objects implemented?");
+    return (jlong) 0;
+  }
+  
+  pdGraph->prepareForProcessing();
+  
+  // initialise the PureDataMobile native variables
+  PureDataMobileNativeVars *pdmnv = (PureDataMobileNativeVars *) malloc(sizeof(PureDataMobileNativeVars));
+  pdmnv->pdGraph = pdGraph;
+  pdmnv->finputBuffer = (float *) malloc(blockSize * 2 * sizeof(float));
+  pdmnv->foutputBuffer = (float *) malloc(blockSize * 2 * sizeof(float));
+  pdmnv->blockSize = blockSize;
+  pdmnv->numInputChannels = numInputChannels;
+  pdmnv->numOutputChannels = numOutputChannels;
+  pdmnv->shortToFloatLookupTable = (float *) malloc(32768 * sizeof(float));
+  pdmnv->numBytesInBlock = blockSize * sizeof(float);
+  
+  // define the input (microphone) waveshaper
+  // linear
+  for (int i = 0; i < 32768; i++) {
+    pdmnv->shortToFloatLookupTable[i] = ((float) i) / 32767.0f;
+  }
+  
+  return (jlong) pdmnv;
+}
+
+JNIEXPORT void JNICALL Java_me_rjdj_dsp_puredatamobile_PureDataMobile_unloadPureData(
+    JNIEnv *env, jobject jobj, jlong nativePtr) {
+  
+  if (nativePtr != 0) { // sanity check
+    // free all of the pure data mobile native variables
+    PureDataMobileNativeVars *pdmnv = (PureDataMobileNativeVars *) nativePtr;
+    free(pdmnv->finputBuffer);
+    free(pdmnv->foutputBuffer);
+    free(pdmnv->shortToFloatLookupTable);
+    delete pdmnv->pdGraph;
+    free(pdmnv);
+  }
+}
+
+// this function uses bit-wise manupulation in order to more quickly multiply floats by
+// -1 or 32768. See http://en.wikipedia.org/wiki/IEEE_754-1985
+JNIEXPORT void JNICALL Java_me_rjdj_dsp_puredatamobile_PureDataMobile_process(
+    JNIEnv *env, jobject jobj, jshortArray jinputBuffer, jshortArray joutputBuffer, 
+    jfloat accelerateX, jfloat accelerateY, jfloat accelerateZ,
+    jint touchAction, jfloat touchX, jfloat touchY,
+    jlong nativePtr) {
+  
+  PureDataMobileNativeVars *pdmnv = (PureDataMobileNativeVars *) nativePtr;
+  
+  // set up the floating point input buffers
+  short *cinputBuffer = (short *) env->GetPrimitiveArrayCritical(jinputBuffer, NULL);
+  switch (pdmnv->numInputChannels) {
+    case 1: { // if there is only one input channel (mono)
+      // convert all shorts to floats
+      for (int i = 0; i < pdmnv->blockSize; i++) {
+        pdmnv->finputBuffer[i] = shortSampleToFloat(cinputBuffer[i], pdmnv);
+      }
+      // copy the float buffer from the left to right channel
+      memcpy(pdmnv->finputBuffer + pdmnv->blockSize, pdmnv->finputBuffer, pdmnv->numBytesInBlock);
+      break;
+    }
+    case 2: { // if there is a stereo input
+      // uninterleave the short buffer
+      for (int i = 0, j = 0; i < pdmnv->blockSize; i++) {
+        for (int k = 0, z = i; k < pdmnv->numInputChannels; k++, j++, z+=pdmnv->blockSize) {
+          pdmnv->finputBuffer[z] = shortSampleToFloat(cinputBuffer[j], pdmnv);
+        }
+      }
+      break;
+    }
+    default: {
+      break;
+    }
+  }
+  env->ReleasePrimitiveArrayCritical(jinputBuffer, cinputBuffer, JNI_ABORT); // no need to copy back changes. release native buffer.
+  
+  pdmnv->pdGraph->process(pdmnv->finputBuffer, pdmnv->foutputBuffer);
+  
+  // read back from the floating point output buffers
+  // regarding use of lrintf, see http://www.mega-nerd.com/FPcast/
+  short *coutputBuffer = (short *) env->GetPrimitiveArrayCritical(joutputBuffer, NULL);
+  for (int i = 0, j = 0; i < pdmnv->blockSize; i++) {
+    for (int k = 0, z = i; k < pdmnv->numOutputChannels; k++, j++, z+=pdmnv->blockSize) {
+      coutputBuffer[j] = (short) lrintf(pdmnv->foutputBuffer[z] * 32767.0f);
+      /*
+       * WARNING: if pdmnv->foutputBuffer[z] == 1.0f, this method will result in -32768, not 32767
+       * and cause a click in the output (i.e., there is overflow when converting to a short)
+       int floatAsInt = *(int *)(pdmnv->foutputBuffer+z);
+       int exponent = floatAsInt & 0x7F800000;
+       exponent += 0x07800000; // multiply by 32768.0f == 2^15 (add 15 to the exponent)
+       floatAsInt = (floatAsInt & 0x807FFFFF) | exponent;
+       coutputBuffer[j] = (short) lrintf(*(float *)&floatAsInt);
+       */
+    }
+  }
+  env->ReleasePrimitiveArrayCritical(joutputBuffer, coutputBuffer, 0); // copy back the changes and release native buffer
+}

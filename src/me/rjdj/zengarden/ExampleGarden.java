@@ -13,12 +13,12 @@ public class ExampleGarden {
   
   private static final int BLOCK_SIZE = 256;
   private static final int SAMPLE_RATE = 22050;
-  private static final int NUM_INPUT_CHANNELS = 1;
+  private static final int NUM_INPUT_CHANNELS = 2;
   private static final int NUM_OUTPUT_CHANNELS = 2;
   
   public static void main(String[] args) {
     if (args.length == 0) {
-      System.out.println("example commandline");
+      System.out.println("java ExampleGarden testpatch.pd");
     } else {
       AudioFormat inputAudioFormat = new AudioFormat(SAMPLE_RATE, 16, NUM_OUTPUT_CHANNELS, true, true);
       AudioFormat outputAudioFormat = new AudioFormat(SAMPLE_RATE, 16, NUM_INPUT_CHANNELS, true, true);
@@ -51,7 +51,7 @@ public class ExampleGarden {
       ZenGarden pdPatch = null;
       try {
         pdPatch = new ZenGarden(pdFile, pdFile.getParentFile(), BLOCK_SIZE, 
-            2, NUM_OUTPUT_CHANNELS, SAMPLE_RATE);
+            NUM_INPUT_CHANNELS, NUM_OUTPUT_CHANNELS, SAMPLE_RATE);
       } catch (NativeLoadException nle) {
         nle.printStackTrace(System.err);
         System.exit(2);
@@ -60,16 +60,18 @@ public class ExampleGarden {
       while (true) {
         // run the patch in an infinite loop
         targetDataLine.read(bInputBuffer, 0, bInputBuffer.length); // read from the input
-        // TODO(mhroth): un-interleave samples
+        // convert the byte buffer to a short buffer
+        for (int i = 0, j = 0; i < inputBuffer.length; i++) {
+          inputBuffer[i] = (short) (((int) bInputBuffer[j++]) << 8);
+          inputBuffer[i] |= ((short) bInputBuffer[j++]) & 0x00FF;
+        }
         
         pdPatch.process(inputBuffer, outputBuffer);
         
-        // interleave samples
-        for (int i = 0, j = BLOCK_SIZE, k = 0; i < BLOCK_SIZE; i++, j++) {
-          bOutputBuffer[k++] = (byte) ((outputBuffer[i] & 0xFF00) >> 8);
-          bOutputBuffer[k++] = (byte) (outputBuffer[i] & 0x00FF);
-          bOutputBuffer[k++] = (byte) ((outputBuffer[j] & 0xFF00) >> 8);
-          bOutputBuffer[k++] = (byte) (outputBuffer[j] & 0x00FF);
+        // convert short buffer to byte buffer
+        for (int i = 0, j = 0; i < outputBuffer.length; i++) {
+          bOutputBuffer[j++] = (byte) ((outputBuffer[i] & 0xFF00) >> 8);
+          bOutputBuffer[j++] = (byte) (outputBuffer[i] & 0x00FF);
         }
         // write to the output
         sourceDataLine.write(bOutputBuffer, 0, bOutputBuffer.length);

@@ -76,7 +76,15 @@ public class ZenGarden {
   
   /**
    * Process the input buffer and return the results in the given output buffer. The buffers contain
-   * <code>number of channels * block size</code> 16-bit (<code>short</code>) samples.
+   * <code>number of channels * block size</code> 16-bit (<code>short</code>) channel-interleaved 
+   * samples.<br>
+   * <br>
+   * NOTE: The format of the input and output buffers is 16-bit channel-interleaved 
+   * (e.g., left, right, left, right, etc.). The reason for this is that Java usually presents
+   * audio data in this way (as does Android). <code>libZenGarden</code> processes its buffers
+   * as floating-point arrays which are channel-order appended (i.e., left buffer, right buffer). The
+   * conversion is done natively, as this is faster.<br>
+   * <br>
    * WARNING: For the sake of speed, this method is not synchronized. There is no check to make sure
    * that the native component is still loaded, or that this object represents a valid Pd graph. The
    * developer is responsible for ensuring that the <code>ZenGarden</code> object is still valid
