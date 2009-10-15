@@ -10,4 +10,4 @@ LOCAL_STATIC_LIBRARIES := zengarden sndfile
 
 LOCAL_CFLAGS := -I$(LOCAL_PATH)/../../../
 
-include $(BUILD_STATIC_LIBRARY)
+include $(BUILD_SHARED_LIBRARY)
