@@ -1,0 +1,29 @@
+ZenGarden
+Copyright RjDj, 2009
+By Martin Roth <mhroth@rjdj.me>
+
+Advantages
+----------
+
+Why use ZenGarden?
+
+* Clean code
+* Portable and embeddable
+	* Embedded devices, synthesizers
+	* Mobile phones
+	* Inside other languages
+* Compiling Pd as a library is non-trivial and requires modifications to Pd vanilla
+* No bloat from GUI or hardware specific audio driver code
+
+Layout
+------
+
+examples/
+	- Examples of using libZenGarden in Java, C, Python
+
+pd-patches/
+	- Demo Pd patches
+
+pd-patches/unittest/
+	- Pd patches for doing unit testing of ZenGarden
+
