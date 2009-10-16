@@ -1,3 +1,24 @@
+/*
+ * Copyright 2009 Reality Jockey, Ltd.
+ *                info@rjdj.me
+ *                http://rjdj.me/
+ * 
+ * This file is part of ZenGarden.
+ * 
+ * ZenGarden is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or 
+ * (at your option) any later version.
+ * 
+ * ZenGarden is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ * GNU General Public License for more details. 
+ * 
+ * You should have received a copy of the GNU General Public License 
+ * along with ZenGarden.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package me.rjdj.zengarden;
 
 import java.io.File;
@@ -20,7 +41,10 @@ import javax.sound.sampled.TargetDataLine;
  */
 public class ExampleGarden {
   
-  private static final int BLOCK_SIZE = 256;
+  // A huge block size is selected because the the Java Sound API is very slow on most platforms.
+  private static final int BLOCK_SIZE = 2048;
+  
+  // 22050 Hz is chosen (somewhat arbitrarily) because this is the sample rate that RjDj runs at.
   private static final int SAMPLE_RATE = 22050;
   private static final int NUM_INPUT_CHANNELS = 2;
   private static final int NUM_OUTPUT_CHANNELS = 2;
@@ -44,8 +68,10 @@ public class ExampleGarden {
       });
       
       // configure the audio input and output lines
-      AudioFormat inputAudioFormat = new AudioFormat(SAMPLE_RATE, 16, NUM_OUTPUT_CHANNELS, true, true);
-      AudioFormat outputAudioFormat = new AudioFormat(SAMPLE_RATE, 16, NUM_INPUT_CHANNELS, true, true);
+      AudioFormat inputAudioFormat = new AudioFormat(
+          SAMPLE_RATE, 16, NUM_OUTPUT_CHANNELS, true, true);
+      AudioFormat outputAudioFormat = new AudioFormat(
+          SAMPLE_RATE, 16, NUM_INPUT_CHANNELS, true, true);
       DataLine.Info inputLineInfo = new DataLine.Info(TargetDataLine.class, inputAudioFormat);
       DataLine.Info outputLineInfo = new DataLine.Info(SourceDataLine.class, outputAudioFormat);
       
@@ -57,6 +83,9 @@ public class ExampleGarden {
       TargetDataLine targetDataLine = null;
       SourceDataLine sourceDataLine = null;
       try {
+        // TODO(mhroth): ensure that stereo input and output lines are actually being returned
+        // by the system.
+        
         // open the audio input (line-in or microphone)
         targetDataLine = (TargetDataLine) AudioSystem.getLine(inputLineInfo);
         targetDataLine.open(inputAudioFormat, bInputBuffer.length);
