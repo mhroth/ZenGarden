@@ -6,7 +6,6 @@ gcc -o ../libs/osx/libjnizengarden.jnilib -fPIC -O3 -dynamiclib \
 -I/Developer/SDKs/MacOSX10.5.sdk/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Headers \
 -I../../libsndfile-1.0.20/src/ \
 -L../../libsndfile-1.0.20/src/.libs/ \
--lstdc++ -lsndfile \
 ./me/rjdj/zengarden/jnizengarden.cpp \
 ./DspAdd.cpp \
 ./DspAdc.cpp \
@@ -98,6 +97,8 @@ gcc -o ../libs/osx/libjnizengarden.jnilib -fPIC -O3 -dynamiclib \
 ./RemoteBufferReceiverObject.cpp \
 ./StaticUtils.cpp \
 ./TextObject.cpp \
+-lstdc++ -lsndfile
 
 rm *.o
+cp ../libs/osx/libjnizengarden.jnilib /Library/Java/Extensions
 ls -l ../libs/osx/libjnizengarden.jnilib

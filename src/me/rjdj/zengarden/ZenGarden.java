@@ -29,6 +29,7 @@ public class ZenGarden {
    * This number must be 1 or 2. This is an arbitrary limit meant to cover most cases and simplify
    * early development.
    * @param sampleRate  The sample rate at which Pd should run.
+   * @throws IllegalArgumentException  Thrown in case any of the method arguments are not valid.
    * @throws NativeLoadException  Thrown if the given scene cannot be loaded. An explanation is
    * <i>ideally</i> given. Use <code>getMessage()</code>.
    */
@@ -52,8 +53,8 @@ public class ZenGarden {
     }
     nativePtr = loadPdPatch(
         patchFile.getAbsoluteFile().getParent() + File.separator, patchFile.getName(), 
-        libDirectory.getAbsolutePath() + File.separator, blockSize, numInputChannels, numOutputChannels, 
-        sampleRate);
+        libDirectory.getAbsolutePath() + File.separator, blockSize, numInputChannels, 
+        numOutputChannels, sampleRate);
   }
   
   static {

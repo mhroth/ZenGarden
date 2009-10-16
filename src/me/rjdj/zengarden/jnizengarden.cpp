@@ -28,7 +28,7 @@ inline float shortSampleToFloat(short s, PureDataMobileNativeVars *pdmnv) {
   }
 }
 
-JNIEXPORT jlong JNICALL Java_me_rjdj_dsp_puredatamobile_PureDataMobile_loadPureData(
+JNIEXPORT jlong JNICALL Java_me_rjdj_zengarden_ZenGarden_loadPdPatch(
     JNIEnv *env, jobject jobj, jstring jdirectory, jstring jfilename, jstring jlibraryDirectory, 
     jint blockSize, jint numInputChannels, jint numOutputChannels, jint sampleRate) {
   /*
@@ -82,7 +82,7 @@ JNIEXPORT jlong JNICALL Java_me_rjdj_dsp_puredatamobile_PureDataMobile_loadPureD
   return (jlong) pdmnv;
 }
 
-JNIEXPORT void JNICALL Java_me_rjdj_dsp_puredatamobile_PureDataMobile_unloadPureData(
+JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZenGarden_unloadPdPatch(
     JNIEnv *env, jobject jobj, jlong nativePtr) {
   
   if (nativePtr != 0) { // sanity check
@@ -98,11 +98,8 @@ JNIEXPORT void JNICALL Java_me_rjdj_dsp_puredatamobile_PureDataMobile_unloadPure
 
 // this function uses bit-wise manupulation in order to more quickly multiply floats by
 // -1 or 32768. See http://en.wikipedia.org/wiki/IEEE_754-1985
-JNIEXPORT void JNICALL Java_me_rjdj_dsp_puredatamobile_PureDataMobile_process(
-    JNIEnv *env, jobject jobj, jshortArray jinputBuffer, jshortArray joutputBuffer, 
-    jfloat accelerateX, jfloat accelerateY, jfloat accelerateZ,
-    jint touchAction, jfloat touchX, jfloat touchY,
-    jlong nativePtr) {
+JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZenGarden_process(
+    JNIEnv *env, jobject jobj, jshortArray jinputBuffer, jshortArray joutputBuffer, jlong nativePtr) {
   
   PureDataMobileNativeVars *pdmnv = (PureDataMobileNativeVars *) nativePtr;
   
