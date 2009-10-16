@@ -51,6 +51,7 @@ public class ZenGarden {
       throw new IllegalArgumentException("The number of output channels must be 1 or 2: " + 
           Integer.toString(numOutputChannels));
     }
+    
     nativePtr = loadPdPatch(
         patchFile.getAbsoluteFile().getParent() + File.separator, patchFile.getName(), 
         libDirectory.getAbsolutePath() + File.separator, blockSize, numInputChannels, 
@@ -110,10 +111,10 @@ public class ZenGarden {
     }
   }
   
-  private native void unloadPdPatch(long nativePointer);
-  
   public synchronized boolean isNativeComponentLoaded() {
     return (nativePtr != 0);
   }
-  
+
+  private native void unloadPdPatch(long nativePointer);
+
 }
