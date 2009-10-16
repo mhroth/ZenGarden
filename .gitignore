@@ -1,2 +1,5 @@
 .DS_Store
 bin
+ZenGarden.jardesc
+.project
+.classpath
