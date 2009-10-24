@@ -31,11 +31,11 @@ void MessageSwap::processMessage(int inletIndex, PdMessage *message) {
         case BANG: {
           PdMessage *outgoingMessageLeft = getNextOutgoingMessage(0);
           outgoingMessageLeft->getElement(0)->setFloat(right);
-          outgoingMessageLeft->setBlockIndex(message->getBlockIndex());
+          outgoingMessageLeft->setBlockIndexAsFloat(message->getBlockIndexAsFloat());
           
-          PdMessage *outgoingMessageRight = getNextOutgoingMessage(0);
+          PdMessage *outgoingMessageRight = getNextOutgoingMessage(1);
           outgoingMessageRight->getElement(0)->setFloat(left);
-          outgoingMessageRight->setBlockIndex(message->getBlockIndex());
+          outgoingMessageRight->setBlockIndexAsFloat(message->getBlockIndexAsFloat());
           break;
         }
         default: {

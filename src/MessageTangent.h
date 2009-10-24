@@ -3,6 +3,9 @@
 
 #include "MessageUnaryOperationObject.h"
 
+/**
+ * tan
+ */
 class MessageTangent : public MessageUnaryOperationObject {
   
   public:

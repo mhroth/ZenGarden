@@ -3,6 +3,9 @@
 
 #include "RemoteBufferReceiverObject.h"
 
+/**
+ * delread~
+ */
 class DspDelayRead : public RemoteBufferReceiverObject {
   
   public:
