@@ -29,9 +29,12 @@ void MessageSwap::processMessage(int inletIndex, PdMessage *message) {
           // allow fallthrough
         }
         case BANG: {
+          // "Output order is right to left as in [trigger]"
           PdMessage *outgoingMessageLeft = getNextOutgoingMessage(0);
           outgoingMessageLeft->getElement(0)->setFloat(right);
-          outgoingMessageLeft->setBlockIndexAsFloat(message->getBlockIndexAsFloat());
+          float blockIndex = message->getBlockIndexAsFloat();
+          float intIndex = *((int *)&blockIndex)+1; // get the next largest float
+          outgoingMessageLeft->setBlockIndexAsFloat(*((float *)&intIndex));
           
           PdMessage *outgoingMessageRight = getNextOutgoingMessage(1);
           outgoingMessageRight->getElement(0)->setFloat(left);
