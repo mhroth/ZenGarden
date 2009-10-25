@@ -40,6 +40,7 @@
 #include "MessageDivide.h"
 #include "MessageEnv.h"
 #include "MessageExp.h"
+#include "MessageFrequencyToMidi.h"
 #include "MessageGreaterThan.h"
 #include "MessageInletOutlet.h"
 #include "MessageInteger.h"
@@ -424,6 +425,8 @@ PdObject *PdObject::newInstance(char *objectType, char *objectInitString, int bl
         float constant = (float) atof(token);
         return new MessageFloat(constant, objectInitString);
       }
+    } else if (strcmp("ftom", token) == 0) {
+      return new MessageFrequencyToMidi(objectInitString);
     } else if (strcmp("inlet", token) == 0 ||
                strcmp("outlet", token) == 0) {
       return new MessageInletOutlet(objectInitString);
