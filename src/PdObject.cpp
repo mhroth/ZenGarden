@@ -41,6 +41,7 @@
 #include "MessageExp.h"
 #include "MessageGreaterThan.h"
 #include "MessageInletOutlet.h"
+#include "MessageInteger.h"
 #include "MessageLessThan.h"
 #include "MessageLessThanOrEqualTo.h"
 #include "MessageLine.h"
@@ -416,6 +417,14 @@ PdObject *PdObject::newInstance(char *objectType, char *objectInitString, int bl
     } else if (strcmp("inlet", token) == 0 ||
                strcmp("outlet", token) == 0) {
       return new MessageInletOutlet(objectInitString);
+    } else if (strcmp("int", token) == 0) {
+      token = strtok(NULL, " ");
+      if (token == NULL) {
+        return new MessageInteger(objectInitString);
+      } else {
+        float constant = (float) atof(token);
+        return new MessageInteger(constant, objectInitString);
+      }
     } else if (strcmp("line", token) == 0) {
       token = strtok(NULL, " ");
       if (token == NULL) {
