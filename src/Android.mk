@@ -20,6 +20,7 @@ LOCAL_SRC_FILES := \
 ./DspMessageInputDspOutputObject.cpp \
 ./DspMessageInputMessageOutputObject.cpp \
 ./DspLine.cpp \
+./DspLog.cpp \
 ./DspLowpassFilter.cpp \
 ./DspMultiply.cpp \
 ./DspOsc.cpp \

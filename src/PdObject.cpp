@@ -12,6 +12,7 @@
 #include "DspInletOutlet.h"
 #include "DspMultiply.h"
 #include "DspLine.h"
+#include "DspLog.h"
 #include "DspLowpassFilter.h"
 #include "DspNoise.h"
 #include "DspOsc.h"
@@ -220,6 +221,14 @@ PdObject *PdObject::newInstance(char *objectType, char *objectInitString, int bl
     } else if (strcmp(token, "line~") == 0 ||
                strcmp(token, "vline~") == 0) { // TODO(mhroth): WARNING! Implement vline~ correctly!
       return new DspLine(blockSize, sampleRate, objectInitString);
+    } else if (strcmp(token, "log~") == 0) {
+      token = strtok(NULL, " ");
+      if (token == NULL) {
+        return new DspLog(blockSize, objectInitString);
+      } else {
+        float base = (float) atof(token);
+        return new DspLog(base, blockSize, objectInitString);
+      }
     } else if (strcmp(token, "lop~") == 0) {
       token = strtok(NULL, " ");
       if (token == NULL) {
