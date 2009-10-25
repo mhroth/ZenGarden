@@ -87,6 +87,7 @@ LOCAL_SRC_FILES := \
 ./MessageSwap.cpp \
 ./MessageSymbol.cpp \
 ./MessageTangent.cpp \
+./MessageTimer.cpp \
 ./MessageToggle.cpp \
 ./MessageTrigger.cpp \
 ./MessageUnaryOperationObject.cpp \

@@ -73,6 +73,7 @@
 #include "MessageSwap.h"
 #include "MessageSymbol.h"
 #include "MessageTangent.h"
+#include "MessageTimer.h"
 #include "MessageToggle.h"
 #include "MessageTrigger.h"
 #include "MessageUnpack.h"
@@ -548,6 +549,8 @@ PdObject *PdObject::newInstance(char *objectType, char *objectInitString, int bl
       }
     } else if (strcmp("tan", token) == 0) {
       return new MessageTangent(objectInitString);
+    } else if (strcmp("timer", token) == 0) {
+      return new MessageTimer(blockSize, sampleRate, objectInitString);
     } else if (strcmp("toggle", token) == 0 ||
                strcmp("tgl", token) == 0) {
       return new MessageToggle(objectInitString);
