@@ -52,6 +52,7 @@
 #include "MessageMidiToFrequency.h"
 #include "MessageMoses.h"
 #include "MessageMultiply.h"
+#include "MessageNotEquals.h"
 #include "MessageEqualsEquals.h"
 #include "MessageFloat.h"
 #include "MessagePack.h"
@@ -267,6 +268,14 @@ PdObject *PdObject::newInstance(char *objectType, char *objectInitString, int bl
       } else {
         float constant = (float) atof(token);
         return new MessageEqualsEquals(constant, objectInitString);
+      }
+    } else if (strcmp("!=", token) == 0) {
+      token = strtok(NULL, " ");
+      if (token == NULL) {
+        return new MessageNotEquals(objectInitString);
+      } else {
+        float constant = (float) atof(token);
+        return new MessageNotEquals(constant, objectInitString);
       }
     } else if (strcmp(">", token) == 0) {
       token = strtok(NULL, " ");

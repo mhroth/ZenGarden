@@ -20,22 +20,22 @@
  *
  */
 
-#include "MessageLogicalAnd.h"
+#include "MessageNotEquals.h"
 
-MessageLogicalAnd::MessageLogicalAnd(char *initString) : MessageBinaryOperationObject(initString) {
+MessageNotEquals::MessageNotEquals(char *initString) : MessageBinaryOperationObject(initString) {
   left = 0.0f;
   right = 0.0f;
 }
 
-MessageLogicalAnd::MessageLogicalAnd(float constant, char *initString) : MessageBinaryOperationObject(initString) {
+MessageNotEquals::MessageNotEquals(float constant, char *initString) : MessageBinaryOperationObject(initString) {
   left = 0.0f;
   right = constant;
 }
 
-MessageLogicalAnd::~MessageLogicalAnd() {
+MessageNotEquals::~MessageNotEquals() {
   // nothing to do
 }
 
-inline float MessageLogicalAnd::performBinaryOperation(float left, float right) {
-  return (left == 0.0f || right == 0.0f) ? 0.0f : 1.0f;
+inline float MessageNotEquals::performBinaryOperation(float left, float right) {
+  return (left != right) ? 1.0f : 0.0f;
 }
