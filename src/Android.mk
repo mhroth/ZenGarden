@@ -62,6 +62,7 @@ LOCAL_SRC_FILES := \
 ./MessageLessThanOrEqualTo.cpp \
 ./MessageLine.cpp \
 ./MessageLoadbang.cpp \
+./MessageLog.cpp \
 ./MessageLogicalAnd.cpp \
 ./MessageLogicalOr.cpp \
 ./MessageMessageBox.cpp \

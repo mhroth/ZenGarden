@@ -38,8 +38,10 @@
 #include "MessageDbToRms.h"
 #include "MessageDelay.h"
 #include "MessageDivide.h"
+#include "MessageEqualsEquals.h"
 #include "MessageEnv.h"
 #include "MessageExp.h"
+#include "MessageFloat.h"
 #include "MessageFrequencyToMidi.h"
 #include "MessageGreaterThan.h"
 #include "MessageInletOutlet.h"
@@ -48,6 +50,7 @@
 #include "MessageLessThanOrEqualTo.h"
 #include "MessageLine.h"
 #include "MessageLoadbang.h"
+#include "MessageLog.h"
 #include "MessageLogicalAnd.h"
 #include "MessageLogicalOr.h"
 #include "MessageMessageBox.h"
@@ -56,8 +59,6 @@
 #include "MessageMoses.h"
 #include "MessageMultiply.h"
 #include "MessageNotEquals.h"
-#include "MessageEqualsEquals.h"
-#include "MessageFloat.h"
 #include "MessagePack.h"
 #include "MessagePow.h"
 #include "MessagePowToDb.h"
@@ -455,6 +456,8 @@ PdObject *PdObject::newInstance(char *objectType, char *objectInitString, int bl
       }
     } else if (strcmp("loadbang", token) == 0) {
       return new MessageLoadbang(objectInitString);
+    } else if (strcmp("log", token) == 0) {
+      return new MessageLog(objectInitString);
     } else if (strcmp("metro", token) == 0) {
       token = strtok(NULL, " ");
       if (token == NULL) {
