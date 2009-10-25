@@ -8,6 +8,7 @@
 #include "DspDelayRead.h"
 #include "DspDelayWrite.h"
 #include "DspDivide.h"
+#include "DspHighpassFilter.h"
 #include "DspInletOutlet.h"
 #include "DspMultiply.h"
 #include "DspLine.h"
@@ -203,6 +204,14 @@ PdObject *PdObject::newInstance(char *objectType, char *objectInitString, int bl
         int windowInterval = atoi(nextToken);
         return new MessageEnv(windowSize, windowInterval, blockSize, objectInitString);
       }
+    } else if (strcmp(token, "hip~") == 0) {
+      token = strtok(NULL, " ");
+      if (token == NULL) {
+        return new DspHighpassFilter(blockSize, sampleRate, objectInitString);
+      } else {
+        float cutoffFrequency = (float) atof(token);
+        return new DspHighpassFilter(cutoffFrequency, blockSize, sampleRate, objectInitString);
+      }
     } else if (strcmp(token, "inlet~") == 0 ||
                strcmp(token, "outlet~") == 0) {
       return new DspInletOutlet(blockSize, objectInitString);
@@ -214,8 +223,8 @@ PdObject *PdObject::newInstance(char *objectType, char *objectInitString, int bl
       if (token == NULL) {
         return new DspLowpassFilter(blockSize, sampleRate, objectInitString);
       } else {
-        float constant = (float) atof(token);
-        return new DspLowpassFilter(constant, blockSize, sampleRate, objectInitString);
+        float cutoffFrequency = (float) atof(token);
+        return new DspLowpassFilter(cutoffFrequency, blockSize, sampleRate, objectInitString);
       }
     } else if (strcmp(token, "noise~") == 0) {
       return new DspNoise(blockSize, objectInitString);

@@ -103,6 +103,10 @@
 		90FA71221094A0A700E48F20 /* TextObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70BF1094A0A700E48F20 /* TextObject.cpp */; };
 		90FA712C1094A24000E48F20 /* MessageLogicalAnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA712B1094A24000E48F20 /* MessageLogicalAnd.cpp */; };
 		90FA712F1094A2F400E48F20 /* MessageLogicalOr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA712E1094A2F400E48F20 /* MessageLogicalOr.cpp */; };
+		90FA71331094A6F800E48F20 /* MessageNotEquals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA71321094A6F800E48F20 /* MessageNotEquals.cpp */; };
+		90FA71361094A9B800E48F20 /* MessageInteger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA71351094A9B800E48F20 /* MessageInteger.cpp */; };
+		90FA71B81094AD5500E48F20 /* MessageTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA71B71094AD5500E48F20 /* MessageTimer.cpp */; };
+		90FA71C21094B4FA00E48F20 /* DspHighpassFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA71C11094B4FA00E48F20 /* DspHighpassFilter.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -316,6 +320,14 @@
 		90FA712B1094A24000E48F20 /* MessageLogicalAnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageLogicalAnd.cpp; path = ../src/MessageLogicalAnd.cpp; sourceTree = SOURCE_ROOT; };
 		90FA712D1094A2F400E48F20 /* MessageLogicalOr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageLogicalOr.h; path = ../src/MessageLogicalOr.h; sourceTree = SOURCE_ROOT; };
 		90FA712E1094A2F400E48F20 /* MessageLogicalOr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageLogicalOr.cpp; path = ../src/MessageLogicalOr.cpp; sourceTree = SOURCE_ROOT; };
+		90FA71311094A6F800E48F20 /* MessageNotEquals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageNotEquals.h; path = ../src/MessageNotEquals.h; sourceTree = SOURCE_ROOT; };
+		90FA71321094A6F800E48F20 /* MessageNotEquals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageNotEquals.cpp; path = ../src/MessageNotEquals.cpp; sourceTree = SOURCE_ROOT; };
+		90FA71341094A9B800E48F20 /* MessageInteger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageInteger.h; path = ../src/MessageInteger.h; sourceTree = SOURCE_ROOT; };
+		90FA71351094A9B800E48F20 /* MessageInteger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageInteger.cpp; path = ../src/MessageInteger.cpp; sourceTree = SOURCE_ROOT; };
+		90FA71B61094AD5500E48F20 /* MessageTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageTimer.h; path = ../src/MessageTimer.h; sourceTree = SOURCE_ROOT; };
+		90FA71B71094AD5500E48F20 /* MessageTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageTimer.cpp; path = ../src/MessageTimer.cpp; sourceTree = SOURCE_ROOT; };
+		90FA71C01094B4FA00E48F20 /* DspHighpassFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspHighpassFilter.h; path = ../src/DspHighpassFilter.h; sourceTree = SOURCE_ROOT; };
+		90FA71C11094B4FA00E48F20 /* DspHighpassFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspHighpassFilter.cpp; path = ../src/DspHighpassFilter.cpp; sourceTree = SOURCE_ROOT; };
 		C6859E8B029090EE04C91782 /* Xcode.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = Xcode.1; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -361,6 +373,8 @@
 				90FA70051094A0A700E48F20 /* DspDelayWrite.h */,
 				90FA70061094A0A700E48F20 /* DspDivide.cpp */,
 				90FA70071094A0A700E48F20 /* DspDivide.h */,
+				90FA71C11094B4FA00E48F20 /* DspHighpassFilter.cpp */,
+				90FA71C01094B4FA00E48F20 /* DspHighpassFilter.h */,
 				90FA70081094A0A700E48F20 /* DspInletOutlet.cpp */,
 				90FA70091094A0A700E48F20 /* DspInletOutlet.h */,
 				90FA700A1094A0A700E48F20 /* DspInputDspOutputObject.cpp */,
@@ -451,6 +465,8 @@
 				90FA706A1094A0A700E48F20 /* MessageInputDspOutputObject.h */,
 				90FA706B1094A0A700E48F20 /* MessageInputMessageOutputObject.cpp */,
 				90FA706C1094A0A700E48F20 /* MessageInputMessageOutputObject.h */,
+				90FA71351094A9B800E48F20 /* MessageInteger.cpp */,
+				90FA71341094A9B800E48F20 /* MessageInteger.h */,
 				90FA706D1094A0A700E48F20 /* MessageLessThan.cpp */,
 				90FA706E1094A0A700E48F20 /* MessageLessThan.h */,
 				90FA706F1094A0A700E48F20 /* MessageLessThanOrEqualTo.cpp */,
@@ -476,6 +492,8 @@
 				90FA707F1094A0A700E48F20 /* MessageMoses.h */,
 				90FA70801094A0A700E48F20 /* MessageMultiply.cpp */,
 				90FA70811094A0A700E48F20 /* MessageMultiply.h */,
+				90FA71321094A6F800E48F20 /* MessageNotEquals.cpp */,
+				90FA71311094A6F800E48F20 /* MessageNotEquals.h */,
 				90FA70821094A0A700E48F20 /* MessageOutputObject.cpp */,
 				90FA70831094A0A700E48F20 /* MessageOutputObject.h */,
 				90FA70841094A0A700E48F20 /* MessagePack.cpp */,
@@ -512,6 +530,8 @@
 				90FA70A31094A0A700E48F20 /* MessageSymbol.h */,
 				90FA70A41094A0A700E48F20 /* MessageTangent.cpp */,
 				90FA70A51094A0A700E48F20 /* MessageTangent.h */,
+				90FA71B71094AD5500E48F20 /* MessageTimer.cpp */,
+				90FA71B61094AD5500E48F20 /* MessageTimer.h */,
 				90FA70A61094A0A700E48F20 /* MessageToggle.cpp */,
 				90FA70A71094A0A700E48F20 /* MessageToggle.h */,
 				90FA70A81094A0A700E48F20 /* MessageTrigger.cpp */,
@@ -697,6 +717,10 @@
 				90FA71221094A0A700E48F20 /* TextObject.cpp in Sources */,
 				90FA712C1094A24000E48F20 /* MessageLogicalAnd.cpp in Sources */,
 				90FA712F1094A2F400E48F20 /* MessageLogicalOr.cpp in Sources */,
+				90FA71331094A6F800E48F20 /* MessageNotEquals.cpp in Sources */,
+				90FA71361094A9B800E48F20 /* MessageInteger.cpp in Sources */,
+				90FA71B81094AD5500E48F20 /* MessageTimer.cpp in Sources */,
+				90FA71C21094B4FA00E48F20 /* DspHighpassFilter.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

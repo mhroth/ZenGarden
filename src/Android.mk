@@ -13,6 +13,7 @@ LOCAL_SRC_FILES := \
 ./DspDelayRead.cpp \
 ./DspDelayWrite.cpp \
 ./DspDivide.cpp \
+./DspHighpassFilter.cpp \
 ./DspInletOutlet.cpp \
 ./DspInputDspOutputObject.cpp \
 ./DspInputMessageOutputObject.cpp \

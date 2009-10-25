@@ -22,42 +22,40 @@
 
 #include <math.h>
 #include <stdlib.h>
-#include "DspLowpassFilter.h"
+#include "DspHighpassFilter.h"
 
-DspLowpassFilter::DspLowpassFilter(int blockSize, int sampleRate, char *initString) :
+DspHighpassFilter::DspHighpassFilter(int blockSize, int sampleRate, char *initString) :
     DspMessageInputDspOutputObject(2, 1, blockSize, initString) {
   this->sampleRate = (float) sampleRate;
   calculateFilterCoefficients((float) (sampleRate/2)); // initialise the filter completely open
   tap_0 = 0.0f;
 }
 
-DspLowpassFilter::DspLowpassFilter(float cutoffFrequency, int blockSize, int sampleRate, char *initString) : 
+DspHighpassFilter::DspHighpassFilter(float cutoffFrequency, int blockSize, int sampleRate, char *initString) : 
     DspMessageInputDspOutputObject(2, 1, blockSize, initString) {
   this->sampleRate = (float) sampleRate;
   calculateFilterCoefficients(cutoffFrequency);
   tap_0 = 0.0f;
 }
 
-DspLowpassFilter::~DspLowpassFilter() {
+DspHighpassFilter::~DspHighpassFilter() {
   // nothing to do
 }
 
-void DspLowpassFilter::calculateFilterCoefficients(float cutoffFrequency) {
-  if (cutoffFrequency < 0.0f) {
-    cutoffFrequency = 0.0f;
-  }
-  alpha = cutoffFrequency * 2.0f * M_PI / sampleRate;
+void DspHighpassFilter::calculateFilterCoefficients(float cutoffFrequency) {
+  alpha = 1 - (cutoffFrequency * 2.0f * M_PI / sampleRate);
   if (alpha > 1.0f) {
     alpha = 1.0f;
+  } else if (alpha < 0.0f) {
+    alpha = 0.0f;
   }
-  beta = 1.0f - alpha;
 }
 
-inline void DspLowpassFilter::processMessage(int inletIndex, PdMessage *message) {
+inline void DspHighpassFilter::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
       MessageElement *messageElement = message->getElement(0);
-      if (messageElement != NULL && messageElement->getType() == SYMBOL) {
+      if (messageElement->getType() == SYMBOL) {
         if (strcmp(messageElement->getSymbol(), "clear") == 0) {
           processDspToIndex(message->getBlockIndex());
           tap_0 = 0.0f;
@@ -67,7 +65,7 @@ inline void DspLowpassFilter::processMessage(int inletIndex, PdMessage *message)
     }
     case 1: {
       MessageElement *messageElement = message->getElement(0);
-      if (messageElement != NULL && messageElement->getType() == FLOAT) {
+      if (messageElement->getType() == FLOAT) {
         processDspToIndex(message->getBlockIndex());
         calculateFilterCoefficients(messageElement->getFloat());
       }
@@ -79,17 +77,18 @@ inline void DspLowpassFilter::processMessage(int inletIndex, PdMessage *message)
   }
 }
 
-inline void DspLowpassFilter::processDspToIndex(int newBlockIndex) {
-  // DspLowpassFilter only supports signalPresedence == DSP_MESSAGE
+inline void DspHighpassFilter::processDspToIndex(int newBlockIndex) {
+  // DspHighpassFilter only supports signalPresedence == DSP_MESSAGE
   if (signalPresedence == DSP_MESSAGE) {
     float *inputBuffer = localDspBufferAtInlet[0]; 
     float *outputBuffer = localDspBufferAtOutlet[0];
-    outputBuffer[blockIndexOfLastMessage] = 
-        (alpha * inputBuffer[blockIndexOfLastMessage]) + (beta * tap_0);
-    for (int i = blockIndexOfLastMessage + 1; i < newBlockIndex; i++) {
-      outputBuffer[i] = alpha * inputBuffer[i] + beta * outputBuffer[i-1];
+    
+    float f;
+    for (int i = blockIndexOfLastMessage; i < newBlockIndex; i++) {
+      f = inputBuffer[i] + alpha * tap_0;
+      outputBuffer[i] = f - tap_0;
+      tap_0 = f;
     }
-    tap_0 = outputBuffer[newBlockIndex-1];
   }
   blockIndexOfLastMessage = newBlockIndex;
 }

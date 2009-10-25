@@ -20,21 +20,21 @@
  *
  */
 
-#ifndef _DSP_LOW_PASS_FILTER_H_
-#define _DSP_LOW_PASS_FILTER_H_
+#ifndef _DSP_HIGH_PASS_FILTER_H_
+#define _DSP_HIGH_PASS_FILTER_H_
 
 #include "DspMessageInputDspOutputObject.h"
 
 /**
- * lop~
- * Specficially implement a one-tap IIR filter: y = alpha * x_0 + (1-alpha) * y_-1
+ * hip~
+ * Specficially implement a one-tap IIR filter: y = x_0 - (alpha * x_0 + (1-alpha) * y_-1)
  */
-class DspLowpassFilter : public DspMessageInputDspOutputObject {
+class DspHighpassFilter : public DspMessageInputDspOutputObject {
   
   public:
-    DspLowpassFilter(int blockSize, int sampleRate, char *iniString);
-    DspLowpassFilter(float cutoffFrequency, int blockSize, int sampleRate, char *iniString);
-    ~DspLowpassFilter();
+    DspHighpassFilter(int blockSize, int sampleRate, char *iniString);
+    DspHighpassFilter(float cutoffFrequency, int blockSize, int sampleRate, char *iniString);
+    ~DspHighpassFilter();
     
   protected:
     inline void processMessage(int inletIndex, PdMessage *message);
@@ -42,11 +42,10 @@ class DspLowpassFilter : public DspMessageInputDspOutputObject {
     
   private:
     void calculateFilterCoefficients(float cutoffFrequency);
-  
+    
     float sampleRate;
     float tap_0;
     float alpha;
-    float beta; // 1 - alpha;
 };
 
-#endif // _DSP_LOW_PASS_FILTER_H_
+#endif // _DSP_HIGH_PASS_FILTER_H_
