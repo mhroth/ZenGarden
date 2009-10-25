@@ -59,6 +59,8 @@ LOCAL_SRC_FILES := \
 ./MessageLessThanOrEqualTo.cpp \
 ./MessageLine.cpp \
 ./MessageLoadbang.cpp \
+./MessageLogicalAnd.cpp \
+./MessageLogicalOr.cpp \
 ./MessageMessageBox.cpp \
 ./MessageMetro.cpp \
 ./MessageMidiToFrequency.cpp \
@@ -96,10 +98,7 @@ LOCAL_SRC_FILES := \
 ./TextObject.cpp \
 
 LOCAL_STATIC_LIBRARIES := sndfile
-#LOCAL_SHARED_LIBRARIES := sndfile
 
-LOCAL_CFLAGS := \
--I$(LOCAL_PATH)/../../libsndfile-1.0.20/src \
--L$(LOCAL_PATH)/../../libsndfile-1.0.20/src/libs/
+LOCAL_CFLAGS := -I$(LOCAL_PATH)/../../libsndfile-1.0.20/src
 
 include $(BUILD_STATIC_LIBRARY)

@@ -3,3 +3,5 @@ bin
 ZenGarden.jardesc
 .project
 .classpath
+Xcode/build
+Xcode/Xcode.xcodeproj/mhroth.pbxuser

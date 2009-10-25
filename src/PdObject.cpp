@@ -45,6 +45,8 @@
 #include "MessageLessThanOrEqualTo.h"
 #include "MessageLine.h"
 #include "MessageLoadbang.h"
+#include "MessageLogicalAnd.h"
+#include "MessageLogicalOr.h"
 #include "MessageMessageBox.h"
 #include "MessageMetro.h"
 #include "MessageMidiToFrequency.h"
@@ -330,6 +332,22 @@ PdObject *PdObject::newInstance(char *objectType, char *objectInitString, int bl
       } else {
         float constant = (float) atof(token);
         return new MessageModulus(constant, objectInitString);
+      }
+    } else if (strcmp("&&", token) == 0) {
+      token = strtok(NULL, " ");
+      if (token == NULL) {
+        return new MessageLogicalAnd(objectInitString);
+      } else {
+        float constant = (float) atof(token);
+        return new MessageLogicalAnd(constant, objectInitString);
+      }
+    } else if (strcmp("||", token) == 0) {
+      token = strtok(NULL, " ");
+      if (token == NULL) {
+        return new MessageLogicalOr(objectInitString);
+      } else {
+        float constant = (float) atof(token);
+        return new MessageLogicalOr(constant, objectInitString);
       }
     } else if (strcmp("abs", token) == 0) {
       return new MessageAbsoluteValue(objectInitString);

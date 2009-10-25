@@ -1,0 +1,785 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8DD76F6A0486A84900D96B5E /* Xcode.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6859E8B029090EE04C91782 /* Xcode.1 */; };
+		90FA70C11094A0A700E48F20 /* DspAdc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA6FF61094A0A700E48F20 /* DspAdc.cpp */; };
+		90FA70C21094A0A700E48F20 /* DspAdd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA6FF81094A0A700E48F20 /* DspAdd.cpp */; };
+		90FA70C31094A0A700E48F20 /* DspBandpassFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA6FFA1094A0A700E48F20 /* DspBandpassFilter.cpp */; };
+		90FA70C41094A0A700E48F20 /* DspBinaryOperationObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA6FFC1094A0A700E48F20 /* DspBinaryOperationObject.cpp */; };
+		90FA70C51094A0A700E48F20 /* DspClip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA6FFE1094A0A700E48F20 /* DspClip.cpp */; };
+		90FA70C61094A0A700E48F20 /* DspDac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70001094A0A700E48F20 /* DspDac.cpp */; };
+		90FA70C71094A0A700E48F20 /* DspDelayRead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70021094A0A700E48F20 /* DspDelayRead.cpp */; };
+		90FA70C81094A0A700E48F20 /* DspDelayWrite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70041094A0A700E48F20 /* DspDelayWrite.cpp */; };
+		90FA70C91094A0A700E48F20 /* DspDivide.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70061094A0A700E48F20 /* DspDivide.cpp */; };
+		90FA70CA1094A0A700E48F20 /* DspInletOutlet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70081094A0A700E48F20 /* DspInletOutlet.cpp */; };
+		90FA70CB1094A0A700E48F20 /* DspInputDspOutputObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA700A1094A0A700E48F20 /* DspInputDspOutputObject.cpp */; };
+		90FA70CC1094A0A700E48F20 /* DspInputMessageOutputObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA700C1094A0A700E48F20 /* DspInputMessageOutputObject.cpp */; };
+		90FA70CD1094A0A700E48F20 /* DspLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA700F1094A0A700E48F20 /* DspLine.cpp */; };
+		90FA70CE1094A0A700E48F20 /* DspLowpassFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70111094A0A700E48F20 /* DspLowpassFilter.cpp */; };
+		90FA70CF1094A0A700E48F20 /* DspMessageInputDspOutputObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70131094A0A700E48F20 /* DspMessageInputDspOutputObject.cpp */; };
+		90FA70D01094A0A700E48F20 /* DspMessageInputMessageOutputObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70151094A0A700E48F20 /* DspMessageInputMessageOutputObject.cpp */; };
+		90FA70D11094A0A700E48F20 /* DspMultiply.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70181094A0A700E48F20 /* DspMultiply.cpp */; };
+		90FA70D21094A0A700E48F20 /* DspNoise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA701A1094A0A700E48F20 /* DspNoise.cpp */; };
+		90FA70D31094A0A700E48F20 /* DspOsc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA701C1094A0A700E48F20 /* DspOsc.cpp */; };
+		90FA70D41094A0A700E48F20 /* DspOutputObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA701E1094A0A700E48F20 /* DspOutputObject.cpp */; };
+		90FA70D51094A0A700E48F20 /* DspPhasor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70201094A0A700E48F20 /* DspPhasor.cpp */; };
+		90FA70D61094A0A700E48F20 /* DspSendReceive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70221094A0A700E48F20 /* DspSendReceive.cpp */; };
+		90FA70D71094A0A700E48F20 /* DspSig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70241094A0A700E48F20 /* DspSig.cpp */; };
+		90FA70D81094A0A700E48F20 /* DspSubtract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70261094A0A700E48F20 /* DspSubtract.cpp */; };
+		90FA70D91094A0A700E48F20 /* DspTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70281094A0A700E48F20 /* DspTable.cpp */; };
+		90FA70DA1094A0A700E48F20 /* DspTablePlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA702A1094A0A700E48F20 /* DspTablePlay.cpp */; };
+		90FA70DB1094A0A700E48F20 /* DspTableRead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA702C1094A0A700E48F20 /* DspTableRead.cpp */; };
+		90FA70DC1094A0A700E48F20 /* DspVariableDelay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA702E1094A0A700E48F20 /* DspVariableDelay.cpp */; };
+		90FA70DD1094A0A700E48F20 /* DspVCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70301094A0A700E48F20 /* DspVCF.cpp */; };
+		90FA70DE1094A0A700E48F20 /* List.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70321094A0A700E48F20 /* List.cpp */; };
+		90FA70DF1094A0A700E48F20 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70341094A0A700E48F20 /* main.cpp */; };
+		90FA70E51094A0A700E48F20 /* MessageAbsoluteValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70401094A0A700E48F20 /* MessageAbsoluteValue.cpp */; };
+		90FA70E61094A0A700E48F20 /* MessageAdd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70421094A0A700E48F20 /* MessageAdd.cpp */; };
+		90FA70E71094A0A700E48F20 /* MessageArcTangent2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70441094A0A700E48F20 /* MessageArcTangent2.cpp */; };
+		90FA70E81094A0A700E48F20 /* MessageBang.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70461094A0A700E48F20 /* MessageBang.cpp */; };
+		90FA70E91094A0A700E48F20 /* MessageBinaryOperationObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70481094A0A700E48F20 /* MessageBinaryOperationObject.cpp */; };
+		90FA70EA1094A0A700E48F20 /* MessageChange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA704A1094A0A700E48F20 /* MessageChange.cpp */; };
+		90FA70EB1094A0A700E48F20 /* MessageClip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA704C1094A0A700E48F20 /* MessageClip.cpp */; };
+		90FA70EC1094A0A700E48F20 /* MessageCosine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA704E1094A0A700E48F20 /* MessageCosine.cpp */; };
+		90FA70ED1094A0A700E48F20 /* MessageDbToPow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70501094A0A700E48F20 /* MessageDbToPow.cpp */; };
+		90FA70EE1094A0A700E48F20 /* MessageDbToRms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70521094A0A700E48F20 /* MessageDbToRms.cpp */; };
+		90FA70EF1094A0A700E48F20 /* MessageDelay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70541094A0A700E48F20 /* MessageDelay.cpp */; };
+		90FA70F01094A0A700E48F20 /* MessageDivide.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70561094A0A700E48F20 /* MessageDivide.cpp */; };
+		90FA70F11094A0A700E48F20 /* MessageElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70581094A0A700E48F20 /* MessageElement.cpp */; };
+		90FA70F21094A0A700E48F20 /* MessageEnv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA705B1094A0A700E48F20 /* MessageEnv.cpp */; };
+		90FA70F31094A0A700E48F20 /* MessageEqualsEquals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA705D1094A0A700E48F20 /* MessageEqualsEquals.cpp */; };
+		90FA70F41094A0A700E48F20 /* MessageExp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA705F1094A0A700E48F20 /* MessageExp.cpp */; };
+		90FA70F51094A0A700E48F20 /* MessageExternalSend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70611094A0A700E48F20 /* MessageExternalSend.cpp */; };
+		90FA70F61094A0A700E48F20 /* MessageFloat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70631094A0A700E48F20 /* MessageFloat.cpp */; };
+		90FA70F71094A0A700E48F20 /* MessageGreaterThan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70651094A0A700E48F20 /* MessageGreaterThan.cpp */; };
+		90FA70F81094A0A700E48F20 /* MessageInletOutlet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70671094A0A700E48F20 /* MessageInletOutlet.cpp */; };
+		90FA70F91094A0A700E48F20 /* MessageInputDspOutputObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70691094A0A700E48F20 /* MessageInputDspOutputObject.cpp */; };
+		90FA70FA1094A0A700E48F20 /* MessageInputMessageOutputObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA706B1094A0A700E48F20 /* MessageInputMessageOutputObject.cpp */; };
+		90FA70FB1094A0A700E48F20 /* MessageLessThan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA706D1094A0A700E48F20 /* MessageLessThan.cpp */; };
+		90FA70FC1094A0A700E48F20 /* MessageLessThanOrEqualTo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA706F1094A0A700E48F20 /* MessageLessThanOrEqualTo.cpp */; };
+		90FA70FD1094A0A700E48F20 /* MessageLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70721094A0A700E48F20 /* MessageLine.cpp */; };
+		90FA70FE1094A0A700E48F20 /* MessageLoadbang.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70741094A0A700E48F20 /* MessageLoadbang.cpp */; };
+		90FA70FF1094A0A700E48F20 /* MessageMessageBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70761094A0A700E48F20 /* MessageMessageBox.cpp */; };
+		90FA71001094A0A700E48F20 /* MessageMetro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70781094A0A700E48F20 /* MessageMetro.cpp */; };
+		90FA71011094A0A700E48F20 /* MessageMidiToFrequency.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA707A1094A0A700E48F20 /* MessageMidiToFrequency.cpp */; };
+		90FA71021094A0A700E48F20 /* MessageModulus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA707C1094A0A700E48F20 /* MessageModulus.cpp */; };
+		90FA71031094A0A700E48F20 /* MessageMoses.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA707E1094A0A700E48F20 /* MessageMoses.cpp */; };
+		90FA71041094A0A700E48F20 /* MessageMultiply.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70801094A0A700E48F20 /* MessageMultiply.cpp */; };
+		90FA71051094A0A700E48F20 /* MessageOutputObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70821094A0A700E48F20 /* MessageOutputObject.cpp */; };
+		90FA71061094A0A700E48F20 /* MessagePack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70841094A0A700E48F20 /* MessagePack.cpp */; };
+		90FA71071094A0A700E48F20 /* MessagePow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70861094A0A700E48F20 /* MessagePow.cpp */; };
+		90FA71081094A0A700E48F20 /* MessagePowToDb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70881094A0A700E48F20 /* MessagePowToDb.cpp */; };
+		90FA71091094A0A700E48F20 /* MessagePrint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA708A1094A0A700E48F20 /* MessagePrint.cpp */; };
+		90FA710A1094A0A700E48F20 /* MessageRandom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA708C1094A0A700E48F20 /* MessageRandom.cpp */; };
+		90FA710B1094A0A700E48F20 /* MessageRmsToDb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA708E1094A0A700E48F20 /* MessageRmsToDb.cpp */; };
+		90FA710C1094A0A700E48F20 /* MessageRoute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70901094A0A700E48F20 /* MessageRoute.cpp */; };
+		90FA710D1094A0A700E48F20 /* MessageSelect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70921094A0A700E48F20 /* MessageSelect.cpp */; };
+		90FA710E1094A0A700E48F20 /* MessageSendReceive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70941094A0A700E48F20 /* MessageSendReceive.cpp */; };
+		90FA710F1094A0A700E48F20 /* MessageSine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70961094A0A700E48F20 /* MessageSine.cpp */; };
+		90FA71101094A0A700E48F20 /* MessageSoundfiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70981094A0A700E48F20 /* MessageSoundfiler.cpp */; };
+		90FA71111094A0A700E48F20 /* MessageSpigot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA709A1094A0A700E48F20 /* MessageSpigot.cpp */; };
+		90FA71121094A0A700E48F20 /* MessageSqrt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA709C1094A0A700E48F20 /* MessageSqrt.cpp */; };
+		90FA71131094A0A700E48F20 /* MessageSubtract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA709E1094A0A700E48F20 /* MessageSubtract.cpp */; };
+		90FA71141094A0A700E48F20 /* MessageSwap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70A01094A0A700E48F20 /* MessageSwap.cpp */; };
+		90FA71151094A0A700E48F20 /* MessageSymbol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70A21094A0A700E48F20 /* MessageSymbol.cpp */; };
+		90FA71161094A0A700E48F20 /* MessageTangent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70A41094A0A700E48F20 /* MessageTangent.cpp */; };
+		90FA71171094A0A700E48F20 /* MessageToggle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70A61094A0A700E48F20 /* MessageToggle.cpp */; };
+		90FA71181094A0A700E48F20 /* MessageTrigger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70A81094A0A700E48F20 /* MessageTrigger.cpp */; };
+		90FA71191094A0A700E48F20 /* MessageUnaryOperationObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70AA1094A0A700E48F20 /* MessageUnaryOperationObject.cpp */; };
+		90FA711A1094A0A700E48F20 /* MessageUnpack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70AC1094A0A700E48F20 /* MessageUnpack.cpp */; };
+		90FA711B1094A0A700E48F20 /* PdGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70AE1094A0A700E48F20 /* PdGraph.cpp */; };
+		90FA711C1094A0A700E48F20 /* PdMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70B01094A0A700E48F20 /* PdMessage.cpp */; };
+		90FA711D1094A0A700E48F20 /* PdObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70B41094A0A700E48F20 /* PdObject.cpp */; };
+		90FA711E1094A0A700E48F20 /* RemoteBufferObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70B71094A0A700E48F20 /* RemoteBufferObject.cpp */; };
+		90FA711F1094A0A700E48F20 /* RemoteBufferReceiverObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70B91094A0A700E48F20 /* RemoteBufferReceiverObject.cpp */; };
+		90FA71201094A0A700E48F20 /* RemoteObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70BB1094A0A700E48F20 /* RemoteObject.cpp */; };
+		90FA71211094A0A700E48F20 /* StaticUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70BD1094A0A700E48F20 /* StaticUtils.cpp */; };
+		90FA71221094A0A700E48F20 /* TextObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70BF1094A0A700E48F20 /* TextObject.cpp */; };
+		90FA712C1094A24000E48F20 /* MessageLogicalAnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA712B1094A24000E48F20 /* MessageLogicalAnd.cpp */; };
+		90FA712F1094A2F400E48F20 /* MessageLogicalOr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA712E1094A2F400E48F20 /* MessageLogicalOr.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		8DD76F690486A84900D96B5E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 8;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				8DD76F6A0486A84900D96B5E /* Xcode.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		8DD76F6C0486A84900D96B5E /* Xcode */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Xcode; sourceTree = BUILT_PRODUCTS_DIR; };
+		90FA6FF61094A0A700E48F20 /* DspAdc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspAdc.cpp; path = ../src/DspAdc.cpp; sourceTree = SOURCE_ROOT; };
+		90FA6FF71094A0A700E48F20 /* DspAdc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspAdc.h; path = ../src/DspAdc.h; sourceTree = SOURCE_ROOT; };
+		90FA6FF81094A0A700E48F20 /* DspAdd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspAdd.cpp; path = ../src/DspAdd.cpp; sourceTree = SOURCE_ROOT; };
+		90FA6FF91094A0A700E48F20 /* DspAdd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspAdd.h; path = ../src/DspAdd.h; sourceTree = SOURCE_ROOT; };
+		90FA6FFA1094A0A700E48F20 /* DspBandpassFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspBandpassFilter.cpp; path = ../src/DspBandpassFilter.cpp; sourceTree = SOURCE_ROOT; };
+		90FA6FFB1094A0A700E48F20 /* DspBandpassFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspBandpassFilter.h; path = ../src/DspBandpassFilter.h; sourceTree = SOURCE_ROOT; };
+		90FA6FFC1094A0A700E48F20 /* DspBinaryOperationObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspBinaryOperationObject.cpp; path = ../src/DspBinaryOperationObject.cpp; sourceTree = SOURCE_ROOT; };
+		90FA6FFD1094A0A700E48F20 /* DspBinaryOperationObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspBinaryOperationObject.h; path = ../src/DspBinaryOperationObject.h; sourceTree = SOURCE_ROOT; };
+		90FA6FFE1094A0A700E48F20 /* DspClip.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspClip.cpp; path = ../src/DspClip.cpp; sourceTree = SOURCE_ROOT; };
+		90FA6FFF1094A0A700E48F20 /* DspClip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspClip.h; path = ../src/DspClip.h; sourceTree = SOURCE_ROOT; };
+		90FA70001094A0A700E48F20 /* DspDac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspDac.cpp; path = ../src/DspDac.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70011094A0A700E48F20 /* DspDac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspDac.h; path = ../src/DspDac.h; sourceTree = SOURCE_ROOT; };
+		90FA70021094A0A700E48F20 /* DspDelayRead.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspDelayRead.cpp; path = ../src/DspDelayRead.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70031094A0A700E48F20 /* DspDelayRead.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspDelayRead.h; path = ../src/DspDelayRead.h; sourceTree = SOURCE_ROOT; };
+		90FA70041094A0A700E48F20 /* DspDelayWrite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspDelayWrite.cpp; path = ../src/DspDelayWrite.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70051094A0A700E48F20 /* DspDelayWrite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspDelayWrite.h; path = ../src/DspDelayWrite.h; sourceTree = SOURCE_ROOT; };
+		90FA70061094A0A700E48F20 /* DspDivide.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspDivide.cpp; path = ../src/DspDivide.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70071094A0A700E48F20 /* DspDivide.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspDivide.h; path = ../src/DspDivide.h; sourceTree = SOURCE_ROOT; };
+		90FA70081094A0A700E48F20 /* DspInletOutlet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspInletOutlet.cpp; path = ../src/DspInletOutlet.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70091094A0A700E48F20 /* DspInletOutlet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspInletOutlet.h; path = ../src/DspInletOutlet.h; sourceTree = SOURCE_ROOT; };
+		90FA700A1094A0A700E48F20 /* DspInputDspOutputObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspInputDspOutputObject.cpp; path = ../src/DspInputDspOutputObject.cpp; sourceTree = SOURCE_ROOT; };
+		90FA700B1094A0A700E48F20 /* DspInputDspOutputObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspInputDspOutputObject.h; path = ../src/DspInputDspOutputObject.h; sourceTree = SOURCE_ROOT; };
+		90FA700C1094A0A700E48F20 /* DspInputMessageOutputObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspInputMessageOutputObject.cpp; path = ../src/DspInputMessageOutputObject.cpp; sourceTree = SOURCE_ROOT; };
+		90FA700D1094A0A700E48F20 /* DspInputMessageOutputObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspInputMessageOutputObject.h; path = ../src/DspInputMessageOutputObject.h; sourceTree = SOURCE_ROOT; };
+		90FA700E1094A0A700E48F20 /* DspLetIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspLetIndex.h; path = ../src/DspLetIndex.h; sourceTree = SOURCE_ROOT; };
+		90FA700F1094A0A700E48F20 /* DspLine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspLine.cpp; path = ../src/DspLine.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70101094A0A700E48F20 /* DspLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspLine.h; path = ../src/DspLine.h; sourceTree = SOURCE_ROOT; };
+		90FA70111094A0A700E48F20 /* DspLowpassFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspLowpassFilter.cpp; path = ../src/DspLowpassFilter.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70121094A0A700E48F20 /* DspLowpassFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspLowpassFilter.h; path = ../src/DspLowpassFilter.h; sourceTree = SOURCE_ROOT; };
+		90FA70131094A0A700E48F20 /* DspMessageInputDspOutputObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspMessageInputDspOutputObject.cpp; path = ../src/DspMessageInputDspOutputObject.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70141094A0A700E48F20 /* DspMessageInputDspOutputObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspMessageInputDspOutputObject.h; path = ../src/DspMessageInputDspOutputObject.h; sourceTree = SOURCE_ROOT; };
+		90FA70151094A0A700E48F20 /* DspMessageInputMessageOutputObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspMessageInputMessageOutputObject.cpp; path = ../src/DspMessageInputMessageOutputObject.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70161094A0A700E48F20 /* DspMessageInputMessageOutputObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspMessageInputMessageOutputObject.h; path = ../src/DspMessageInputMessageOutputObject.h; sourceTree = SOURCE_ROOT; };
+		90FA70171094A0A700E48F20 /* DspMessagePresedence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspMessagePresedence.h; path = ../src/DspMessagePresedence.h; sourceTree = SOURCE_ROOT; };
+		90FA70181094A0A700E48F20 /* DspMultiply.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspMultiply.cpp; path = ../src/DspMultiply.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70191094A0A700E48F20 /* DspMultiply.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspMultiply.h; path = ../src/DspMultiply.h; sourceTree = SOURCE_ROOT; };
+		90FA701A1094A0A700E48F20 /* DspNoise.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspNoise.cpp; path = ../src/DspNoise.cpp; sourceTree = SOURCE_ROOT; };
+		90FA701B1094A0A700E48F20 /* DspNoise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspNoise.h; path = ../src/DspNoise.h; sourceTree = SOURCE_ROOT; };
+		90FA701C1094A0A700E48F20 /* DspOsc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspOsc.cpp; path = ../src/DspOsc.cpp; sourceTree = SOURCE_ROOT; };
+		90FA701D1094A0A700E48F20 /* DspOsc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspOsc.h; path = ../src/DspOsc.h; sourceTree = SOURCE_ROOT; };
+		90FA701E1094A0A700E48F20 /* DspOutputObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspOutputObject.cpp; path = ../src/DspOutputObject.cpp; sourceTree = SOURCE_ROOT; };
+		90FA701F1094A0A700E48F20 /* DspOutputObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspOutputObject.h; path = ../src/DspOutputObject.h; sourceTree = SOURCE_ROOT; };
+		90FA70201094A0A700E48F20 /* DspPhasor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspPhasor.cpp; path = ../src/DspPhasor.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70211094A0A700E48F20 /* DspPhasor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspPhasor.h; path = ../src/DspPhasor.h; sourceTree = SOURCE_ROOT; };
+		90FA70221094A0A700E48F20 /* DspSendReceive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspSendReceive.cpp; path = ../src/DspSendReceive.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70231094A0A700E48F20 /* DspSendReceive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspSendReceive.h; path = ../src/DspSendReceive.h; sourceTree = SOURCE_ROOT; };
+		90FA70241094A0A700E48F20 /* DspSig.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspSig.cpp; path = ../src/DspSig.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70251094A0A700E48F20 /* DspSig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspSig.h; path = ../src/DspSig.h; sourceTree = SOURCE_ROOT; };
+		90FA70261094A0A700E48F20 /* DspSubtract.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspSubtract.cpp; path = ../src/DspSubtract.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70271094A0A700E48F20 /* DspSubtract.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspSubtract.h; path = ../src/DspSubtract.h; sourceTree = SOURCE_ROOT; };
+		90FA70281094A0A700E48F20 /* DspTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspTable.cpp; path = ../src/DspTable.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70291094A0A700E48F20 /* DspTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspTable.h; path = ../src/DspTable.h; sourceTree = SOURCE_ROOT; };
+		90FA702A1094A0A700E48F20 /* DspTablePlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspTablePlay.cpp; path = ../src/DspTablePlay.cpp; sourceTree = SOURCE_ROOT; };
+		90FA702B1094A0A700E48F20 /* DspTablePlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspTablePlay.h; path = ../src/DspTablePlay.h; sourceTree = SOURCE_ROOT; };
+		90FA702C1094A0A700E48F20 /* DspTableRead.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspTableRead.cpp; path = ../src/DspTableRead.cpp; sourceTree = SOURCE_ROOT; };
+		90FA702D1094A0A700E48F20 /* DspTableRead.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspTableRead.h; path = ../src/DspTableRead.h; sourceTree = SOURCE_ROOT; };
+		90FA702E1094A0A700E48F20 /* DspVariableDelay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspVariableDelay.cpp; path = ../src/DspVariableDelay.cpp; sourceTree = SOURCE_ROOT; };
+		90FA702F1094A0A700E48F20 /* DspVariableDelay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspVariableDelay.h; path = ../src/DspVariableDelay.h; sourceTree = SOURCE_ROOT; };
+		90FA70301094A0A700E48F20 /* DspVCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspVCF.cpp; path = ../src/DspVCF.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70311094A0A700E48F20 /* DspVCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspVCF.h; path = ../src/DspVCF.h; sourceTree = SOURCE_ROOT; };
+		90FA70321094A0A700E48F20 /* List.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = List.cpp; path = ../src/List.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70331094A0A700E48F20 /* List.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = List.h; path = ../src/List.h; sourceTree = SOURCE_ROOT; };
+		90FA70341094A0A700E48F20 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../src/main.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70401094A0A700E48F20 /* MessageAbsoluteValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageAbsoluteValue.cpp; path = ../src/MessageAbsoluteValue.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70411094A0A700E48F20 /* MessageAbsoluteValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageAbsoluteValue.h; path = ../src/MessageAbsoluteValue.h; sourceTree = SOURCE_ROOT; };
+		90FA70421094A0A700E48F20 /* MessageAdd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageAdd.cpp; path = ../src/MessageAdd.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70431094A0A700E48F20 /* MessageAdd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageAdd.h; path = ../src/MessageAdd.h; sourceTree = SOURCE_ROOT; };
+		90FA70441094A0A700E48F20 /* MessageArcTangent2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageArcTangent2.cpp; path = ../src/MessageArcTangent2.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70451094A0A700E48F20 /* MessageArcTangent2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageArcTangent2.h; path = ../src/MessageArcTangent2.h; sourceTree = SOURCE_ROOT; };
+		90FA70461094A0A700E48F20 /* MessageBang.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageBang.cpp; path = ../src/MessageBang.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70471094A0A700E48F20 /* MessageBang.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageBang.h; path = ../src/MessageBang.h; sourceTree = SOURCE_ROOT; };
+		90FA70481094A0A700E48F20 /* MessageBinaryOperationObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageBinaryOperationObject.cpp; path = ../src/MessageBinaryOperationObject.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70491094A0A700E48F20 /* MessageBinaryOperationObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageBinaryOperationObject.h; path = ../src/MessageBinaryOperationObject.h; sourceTree = SOURCE_ROOT; };
+		90FA704A1094A0A700E48F20 /* MessageChange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageChange.cpp; path = ../src/MessageChange.cpp; sourceTree = SOURCE_ROOT; };
+		90FA704B1094A0A700E48F20 /* MessageChange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageChange.h; path = ../src/MessageChange.h; sourceTree = SOURCE_ROOT; };
+		90FA704C1094A0A700E48F20 /* MessageClip.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageClip.cpp; path = ../src/MessageClip.cpp; sourceTree = SOURCE_ROOT; };
+		90FA704D1094A0A700E48F20 /* MessageClip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageClip.h; path = ../src/MessageClip.h; sourceTree = SOURCE_ROOT; };
+		90FA704E1094A0A700E48F20 /* MessageCosine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageCosine.cpp; path = ../src/MessageCosine.cpp; sourceTree = SOURCE_ROOT; };
+		90FA704F1094A0A700E48F20 /* MessageCosine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageCosine.h; path = ../src/MessageCosine.h; sourceTree = SOURCE_ROOT; };
+		90FA70501094A0A700E48F20 /* MessageDbToPow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageDbToPow.cpp; path = ../src/MessageDbToPow.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70511094A0A700E48F20 /* MessageDbToPow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageDbToPow.h; path = ../src/MessageDbToPow.h; sourceTree = SOURCE_ROOT; };
+		90FA70521094A0A700E48F20 /* MessageDbToRms.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageDbToRms.cpp; path = ../src/MessageDbToRms.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70531094A0A700E48F20 /* MessageDbToRms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageDbToRms.h; path = ../src/MessageDbToRms.h; sourceTree = SOURCE_ROOT; };
+		90FA70541094A0A700E48F20 /* MessageDelay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageDelay.cpp; path = ../src/MessageDelay.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70551094A0A700E48F20 /* MessageDelay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageDelay.h; path = ../src/MessageDelay.h; sourceTree = SOURCE_ROOT; };
+		90FA70561094A0A700E48F20 /* MessageDivide.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageDivide.cpp; path = ../src/MessageDivide.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70571094A0A700E48F20 /* MessageDivide.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageDivide.h; path = ../src/MessageDivide.h; sourceTree = SOURCE_ROOT; };
+		90FA70581094A0A700E48F20 /* MessageElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageElement.cpp; path = ../src/MessageElement.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70591094A0A700E48F20 /* MessageElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageElement.h; path = ../src/MessageElement.h; sourceTree = SOURCE_ROOT; };
+		90FA705A1094A0A700E48F20 /* MessageElementType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageElementType.h; path = ../src/MessageElementType.h; sourceTree = SOURCE_ROOT; };
+		90FA705B1094A0A700E48F20 /* MessageEnv.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageEnv.cpp; path = ../src/MessageEnv.cpp; sourceTree = SOURCE_ROOT; };
+		90FA705C1094A0A700E48F20 /* MessageEnv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageEnv.h; path = ../src/MessageEnv.h; sourceTree = SOURCE_ROOT; };
+		90FA705D1094A0A700E48F20 /* MessageEqualsEquals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageEqualsEquals.cpp; path = ../src/MessageEqualsEquals.cpp; sourceTree = SOURCE_ROOT; };
+		90FA705E1094A0A700E48F20 /* MessageEqualsEquals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageEqualsEquals.h; path = ../src/MessageEqualsEquals.h; sourceTree = SOURCE_ROOT; };
+		90FA705F1094A0A700E48F20 /* MessageExp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageExp.cpp; path = ../src/MessageExp.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70601094A0A700E48F20 /* MessageExp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageExp.h; path = ../src/MessageExp.h; sourceTree = SOURCE_ROOT; };
+		90FA70611094A0A700E48F20 /* MessageExternalSend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageExternalSend.cpp; path = ../src/MessageExternalSend.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70621094A0A700E48F20 /* MessageExternalSend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageExternalSend.h; path = ../src/MessageExternalSend.h; sourceTree = SOURCE_ROOT; };
+		90FA70631094A0A700E48F20 /* MessageFloat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageFloat.cpp; path = ../src/MessageFloat.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70641094A0A700E48F20 /* MessageFloat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageFloat.h; path = ../src/MessageFloat.h; sourceTree = SOURCE_ROOT; };
+		90FA70651094A0A700E48F20 /* MessageGreaterThan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageGreaterThan.cpp; path = ../src/MessageGreaterThan.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70661094A0A700E48F20 /* MessageGreaterThan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageGreaterThan.h; path = ../src/MessageGreaterThan.h; sourceTree = SOURCE_ROOT; };
+		90FA70671094A0A700E48F20 /* MessageInletOutlet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageInletOutlet.cpp; path = ../src/MessageInletOutlet.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70681094A0A700E48F20 /* MessageInletOutlet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageInletOutlet.h; path = ../src/MessageInletOutlet.h; sourceTree = SOURCE_ROOT; };
+		90FA70691094A0A700E48F20 /* MessageInputDspOutputObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageInputDspOutputObject.cpp; path = ../src/MessageInputDspOutputObject.cpp; sourceTree = SOURCE_ROOT; };
+		90FA706A1094A0A700E48F20 /* MessageInputDspOutputObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageInputDspOutputObject.h; path = ../src/MessageInputDspOutputObject.h; sourceTree = SOURCE_ROOT; };
+		90FA706B1094A0A700E48F20 /* MessageInputMessageOutputObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageInputMessageOutputObject.cpp; path = ../src/MessageInputMessageOutputObject.cpp; sourceTree = SOURCE_ROOT; };
+		90FA706C1094A0A700E48F20 /* MessageInputMessageOutputObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageInputMessageOutputObject.h; path = ../src/MessageInputMessageOutputObject.h; sourceTree = SOURCE_ROOT; };
+		90FA706D1094A0A700E48F20 /* MessageLessThan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageLessThan.cpp; path = ../src/MessageLessThan.cpp; sourceTree = SOURCE_ROOT; };
+		90FA706E1094A0A700E48F20 /* MessageLessThan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageLessThan.h; path = ../src/MessageLessThan.h; sourceTree = SOURCE_ROOT; };
+		90FA706F1094A0A700E48F20 /* MessageLessThanOrEqualTo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageLessThanOrEqualTo.cpp; path = ../src/MessageLessThanOrEqualTo.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70701094A0A700E48F20 /* MessageLessThanOrEqualTo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageLessThanOrEqualTo.h; path = ../src/MessageLessThanOrEqualTo.h; sourceTree = SOURCE_ROOT; };
+		90FA70711094A0A700E48F20 /* MessageLetIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageLetIndex.h; path = ../src/MessageLetIndex.h; sourceTree = SOURCE_ROOT; };
+		90FA70721094A0A700E48F20 /* MessageLine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageLine.cpp; path = ../src/MessageLine.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70731094A0A700E48F20 /* MessageLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageLine.h; path = ../src/MessageLine.h; sourceTree = SOURCE_ROOT; };
+		90FA70741094A0A700E48F20 /* MessageLoadbang.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageLoadbang.cpp; path = ../src/MessageLoadbang.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70751094A0A700E48F20 /* MessageLoadbang.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageLoadbang.h; path = ../src/MessageLoadbang.h; sourceTree = SOURCE_ROOT; };
+		90FA70761094A0A700E48F20 /* MessageMessageBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageMessageBox.cpp; path = ../src/MessageMessageBox.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70771094A0A700E48F20 /* MessageMessageBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageMessageBox.h; path = ../src/MessageMessageBox.h; sourceTree = SOURCE_ROOT; };
+		90FA70781094A0A700E48F20 /* MessageMetro.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageMetro.cpp; path = ../src/MessageMetro.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70791094A0A700E48F20 /* MessageMetro.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageMetro.h; path = ../src/MessageMetro.h; sourceTree = SOURCE_ROOT; };
+		90FA707A1094A0A700E48F20 /* MessageMidiToFrequency.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageMidiToFrequency.cpp; path = ../src/MessageMidiToFrequency.cpp; sourceTree = SOURCE_ROOT; };
+		90FA707B1094A0A700E48F20 /* MessageMidiToFrequency.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageMidiToFrequency.h; path = ../src/MessageMidiToFrequency.h; sourceTree = SOURCE_ROOT; };
+		90FA707C1094A0A700E48F20 /* MessageModulus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageModulus.cpp; path = ../src/MessageModulus.cpp; sourceTree = SOURCE_ROOT; };
+		90FA707D1094A0A700E48F20 /* MessageModulus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageModulus.h; path = ../src/MessageModulus.h; sourceTree = SOURCE_ROOT; };
+		90FA707E1094A0A700E48F20 /* MessageMoses.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageMoses.cpp; path = ../src/MessageMoses.cpp; sourceTree = SOURCE_ROOT; };
+		90FA707F1094A0A700E48F20 /* MessageMoses.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageMoses.h; path = ../src/MessageMoses.h; sourceTree = SOURCE_ROOT; };
+		90FA70801094A0A700E48F20 /* MessageMultiply.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageMultiply.cpp; path = ../src/MessageMultiply.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70811094A0A700E48F20 /* MessageMultiply.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageMultiply.h; path = ../src/MessageMultiply.h; sourceTree = SOURCE_ROOT; };
+		90FA70821094A0A700E48F20 /* MessageOutputObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageOutputObject.cpp; path = ../src/MessageOutputObject.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70831094A0A700E48F20 /* MessageOutputObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageOutputObject.h; path = ../src/MessageOutputObject.h; sourceTree = SOURCE_ROOT; };
+		90FA70841094A0A700E48F20 /* MessagePack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessagePack.cpp; path = ../src/MessagePack.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70851094A0A700E48F20 /* MessagePack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessagePack.h; path = ../src/MessagePack.h; sourceTree = SOURCE_ROOT; };
+		90FA70861094A0A700E48F20 /* MessagePow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessagePow.cpp; path = ../src/MessagePow.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70871094A0A700E48F20 /* MessagePow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessagePow.h; path = ../src/MessagePow.h; sourceTree = SOURCE_ROOT; };
+		90FA70881094A0A700E48F20 /* MessagePowToDb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessagePowToDb.cpp; path = ../src/MessagePowToDb.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70891094A0A700E48F20 /* MessagePowToDb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessagePowToDb.h; path = ../src/MessagePowToDb.h; sourceTree = SOURCE_ROOT; };
+		90FA708A1094A0A700E48F20 /* MessagePrint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessagePrint.cpp; path = ../src/MessagePrint.cpp; sourceTree = SOURCE_ROOT; };
+		90FA708B1094A0A700E48F20 /* MessagePrint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessagePrint.h; path = ../src/MessagePrint.h; sourceTree = SOURCE_ROOT; };
+		90FA708C1094A0A700E48F20 /* MessageRandom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageRandom.cpp; path = ../src/MessageRandom.cpp; sourceTree = SOURCE_ROOT; };
+		90FA708D1094A0A700E48F20 /* MessageRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageRandom.h; path = ../src/MessageRandom.h; sourceTree = SOURCE_ROOT; };
+		90FA708E1094A0A700E48F20 /* MessageRmsToDb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageRmsToDb.cpp; path = ../src/MessageRmsToDb.cpp; sourceTree = SOURCE_ROOT; };
+		90FA708F1094A0A700E48F20 /* MessageRmsToDb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageRmsToDb.h; path = ../src/MessageRmsToDb.h; sourceTree = SOURCE_ROOT; };
+		90FA70901094A0A700E48F20 /* MessageRoute.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageRoute.cpp; path = ../src/MessageRoute.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70911094A0A700E48F20 /* MessageRoute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageRoute.h; path = ../src/MessageRoute.h; sourceTree = SOURCE_ROOT; };
+		90FA70921094A0A700E48F20 /* MessageSelect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageSelect.cpp; path = ../src/MessageSelect.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70931094A0A700E48F20 /* MessageSelect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageSelect.h; path = ../src/MessageSelect.h; sourceTree = SOURCE_ROOT; };
+		90FA70941094A0A700E48F20 /* MessageSendReceive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageSendReceive.cpp; path = ../src/MessageSendReceive.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70951094A0A700E48F20 /* MessageSendReceive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageSendReceive.h; path = ../src/MessageSendReceive.h; sourceTree = SOURCE_ROOT; };
+		90FA70961094A0A700E48F20 /* MessageSine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageSine.cpp; path = ../src/MessageSine.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70971094A0A700E48F20 /* MessageSine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageSine.h; path = ../src/MessageSine.h; sourceTree = SOURCE_ROOT; };
+		90FA70981094A0A700E48F20 /* MessageSoundfiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageSoundfiler.cpp; path = ../src/MessageSoundfiler.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70991094A0A700E48F20 /* MessageSoundfiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageSoundfiler.h; path = ../src/MessageSoundfiler.h; sourceTree = SOURCE_ROOT; };
+		90FA709A1094A0A700E48F20 /* MessageSpigot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageSpigot.cpp; path = ../src/MessageSpigot.cpp; sourceTree = SOURCE_ROOT; };
+		90FA709B1094A0A700E48F20 /* MessageSpigot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageSpigot.h; path = ../src/MessageSpigot.h; sourceTree = SOURCE_ROOT; };
+		90FA709C1094A0A700E48F20 /* MessageSqrt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageSqrt.cpp; path = ../src/MessageSqrt.cpp; sourceTree = SOURCE_ROOT; };
+		90FA709D1094A0A700E48F20 /* MessageSqrt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageSqrt.h; path = ../src/MessageSqrt.h; sourceTree = SOURCE_ROOT; };
+		90FA709E1094A0A700E48F20 /* MessageSubtract.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageSubtract.cpp; path = ../src/MessageSubtract.cpp; sourceTree = SOURCE_ROOT; };
+		90FA709F1094A0A700E48F20 /* MessageSubtract.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageSubtract.h; path = ../src/MessageSubtract.h; sourceTree = SOURCE_ROOT; };
+		90FA70A01094A0A700E48F20 /* MessageSwap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageSwap.cpp; path = ../src/MessageSwap.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70A11094A0A700E48F20 /* MessageSwap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageSwap.h; path = ../src/MessageSwap.h; sourceTree = SOURCE_ROOT; };
+		90FA70A21094A0A700E48F20 /* MessageSymbol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageSymbol.cpp; path = ../src/MessageSymbol.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70A31094A0A700E48F20 /* MessageSymbol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageSymbol.h; path = ../src/MessageSymbol.h; sourceTree = SOURCE_ROOT; };
+		90FA70A41094A0A700E48F20 /* MessageTangent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageTangent.cpp; path = ../src/MessageTangent.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70A51094A0A700E48F20 /* MessageTangent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageTangent.h; path = ../src/MessageTangent.h; sourceTree = SOURCE_ROOT; };
+		90FA70A61094A0A700E48F20 /* MessageToggle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageToggle.cpp; path = ../src/MessageToggle.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70A71094A0A700E48F20 /* MessageToggle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageToggle.h; path = ../src/MessageToggle.h; sourceTree = SOURCE_ROOT; };
+		90FA70A81094A0A700E48F20 /* MessageTrigger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageTrigger.cpp; path = ../src/MessageTrigger.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70A91094A0A700E48F20 /* MessageTrigger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageTrigger.h; path = ../src/MessageTrigger.h; sourceTree = SOURCE_ROOT; };
+		90FA70AA1094A0A700E48F20 /* MessageUnaryOperationObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageUnaryOperationObject.cpp; path = ../src/MessageUnaryOperationObject.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70AB1094A0A700E48F20 /* MessageUnaryOperationObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageUnaryOperationObject.h; path = ../src/MessageUnaryOperationObject.h; sourceTree = SOURCE_ROOT; };
+		90FA70AC1094A0A700E48F20 /* MessageUnpack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageUnpack.cpp; path = ../src/MessageUnpack.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70AD1094A0A700E48F20 /* MessageUnpack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageUnpack.h; path = ../src/MessageUnpack.h; sourceTree = SOURCE_ROOT; };
+		90FA70AE1094A0A700E48F20 /* PdGraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PdGraph.cpp; path = ../src/PdGraph.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70AF1094A0A700E48F20 /* PdGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PdGraph.h; path = ../src/PdGraph.h; sourceTree = SOURCE_ROOT; };
+		90FA70B01094A0A700E48F20 /* PdMessage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PdMessage.cpp; path = ../src/PdMessage.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70B11094A0A700E48F20 /* PdMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PdMessage.h; path = ../src/PdMessage.h; sourceTree = SOURCE_ROOT; };
+		90FA70B21094A0A700E48F20 /* PdNodeInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PdNodeInterface.h; path = ../src/PdNodeInterface.h; sourceTree = SOURCE_ROOT; };
+		90FA70B31094A0A700E48F20 /* PdNodeType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PdNodeType.h; path = ../src/PdNodeType.h; sourceTree = SOURCE_ROOT; };
+		90FA70B41094A0A700E48F20 /* PdObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PdObject.cpp; path = ../src/PdObject.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70B51094A0A700E48F20 /* PdObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PdObject.h; path = ../src/PdObject.h; sourceTree = SOURCE_ROOT; };
+		90FA70B61094A0A700E48F20 /* PdObjectType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PdObjectType.h; path = ../src/PdObjectType.h; sourceTree = SOURCE_ROOT; };
+		90FA70B71094A0A700E48F20 /* RemoteBufferObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteBufferObject.cpp; path = ../src/RemoteBufferObject.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70B81094A0A700E48F20 /* RemoteBufferObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteBufferObject.h; path = ../src/RemoteBufferObject.h; sourceTree = SOURCE_ROOT; };
+		90FA70B91094A0A700E48F20 /* RemoteBufferReceiverObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteBufferReceiverObject.cpp; path = ../src/RemoteBufferReceiverObject.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70BA1094A0A700E48F20 /* RemoteBufferReceiverObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteBufferReceiverObject.h; path = ../src/RemoteBufferReceiverObject.h; sourceTree = SOURCE_ROOT; };
+		90FA70BB1094A0A700E48F20 /* RemoteObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteObject.cpp; path = ../src/RemoteObject.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70BC1094A0A700E48F20 /* RemoteObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteObject.h; path = ../src/RemoteObject.h; sourceTree = SOURCE_ROOT; };
+		90FA70BD1094A0A700E48F20 /* StaticUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StaticUtils.cpp; path = ../src/StaticUtils.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70BE1094A0A700E48F20 /* StaticUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StaticUtils.h; path = ../src/StaticUtils.h; sourceTree = SOURCE_ROOT; };
+		90FA70BF1094A0A700E48F20 /* TextObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextObject.cpp; path = ../src/TextObject.cpp; sourceTree = SOURCE_ROOT; };
+		90FA70C01094A0A700E48F20 /* TextObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextObject.h; path = ../src/TextObject.h; sourceTree = SOURCE_ROOT; };
+		90FA712A1094A24000E48F20 /* MessageLogicalAnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageLogicalAnd.h; path = ../src/MessageLogicalAnd.h; sourceTree = SOURCE_ROOT; };
+		90FA712B1094A24000E48F20 /* MessageLogicalAnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageLogicalAnd.cpp; path = ../src/MessageLogicalAnd.cpp; sourceTree = SOURCE_ROOT; };
+		90FA712D1094A2F400E48F20 /* MessageLogicalOr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageLogicalOr.h; path = ../src/MessageLogicalOr.h; sourceTree = SOURCE_ROOT; };
+		90FA712E1094A2F400E48F20 /* MessageLogicalOr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageLogicalOr.cpp; path = ../src/MessageLogicalOr.cpp; sourceTree = SOURCE_ROOT; };
+		C6859E8B029090EE04C91782 /* Xcode.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = Xcode.1; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8DD76F660486A84900D96B5E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		08FB7794FE84155DC02AAC07 /* Xcode */ = {
+			isa = PBXGroup;
+			children = (
+				08FB7795FE84155DC02AAC07 /* Source */,
+				C6859E8C029090F304C91782 /* Documentation */,
+				1AB674ADFE9D54B511CA2CBB /* Products */,
+			);
+			name = Xcode;
+			sourceTree = "<group>";
+		};
+		08FB7795FE84155DC02AAC07 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				90FA6FF61094A0A700E48F20 /* DspAdc.cpp */,
+				90FA6FF71094A0A700E48F20 /* DspAdc.h */,
+				90FA6FF81094A0A700E48F20 /* DspAdd.cpp */,
+				90FA6FF91094A0A700E48F20 /* DspAdd.h */,
+				90FA6FFA1094A0A700E48F20 /* DspBandpassFilter.cpp */,
+				90FA6FFB1094A0A700E48F20 /* DspBandpassFilter.h */,
+				90FA6FFC1094A0A700E48F20 /* DspBinaryOperationObject.cpp */,
+				90FA6FFD1094A0A700E48F20 /* DspBinaryOperationObject.h */,
+				90FA6FFE1094A0A700E48F20 /* DspClip.cpp */,
+				90FA6FFF1094A0A700E48F20 /* DspClip.h */,
+				90FA70001094A0A700E48F20 /* DspDac.cpp */,
+				90FA70011094A0A700E48F20 /* DspDac.h */,
+				90FA70021094A0A700E48F20 /* DspDelayRead.cpp */,
+				90FA70031094A0A700E48F20 /* DspDelayRead.h */,
+				90FA70041094A0A700E48F20 /* DspDelayWrite.cpp */,
+				90FA70051094A0A700E48F20 /* DspDelayWrite.h */,
+				90FA70061094A0A700E48F20 /* DspDivide.cpp */,
+				90FA70071094A0A700E48F20 /* DspDivide.h */,
+				90FA70081094A0A700E48F20 /* DspInletOutlet.cpp */,
+				90FA70091094A0A700E48F20 /* DspInletOutlet.h */,
+				90FA700A1094A0A700E48F20 /* DspInputDspOutputObject.cpp */,
+				90FA700B1094A0A700E48F20 /* DspInputDspOutputObject.h */,
+				90FA700C1094A0A700E48F20 /* DspInputMessageOutputObject.cpp */,
+				90FA700D1094A0A700E48F20 /* DspInputMessageOutputObject.h */,
+				90FA700E1094A0A700E48F20 /* DspLetIndex.h */,
+				90FA700F1094A0A700E48F20 /* DspLine.cpp */,
+				90FA70101094A0A700E48F20 /* DspLine.h */,
+				90FA70111094A0A700E48F20 /* DspLowpassFilter.cpp */,
+				90FA70121094A0A700E48F20 /* DspLowpassFilter.h */,
+				90FA70131094A0A700E48F20 /* DspMessageInputDspOutputObject.cpp */,
+				90FA70141094A0A700E48F20 /* DspMessageInputDspOutputObject.h */,
+				90FA70151094A0A700E48F20 /* DspMessageInputMessageOutputObject.cpp */,
+				90FA70161094A0A700E48F20 /* DspMessageInputMessageOutputObject.h */,
+				90FA70171094A0A700E48F20 /* DspMessagePresedence.h */,
+				90FA70181094A0A700E48F20 /* DspMultiply.cpp */,
+				90FA70191094A0A700E48F20 /* DspMultiply.h */,
+				90FA701A1094A0A700E48F20 /* DspNoise.cpp */,
+				90FA701B1094A0A700E48F20 /* DspNoise.h */,
+				90FA701C1094A0A700E48F20 /* DspOsc.cpp */,
+				90FA701D1094A0A700E48F20 /* DspOsc.h */,
+				90FA701E1094A0A700E48F20 /* DspOutputObject.cpp */,
+				90FA701F1094A0A700E48F20 /* DspOutputObject.h */,
+				90FA70201094A0A700E48F20 /* DspPhasor.cpp */,
+				90FA70211094A0A700E48F20 /* DspPhasor.h */,
+				90FA70221094A0A700E48F20 /* DspSendReceive.cpp */,
+				90FA70231094A0A700E48F20 /* DspSendReceive.h */,
+				90FA70241094A0A700E48F20 /* DspSig.cpp */,
+				90FA70251094A0A700E48F20 /* DspSig.h */,
+				90FA70261094A0A700E48F20 /* DspSubtract.cpp */,
+				90FA70271094A0A700E48F20 /* DspSubtract.h */,
+				90FA70281094A0A700E48F20 /* DspTable.cpp */,
+				90FA70291094A0A700E48F20 /* DspTable.h */,
+				90FA702A1094A0A700E48F20 /* DspTablePlay.cpp */,
+				90FA702B1094A0A700E48F20 /* DspTablePlay.h */,
+				90FA702C1094A0A700E48F20 /* DspTableRead.cpp */,
+				90FA702D1094A0A700E48F20 /* DspTableRead.h */,
+				90FA702E1094A0A700E48F20 /* DspVariableDelay.cpp */,
+				90FA702F1094A0A700E48F20 /* DspVariableDelay.h */,
+				90FA70301094A0A700E48F20 /* DspVCF.cpp */,
+				90FA70311094A0A700E48F20 /* DspVCF.h */,
+				90FA70321094A0A700E48F20 /* List.cpp */,
+				90FA70331094A0A700E48F20 /* List.h */,
+				90FA70341094A0A700E48F20 /* main.cpp */,
+				90FA70401094A0A700E48F20 /* MessageAbsoluteValue.cpp */,
+				90FA70411094A0A700E48F20 /* MessageAbsoluteValue.h */,
+				90FA70421094A0A700E48F20 /* MessageAdd.cpp */,
+				90FA70431094A0A700E48F20 /* MessageAdd.h */,
+				90FA70441094A0A700E48F20 /* MessageArcTangent2.cpp */,
+				90FA70451094A0A700E48F20 /* MessageArcTangent2.h */,
+				90FA70461094A0A700E48F20 /* MessageBang.cpp */,
+				90FA70471094A0A700E48F20 /* MessageBang.h */,
+				90FA70481094A0A700E48F20 /* MessageBinaryOperationObject.cpp */,
+				90FA70491094A0A700E48F20 /* MessageBinaryOperationObject.h */,
+				90FA704A1094A0A700E48F20 /* MessageChange.cpp */,
+				90FA704B1094A0A700E48F20 /* MessageChange.h */,
+				90FA704C1094A0A700E48F20 /* MessageClip.cpp */,
+				90FA704D1094A0A700E48F20 /* MessageClip.h */,
+				90FA704E1094A0A700E48F20 /* MessageCosine.cpp */,
+				90FA704F1094A0A700E48F20 /* MessageCosine.h */,
+				90FA70501094A0A700E48F20 /* MessageDbToPow.cpp */,
+				90FA70511094A0A700E48F20 /* MessageDbToPow.h */,
+				90FA70521094A0A700E48F20 /* MessageDbToRms.cpp */,
+				90FA70531094A0A700E48F20 /* MessageDbToRms.h */,
+				90FA70541094A0A700E48F20 /* MessageDelay.cpp */,
+				90FA70551094A0A700E48F20 /* MessageDelay.h */,
+				90FA70561094A0A700E48F20 /* MessageDivide.cpp */,
+				90FA70571094A0A700E48F20 /* MessageDivide.h */,
+				90FA70581094A0A700E48F20 /* MessageElement.cpp */,
+				90FA70591094A0A700E48F20 /* MessageElement.h */,
+				90FA705A1094A0A700E48F20 /* MessageElementType.h */,
+				90FA705B1094A0A700E48F20 /* MessageEnv.cpp */,
+				90FA705C1094A0A700E48F20 /* MessageEnv.h */,
+				90FA705D1094A0A700E48F20 /* MessageEqualsEquals.cpp */,
+				90FA705E1094A0A700E48F20 /* MessageEqualsEquals.h */,
+				90FA705F1094A0A700E48F20 /* MessageExp.cpp */,
+				90FA70601094A0A700E48F20 /* MessageExp.h */,
+				90FA70611094A0A700E48F20 /* MessageExternalSend.cpp */,
+				90FA70621094A0A700E48F20 /* MessageExternalSend.h */,
+				90FA70631094A0A700E48F20 /* MessageFloat.cpp */,
+				90FA70641094A0A700E48F20 /* MessageFloat.h */,
+				90FA70651094A0A700E48F20 /* MessageGreaterThan.cpp */,
+				90FA70661094A0A700E48F20 /* MessageGreaterThan.h */,
+				90FA70671094A0A700E48F20 /* MessageInletOutlet.cpp */,
+				90FA70681094A0A700E48F20 /* MessageInletOutlet.h */,
+				90FA70691094A0A700E48F20 /* MessageInputDspOutputObject.cpp */,
+				90FA706A1094A0A700E48F20 /* MessageInputDspOutputObject.h */,
+				90FA706B1094A0A700E48F20 /* MessageInputMessageOutputObject.cpp */,
+				90FA706C1094A0A700E48F20 /* MessageInputMessageOutputObject.h */,
+				90FA706D1094A0A700E48F20 /* MessageLessThan.cpp */,
+				90FA706E1094A0A700E48F20 /* MessageLessThan.h */,
+				90FA706F1094A0A700E48F20 /* MessageLessThanOrEqualTo.cpp */,
+				90FA70701094A0A700E48F20 /* MessageLessThanOrEqualTo.h */,
+				90FA70711094A0A700E48F20 /* MessageLetIndex.h */,
+				90FA70721094A0A700E48F20 /* MessageLine.cpp */,
+				90FA70731094A0A700E48F20 /* MessageLine.h */,
+				90FA70741094A0A700E48F20 /* MessageLoadbang.cpp */,
+				90FA70751094A0A700E48F20 /* MessageLoadbang.h */,
+				90FA712B1094A24000E48F20 /* MessageLogicalAnd.cpp */,
+				90FA712A1094A24000E48F20 /* MessageLogicalAnd.h */,
+				90FA712E1094A2F400E48F20 /* MessageLogicalOr.cpp */,
+				90FA712D1094A2F400E48F20 /* MessageLogicalOr.h */,
+				90FA70761094A0A700E48F20 /* MessageMessageBox.cpp */,
+				90FA70771094A0A700E48F20 /* MessageMessageBox.h */,
+				90FA70781094A0A700E48F20 /* MessageMetro.cpp */,
+				90FA70791094A0A700E48F20 /* MessageMetro.h */,
+				90FA707A1094A0A700E48F20 /* MessageMidiToFrequency.cpp */,
+				90FA707B1094A0A700E48F20 /* MessageMidiToFrequency.h */,
+				90FA707C1094A0A700E48F20 /* MessageModulus.cpp */,
+				90FA707D1094A0A700E48F20 /* MessageModulus.h */,
+				90FA707E1094A0A700E48F20 /* MessageMoses.cpp */,
+				90FA707F1094A0A700E48F20 /* MessageMoses.h */,
+				90FA70801094A0A700E48F20 /* MessageMultiply.cpp */,
+				90FA70811094A0A700E48F20 /* MessageMultiply.h */,
+				90FA70821094A0A700E48F20 /* MessageOutputObject.cpp */,
+				90FA70831094A0A700E48F20 /* MessageOutputObject.h */,
+				90FA70841094A0A700E48F20 /* MessagePack.cpp */,
+				90FA70851094A0A700E48F20 /* MessagePack.h */,
+				90FA70861094A0A700E48F20 /* MessagePow.cpp */,
+				90FA70871094A0A700E48F20 /* MessagePow.h */,
+				90FA70881094A0A700E48F20 /* MessagePowToDb.cpp */,
+				90FA70891094A0A700E48F20 /* MessagePowToDb.h */,
+				90FA708A1094A0A700E48F20 /* MessagePrint.cpp */,
+				90FA708B1094A0A700E48F20 /* MessagePrint.h */,
+				90FA708C1094A0A700E48F20 /* MessageRandom.cpp */,
+				90FA708D1094A0A700E48F20 /* MessageRandom.h */,
+				90FA708E1094A0A700E48F20 /* MessageRmsToDb.cpp */,
+				90FA708F1094A0A700E48F20 /* MessageRmsToDb.h */,
+				90FA70901094A0A700E48F20 /* MessageRoute.cpp */,
+				90FA70911094A0A700E48F20 /* MessageRoute.h */,
+				90FA70921094A0A700E48F20 /* MessageSelect.cpp */,
+				90FA70931094A0A700E48F20 /* MessageSelect.h */,
+				90FA70941094A0A700E48F20 /* MessageSendReceive.cpp */,
+				90FA70951094A0A700E48F20 /* MessageSendReceive.h */,
+				90FA70961094A0A700E48F20 /* MessageSine.cpp */,
+				90FA70971094A0A700E48F20 /* MessageSine.h */,
+				90FA70981094A0A700E48F20 /* MessageSoundfiler.cpp */,
+				90FA70991094A0A700E48F20 /* MessageSoundfiler.h */,
+				90FA709A1094A0A700E48F20 /* MessageSpigot.cpp */,
+				90FA709B1094A0A700E48F20 /* MessageSpigot.h */,
+				90FA709C1094A0A700E48F20 /* MessageSqrt.cpp */,
+				90FA709D1094A0A700E48F20 /* MessageSqrt.h */,
+				90FA709E1094A0A700E48F20 /* MessageSubtract.cpp */,
+				90FA709F1094A0A700E48F20 /* MessageSubtract.h */,
+				90FA70A01094A0A700E48F20 /* MessageSwap.cpp */,
+				90FA70A11094A0A700E48F20 /* MessageSwap.h */,
+				90FA70A21094A0A700E48F20 /* MessageSymbol.cpp */,
+				90FA70A31094A0A700E48F20 /* MessageSymbol.h */,
+				90FA70A41094A0A700E48F20 /* MessageTangent.cpp */,
+				90FA70A51094A0A700E48F20 /* MessageTangent.h */,
+				90FA70A61094A0A700E48F20 /* MessageToggle.cpp */,
+				90FA70A71094A0A700E48F20 /* MessageToggle.h */,
+				90FA70A81094A0A700E48F20 /* MessageTrigger.cpp */,
+				90FA70A91094A0A700E48F20 /* MessageTrigger.h */,
+				90FA70AA1094A0A700E48F20 /* MessageUnaryOperationObject.cpp */,
+				90FA70AB1094A0A700E48F20 /* MessageUnaryOperationObject.h */,
+				90FA70AC1094A0A700E48F20 /* MessageUnpack.cpp */,
+				90FA70AD1094A0A700E48F20 /* MessageUnpack.h */,
+				90FA70AE1094A0A700E48F20 /* PdGraph.cpp */,
+				90FA70AF1094A0A700E48F20 /* PdGraph.h */,
+				90FA70B01094A0A700E48F20 /* PdMessage.cpp */,
+				90FA70B11094A0A700E48F20 /* PdMessage.h */,
+				90FA70B21094A0A700E48F20 /* PdNodeInterface.h */,
+				90FA70B31094A0A700E48F20 /* PdNodeType.h */,
+				90FA70B41094A0A700E48F20 /* PdObject.cpp */,
+				90FA70B51094A0A700E48F20 /* PdObject.h */,
+				90FA70B61094A0A700E48F20 /* PdObjectType.h */,
+				90FA70B71094A0A700E48F20 /* RemoteBufferObject.cpp */,
+				90FA70B81094A0A700E48F20 /* RemoteBufferObject.h */,
+				90FA70B91094A0A700E48F20 /* RemoteBufferReceiverObject.cpp */,
+				90FA70BA1094A0A700E48F20 /* RemoteBufferReceiverObject.h */,
+				90FA70BB1094A0A700E48F20 /* RemoteObject.cpp */,
+				90FA70BC1094A0A700E48F20 /* RemoteObject.h */,
+				90FA70BD1094A0A700E48F20 /* StaticUtils.cpp */,
+				90FA70BE1094A0A700E48F20 /* StaticUtils.h */,
+				90FA70BF1094A0A700E48F20 /* TextObject.cpp */,
+				90FA70C01094A0A700E48F20 /* TextObject.h */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+		1AB674ADFE9D54B511CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8DD76F6C0486A84900D96B5E /* Xcode */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C6859E8C029090F304C91782 /* Documentation */ = {
+			isa = PBXGroup;
+			children = (
+				C6859E8B029090EE04C91782 /* Xcode.1 */,
+			);
+			name = Documentation;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8DD76F620486A84900D96B5E /* Xcode */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DEB923108733DC60010E9CD /* Build configuration list for PBXNativeTarget "Xcode" */;
+			buildPhases = (
+				8DD76F640486A84900D96B5E /* Sources */,
+				8DD76F660486A84900D96B5E /* Frameworks */,
+				8DD76F690486A84900D96B5E /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Xcode;
+			productInstallPath = "$(HOME)/bin";
+			productName = Xcode;
+			productReference = 8DD76F6C0486A84900D96B5E /* Xcode */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		08FB7793FE84155DC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 1DEB923508733DC60010E9CD /* Build configuration list for PBXProject "Xcode" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 1;
+			mainGroup = 08FB7794FE84155DC02AAC07 /* Xcode */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8DD76F620486A84900D96B5E /* Xcode */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8DD76F640486A84900D96B5E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				90FA70C11094A0A700E48F20 /* DspAdc.cpp in Sources */,
+				90FA70C21094A0A700E48F20 /* DspAdd.cpp in Sources */,
+				90FA70C31094A0A700E48F20 /* DspBandpassFilter.cpp in Sources */,
+				90FA70C41094A0A700E48F20 /* DspBinaryOperationObject.cpp in Sources */,
+				90FA70C51094A0A700E48F20 /* DspClip.cpp in Sources */,
+				90FA70C61094A0A700E48F20 /* DspDac.cpp in Sources */,
+				90FA70C71094A0A700E48F20 /* DspDelayRead.cpp in Sources */,
+				90FA70C81094A0A700E48F20 /* DspDelayWrite.cpp in Sources */,
+				90FA70C91094A0A700E48F20 /* DspDivide.cpp in Sources */,
+				90FA70CA1094A0A700E48F20 /* DspInletOutlet.cpp in Sources */,
+				90FA70CB1094A0A700E48F20 /* DspInputDspOutputObject.cpp in Sources */,
+				90FA70CC1094A0A700E48F20 /* DspInputMessageOutputObject.cpp in Sources */,
+				90FA70CD1094A0A700E48F20 /* DspLine.cpp in Sources */,
+				90FA70CE1094A0A700E48F20 /* DspLowpassFilter.cpp in Sources */,
+				90FA70CF1094A0A700E48F20 /* DspMessageInputDspOutputObject.cpp in Sources */,
+				90FA70D01094A0A700E48F20 /* DspMessageInputMessageOutputObject.cpp in Sources */,
+				90FA70D11094A0A700E48F20 /* DspMultiply.cpp in Sources */,
+				90FA70D21094A0A700E48F20 /* DspNoise.cpp in Sources */,
+				90FA70D31094A0A700E48F20 /* DspOsc.cpp in Sources */,
+				90FA70D41094A0A700E48F20 /* DspOutputObject.cpp in Sources */,
+				90FA70D51094A0A700E48F20 /* DspPhasor.cpp in Sources */,
+				90FA70D61094A0A700E48F20 /* DspSendReceive.cpp in Sources */,
+				90FA70D71094A0A700E48F20 /* DspSig.cpp in Sources */,
+				90FA70D81094A0A700E48F20 /* DspSubtract.cpp in Sources */,
+				90FA70D91094A0A700E48F20 /* DspTable.cpp in Sources */,
+				90FA70DA1094A0A700E48F20 /* DspTablePlay.cpp in Sources */,
+				90FA70DB1094A0A700E48F20 /* DspTableRead.cpp in Sources */,
+				90FA70DC1094A0A700E48F20 /* DspVariableDelay.cpp in Sources */,
+				90FA70DD1094A0A700E48F20 /* DspVCF.cpp in Sources */,
+				90FA70DE1094A0A700E48F20 /* List.cpp in Sources */,
+				90FA70DF1094A0A700E48F20 /* main.cpp in Sources */,
+				90FA70E51094A0A700E48F20 /* MessageAbsoluteValue.cpp in Sources */,
+				90FA70E61094A0A700E48F20 /* MessageAdd.cpp in Sources */,
+				90FA70E71094A0A700E48F20 /* MessageArcTangent2.cpp in Sources */,
+				90FA70E81094A0A700E48F20 /* MessageBang.cpp in Sources */,
+				90FA70E91094A0A700E48F20 /* MessageBinaryOperationObject.cpp in Sources */,
+				90FA70EA1094A0A700E48F20 /* MessageChange.cpp in Sources */,
+				90FA70EB1094A0A700E48F20 /* MessageClip.cpp in Sources */,
+				90FA70EC1094A0A700E48F20 /* MessageCosine.cpp in Sources */,
+				90FA70ED1094A0A700E48F20 /* MessageDbToPow.cpp in Sources */,
+				90FA70EE1094A0A700E48F20 /* MessageDbToRms.cpp in Sources */,
+				90FA70EF1094A0A700E48F20 /* MessageDelay.cpp in Sources */,
+				90FA70F01094A0A700E48F20 /* MessageDivide.cpp in Sources */,
+				90FA70F11094A0A700E48F20 /* MessageElement.cpp in Sources */,
+				90FA70F21094A0A700E48F20 /* MessageEnv.cpp in Sources */,
+				90FA70F31094A0A700E48F20 /* MessageEqualsEquals.cpp in Sources */,
+				90FA70F41094A0A700E48F20 /* MessageExp.cpp in Sources */,
+				90FA70F51094A0A700E48F20 /* MessageExternalSend.cpp in Sources */,
+				90FA70F61094A0A700E48F20 /* MessageFloat.cpp in Sources */,
+				90FA70F71094A0A700E48F20 /* MessageGreaterThan.cpp in Sources */,
+				90FA70F81094A0A700E48F20 /* MessageInletOutlet.cpp in Sources */,
+				90FA70F91094A0A700E48F20 /* MessageInputDspOutputObject.cpp in Sources */,
+				90FA70FA1094A0A700E48F20 /* MessageInputMessageOutputObject.cpp in Sources */,
+				90FA70FB1094A0A700E48F20 /* MessageLessThan.cpp in Sources */,
+				90FA70FC1094A0A700E48F20 /* MessageLessThanOrEqualTo.cpp in Sources */,
+				90FA70FD1094A0A700E48F20 /* MessageLine.cpp in Sources */,
+				90FA70FE1094A0A700E48F20 /* MessageLoadbang.cpp in Sources */,
+				90FA70FF1094A0A700E48F20 /* MessageMessageBox.cpp in Sources */,
+				90FA71001094A0A700E48F20 /* MessageMetro.cpp in Sources */,
+				90FA71011094A0A700E48F20 /* MessageMidiToFrequency.cpp in Sources */,
+				90FA71021094A0A700E48F20 /* MessageModulus.cpp in Sources */,
+				90FA71031094A0A700E48F20 /* MessageMoses.cpp in Sources */,
+				90FA71041094A0A700E48F20 /* MessageMultiply.cpp in Sources */,
+				90FA71051094A0A700E48F20 /* MessageOutputObject.cpp in Sources */,
+				90FA71061094A0A700E48F20 /* MessagePack.cpp in Sources */,
+				90FA71071094A0A700E48F20 /* MessagePow.cpp in Sources */,
+				90FA71081094A0A700E48F20 /* MessagePowToDb.cpp in Sources */,
+				90FA71091094A0A700E48F20 /* MessagePrint.cpp in Sources */,
+				90FA710A1094A0A700E48F20 /* MessageRandom.cpp in Sources */,
+				90FA710B1094A0A700E48F20 /* MessageRmsToDb.cpp in Sources */,
+				90FA710C1094A0A700E48F20 /* MessageRoute.cpp in Sources */,
+				90FA710D1094A0A700E48F20 /* MessageSelect.cpp in Sources */,
+				90FA710E1094A0A700E48F20 /* MessageSendReceive.cpp in Sources */,
+				90FA710F1094A0A700E48F20 /* MessageSine.cpp in Sources */,
+				90FA71101094A0A700E48F20 /* MessageSoundfiler.cpp in Sources */,
+				90FA71111094A0A700E48F20 /* MessageSpigot.cpp in Sources */,
+				90FA71121094A0A700E48F20 /* MessageSqrt.cpp in Sources */,
+				90FA71131094A0A700E48F20 /* MessageSubtract.cpp in Sources */,
+				90FA71141094A0A700E48F20 /* MessageSwap.cpp in Sources */,
+				90FA71151094A0A700E48F20 /* MessageSymbol.cpp in Sources */,
+				90FA71161094A0A700E48F20 /* MessageTangent.cpp in Sources */,
+				90FA71171094A0A700E48F20 /* MessageToggle.cpp in Sources */,
+				90FA71181094A0A700E48F20 /* MessageTrigger.cpp in Sources */,
+				90FA71191094A0A700E48F20 /* MessageUnaryOperationObject.cpp in Sources */,
+				90FA711A1094A0A700E48F20 /* MessageUnpack.cpp in Sources */,
+				90FA711B1094A0A700E48F20 /* PdGraph.cpp in Sources */,
+				90FA711C1094A0A700E48F20 /* PdMessage.cpp in Sources */,
+				90FA711D1094A0A700E48F20 /* PdObject.cpp in Sources */,
+				90FA711E1094A0A700E48F20 /* RemoteBufferObject.cpp in Sources */,
+				90FA711F1094A0A700E48F20 /* RemoteBufferReceiverObject.cpp in Sources */,
+				90FA71201094A0A700E48F20 /* RemoteObject.cpp in Sources */,
+				90FA71211094A0A700E48F20 /* StaticUtils.cpp in Sources */,
+				90FA71221094A0A700E48F20 /* TextObject.cpp in Sources */,
+				90FA712C1094A24000E48F20 /* MessageLogicalAnd.cpp in Sources */,
+				90FA712F1094A2F400E48F20 /* MessageLogicalOr.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB923208733DC60010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"_GLIBCXX_DEBUG=1",
+					"_GLIBCXX_DEBUG_PEDANTIC=1",
+				);
+				INSTALL_PATH = /usr/local/bin;
+				PRODUCT_NAME = Xcode;
+			};
+			name = Debug;
+		};
+		1DEB923308733DC60010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/bin;
+				PRODUCT_NAME = Xcode;
+			};
+			name = Release;
+		};
+		1DEB923608733DC60010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.5;
+			};
+			name = Debug;
+		};
+		1DEB923708733DC60010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.5;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB923108733DC60010E9CD /* Build configuration list for PBXNativeTarget "Xcode" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB923208733DC60010E9CD /* Debug */,
+				1DEB923308733DC60010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DEB923508733DC60010E9CD /* Build configuration list for PBXProject "Xcode" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB923608733DC60010E9CD /* Debug */,
+				1DEB923708733DC60010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 08FB7793FE84155DC02AAC07 /* Project object */;
+}
