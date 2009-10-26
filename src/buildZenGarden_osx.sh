@@ -5,7 +5,7 @@ gcc -o ../libs/osx/libzengarden.jnilib -fPIC -O3 -dynamiclib \
 -I/Developer/SDKs/MacOSX10.5.sdk/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Headers \
 -I../../libsndfile-1.0.20/src/ \
 -L../../libsndfile-1.0.20/src/.libs/ \
--lstdc++ -lsndfile \
+./me/rjdj/zengarden/jnizengarden.cpp \
 ./DspAdd.cpp \
 ./DspAdc.cpp \
 ./DspBandpassFilter.cpp \
@@ -15,12 +15,14 @@ gcc -o ../libs/osx/libzengarden.jnilib -fPIC -O3 -dynamiclib \
 ./DspDelayRead.cpp \
 ./DspDelayWrite.cpp \
 ./DspDivide.cpp \
+./DspHighpassFilter.cpp \
 ./DspInletOutlet.cpp \
 ./DspInputDspOutputObject.cpp \
 ./DspInputMessageOutputObject.cpp \
 ./DspMessageInputDspOutputObject.cpp \
 ./DspMessageInputMessageOutputObject.cpp \
 ./DspLine.cpp \
+./DspLog.cpp \
 ./DspLowpassFilter.cpp \
 ./DspMultiply.cpp \
 ./DspOsc.cpp \
@@ -53,20 +55,27 @@ gcc -o ../libs/osx/libzengarden.jnilib -fPIC -O3 -dynamiclib \
 ./MessageEqualsEquals.cpp \
 ./MessageExternalSend.cpp \
 ./MessageFloat.cpp \
+./MessageFrequencyToMidi.cpp \
 ./MessageGreaterThan.cpp \
+./MessageGreaterThanOrEqualTo.cpp \
 ./MessageInletOutlet.cpp \
 ./MessageInputDspOutputObject.cpp \
 ./MessageInputMessageOutputObject.cpp \
+./MessageInteger.cpp \
 ./MessageLessThan.cpp \
 ./MessageLessThanOrEqualTo.cpp \
 ./MessageLine.cpp \
 ./MessageLoadbang.cpp \
+./MessageLog.cpp \
+./MessageLogicalAnd.cpp \
+./MessageLogicalOr.cpp \
 ./MessageMessageBox.cpp \
 ./MessageMetro.cpp \
 ./MessageMidiToFrequency.cpp \
 ./MessageModulus.cpp \
 ./MessageMoses.cpp \
 ./MessageMultiply.cpp \
+./MessageNotEquals.cpp \
 ./MessagePack.cpp \
 ./MessagePow.cpp \
 ./MessagePowToDb.cpp \
@@ -85,6 +94,7 @@ gcc -o ../libs/osx/libzengarden.jnilib -fPIC -O3 -dynamiclib \
 ./MessageSwap.cpp \
 ./MessageSymbol.cpp \
 ./MessageTangent.cpp \
+./MessageTimer.cpp \
 ./MessageToggle.cpp \
 ./MessageTrigger.cpp \
 ./MessageUnaryOperationObject.cpp \
@@ -96,6 +106,7 @@ gcc -o ../libs/osx/libzengarden.jnilib -fPIC -O3 -dynamiclib \
 ./RemoteBufferReceiverObject.cpp \
 ./StaticUtils.cpp \
 ./TextObject.cpp \
+-lstdc++ -lsndfile
 
 rm *.o
 ls -l ../libs/osx/libzengarden.jnilib
