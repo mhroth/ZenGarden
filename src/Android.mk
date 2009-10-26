@@ -80,6 +80,7 @@ LOCAL_SRC_FILES := \
 ./MessagePrint.cpp \
 ./MessageOutputObject.cpp \
 ./MessageRandom.cpp \
+./MessageRemainder.cpp \
 ./MessageRmsToDb.cpp \
 ./MessageRoute.cpp \
 ./MessageSelect.cpp \
