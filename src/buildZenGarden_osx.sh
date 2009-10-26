@@ -1,6 +1,6 @@
 # -O3 optimise!
 # -g3 -ggdb3 debug!
-gcc -o ../libs/osx/libzengarden.jnilib -fPIC -O3 -dynamiclib \
+gcc -o ../libs/osx/libzengarden.dylib -fPIC -O3 -dynamiclib \
 -I./ \
 -I/Developer/SDKs/MacOSX10.5.sdk/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Headers \
 -I../../libsndfile-1.0.20/src/ \
@@ -109,4 +109,4 @@ gcc -o ../libs/osx/libzengarden.jnilib -fPIC -O3 -dynamiclib \
 -lstdc++ -lsndfile
 
 rm *.o
-ls -l ../libs/osx/libzengarden.jnilib
+ls -l ../libs/osx/libzengarden.dylib
