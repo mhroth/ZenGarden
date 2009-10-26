@@ -3,7 +3,7 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE    := libzengarden
-include Makefile.sourcefiles
+include $(LOCAL_PATH)/Makefile.sourcefiles
 
 LOCAL_STATIC_LIBRARIES := sndfile
 

@@ -9,7 +9,7 @@ SNDFILE_LIB = `pkg-config --libs sndfile`
 
 #CXX = g++
 #CXXFLAGS = -g -Os -I. -Wall -Wno-sign-compare -Wno-unknown-pragmas -Wno-format $(LOCAL_CFLAGS)
-CXXFLAGS = -g -O3 -fPIC -Wall -I$(my-dir) -Wno-sign-compare -Wno-unknown-pragmas -Wno-format $(SNDFILE_INCLUDE)
+CXXFLAGS = -O3 -fPIC -Wall -I$(my-dir) -Wno-sign-compare -Wno-unknown-pragmas -Wno-format $(SNDFILE_INCLUDE)
 
 #$(LOCAL_MODULE).so: $(OBJS) libsndfile-flags
 #	${CXX} $(OBJS) ${CXXFLAGS} -shared -fPIC -L. $(LOCAL_CFLAGS) -Wl,-soname,$@ -o $@
