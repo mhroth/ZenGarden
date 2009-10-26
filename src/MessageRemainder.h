@@ -20,23 +20,23 @@
  *
  */
 
-#ifndef _MESSAGE_MODULUS_H_
-#define _MESSAGE_MODULUS_H_
+#ifndef _MESSAGE_REMAINDER_H_
+#define _MESSAGE_REMAINDER_H_
 
 #include "MessageBinaryOperationObject.h"
 
 /**
- * mod
+ * %
  */
-class MessageModulus : public MessageBinaryOperationObject {
+class MessageRemainder : public MessageBinaryOperationObject {
   
   public:
-    MessageModulus(char *initString);
-    MessageModulus(float constant, char *initString);
-    ~MessageModulus();
+    MessageRemainder(char *initString);
+    MessageRemainder(float constant, char *initString);
+    ~MessageRemainder();
     
   protected:
     inline float performBinaryOperation(float left, float right);
 };
 
-#endif // _MESSAGE_MODULUS_H_
+#endif // _MESSAGE_REMAINDER_H_

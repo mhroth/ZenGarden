@@ -20,23 +20,27 @@
  *
  */
 
-#ifndef _MESSAGE_MODULUS_H_
-#define _MESSAGE_MODULUS_H_
+#include <math.h>
+#include "MessageRemainder.h"
 
-#include "MessageBinaryOperationObject.h"
+MessageRemainder::MessageRemainder(char *initString) : MessageBinaryOperationObject(initString) {
+  left = 0.0f;
+  right = 2.0f;
+}
 
-/**
- * mod
- */
-class MessageModulus : public MessageBinaryOperationObject {
-  
-  public:
-    MessageModulus(char *initString);
-    MessageModulus(float constant, char *initString);
-    ~MessageModulus();
-    
-  protected:
-    inline float performBinaryOperation(float left, float right);
-};
+MessageRemainder::MessageRemainder(float constant, char *initString) : MessageBinaryOperationObject(initString) {
+  left = 0.0f;
+  right = constant;
+}
 
-#endif // _MESSAGE_MODULUS_H_
+MessageRemainder::~MessageRemainder() {
+  // nothing to do
+}
+
+inline float MessageRemainder::performBinaryOperation(float left, float right) {
+  if (right == 0.0f) {
+    return 0.0f;
+  } else {
+    return (float) (lrintf(left) % lrintf(right));
+  }
+}

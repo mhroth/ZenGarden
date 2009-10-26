@@ -66,6 +66,7 @@
 #include "MessagePowToDb.h"
 #include "MessagePrint.h"
 #include "MessageRandom.h"
+#include "MessageRemainder.h"
 #include "MessageRmsToDb.h"
 #include "MessageRoute.h"
 #include "MessageSelect.h"
@@ -364,14 +365,13 @@ PdObject *PdObject::newInstance(char *objectType, char *objectInitString, int bl
         float constant = (float) atof(token);
         return new MessageDivide(constant, objectInitString);
       }
-    } else if (strcmp("%", token) == 0 ||
-               strcmp("mod", token) == 0) {
+    } else if (strcmp("%", token) == 0) {
       token = strtok(NULL, " ");
       if (token == NULL) {
-        return new MessageModulus(objectInitString);
+        return new MessageRemainder(objectInitString);
       } else {
         float constant = (float) atof(token);
-        return new MessageModulus(constant, objectInitString);
+        return new MessageRemainder(constant, objectInitString);
       }
     } else if (strcmp("&&", token) == 0) {
       token = strtok(NULL, " ");
@@ -483,6 +483,14 @@ PdObject *PdObject::newInstance(char *objectType, char *objectInitString, int bl
       } else {
         float constant = (float) atof(token);
         return new MessageMetro(constant, blockSize, sampleRate, objectInitString);
+      }
+    } else if (strcmp("mod", token) == 0) {
+      token = strtok(NULL, " ");
+      if (token == NULL) {
+        return new MessageModulus(objectInitString);
+      } else {
+        float constant = (float) atof(token);
+        return new MessageModulus(constant, objectInitString);
       }
     } else if (strcmp("mtof", token) == 0) {
       return new MessageMidiToFrequency(objectInitString);
