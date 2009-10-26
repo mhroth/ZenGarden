@@ -2,6 +2,20 @@ ZenGarden
 Copyright RjDj, 2009
 By Martin Roth <mhroth@rjdj.me>
 
+Build
+-----
+
+Here is how to build the java demo from scratch.
+cd src
+make libzengarden
+make libjnizengarden
+make examplegarden
+
+Test
+----
+
+./runme.sh
+
 Advantages
 ----------
 

@@ -1,3 +1,6 @@
+*.o
+*.class
+libs/osx/*.dSYM
 .DS_Store
 bin
 ZenGarden.jardesc
