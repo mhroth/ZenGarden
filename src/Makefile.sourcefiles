@@ -62,9 +62,11 @@ LOCAL_SRC_FILES := \
 ./MessageLog.cpp \
 ./MessageLogicalAnd.cpp \
 ./MessageLogicalOr.cpp \
+./MessageMaximum.cpp \
 ./MessageMessageBox.cpp \
 ./MessageMetro.cpp \
 ./MessageMidiToFrequency.cpp \
+./MessageMinimum.cpp \
 ./MessageModulus.cpp \
 ./MessageMoses.cpp \
 ./MessageMultiply.cpp \

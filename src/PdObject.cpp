@@ -55,9 +55,11 @@
 #include "MessageLog.h"
 #include "MessageLogicalAnd.h"
 #include "MessageLogicalOr.h"
+#include "MessageMaximum.h"
 #include "MessageMessageBox.h"
 #include "MessageMetro.h"
 #include "MessageMidiToFrequency.h"
+#include "MessageMinimum.h"
 #include "MessageMoses.h"
 #include "MessageMultiply.h"
 #include "MessageNotEquals.h"
@@ -476,6 +478,14 @@ PdObject *PdObject::newInstance(char *objectType, char *objectInitString, int bl
       return new MessageLoadbang(objectInitString);
     } else if (strcmp("log", token) == 0) {
       return new MessageLog(objectInitString);
+    } else if (strcmp("max", token) == 0) {
+      token = strtok(NULL, " ");
+      if (token == NULL) {
+        return new MessageMaximum(objectInitString);
+      } else {
+        float constant = (float) atof(token);
+        return new MessageMaximum(constant, objectInitString);
+      }
     } else if (strcmp("metro", token) == 0) {
       token = strtok(NULL, " ");
       if (token == NULL) {
@@ -483,6 +493,14 @@ PdObject *PdObject::newInstance(char *objectType, char *objectInitString, int bl
       } else {
         float constant = (float) atof(token);
         return new MessageMetro(constant, blockSize, sampleRate, objectInitString);
+      }
+    } else if (strcmp("min", token) == 0) {
+      token = strtok(NULL, " ");
+      if (token == NULL) {
+        return new MessageMinimum(objectInitString);
+      } else {
+        float constant = (float) atof(token);
+        return new MessageMinimum(constant, objectInitString);
       }
     } else if (strcmp("mod", token) == 0) {
       token = strtok(NULL, " ");

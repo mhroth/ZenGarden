@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		8DD76F6A0486A84900D96B5E /* Xcode.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6859E8B029090EE04C91782 /* Xcode.1 */; };
 		9012471A1095B4D9004FEAF7 /* MessageGreaterThanOrEqualTo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 901247191095B4D9004FEAF7 /* MessageGreaterThanOrEqualTo.cpp */; };
+		90378B9510964AC500FCA5CB /* MessageMaximum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90378B9410964AC500FCA5CB /* MessageMaximum.cpp */; };
+		90378B9810964B4F00FCA5CB /* MessageMinimum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90378B9710964B4F00FCA5CB /* MessageMinimum.cpp */; };
 		9087677A109628220073E449 /* MessageRemainder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90876778109628220073E449 /* MessageRemainder.cpp */; };
 		90FA70C11094A0A700E48F20 /* DspAdc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA6FF61094A0A700E48F20 /* DspAdc.cpp */; };
 		90FA70C21094A0A700E48F20 /* DspAdd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA6FF81094A0A700E48F20 /* DspAdd.cpp */; };
@@ -131,6 +133,10 @@
 		8DD76F6C0486A84900D96B5E /* Xcode */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Xcode; sourceTree = BUILT_PRODUCTS_DIR; };
 		901247181095B4D9004FEAF7 /* MessageGreaterThanOrEqualTo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageGreaterThanOrEqualTo.h; path = ../src/MessageGreaterThanOrEqualTo.h; sourceTree = SOURCE_ROOT; };
 		901247191095B4D9004FEAF7 /* MessageGreaterThanOrEqualTo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageGreaterThanOrEqualTo.cpp; path = ../src/MessageGreaterThanOrEqualTo.cpp; sourceTree = SOURCE_ROOT; };
+		90378B9310964AC500FCA5CB /* MessageMaximum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageMaximum.h; path = ../src/MessageMaximum.h; sourceTree = SOURCE_ROOT; };
+		90378B9410964AC500FCA5CB /* MessageMaximum.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageMaximum.cpp; path = ../src/MessageMaximum.cpp; sourceTree = SOURCE_ROOT; };
+		90378B9610964B4F00FCA5CB /* MessageMinimum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageMinimum.h; path = ../src/MessageMinimum.h; sourceTree = SOURCE_ROOT; };
+		90378B9710964B4F00FCA5CB /* MessageMinimum.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageMinimum.cpp; path = ../src/MessageMinimum.cpp; sourceTree = SOURCE_ROOT; };
 		90876778109628220073E449 /* MessageRemainder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageRemainder.cpp; path = ../src/MessageRemainder.cpp; sourceTree = SOURCE_ROOT; };
 		90876779109628220073E449 /* MessageRemainder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageRemainder.h; path = ../src/MessageRemainder.h; sourceTree = SOURCE_ROOT; };
 		90FA6FF61094A0A700E48F20 /* DspAdc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspAdc.cpp; path = ../src/DspAdc.cpp; sourceTree = SOURCE_ROOT; };
@@ -503,12 +509,16 @@
 				90FA712A1094A24000E48F20 /* MessageLogicalAnd.h */,
 				90FA712E1094A2F400E48F20 /* MessageLogicalOr.cpp */,
 				90FA712D1094A2F400E48F20 /* MessageLogicalOr.h */,
+				90378B9410964AC500FCA5CB /* MessageMaximum.cpp */,
+				90378B9310964AC500FCA5CB /* MessageMaximum.h */,
 				90FA70761094A0A700E48F20 /* MessageMessageBox.cpp */,
 				90FA70771094A0A700E48F20 /* MessageMessageBox.h */,
 				90FA70781094A0A700E48F20 /* MessageMetro.cpp */,
 				90FA70791094A0A700E48F20 /* MessageMetro.h */,
 				90FA707A1094A0A700E48F20 /* MessageMidiToFrequency.cpp */,
 				90FA707B1094A0A700E48F20 /* MessageMidiToFrequency.h */,
+				90378B9710964B4F00FCA5CB /* MessageMinimum.cpp */,
+				90378B9610964B4F00FCA5CB /* MessageMinimum.h */,
 				90FA707C1094A0A700E48F20 /* MessageModulus.cpp */,
 				90FA707D1094A0A700E48F20 /* MessageModulus.h */,
 				90FA707E1094A0A700E48F20 /* MessageMoses.cpp */,
@@ -751,6 +761,8 @@
 				90FA71D61094C41500E48F20 /* DspLog.cpp in Sources */,
 				9012471A1095B4D9004FEAF7 /* MessageGreaterThanOrEqualTo.cpp in Sources */,
 				9087677A109628220073E449 /* MessageRemainder.cpp in Sources */,
+				90378B9510964AC500FCA5CB /* MessageMaximum.cpp in Sources */,
+				90378B9810964B4F00FCA5CB /* MessageMinimum.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
