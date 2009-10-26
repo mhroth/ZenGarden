@@ -83,8 +83,9 @@ LOCAL_SRC_FILES := \
 ./MessageSelect.cpp \
 ./MessageSendReceive.cpp \
 ./MessageSine.cpp \
-./MessageSpigot.cpp \
+./MessageSnapshot.cpp \
 ./MessageSoundfiler.cpp \
+./MessageSpigot.cpp \
 ./MessageSqrt.cpp \
 ./MessageSubtract.cpp \
 ./MessageSwap.cpp \
@@ -95,6 +96,7 @@ LOCAL_SRC_FILES := \
 ./MessageTrigger.cpp \
 ./MessageUnaryOperationObject.cpp \
 ./MessageUnpack.cpp \
+./MessageWrap.cpp \
 ./PdGraph.cpp \
 ./PdMessage.cpp \
 ./PdObject.cpp \

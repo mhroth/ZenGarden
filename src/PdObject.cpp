@@ -75,6 +75,7 @@
 #include "MessageSelect.h"
 #include "MessageSendReceive.h"
 #include "MessageSine.h"
+#include "MessageSnapshot.h"
 #include "MessageSpigot.h"
 #include "MessageSoundfiler.h"
 #include "MessageSqrt.h"
@@ -87,9 +88,6 @@
 #include "MessageTrigger.h"
 #include "MessageUnpack.h"
 #include "MessageWrap.h"
-/*
-#include "MessageSnapshot.h"
-*/
 
 PdObject::PdObject(char *initString) {
   this->initString = StaticUtils::copyString(initString);
@@ -273,6 +271,8 @@ PdObject *PdObject::newInstance(char *objectType, char *objectInitString, int bl
         float frequency = (float) atof(token);
         return new DspSig(frequency, blockSize, objectInitString);
       }
+    } else if (strcmp("snapshot~", token) == 0) {
+      return new MessageSnapshot(blockSize, objectInitString);
     } else if (strcmp("tabread4~", token) == 0) {
       token = strtok(NULL, ";");
       return new DspTableRead(token, blockSize, pdGraph, objectInitString);
