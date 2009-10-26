@@ -29,8 +29,7 @@ void MessageSelect::processMessage(int inletIndex, PdMessage *message) {
           return;
         }
       }
-      //PdMessage *outgoingMessage = getNextOutgoingMessage(messageElementList->getNumElements());
-      //outgoingMessage->clearAndCopyFrom(message);
+
       setNextOutgoingMessage(messageElementList->getNumElements(), message);
       break;
     }
