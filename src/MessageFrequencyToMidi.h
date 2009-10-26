@@ -23,20 +23,19 @@
 #ifndef _MESSAGE_FREQUENCY_TO_MIDI_H_
 #define _MESSAGE_FREQUENCY_TO_MIDI_H_
 
-#include "MessageInputMessageOutputObject.h"
+#include "MessageUnaryOperationObject.h"
 
 /**
  * ftom
  */
-class MessageFrequencyToMidi : public MessageInputMessageOutputObject {
+class MessageFrequencyToMidi : public MessageUnaryOperationObject {
   
   public:
     MessageFrequencyToMidi(char *initString);
     ~MessageFrequencyToMidi();
     
   protected:
-    void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage();
+    inline float performUnaryOperation(float input);
   
   private:
     const static float LN_2 = 0.69314718f;

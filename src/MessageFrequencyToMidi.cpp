@@ -23,7 +23,7 @@
 #include <math.h>
 #include "MessageFrequencyToMidi.h"
 
-MessageFrequencyToMidi::MessageFrequencyToMidi(char *initString) : MessageInputMessageOutputObject(1, 1, initString) {
+MessageFrequencyToMidi::MessageFrequencyToMidi(char *initString) : MessageUnaryOperationObject(initString) {
   // nothing to do
 }
 
@@ -31,22 +31,6 @@ MessageFrequencyToMidi::~MessageFrequencyToMidi() {
   // nothing to do
 }
 
-void MessageFrequencyToMidi::processMessage(int inletIndex, PdMessage *message) {
-  if (inletIndex == 0) {
-    MessageElement *messageElement = message->getElement(0);
-    if (messageElement->getType() == FLOAT) {
-      float frequency = messageElement->getFloat();
-      float midiNoteNumber = (12.0f * (logf(frequency/440.0f) / LN_2)) + 69.0f;
-      
-      PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-      outgoingMessage->getElement(0)->setFloat(midiNoteNumber);
-      outgoingMessage->setBlockIndexAsFloat(message->getBlockIndexAsFloat());
-    }
-  }
-}
-
-PdMessage *MessageFrequencyToMidi::newCanonicalMessage() {
-  PdMessage *message = new PdMessage();
-  message->addElement(new MessageElement(0.0f));
-  return message;
+inline float MessageFrequencyToMidi::performUnaryOperation(float input) {
+  return (12.0f * (logf(input/440.0f) / LN_2)) + 69.0f;
 }

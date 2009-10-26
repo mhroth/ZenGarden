@@ -411,7 +411,7 @@ PdObject *PdObject::newInstance(char *objectType, char *objectInitString, int bl
       }
     } else if (strcmp("cos", token) == 0) {
       return new MessageCosine(objectInitString);
-    } else if (strcmp("dbtorms", token) == 0) {
+    } else if (strcmp("dbtopow", token) == 0) {
       return new MessageDbToPow(objectInitString);
     } else if (strcmp("dbtorms", token) == 0) {
       return new MessageDbToRms(objectInitString);
