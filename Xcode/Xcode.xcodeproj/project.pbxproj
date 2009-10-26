@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		8DD76F6A0486A84900D96B5E /* Xcode.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6859E8B029090EE04C91782 /* Xcode.1 */; };
+		9012471A1095B4D9004FEAF7 /* MessageGreaterThanOrEqualTo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 901247191095B4D9004FEAF7 /* MessageGreaterThanOrEqualTo.cpp */; };
 		90FA70C11094A0A700E48F20 /* DspAdc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA6FF61094A0A700E48F20 /* DspAdc.cpp */; };
 		90FA70C21094A0A700E48F20 /* DspAdd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA6FF81094A0A700E48F20 /* DspAdd.cpp */; };
 		90FA70C31094A0A700E48F20 /* DspBandpassFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA6FFA1094A0A700E48F20 /* DspBandpassFilter.cpp */; };
@@ -127,6 +128,8 @@
 
 /* Begin PBXFileReference section */
 		8DD76F6C0486A84900D96B5E /* Xcode */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Xcode; sourceTree = BUILT_PRODUCTS_DIR; };
+		901247181095B4D9004FEAF7 /* MessageGreaterThanOrEqualTo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageGreaterThanOrEqualTo.h; path = ../src/MessageGreaterThanOrEqualTo.h; sourceTree = SOURCE_ROOT; };
+		901247191095B4D9004FEAF7 /* MessageGreaterThanOrEqualTo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageGreaterThanOrEqualTo.cpp; path = ../src/MessageGreaterThanOrEqualTo.cpp; sourceTree = SOURCE_ROOT; };
 		90FA6FF61094A0A700E48F20 /* DspAdc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspAdc.cpp; path = ../src/DspAdc.cpp; sourceTree = SOURCE_ROOT; };
 		90FA6FF71094A0A700E48F20 /* DspAdc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspAdc.h; path = ../src/DspAdc.h; sourceTree = SOURCE_ROOT; };
 		90FA6FF81094A0A700E48F20 /* DspAdd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspAdd.cpp; path = ../src/DspAdd.cpp; sourceTree = SOURCE_ROOT; };
@@ -472,6 +475,8 @@
 				90FA71C41094BC7800E48F20 /* MessageFrequencyToMidi.h */,
 				90FA70651094A0A700E48F20 /* MessageGreaterThan.cpp */,
 				90FA70661094A0A700E48F20 /* MessageGreaterThan.h */,
+				901247191095B4D9004FEAF7 /* MessageGreaterThanOrEqualTo.cpp */,
+				901247181095B4D9004FEAF7 /* MessageGreaterThanOrEqualTo.h */,
 				90FA70671094A0A700E48F20 /* MessageInletOutlet.cpp */,
 				90FA70681094A0A700E48F20 /* MessageInletOutlet.h */,
 				90FA70691094A0A700E48F20 /* MessageInputDspOutputObject.cpp */,
@@ -739,6 +744,7 @@
 				90FA71C61094BC7800E48F20 /* MessageFrequencyToMidi.cpp in Sources */,
 				90FA71D31094C23000E48F20 /* MessageLog.cpp in Sources */,
 				90FA71D61094C41500E48F20 /* DspLog.cpp in Sources */,
+				9012471A1095B4D9004FEAF7 /* MessageGreaterThanOrEqualTo.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

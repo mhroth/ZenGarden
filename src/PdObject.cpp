@@ -45,6 +45,7 @@
 #include "MessageFloat.h"
 #include "MessageFrequencyToMidi.h"
 #include "MessageGreaterThan.h"
+#include "MessageGreaterThanOrEqualTo.h"
 #include "MessageInletOutlet.h"
 #include "MessageInteger.h"
 #include "MessageLessThan.h"
@@ -306,6 +307,14 @@ PdObject *PdObject::newInstance(char *objectType, char *objectInitString, int bl
       } else {
         float constant = (float) atof(token);
         return new MessageGreaterThan(constant, objectInitString);
+      }
+    } else if (strcmp(">=", token) == 0) {
+      token = strtok(NULL, " ");
+      if (token == NULL) {
+        return new MessageGreaterThanOrEqualTo(objectInitString);
+      } else {
+        float constant = (float) atof(token);
+        return new MessageGreaterThanOrEqualTo(constant, objectInitString);
       }
     } else if (strcmp("<", token) == 0) {
       token = strtok(NULL, " ");

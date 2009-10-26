@@ -55,6 +55,7 @@ LOCAL_SRC_FILES := \
 ./MessageFloat.cpp \
 ./MessageFrequencyToMidi.cpp \
 ./MessageGreaterThan.cpp \
+./MessageGreaterThanOrEqualTo.cpp \
 ./MessageInletOutlet.cpp \
 ./MessageInputDspOutputObject.cpp \
 ./MessageInputMessageOutputObject.cpp \
