@@ -33,7 +33,7 @@ void MessageSwap::processMessage(int inletIndex, PdMessage *message) {
           PdMessage *outgoingMessageLeft = getNextOutgoingMessage(0);
           outgoingMessageLeft->getElement(0)->setFloat(right);
           float blockIndex = message->getBlockIndexAsFloat();
-          float intIndex = *((int *)&blockIndex)+1; // get the next largest float
+          int intIndex = *((int *)&blockIndex)+1; // get the next largest float
           outgoingMessageLeft->setBlockIndexAsFloat(*((float *)&intIndex));
           
           PdMessage *outgoingMessageRight = getNextOutgoingMessage(1);
@@ -62,6 +62,6 @@ void MessageSwap::processMessage(int inletIndex, PdMessage *message) {
 
 PdMessage *MessageSwap::newCanonicalMessage() {
   PdMessage *message = new PdMessage();
-  message->addElement(new MessageElement());
+  message->addElement(new MessageElement(0.0f));
   return message;
 }
