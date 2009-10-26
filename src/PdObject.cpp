@@ -60,6 +60,7 @@
 #include "MessageMetro.h"
 #include "MessageMidiToFrequency.h"
 #include "MessageMinimum.h"
+#include "MessageModulus.h"
 #include "MessageMoses.h"
 #include "MessageMultiply.h"
 #include "MessageNotEquals.h"
@@ -85,8 +86,7 @@
 #include "MessageToggle.h"
 #include "MessageTrigger.h"
 #include "MessageUnpack.h"
-#include "MessageGreaterThan.h"
-#include "MessageModulus.h"
+#include "MessageWrap.h"
 /*
 #include "MessageSnapshot.h"
 */
@@ -633,6 +633,8 @@ PdObject *PdObject::newInstance(char *objectType, char *objectInitString, int bl
       // a vslider is just a float box with a graphical element
       // (which is not represented here)
       return new MessageFloat(objectInitString);
+    } else if (strcmp("wrap", token) == 0) {
+      return new MessageWrap(objectInitString);
     } else {
       return NULL;
     }
