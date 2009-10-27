@@ -13,6 +13,7 @@
 		90378B9810964B4F00FCA5CB /* MessageMinimum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90378B9710964B4F00FCA5CB /* MessageMinimum.cpp */; };
 		90378B9B10964D8600FCA5CB /* MessageWrap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90378B9A10964D8600FCA5CB /* MessageWrap.cpp */; };
 		90378C271096554200FCA5CB /* MessageSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90378C251096554200FCA5CB /* MessageSnapshot.cpp */; };
+		907C759B10976DF100CD25FB /* libsndfile.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 907C759510976DA600CD25FB /* libsndfile.dylib */; };
 		9087677A109628220073E449 /* MessageRemainder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90876778109628220073E449 /* MessageRemainder.cpp */; };
 		90FA70C11094A0A700E48F20 /* DspAdc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA6FF61094A0A700E48F20 /* DspAdc.cpp */; };
 		90FA70C21094A0A700E48F20 /* DspAdd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA6FF81094A0A700E48F20 /* DspAdd.cpp */; };
@@ -143,6 +144,7 @@
 		90378B9A10964D8600FCA5CB /* MessageWrap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageWrap.cpp; path = ../src/MessageWrap.cpp; sourceTree = SOURCE_ROOT; };
 		90378C251096554200FCA5CB /* MessageSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageSnapshot.cpp; path = ../src/MessageSnapshot.cpp; sourceTree = SOURCE_ROOT; };
 		90378C261096554200FCA5CB /* MessageSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageSnapshot.h; path = ../src/MessageSnapshot.h; sourceTree = SOURCE_ROOT; };
+		907C759510976DA600CD25FB /* libsndfile.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsndfile.dylib; path = usr/local/lib/libsndfile.dylib; sourceTree = SDKROOT; };
 		90876778109628220073E449 /* MessageRemainder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageRemainder.cpp; path = ../src/MessageRemainder.cpp; sourceTree = SOURCE_ROOT; };
 		90876779109628220073E449 /* MessageRemainder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageRemainder.h; path = ../src/MessageRemainder.h; sourceTree = SOURCE_ROOT; };
 		90FA6FF61094A0A700E48F20 /* DspAdc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspAdc.cpp; path = ../src/DspAdc.cpp; sourceTree = SOURCE_ROOT; };
@@ -363,6 +365,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				907C759B10976DF100CD25FB /* libsndfile.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -375,6 +378,7 @@
 				08FB7795FE84155DC02AAC07 /* Source */,
 				C6859E8C029090F304C91782 /* Documentation */,
 				1AB674ADFE9D54B511CA2CBB /* Products */,
+				907C759510976DA600CD25FB /* libsndfile.dylib */,
 			);
 			name = Xcode;
 			sourceTree = "<group>";
@@ -382,6 +386,7 @@
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				90FA70341094A0A700E48F20 /* main.cpp */,
 				90FA6FF61094A0A700E48F20 /* DspAdc.cpp */,
 				90FA6FF71094A0A700E48F20 /* DspAdc.h */,
 				90FA6FF81094A0A700E48F20 /* DspAdd.cpp */,
@@ -448,7 +453,6 @@
 				90FA70311094A0A700E48F20 /* DspVCF.h */,
 				90FA70321094A0A700E48F20 /* List.cpp */,
 				90FA70331094A0A700E48F20 /* List.h */,
-				90FA70341094A0A700E48F20 /* main.cpp */,
 				90FA70401094A0A700E48F20 /* MessageAbsoluteValue.cpp */,
 				90FA70411094A0A700E48F20 /* MessageAbsoluteValue.h */,
 				90FA70421094A0A700E48F20 /* MessageAdd.cpp */,
@@ -784,7 +788,7 @@
 		1DEB923208733DC60010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -797,7 +801,8 @@
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				INSTALL_PATH = /usr/local/bin;
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
-				OTHER_LDFLAGS = "-lsndfile";
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = Xcode;
 			};
 			name = Debug;
@@ -805,10 +810,15 @@
 		1DEB923308733DC60010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
+				HEADER_SEARCH_PATHS = /usr/local/include;
 				INSTALL_PATH = /usr/local/bin;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "";
+				PRELINK_LIBS = "";
 				PRODUCT_NAME = Xcode;
 			};
 			name = Release;
