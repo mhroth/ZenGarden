@@ -20,14 +20,24 @@
  *
  */
 
-#ifndef _ENUM_BINARY_OPERATION_H_
-#define _ENUM_BINARY_OPERATION_H_
+#ifndef _DSP_SUBTRACT_H_
+#define _DSP_SUBTRACT_H_
 
-enum EnumBinaryOperation {
-  BINOP_ADD,
-  BINOP_MULTIPLY,
-  BINOP_SUBTRACT,
-  BINOP_DIVIDE
+#include "DspMessageInputDspOutputObject.h"
+
+class DspSubtract : public DspMessageInputDspOutputObject {
+  
+  public:
+    DspSubtract(int blockSize, char *initString);
+    DspSubtract(float constant, int blockSize, char *initString);
+    ~DspSubtract();
+    
+  protected:
+    void processMessage(int inletIndex, PdMessage *message);
+    void processDspToIndex(int newBlockIndex);
+    
+  private:
+    float constant;
 };
 
-#endif // _ENUM_BINARY_OPERATION_H_
+#endif // _DSP_SUBTRACT_H_

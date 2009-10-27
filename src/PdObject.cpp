@@ -22,23 +22,26 @@
 
 #include "PdObject.h"
 
+#include "DspAdd.h"
 #include "DspAdc.h"
 #include "DspBandpassFilter.h"
-#include "DspBinaryOperation.h"
 #include "DspClip.h"
 #include "DspDac.h"
 #include "DspDelayRead.h"
 #include "DspDelayWrite.h"
+#include "DspDivide.h"
 #include "DspHighpassFilter.h"
 #include "DspInletOutlet.h"
 #include "DspLine.h"
 #include "DspLog.h"
 #include "DspLowpassFilter.h"
+#include "DspMultiply.h"
 #include "DspNoise.h"
 #include "DspOsc.h"
 #include "DspPhasor.h"
 #include "DspSendReceive.h"
 #include "DspSig.h"
+#include "DspSubtract.h"
 #include "DspTable.h"
 #include "DspTableRead.h"
 #include "DspVariableDelay.h"
@@ -139,34 +142,34 @@ PdObject *PdObject::newInstance(char *objectType, char *objectInitString, int bl
     if (strcmp(token, "*~") == 0) {
       token = strtok(NULL, " ");
       if (token == NULL) {
-        return new DspBinaryOperation(BINOP_MULTIPLY, blockSize, objectInitString);
+        return new DspMultiply(blockSize, objectInitString);
       } else {
         float constant = (float) atof(token);
-        return new DspBinaryOperation(BINOP_MULTIPLY, constant, blockSize, objectInitString);
+        return new DspMultiply(constant, blockSize, objectInitString);
       }
     } else if (strcmp(token, "/~") == 0) {
       token = strtok(NULL, " ");
       if (token == NULL) {
-        return new DspBinaryOperation(BINOP_DIVIDE, blockSize, objectInitString);
+        return new DspDivide(blockSize, objectInitString);
       } else {
         float constant = (float) atof(token);
-        return new DspBinaryOperation(BINOP_DIVIDE, constant, blockSize, objectInitString);
+        return new DspDivide(constant, blockSize, objectInitString);
       }
     } else if (strcmp(token, "+~") == 0) {
       token = strtok(NULL, " ");
       if (token == NULL) {
-        return new DspBinaryOperation(BINOP_ADD, blockSize, objectInitString);
+        return new DspAdd(blockSize, objectInitString);
       } else {
         float constant = (float) atof(token);
-        return new DspBinaryOperation(BINOP_ADD, constant, blockSize, objectInitString);
+        return new DspAdd(constant, blockSize, objectInitString);
       }
     } else if (strcmp(token, "-~") == 0) {
       token = strtok(NULL, " ");
       if (token == NULL) {
-        return new DspBinaryOperation(BINOP_SUBTRACT, blockSize, objectInitString);
+        return new DspSubtract(blockSize, objectInitString);
       } else {
         float constant = (float) atof(token);
-        return new DspBinaryOperation(BINOP_SUBTRACT, constant, blockSize, objectInitString);
+        return new DspSubtract(constant, blockSize, objectInitString);
       }
     } else if (strcmp(token, "adc~") == 0 ||
                strcmp(token, "soundinput") == 0) { // soundinput is from rjlib but doesn't do much for us

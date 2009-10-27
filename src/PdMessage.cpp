@@ -49,7 +49,7 @@ MessageElement *PdMessage::getElement(int index) {
 }
 
 int PdMessage::getBlockIndex() {
-  return (int) lrintf(blockIndex);
+  return lrintf(truncf(blockIndex));
 }
 
 float PdMessage::getBlockIndexAsFloat() {
