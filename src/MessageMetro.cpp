@@ -20,8 +20,8 @@
  *
  */
 
-#include "stdlib.h"
-#include "stdio.h"
+#include <stdlib.h>
+#include <stdio.h>
 #include "MessageMetro.h"
 #include "StaticUtils.h"
 
@@ -96,7 +96,6 @@ void MessageMetro::process() {
 
 PdMessage *MessageMetro::newCanonicalMessage() {
   PdMessage *message = new PdMessage();
-  MessageElement *messageElement = new MessageElement();
-  message->addElement(messageElement);
+  message->addElement(new MessageElement());
   return message;
 }

@@ -401,7 +401,6 @@ void PdGraph::process(float *audioInput, float *audioOutput) {
   
   // process all of the nodes
   for (int i = 0; i < orderedEvaluationList->getNumElements(); i++) {
-    // TODO(mhroth): collapse to one line when finished debugging
     PdObject *pdObject = (PdObject *) orderedEvaluationList->get(i);
     pdObject->process();
   }
