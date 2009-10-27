@@ -54,9 +54,7 @@ void MessageSwap::processMessage(int inletIndex, PdMessage *message) {
           // "Output order is right to left as in [trigger]"
           PdMessage *outgoingMessageLeft = getNextOutgoingMessage(0);
           outgoingMessageLeft->getElement(0)->setFloat(right);
-          float blockIndex = message->getBlockIndexAsFloat();
-          int intIndex = *((int *)&blockIndex)+1; // get the next largest float
-          outgoingMessageLeft->setBlockIndexAsFloat(*((float *)&intIndex));
+          outgoingMessageLeft->setBlockIndexAsFloat(nextafterf(message->getBlockIndexAsFloat(), INFINITY));
           
           PdMessage *outgoingMessageRight = getNextOutgoingMessage(1);
           outgoingMessageRight->getElement(0)->setFloat(left);
