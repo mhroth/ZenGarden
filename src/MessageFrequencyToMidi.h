@@ -36,9 +36,6 @@ class MessageFrequencyToMidi : public MessageUnaryOperationObject {
     
   protected:
     inline float performUnaryOperation(float input);
-  
-  private:
-    const static float LN_2 = 0.69314718f;
 };
 
 #endif // _MESSAGE_FREQUENCY_TO_MIDI_H_
