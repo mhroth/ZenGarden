@@ -16,14 +16,12 @@
 		907C759B10976DF100CD25FB /* libsndfile.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 907C759510976DA600CD25FB /* libsndfile.dylib */; };
 		9087677A109628220073E449 /* MessageRemainder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90876778109628220073E449 /* MessageRemainder.cpp */; };
 		90FA70C11094A0A700E48F20 /* DspAdc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA6FF61094A0A700E48F20 /* DspAdc.cpp */; };
-		90FA70C21094A0A700E48F20 /* DspAdd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA6FF81094A0A700E48F20 /* DspAdd.cpp */; };
 		90FA70C31094A0A700E48F20 /* DspBandpassFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA6FFA1094A0A700E48F20 /* DspBandpassFilter.cpp */; };
-		90FA70C41094A0A700E48F20 /* DspBinaryOperationObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA6FFC1094A0A700E48F20 /* DspBinaryOperationObject.cpp */; };
+		90FA70C41094A0A700E48F20 /* DspBinaryOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA6FFC1094A0A700E48F20 /* DspBinaryOperation.cpp */; };
 		90FA70C51094A0A700E48F20 /* DspClip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA6FFE1094A0A700E48F20 /* DspClip.cpp */; };
 		90FA70C61094A0A700E48F20 /* DspDac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70001094A0A700E48F20 /* DspDac.cpp */; };
 		90FA70C71094A0A700E48F20 /* DspDelayRead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70021094A0A700E48F20 /* DspDelayRead.cpp */; };
 		90FA70C81094A0A700E48F20 /* DspDelayWrite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70041094A0A700E48F20 /* DspDelayWrite.cpp */; };
-		90FA70C91094A0A700E48F20 /* DspDivide.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70061094A0A700E48F20 /* DspDivide.cpp */; };
 		90FA70CA1094A0A700E48F20 /* DspInletOutlet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70081094A0A700E48F20 /* DspInletOutlet.cpp */; };
 		90FA70CB1094A0A700E48F20 /* DspInputDspOutputObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA700A1094A0A700E48F20 /* DspInputDspOutputObject.cpp */; };
 		90FA70CC1094A0A700E48F20 /* DspInputMessageOutputObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA700C1094A0A700E48F20 /* DspInputMessageOutputObject.cpp */; };
@@ -31,14 +29,12 @@
 		90FA70CE1094A0A700E48F20 /* DspLowpassFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70111094A0A700E48F20 /* DspLowpassFilter.cpp */; };
 		90FA70CF1094A0A700E48F20 /* DspMessageInputDspOutputObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70131094A0A700E48F20 /* DspMessageInputDspOutputObject.cpp */; };
 		90FA70D01094A0A700E48F20 /* DspMessageInputMessageOutputObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70151094A0A700E48F20 /* DspMessageInputMessageOutputObject.cpp */; };
-		90FA70D11094A0A700E48F20 /* DspMultiply.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70181094A0A700E48F20 /* DspMultiply.cpp */; };
 		90FA70D21094A0A700E48F20 /* DspNoise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA701A1094A0A700E48F20 /* DspNoise.cpp */; };
 		90FA70D31094A0A700E48F20 /* DspOsc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA701C1094A0A700E48F20 /* DspOsc.cpp */; };
 		90FA70D41094A0A700E48F20 /* DspOutputObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA701E1094A0A700E48F20 /* DspOutputObject.cpp */; };
 		90FA70D51094A0A700E48F20 /* DspPhasor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70201094A0A700E48F20 /* DspPhasor.cpp */; };
 		90FA70D61094A0A700E48F20 /* DspSendReceive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70221094A0A700E48F20 /* DspSendReceive.cpp */; };
 		90FA70D71094A0A700E48F20 /* DspSig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70241094A0A700E48F20 /* DspSig.cpp */; };
-		90FA70D81094A0A700E48F20 /* DspSubtract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70261094A0A700E48F20 /* DspSubtract.cpp */; };
 		90FA70D91094A0A700E48F20 /* DspTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA70281094A0A700E48F20 /* DspTable.cpp */; };
 		90FA70DA1094A0A700E48F20 /* DspTablePlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA702A1094A0A700E48F20 /* DspTablePlay.cpp */; };
 		90FA70DB1094A0A700E48F20 /* DspTableRead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA702C1094A0A700E48F20 /* DspTableRead.cpp */; };
@@ -145,16 +141,15 @@
 		90378C251096554200FCA5CB /* MessageSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageSnapshot.cpp; path = ../src/MessageSnapshot.cpp; sourceTree = SOURCE_ROOT; };
 		90378C261096554200FCA5CB /* MessageSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageSnapshot.h; path = ../src/MessageSnapshot.h; sourceTree = SOURCE_ROOT; };
 		907C759510976DA600CD25FB /* libsndfile.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsndfile.dylib; path = usr/local/lib/libsndfile.dylib; sourceTree = SDKROOT; };
+		907C760E10977A6200CD25FB /* EnumBinaryOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EnumBinaryOperation.h; path = ../src/EnumBinaryOperation.h; sourceTree = SOURCE_ROOT; };
 		90876778109628220073E449 /* MessageRemainder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageRemainder.cpp; path = ../src/MessageRemainder.cpp; sourceTree = SOURCE_ROOT; };
 		90876779109628220073E449 /* MessageRemainder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageRemainder.h; path = ../src/MessageRemainder.h; sourceTree = SOURCE_ROOT; };
 		90FA6FF61094A0A700E48F20 /* DspAdc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspAdc.cpp; path = ../src/DspAdc.cpp; sourceTree = SOURCE_ROOT; };
 		90FA6FF71094A0A700E48F20 /* DspAdc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspAdc.h; path = ../src/DspAdc.h; sourceTree = SOURCE_ROOT; };
-		90FA6FF81094A0A700E48F20 /* DspAdd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspAdd.cpp; path = ../src/DspAdd.cpp; sourceTree = SOURCE_ROOT; };
-		90FA6FF91094A0A700E48F20 /* DspAdd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspAdd.h; path = ../src/DspAdd.h; sourceTree = SOURCE_ROOT; };
 		90FA6FFA1094A0A700E48F20 /* DspBandpassFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspBandpassFilter.cpp; path = ../src/DspBandpassFilter.cpp; sourceTree = SOURCE_ROOT; };
 		90FA6FFB1094A0A700E48F20 /* DspBandpassFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspBandpassFilter.h; path = ../src/DspBandpassFilter.h; sourceTree = SOURCE_ROOT; };
-		90FA6FFC1094A0A700E48F20 /* DspBinaryOperationObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspBinaryOperationObject.cpp; path = ../src/DspBinaryOperationObject.cpp; sourceTree = SOURCE_ROOT; };
-		90FA6FFD1094A0A700E48F20 /* DspBinaryOperationObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspBinaryOperationObject.h; path = ../src/DspBinaryOperationObject.h; sourceTree = SOURCE_ROOT; };
+		90FA6FFC1094A0A700E48F20 /* DspBinaryOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspBinaryOperation.cpp; path = ../src/DspBinaryOperation.cpp; sourceTree = SOURCE_ROOT; };
+		90FA6FFD1094A0A700E48F20 /* DspBinaryOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspBinaryOperation.h; path = ../src/DspBinaryOperation.h; sourceTree = SOURCE_ROOT; };
 		90FA6FFE1094A0A700E48F20 /* DspClip.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspClip.cpp; path = ../src/DspClip.cpp; sourceTree = SOURCE_ROOT; };
 		90FA6FFF1094A0A700E48F20 /* DspClip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspClip.h; path = ../src/DspClip.h; sourceTree = SOURCE_ROOT; };
 		90FA70001094A0A700E48F20 /* DspDac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspDac.cpp; path = ../src/DspDac.cpp; sourceTree = SOURCE_ROOT; };
@@ -163,8 +158,6 @@
 		90FA70031094A0A700E48F20 /* DspDelayRead.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspDelayRead.h; path = ../src/DspDelayRead.h; sourceTree = SOURCE_ROOT; };
 		90FA70041094A0A700E48F20 /* DspDelayWrite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspDelayWrite.cpp; path = ../src/DspDelayWrite.cpp; sourceTree = SOURCE_ROOT; };
 		90FA70051094A0A700E48F20 /* DspDelayWrite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspDelayWrite.h; path = ../src/DspDelayWrite.h; sourceTree = SOURCE_ROOT; };
-		90FA70061094A0A700E48F20 /* DspDivide.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspDivide.cpp; path = ../src/DspDivide.cpp; sourceTree = SOURCE_ROOT; };
-		90FA70071094A0A700E48F20 /* DspDivide.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspDivide.h; path = ../src/DspDivide.h; sourceTree = SOURCE_ROOT; };
 		90FA70081094A0A700E48F20 /* DspInletOutlet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspInletOutlet.cpp; path = ../src/DspInletOutlet.cpp; sourceTree = SOURCE_ROOT; };
 		90FA70091094A0A700E48F20 /* DspInletOutlet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspInletOutlet.h; path = ../src/DspInletOutlet.h; sourceTree = SOURCE_ROOT; };
 		90FA700A1094A0A700E48F20 /* DspInputDspOutputObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspInputDspOutputObject.cpp; path = ../src/DspInputDspOutputObject.cpp; sourceTree = SOURCE_ROOT; };
@@ -181,8 +174,6 @@
 		90FA70151094A0A700E48F20 /* DspMessageInputMessageOutputObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspMessageInputMessageOutputObject.cpp; path = ../src/DspMessageInputMessageOutputObject.cpp; sourceTree = SOURCE_ROOT; };
 		90FA70161094A0A700E48F20 /* DspMessageInputMessageOutputObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspMessageInputMessageOutputObject.h; path = ../src/DspMessageInputMessageOutputObject.h; sourceTree = SOURCE_ROOT; };
 		90FA70171094A0A700E48F20 /* DspMessagePresedence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspMessagePresedence.h; path = ../src/DspMessagePresedence.h; sourceTree = SOURCE_ROOT; };
-		90FA70181094A0A700E48F20 /* DspMultiply.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspMultiply.cpp; path = ../src/DspMultiply.cpp; sourceTree = SOURCE_ROOT; };
-		90FA70191094A0A700E48F20 /* DspMultiply.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspMultiply.h; path = ../src/DspMultiply.h; sourceTree = SOURCE_ROOT; };
 		90FA701A1094A0A700E48F20 /* DspNoise.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspNoise.cpp; path = ../src/DspNoise.cpp; sourceTree = SOURCE_ROOT; };
 		90FA701B1094A0A700E48F20 /* DspNoise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspNoise.h; path = ../src/DspNoise.h; sourceTree = SOURCE_ROOT; };
 		90FA701C1094A0A700E48F20 /* DspOsc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspOsc.cpp; path = ../src/DspOsc.cpp; sourceTree = SOURCE_ROOT; };
@@ -195,8 +186,6 @@
 		90FA70231094A0A700E48F20 /* DspSendReceive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspSendReceive.h; path = ../src/DspSendReceive.h; sourceTree = SOURCE_ROOT; };
 		90FA70241094A0A700E48F20 /* DspSig.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspSig.cpp; path = ../src/DspSig.cpp; sourceTree = SOURCE_ROOT; };
 		90FA70251094A0A700E48F20 /* DspSig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspSig.h; path = ../src/DspSig.h; sourceTree = SOURCE_ROOT; };
-		90FA70261094A0A700E48F20 /* DspSubtract.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspSubtract.cpp; path = ../src/DspSubtract.cpp; sourceTree = SOURCE_ROOT; };
-		90FA70271094A0A700E48F20 /* DspSubtract.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspSubtract.h; path = ../src/DspSubtract.h; sourceTree = SOURCE_ROOT; };
 		90FA70281094A0A700E48F20 /* DspTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspTable.cpp; path = ../src/DspTable.cpp; sourceTree = SOURCE_ROOT; };
 		90FA70291094A0A700E48F20 /* DspTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspTable.h; path = ../src/DspTable.h; sourceTree = SOURCE_ROOT; };
 		90FA702A1094A0A700E48F20 /* DspTablePlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspTablePlay.cpp; path = ../src/DspTablePlay.cpp; sourceTree = SOURCE_ROOT; };
@@ -389,12 +378,10 @@
 				90FA70341094A0A700E48F20 /* main.cpp */,
 				90FA6FF61094A0A700E48F20 /* DspAdc.cpp */,
 				90FA6FF71094A0A700E48F20 /* DspAdc.h */,
-				90FA6FF81094A0A700E48F20 /* DspAdd.cpp */,
-				90FA6FF91094A0A700E48F20 /* DspAdd.h */,
 				90FA6FFA1094A0A700E48F20 /* DspBandpassFilter.cpp */,
 				90FA6FFB1094A0A700E48F20 /* DspBandpassFilter.h */,
-				90FA6FFC1094A0A700E48F20 /* DspBinaryOperationObject.cpp */,
-				90FA6FFD1094A0A700E48F20 /* DspBinaryOperationObject.h */,
+				90FA6FFC1094A0A700E48F20 /* DspBinaryOperation.cpp */,
+				90FA6FFD1094A0A700E48F20 /* DspBinaryOperation.h */,
 				90FA6FFE1094A0A700E48F20 /* DspClip.cpp */,
 				90FA6FFF1094A0A700E48F20 /* DspClip.h */,
 				90FA70001094A0A700E48F20 /* DspDac.cpp */,
@@ -403,8 +390,6 @@
 				90FA70031094A0A700E48F20 /* DspDelayRead.h */,
 				90FA70041094A0A700E48F20 /* DspDelayWrite.cpp */,
 				90FA70051094A0A700E48F20 /* DspDelayWrite.h */,
-				90FA70061094A0A700E48F20 /* DspDivide.cpp */,
-				90FA70071094A0A700E48F20 /* DspDivide.h */,
 				90FA71C11094B4FA00E48F20 /* DspHighpassFilter.cpp */,
 				90FA71C01094B4FA00E48F20 /* DspHighpassFilter.h */,
 				90FA70081094A0A700E48F20 /* DspInletOutlet.cpp */,
@@ -425,8 +410,6 @@
 				90FA70151094A0A700E48F20 /* DspMessageInputMessageOutputObject.cpp */,
 				90FA70161094A0A700E48F20 /* DspMessageInputMessageOutputObject.h */,
 				90FA70171094A0A700E48F20 /* DspMessagePresedence.h */,
-				90FA70181094A0A700E48F20 /* DspMultiply.cpp */,
-				90FA70191094A0A700E48F20 /* DspMultiply.h */,
 				90FA701A1094A0A700E48F20 /* DspNoise.cpp */,
 				90FA701B1094A0A700E48F20 /* DspNoise.h */,
 				90FA701C1094A0A700E48F20 /* DspOsc.cpp */,
@@ -439,8 +422,6 @@
 				90FA70231094A0A700E48F20 /* DspSendReceive.h */,
 				90FA70241094A0A700E48F20 /* DspSig.cpp */,
 				90FA70251094A0A700E48F20 /* DspSig.h */,
-				90FA70261094A0A700E48F20 /* DspSubtract.cpp */,
-				90FA70271094A0A700E48F20 /* DspSubtract.h */,
 				90FA70281094A0A700E48F20 /* DspTable.cpp */,
 				90FA70291094A0A700E48F20 /* DspTable.h */,
 				90FA702A1094A0A700E48F20 /* DspTablePlay.cpp */,
@@ -451,6 +432,7 @@
 				90FA702F1094A0A700E48F20 /* DspVariableDelay.h */,
 				90FA70301094A0A700E48F20 /* DspVCF.cpp */,
 				90FA70311094A0A700E48F20 /* DspVCF.h */,
+				907C760E10977A6200CD25FB /* EnumBinaryOperation.h */,
 				90FA70321094A0A700E48F20 /* List.cpp */,
 				90FA70331094A0A700E48F20 /* List.h */,
 				90FA70401094A0A700E48F20 /* MessageAbsoluteValue.cpp */,
@@ -672,14 +654,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				90FA70C11094A0A700E48F20 /* DspAdc.cpp in Sources */,
-				90FA70C21094A0A700E48F20 /* DspAdd.cpp in Sources */,
 				90FA70C31094A0A700E48F20 /* DspBandpassFilter.cpp in Sources */,
-				90FA70C41094A0A700E48F20 /* DspBinaryOperationObject.cpp in Sources */,
+				90FA70C41094A0A700E48F20 /* DspBinaryOperation.cpp in Sources */,
 				90FA70C51094A0A700E48F20 /* DspClip.cpp in Sources */,
 				90FA70C61094A0A700E48F20 /* DspDac.cpp in Sources */,
 				90FA70C71094A0A700E48F20 /* DspDelayRead.cpp in Sources */,
 				90FA70C81094A0A700E48F20 /* DspDelayWrite.cpp in Sources */,
-				90FA70C91094A0A700E48F20 /* DspDivide.cpp in Sources */,
 				90FA70CA1094A0A700E48F20 /* DspInletOutlet.cpp in Sources */,
 				90FA70CB1094A0A700E48F20 /* DspInputDspOutputObject.cpp in Sources */,
 				90FA70CC1094A0A700E48F20 /* DspInputMessageOutputObject.cpp in Sources */,
@@ -687,14 +667,12 @@
 				90FA70CE1094A0A700E48F20 /* DspLowpassFilter.cpp in Sources */,
 				90FA70CF1094A0A700E48F20 /* DspMessageInputDspOutputObject.cpp in Sources */,
 				90FA70D01094A0A700E48F20 /* DspMessageInputMessageOutputObject.cpp in Sources */,
-				90FA70D11094A0A700E48F20 /* DspMultiply.cpp in Sources */,
 				90FA70D21094A0A700E48F20 /* DspNoise.cpp in Sources */,
 				90FA70D31094A0A700E48F20 /* DspOsc.cpp in Sources */,
 				90FA70D41094A0A700E48F20 /* DspOutputObject.cpp in Sources */,
 				90FA70D51094A0A700E48F20 /* DspPhasor.cpp in Sources */,
 				90FA70D61094A0A700E48F20 /* DspSendReceive.cpp in Sources */,
 				90FA70D71094A0A700E48F20 /* DspSig.cpp in Sources */,
-				90FA70D81094A0A700E48F20 /* DspSubtract.cpp in Sources */,
 				90FA70D91094A0A700E48F20 /* DspTable.cpp in Sources */,
 				90FA70DA1094A0A700E48F20 /* DspTablePlay.cpp in Sources */,
 				90FA70DB1094A0A700E48F20 /* DspTableRead.cpp in Sources */,

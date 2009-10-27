@@ -1,13 +1,11 @@
 LOCAL_SRC_FILES := \
-./DspAdd.cpp \
 ./DspAdc.cpp \
 ./DspBandpassFilter.cpp \
-./DspBinaryOperationObject.cpp \
+./DspBinaryOperation.cpp \
 ./DspClip.cpp \
 ./DspDac.cpp \
 ./DspDelayRead.cpp \
 ./DspDelayWrite.cpp \
-./DspDivide.cpp \
 ./DspHighpassFilter.cpp \
 ./DspInletOutlet.cpp \
 ./DspInputDspOutputObject.cpp \
@@ -17,14 +15,12 @@ LOCAL_SRC_FILES := \
 ./DspLine.cpp \
 ./DspLog.cpp \
 ./DspLowpassFilter.cpp \
-./DspMultiply.cpp \
 ./DspOsc.cpp \
 ./DspOutputObject.cpp \
 ./DspNoise.cpp \
 ./DspPhasor.cpp \
 ./DspSendReceive.cpp \
 ./DspSig.cpp \
-./DspSubtract.cpp \
 ./DspTable.cpp \
 ./DspTableRead.cpp \
 ./DspVariableDelay.cpp \

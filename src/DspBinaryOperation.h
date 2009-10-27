@@ -20,23 +20,26 @@
  *
  */
 
-#ifndef _DSP_BINARY_OPERATION_OBJECT_H_
-#define _DSP_BINARY_OPERATION_OBJECT_H_
+#ifndef _DSP_BINARY_OPERATION_H_
+#define _DSP_BINARY_OPERATION_H_
 
 #include "DspMessageInputDspOutputObject.h"
+#include "EnumBinaryOperation.h"
 
-class DspBinaryOperationObject : public DspMessageInputDspOutputObject {
+class DspBinaryOperation : public DspMessageInputDspOutputObject {
   
-public:
-  DspBinaryOperationObject(int blockSize, char *initString);
-  virtual ~DspBinaryOperationObject();
+  public:
+    DspBinaryOperation(EnumBinaryOperation binop, int blockSize, char *initString);
+    DspBinaryOperation(EnumBinaryOperation binop, float constant, int blockSize, char *initString);
+    ~DspBinaryOperation();
+    
+  protected:
+    void processMessage(int inletIndex, PdMessage *message);
+    void processDspToIndex(int newBlockIndex);
   
-protected:
-  void processMessage(int inletIndex, PdMessage *message);
-  void processDspToIndex(int newBlockIndex);
-  virtual float performBinaryOperation(float left, float right) = 0;
-  
-  float constant;
+  private:
+    EnumBinaryOperation binop;
+    float constant;
 };
 
-#endif // _DSP_BINARY_OPERATION_OBJECT_H_
+#endif // _DSP_BINARY_OPERATION_H_

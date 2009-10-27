@@ -20,20 +20,14 @@
  *
  */
 
-#include "DspAdd.h"
+#ifndef _ENUM_BINARY_OPERATION_H_
+#define _ENUM_BINARY_OPERATION_H_
 
-DspAdd::DspAdd(int blockSize, char *initString) : DspBinaryOperationObject(blockSize, initString) {
-  this->constant = 0.0f;
-}
+enum EnumBinaryOperation {
+  BINOP_ADD,
+  BINOP_MULTIPLY,
+  BINOP_SUBTRACT,
+  BINOP_DIVIDE
+};
 
-DspAdd::DspAdd(float constant, int blockSize, char *initString) : DspBinaryOperationObject(blockSize, initString) {
-  this->constant = constant;
-}
-
-DspAdd::~DspAdd() {
-  // nothing to do
-}
-
-inline float DspAdd::performBinaryOperation(float left, float right) {
-  return left + right;
-}
+#endif // _ENUM_BINARY_OPERATION_H_
