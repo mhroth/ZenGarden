@@ -36,7 +36,7 @@ class MessageMinimum : public MessageBinaryOperationObject {
     ~MessageMinimum();
     
   protected:
-    inline float performBinaryOperation(float left, float right);
+    float performBinaryOperation(float left, float right);
 };
 
 #endif // _MESSAGE_MINIMUM_H_

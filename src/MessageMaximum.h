@@ -36,7 +36,7 @@ class MessageMaximum : public MessageBinaryOperationObject {
     ~MessageMaximum();
     
   protected:
-    inline float performBinaryOperation(float left, float right);
+    float performBinaryOperation(float left, float right);
 };
 
 #endif // _MESSAGE_MAXIMUM_H_

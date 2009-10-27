@@ -20,6 +20,7 @@
  *
  */
 
+#include <math.h>
 #include "MessageMaximum.h"
 
 MessageMaximum::MessageMaximum(char *initString) : MessageBinaryOperationObject(initString) {
@@ -36,6 +37,6 @@ MessageMaximum::~MessageMaximum() {
   // nothing to do
 }
 
-inline float MessageMaximum::performBinaryOperation(float left, float right) {
-  return (left > right) ? left : right;
+float MessageMaximum::performBinaryOperation(float left, float right) {
+  return fmaxf(left, right);
 }

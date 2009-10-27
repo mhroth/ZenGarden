@@ -36,6 +36,6 @@ MessageMinimum::~MessageMinimum() {
   // nothing to do
 }
 
-inline float MessageMinimum::performBinaryOperation(float left, float right) {
-  return (left < right) ? left : right;
+float MessageMinimum::performBinaryOperation(float left, float right) {
+  return fminf(left, right);
 }
