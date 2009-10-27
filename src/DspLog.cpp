@@ -27,7 +27,7 @@ DspLog::DspLog(int blockSize, char *initString) : DspMessageInputDspOutputObject
 }
 
 DspLog::DspLog(float base, int blockSize, char *initString) : DspMessageInputDspOutputObject(2, 1, blockSize, initString) {
-  log2_base = log2Approx(base);
+  log2_base = logf(base) / M_LN2;
 }
 
 DspLog::~DspLog() {
@@ -39,7 +39,7 @@ void DspLog::processMessage(int inletIndex, PdMessage *message) {
     MessageElement *messageElement = message->getElement(0);
     if (messageElement->getType() == FLOAT) {
       processDspToIndex(message->getBlockIndex());
-      log2_base = log2Approx(messageElement->getFloat());
+      log2_base = logf(messageElement->getFloat()) / M_LN2;
     }
   }
 }
