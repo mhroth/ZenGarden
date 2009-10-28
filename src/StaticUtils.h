@@ -28,7 +28,9 @@ class StaticUtils {
   public:
     static char *copyString(char *str);
     static bool isNumeric(char *str);
-    static float millisecondsToSamples(float delayInMs, float sampleRate);
+    static inline float millisecondsToSamples(float delayInMs, float sampleRate) {
+      return (delayInMs / 1000.0f) * sampleRate;
+    };
     static char *joinPaths(const char *path0, const char *path1);
     static float sineApprox(float x);
   

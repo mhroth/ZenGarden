@@ -73,10 +73,6 @@ bool StaticUtils::isNumeric(char *str) {
   return true;
 }
 
-float StaticUtils::millisecondsToSamples(float delayInMs, float sampleRate) {
-  return (delayInMs / 1000.0f) * sampleRate;
-}
-
 char *StaticUtils::joinPaths(const char *path0, const char *path1) {
   if (path0 == NULL || path1 == NULL) {
     return NULL;

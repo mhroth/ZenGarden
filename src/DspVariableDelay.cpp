@@ -58,12 +58,12 @@ void DspVariableDelay::processDspToIndex(int newBlockIndex) {
     float x0 = floorf(targetSampleIndex);
     float x1 = ceilf(targetSampleIndex);
     if (x0 == x1) {
-      outputBuffer[i] = buffer[(int) x0];
+      outputBuffer[i] = buffer[lrintf(x0)];
     } else {
       
       // 2-point linear interpolation (basic and fast)
-      float y0 = buffer[(int) x0];
-      float y1 = buffer[(int) x1];
+      float y0 = buffer[lrintf(x0)];
+      float y1 = buffer[lrintf(x1)];
       float slope = (y1 - y0) / (x1 - x0);
       float dx = targetSampleIndex - x0;
       outputBuffer[i] = (slope * dx) + y0;
