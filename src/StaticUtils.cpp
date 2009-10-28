@@ -20,6 +20,7 @@
  *
  */
 
+#include <math.h>
 #include <stdlib.h>
 #include <string.h>
 #include "StaticUtils.h"
@@ -85,9 +86,11 @@ char *StaticUtils::joinPaths(const char *path0, const char *path1) {
 }
 
 float StaticUtils::sineApprox(float x) {
-  //const static float a = 4.0f / M_PI; // 1.273239544735163
-  //const static float b = 4.0f / (M_PI * M_PI); // 0.405284734569351
-  //return (a * x) - (b * x) * abs(x);
-  int y = *(int *)&x | 0x80000000;
-  return (1.273239544735163f * x) - (0.405284734569351f * x) * (*(float *)&y);
+  const static float a = 4.0f / M_PI; // 1.273239544735163
+  const static float b = 4.0f / (M_PI * M_PI); // 0.405284734569351
+  return (a * x) - (b * x) * abs(x);
+  // NOTE(mhroth): use for former method instead of the latter for now (unless performance issues arise)
+  // in order to avoid type-punning pointer warnings.
+  //int y = *(int *)&x | 0x80000000;
+  //return (1.273239544735163f * x) - (0.405284734569351f * x) * (*(float *)&y);
 }
