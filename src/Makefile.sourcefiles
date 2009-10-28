@@ -2,7 +2,6 @@ LOCAL_SRC_FILES := \
 ./DspAdd.cpp \
 ./DspAdc.cpp \
 ./DspBandpassFilter.cpp \
-./DspBinaryOperationObject.cpp \
 ./DspClip.cpp \
 ./DspDac.cpp \
 ./DspDelayRead.cpp \
@@ -62,9 +61,11 @@ LOCAL_SRC_FILES := \
 ./MessageLog.cpp \
 ./MessageLogicalAnd.cpp \
 ./MessageLogicalOr.cpp \
+./MessageMaximum.cpp \
 ./MessageMessageBox.cpp \
 ./MessageMetro.cpp \
 ./MessageMidiToFrequency.cpp \
+./MessageMinimum.cpp \
 ./MessageModulus.cpp \
 ./MessageMoses.cpp \
 ./MessageMultiply.cpp \
@@ -81,8 +82,9 @@ LOCAL_SRC_FILES := \
 ./MessageSelect.cpp \
 ./MessageSendReceive.cpp \
 ./MessageSine.cpp \
-./MessageSpigot.cpp \
+./MessageSnapshot.cpp \
 ./MessageSoundfiler.cpp \
+./MessageSpigot.cpp \
 ./MessageSqrt.cpp \
 ./MessageSubtract.cpp \
 ./MessageSwap.cpp \
@@ -93,6 +95,7 @@ LOCAL_SRC_FILES := \
 ./MessageTrigger.cpp \
 ./MessageUnaryOperationObject.cpp \
 ./MessageUnpack.cpp \
+./MessageWrap.cpp \
 ./PdGraph.cpp \
 ./PdMessage.cpp \
 ./PdObject.cpp \

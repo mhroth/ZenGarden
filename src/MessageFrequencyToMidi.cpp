@@ -32,5 +32,5 @@ MessageFrequencyToMidi::~MessageFrequencyToMidi() {
 }
 
 inline float MessageFrequencyToMidi::performUnaryOperation(float input) {
-  return (12.0f * (logf(input/440.0f) / LN_2)) + 69.0f;
+  return (12.0f * (logf(input/440.0f) / M_LN2)) + 69.0f;
 }
