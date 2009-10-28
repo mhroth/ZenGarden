@@ -2,6 +2,15 @@ ZenGarden
 Copyright RjDj, 2009
 By Martin Roth <mhroth@rjdj.me>
 
+Requirements
+------------
+
+libsndfile
+	- OSX: port install libsndfile
+	- Debian: apt-get install libsndfile
+java (for the java example)
+	- Debian: apt-get install default-jdk
+
 Build
 -----
 
