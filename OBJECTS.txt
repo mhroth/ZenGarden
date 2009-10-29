@@ -21,6 +21,7 @@ GLUE
 > swap
 < value
 > toggle
+< list (prepend, append, trim, length)
 
 TIME
 ----
