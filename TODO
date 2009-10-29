@@ -1,1 +1,23 @@
-* Fill up pd-patches/unittests/
+ * Fill up pd-patches/unittests/
+ * Make all messages use floats for block timing, thus enabling sub-sample (to the limit of float) timing precision for messages
+ * Add switch~
+ * Add block~
+ * Add comma separated messages: [;mything 56,37,hello goodbye,yes,5( style message functionality
+ * Add global send messages functionality
+ * Add Python wrapper
+ * Upgrade to Android NDK 1.6
+  * build files
+  * NDK location
+  * documentation
+ * Check which functions should be inlined
+  * It is now clear that inlining subclassed functions doesn't work. Either remove the superfluous inline keyword, or change the class structure if the vtable lookup is a problem.
+ * Remove char *initString from all PdObjects. Allow each object to return whatever it wants from getName().
+
+
+
+Done:
+
+ * Need Linux make file
+  * Linux library binaries
+ * update license files (COPYING, etc.) to LGPL
+  * Add license header to all files
