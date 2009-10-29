@@ -1,4 +1,5 @@
 my-dir = $(dir $(lastword $(MAKEFILE_LIST)))
+OS_MAKEFILES = $(shell ls Makefile.OS.*)
 
 include Makefile.sourcefiles
 
@@ -7,41 +8,44 @@ OBJS := $(foreach FILE,$(LOCAL_SRC_FILES),$(FILE:.cpp=.o))
 SNDFILE_INCLUDE = `pkg-config --cflags sndfile`
 SNDFILE_LIB = `pkg-config --libs sndfile`
 
-#CXXFLAGS = -g -Os -I. -Wall -Wno-sign-compare -Wno-unknown-pragmas -Wno-format $(LOCAL_CFLAGS)
 CXXFLAGS = -g -Os -fPIC -Wall -I$(my-dir) $(SNDFILE_INCLUDE)
 
-### User should manually specify the platform
+# figure out what platform we're on
 
-SUPPORTED_PLATFORMS=Linux OSX
+OS=$(shell ./platform)
 
-ifeq (,$(findstring $(OS),$(SUPPORTED_PLATFORMS)))
+ifeq (,$(findstring Makefile.OS.$(OS),$(OS_MAKEFILES)))
 
 ### Help message
 all %:
-	@echo The OS environment variable is set to [$(OS)].
+	@echo OS is set to [$(OS)]
 	@echo Please set the OS environment variable to one of the following:
-	@echo $(SUPPORTED_PLATFORMS)
+	@ls Makefile.OS.*
 	@echo for example:
-	@echo '`OS=Linux make`'
+	@echo '`OS=Linux-i386 make`'
+	@echo or else make a Makefile.$(OS)
 
 else
 
-### platform specific makefile for definitions
-include makefile.$(OS)
+include Makefile.OS.$(OS)
 
-all: libzengarden libjnizengarden examplegarden
+all: platform libzengarden libjnizengarden examplegarden
+
+platform: Makefile.OS.$(OS)
+	@echo "Building for the $(OS) platform"
+	@mkdir -p ../libs/$(OS)
 
 clean:
-	rm -rf $(LOCAL_MODULE).so *.o src/me/rjdj/zengarden/*.class ../ZenGarden.jar ../libs/$(PLATFORM_DIR)/*
+	rm -rf $(LOCAL_MODULE).so *.o me/rjdj/zengarden/*.class ../ZenGarden.jar ../libs/$(OS)/*
 
-libjnizengarden: ../libs/$(PLATFORM_DIR)/libjnizengarden.$(JNI_EXTENSION)
+libjnizengarden: ../libs/$(OS)/libjnizengarden.$(JNI_EXTENSION)
 
-../libs/$(PLATFORM_DIR)/libjnizengarden.$(JNI_EXTENSION): ./me/rjdj/zengarden/jnizengarden.cpp $(OBJS)
+../libs/$(OS)/libjnizengarden.$(JNI_EXTENSION): ./me/rjdj/zengarden/jnizengarden.cpp $(OBJS)
 	$(call MAKE_SO, $@, $<, $(OBJS))
 
-libzengarden: ../libs/$(PLATFORM_DIR)/libzengarden.$(SO_EXTENSION)
+libzengarden: ../libs/$(OS)/libzengarden.$(SO_EXTENSION)
 
-../libs/$(PLATFORM_DIR)/libzengarden.$(SO_EXTENSION): ./me/rjdj/zengarden/jnizengarden.cpp $(OBJS)
+../libs/$(OS)/libzengarden.$(SO_EXTENSION): ./me/rjdj/zengarden/jnizengarden.cpp $(OBJS)
 	$(call MAKE_SO, $@, $<, $(OBJS))
 
 examplegarden: me/rjdj/zengarden/*.java

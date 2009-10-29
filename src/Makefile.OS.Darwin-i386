@@ -1,6 +1,5 @@
 MAKE_SO=$(CC) -o $(1) $(CXXFLAGS) -dynamiclib \
-	-I/Developer/SDKs/MacOSX10.5.sdk/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Headers \
+	-I`javaconfig Headers` \
 	$(2) $(3) $(SNDFILE_LIB) -lstdc++ 
-PLATFORM_DIR=osx
 JNI_EXTENSION=jnilib
 SO_EXTENSION=dylib
