@@ -20,6 +20,7 @@
  *
  */
 
+#include <math.h>
 #include "MessageTrigger.h"
 
 MessageTrigger::MessageTrigger(List *messageElementList, char *initString) :
@@ -71,13 +72,12 @@ MessageTrigger::~MessageTrigger() {
  */
 void MessageTrigger::processMessage(int inletIndex, PdMessage *message) {
   if (inletIndex == 0) {
-    float blockIndexAsFloat = message->getBlockIndexAsFloat();
-    int blockIndex = *((int *)&blockIndexAsFloat); // treat blockIndexAsFloat as an integer
-    for (int i = numCasts-1; i >= 0; i--, blockIndex++) { // trigger sends messages right to left
+    float blockIndex = message->getBlockIndexAsFloat();
+    for (int i = numCasts-1; i >= 0; i--, blockIndex = nextafterf(blockIndex, INFINITY)) { // trigger sends messages right to left
       switch (castArray[i]) {
         case FLOAT: {
           PdMessage *outgoingMessage = getNextOutgoingMessage(i);
-          outgoingMessage->setBlockIndexAsFloat(*((float *)&blockIndex));
+          outgoingMessage->setBlockIndexAsFloat(blockIndex);
           MessageElement *messageElement = message->getElement(0);
           if (messageElement != NULL && messageElement->getType() == FLOAT) {
             outgoingMessage->getElement(0)->setFloat(messageElement->getFloat());
@@ -88,7 +88,7 @@ void MessageTrigger::processMessage(int inletIndex, PdMessage *message) {
         }
         case SYMBOL: {
           PdMessage *outgoingMessage = getNextOutgoingMessage(i);
-          outgoingMessage->setBlockIndexAsFloat(*((float *)&blockIndex));
+          outgoingMessage->setBlockIndexAsFloat(blockIndex);
           MessageElement *messageElement = message->getElement(0);
           if (messageElement != NULL) {
             switch (messageElement->getType()) {
@@ -114,7 +114,7 @@ void MessageTrigger::processMessage(int inletIndex, PdMessage *message) {
         case BANG: {
           // everything gets converted into a bang
           PdMessage *outgoingMessage = getNextOutgoingMessage(i);
-          outgoingMessage->setBlockIndexAsFloat(*((float *)&blockIndex));
+          outgoingMessage->setBlockIndexAsFloat(blockIndex);
           outgoingMessage->getElement(0)->setBang();
           break;
         }
@@ -122,7 +122,7 @@ void MessageTrigger::processMessage(int inletIndex, PdMessage *message) {
           // cast the message to whatever it was before (i.e., no cast)
           PdMessage *outgoingMessage = getNextOutgoingMessage(i);
           outgoingMessage->clearAndCopyFrom(message);
-          outgoingMessage->setBlockIndexAsFloat(*((float *)&blockIndex));
+          outgoingMessage->setBlockIndexAsFloat(blockIndex);
           break;
         }
         default: {
