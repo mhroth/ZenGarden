@@ -6,24 +6,33 @@ Requirements
 ------------
 
 libsndfile
-	- OSX: port install libsndfile
-	- Debian: apt-get install libsndfile
-java (for the java example)
-	- Debian: apt-get install default-jdk
+	- Darwin/OSX: port install libsndfile
+	- Debian GNU/Linux: apt-get install libsndfile
+	- Other Linux's may vary
+
+java - for the java example - you need at least java5
+	- Debian: apt-get install sun-java6-jdk
 
 Build
 -----
 
 Here is how to build the java demo from scratch.
-cd src
-make libzengarden
-make libjnizengarden
-make examplegarden
+	cd src
+	make
+
+You can build individual components like so:
+	# build the library as a shared object file
+	make libzengarden
+	# build the Java Native Interface as a shared object file
+	make libjnizengarden
+	# build the Java hosted example
+	make examplegarden
 
 Test
 ----
 
-./runme.sh
+This runs the Java hosted example
+	./runme.sh
 
 Advantages
 ----------
@@ -36,13 +45,21 @@ Why use ZenGarden?
 	* Mobile phones
 	* Inside other languages
 * Compiling Pd as a library is non-trivial and requires modifications to Pd vanilla
-* No bloat from GUI or hardware specific audio driver code
+* Less bloat
+	* No GUI
+	* No hardware specific audio driver code
 
 Layout
 ------
 
-examples/
-	- Examples of using libZenGarden in Java, C, Python
+src/
+	- Source code
+
+src/me/
+	- Java JNI demo source
+
+Xcode/
+	- Xcode project
 
 pd-patches/
 	- Demo Pd patches
