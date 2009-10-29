@@ -2,16 +2,28 @@ ZenGarden
 Copyright RjDj, 2009
 By Martin Roth <mhroth@rjdj.me>
 
+ZenGarden is a standalone library for running Pure Data patches.
+
+It is beta quality software - expect bugs and don't expect everything to be implemented.
+
+https://github.com/mhroth/ZenGarden/
+
 Requirements
 ------------
 
 libsndfile
-	- Darwin/OSX: port install libsndfile
-	- Debian GNU/Linux: apt-get install libsndfile
-	- Other Linux's may vary
+	- OSX: port install libsndfile
+	- Debian GNU/Linux: apt-get install libsndfile1-dev
 
 java - for the java example - you need at least java5
+	- OSX: It's already installed
 	- Debian: apt-get install sun-java6-jdk
+
+Run
+---
+
+This runs the Java hosted example:
+	./runme.sh
 
 Build
 -----
@@ -27,12 +39,6 @@ You can build individual components like so:
 	make libjnizengarden
 	# build the Java hosted example
 	make examplegarden
-
-Test
-----
-
-This runs the Java hosted example
-	./runme.sh
 
 Advantages
 ----------
