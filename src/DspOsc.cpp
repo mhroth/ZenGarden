@@ -20,6 +20,7 @@
  *
  */
 
+#include <math.h>
 #include "DspOsc.h"
 
 // initialise the static class variables
@@ -28,20 +29,20 @@ int DspOsc::refCount = 0;
 
 DspOsc::DspOsc(int blockSize, int sampleRate, char *initString) : 
     DspMessageInputDspOutputObject(2, 1, blockSize, initString) {
-  frequency = 0;
+  frequency = 0.0f;
   init(sampleRate);
 }
 
 DspOsc::DspOsc(float frequency, int blockSize, int sampleRate, char *initString) : 
     DspMessageInputDspOutputObject(2, 1, blockSize, initString) {
-  this->frequency = (int) frequency;
+  this->frequency = fabsf(frequency);
   init(sampleRate);
 }
 
 void DspOsc::init(int sampleRate) {
   this->sampleRate = sampleRate;
   phase = 0;
-  index = 0;
+  index = 0.0f;
   refCount++;
   if (cos_table == NULL) {
     cos_table = (float *) malloc(sampleRate * sizeof(float));
@@ -64,7 +65,7 @@ void DspOsc::processMessage(int inletIndex, PdMessage *message) {
       MessageElement *messageElement = message->getElement(0);
       if (messageElement->getType() == FLOAT) {
         processDspToIndex(message->getBlockIndex());
-        frequency = (int) messageElement->getFloat();
+        frequency = fabsf(messageElement->getFloat());
         blockIndexOfLastMessage = message->getBlockIndex();
       }
       break;
@@ -92,11 +93,11 @@ void DspOsc::processDspToIndex(int newBlockIndex) {
     case DSP_MESSAGE: {
       float *inputBuffer = localDspBufferAtInlet[0];
       float *outputBuffer = localDspBufferAtOutlet[0];
-      for (int i = blockIndexOfLastMessage; i < newBlockIndex; index += (int) inputBuffer[i++]) {
+      for (int i = blockIndexOfLastMessage; i < newBlockIndex; index += inputBuffer[i++]) {
         if (index >= sampleRate) {
           index -= sampleRate;
         }
-        outputBuffer[i] = cos_table[index];
+        outputBuffer[i] = cos_table[lrintf(index)];
       }
       break;
     }
@@ -110,7 +111,7 @@ void DspOsc::processDspToIndex(int newBlockIndex) {
         if (index >= sampleRate) {
           index -= sampleRate;
         }
-        outputBuffer[i] = cos_table[index];
+        outputBuffer[i] = cos_table[lrintf(index)];
       }
       break;
     }

@@ -46,9 +46,9 @@ class DspOsc : public DspMessageInputDspOutputObject {
     void init(int sampleRate);
     
     int sampleRate;
-    int frequency; // frequency and phase are stored as integers because they are used
+    float frequency; // frequency and phase are stored as integers because they are used
     int phase;     // in for-loops to traverse the lookup table
-    int index; // indexes the current place in the cosine lookup table
+    float index; // indexes the current place in the cosine lookup table
     static float *cos_table; // the cosine lookup table
     static int refCount; // a reference counter for cos_table. Now we know when to free it.
 };
