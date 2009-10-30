@@ -1,5 +1,9 @@
 from ctypes import *
 from os import path, sep
+from sys import platform
+
+class pyZenGardenException(Exception):
+    pass
 
 class pyZenGarden:
     def __init__(self, pdFile, libraryPath, blockSize, inChannels, outChannels, sampleRate):
@@ -15,7 +19,12 @@ class pyZenGarden:
             >>> print [s for s in zg.outBlock[:5]]
             [1.0, 0.99215036630630493, 0.96872472763061523, 0.93009084463119507, 0.87685519456863403]
         """
-        self.zg = cdll.LoadLibrary("libs/Darwin-i386/libzengarden.dylib")
+        if platform == "darwin":
+            self.zg = cdll.LoadLibrary("libzengarden.dylib")
+        elif platform == "Linux2":
+            self.zg = cdll.LoadLibrary("libzengarden.so")
+        else:
+            raise pyZenGardenException("Sorry, your platform '%s' doesn't seem to be supported yet" % platform)
         filename = path.basename(pdFile)
         directory = path.dirname(pdFile)
         self.g = self.zg.NewPdGraph(directory + sep, filename, libraryPath + sep, blockSize, inChannels, outChannels, sampleRate)
