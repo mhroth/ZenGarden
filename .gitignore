@@ -1,6 +1,6 @@
 *.o
 *.class
-libs/osx/*.dSYM
+libs/Darwin-i386/*.dSYM
 .DS_Store
 bin
 ZenGarden.jardesc
@@ -11,3 +11,4 @@ Xcode/Xcode.xcodeproj/mhroth.pbxuser
 Xcode/Xcode.xcodeproj/mhroth.mode1v3
 src/main.cpp
 .*.swp
+*.pyc

@@ -430,3 +430,23 @@ void PdGraph::process(float *audioInput, float *audioOutput) {
     }
   }
 }
+
+/* Expose our PdGraph object with a pure C interface */
+extern "C" {
+  PdGraph *NewPdGraph(char *directory, char *filename, char *libraryDirectory, int blockSize, int numInputChannels, int numOutputChannels, int sampleRate) {
+    return PdGraph::newInstance(directory, filename, libraryDirectory, blockSize, numInputChannels, numOutputChannels, sampleRate);
+  }
+  
+  void DeletePdGraph(PdGraph *pdGraph) {
+    delete pdGraph;
+  }
+  
+  void PrepareForProcessingPdGraph(PdGraph *pdGraph) {
+    pdGraph->prepareForProcessing();
+  }
+  
+  void ProcessPdGraph(PdGraph *pdGraph, float *audioInput, float *audioOutput) {
+    pdGraph->process(audioInput, audioOutput);
+  }
+}
+
