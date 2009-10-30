@@ -45,10 +45,11 @@ void DspOsc::init(int sampleRate) {
   index = 0.0f;
   refCount++;
   if (cos_table == NULL) {
-    cos_table = (float *) malloc(sampleRate * sizeof(float));
+    cos_table = (float *) malloc((sampleRate+1) * sizeof(float));
     for (int i = 0; i < sampleRate; i++) {
       cos_table[i] = cosf(2.0f * M_PI * (float) i / (float) sampleRate);
     }
+    cos_table[sampleRate] = cos_table[0];
   }
 }
 
