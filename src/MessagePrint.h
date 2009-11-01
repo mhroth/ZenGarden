@@ -24,6 +24,7 @@
 #define _MESSAGE_PRINT_H_
 
 #include "MessageInputMessageOutputObject.h"
+#include "PdGraph.h"
 
 /**
  *  print
@@ -32,12 +33,16 @@
 class MessagePrint : public MessageInputMessageOutputObject {
   
   public:
-    MessagePrint(char *initString);
+    MessagePrint(char *name, PdGraph *pdGraph, char *initString);
     ~MessagePrint();
   
   protected:
     void processMessage(int inletIndex, PdMessage *message);
     PdMessage *newCanonicalMessage();
+  
+  private:
+    PdGraph *pdGraph;
+    char *name;
 };
 
 #endif // _MESSAGE_PRINT_H_

@@ -79,6 +79,7 @@ class PdGraph : public PdNodeInterface {
     List *delayReceiverList; // vd~ and delread~ objects
     List *sendList;
     List *receiveList;
+    List *printList;
     List *tableList;
     List *tableActorList; // list of all objects which interact with tables
     List *inletList; // list of all inlet objects of a graph

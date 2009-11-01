@@ -557,7 +557,13 @@ PdObject *PdObject::newInstance(char *objectType, char *objectInitString, int bl
     } else if (strcmp("powtodb", token) == 0) {
       return new MessagePowToDb(objectInitString);
     } else if (strcmp("print", token) == 0) {
-      return new MessagePrint(objectInitString);
+      token = strtok(NULL, " ");
+      printf("token: %s\n", token);
+      if (token == NULL) {
+        return new MessagePrint("print", pdGraph, objectInitString);
+      } else {
+        return new MessagePrint(token, pdGraph, objectInitString);
+      }
     } else if (strcmp("random", token) == 0) {
       token = strtok(NULL, " ");
       if (token == NULL) {

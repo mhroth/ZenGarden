@@ -75,6 +75,7 @@ PdGraph::PdGraph(FILE *fp, char *directory, char *libraryDirectory, int blockSiz
   delWriteList = new List();
   delayReceiverList = new List();
   sendList = new List();
+  printList = new List();
   receiveList = new List();
   tableList = new List();
   tableActorList = new List();
@@ -187,6 +188,7 @@ PdGraph::~PdGraph() {
   delete delWriteList;
   delete delayReceiverList;
   delete sendList;
+  delete printList;
   delete receiveList;
   delete tableList;
   delete tableActorList;
@@ -267,6 +269,8 @@ void PdGraph::addObject(PdObject *pdObject) {
   } else if (strcmp(objectName, "outlet") == 0 ||
              strcmp(objectName, "outlet~") == 0) {
     outletList->add(pdObject);
+  } else if (strcmp(objectName, "print") == 0) {
+    printList->add(pdObject);
   }
 }
 
@@ -350,6 +354,7 @@ List *PdGraph::flatten() {
     adcList->add(pdGraph->adcList);
     dacList->add(pdGraph->dacList);
     sendList->add(pdGraph->sendList);
+    printList->add(pdGraph->printList);
     receiveList->add(pdGraph->receiveList);
     delWriteList->add(pdGraph->delWriteList);
     delayReceiverList->add(pdGraph->delayReceiverList);
@@ -366,6 +371,7 @@ List *PdGraph::getOrderedEvaluationList(List *objectList) {
   // do not find all leaves of the graph. We only care about what is connected
   // to the dac~s (and also objects which typically have no outputs)
   leafList->add(dacList);
+  leafList->add(printList);
   leafList->add(delWriteList);
   //leafList->add(tableList); // no need to do because table isn't really process()ed
   

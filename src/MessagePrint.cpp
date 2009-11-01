@@ -22,8 +22,15 @@
 
 #include "MessagePrint.h"
 
-MessagePrint::MessagePrint(char *initString) : MessageInputMessageOutputObject(1, 1, initString) {
-  // nothing to do
+MessagePrint::MessagePrint(char *name, PdGraph *pdGraph, char *initString) : MessageInputMessageOutputObject(1, 0, initString) {
+  int namelen = strlen(name);
+  if (!strncmp(name, "-n", 2)) {
+    this->name = NULL;
+  } else {
+    this->name = (char *)malloc(namelen + 1);
+    strncpy(this->name, name, namelen);
+  }
+  this->pdGraph = pdGraph;
 }
 
 MessagePrint::~MessagePrint() {
@@ -31,7 +38,15 @@ MessagePrint::~MessagePrint() {
 }
 
 void MessagePrint::processMessage(int inletIndex, PdMessage *message) {
-  // nothing to do
+  if (inletIndex == 0) {
+    char *out = message->toString();
+    if (this->name) {
+      printf("%s: %s\n", name, out);
+    } else {
+      printf("%s\n", out);
+    }
+    free(out);
+  }
 }
 
 PdMessage *MessagePrint::newCanonicalMessage() {
