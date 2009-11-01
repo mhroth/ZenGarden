@@ -39,11 +39,13 @@ c_ranger = xrange(CHANNELS)
 
 c.play(s)
 
-while 1:
-    if pygame.event.get(locals.USEREVENT):
-        zg.process()
-        for x in c_ranger:
-            for y in s_ranger:
-                a[y][x] = zg.outBlock[y + x * BLOCKSIZE] * (pow(2, 16) / 2 - 1)
-        c.play(s)
-
+try:
+    while 1:
+        if pygame.event.get(locals.USEREVENT):
+            zg.process()
+            for x in c_ranger:
+                for y in s_ranger:
+                    a[y][x] = zg.outBlock[y + x * BLOCKSIZE] * (pow(2, 16) / 2 - 1)
+            c.play(s)
+except KeyboardInterrupt:
+    print "done"
