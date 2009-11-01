@@ -56,6 +56,12 @@ class PdGraph : public PdNodeInterface {
   
     void process(float *inputBuffer, float *outputBuffer);
     
+    /**
+     *  Callbacks to interface with the outside world.
+     */
+    void setPrintHook(void(*printHookIn)(char *));
+    void (*printHook)(char *);
+    
   private:
     PdGraph(FILE *fp, char *directory, char *libraryDirectory, int blockSize, int numInputChannels, int numOutputChannels, int sampleRate);
     List *flatten();
@@ -87,6 +93,11 @@ class PdGraph : public PdNodeInterface {
     List *subgraphList;
   
     List *orderedEvaluationList; // an ordered list of the object to be evaluated
+    
 };
+
+extern "C" {
+  void defaultPrintHook(char *incoming);
+}
 
 #endif // _PD_GRAPH_H_

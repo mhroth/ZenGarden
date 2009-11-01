@@ -69,6 +69,8 @@ PdGraph::PdGraph(FILE *fp, char *directory, char *libraryDirectory, int blockSiz
   
   this->directory = StaticUtils::copyString(directory);
   
+  this->printHook = defaultPrintHook;
+  
   nodeList = new List();
   adcList = new List();
   dacList = new List();
@@ -437,22 +439,39 @@ void PdGraph::process(float *audioInput, float *audioOutput) {
   }
 }
 
+void PdGraph::setPrintHook(void(*printHookIn)(char *)) {
+  printHook=printHookIn;
+}
+
 /* Expose our PdGraph object with a pure C interface */
 extern "C" {
+  /** Create a new ZenGarden graph to evaluate Pd patches */
   PdGraph *NewPdGraph(char *directory, char *filename, char *libraryDirectory, int blockSize, int numInputChannels, int numOutputChannels, int sampleRate) {
     return PdGraph::newInstance(directory, filename, libraryDirectory, blockSize, numInputChannels, numOutputChannels, sampleRate);
   }
   
+  /** Destroy an existing ZenGarden graph */
   void DeletePdGraph(PdGraph *pdGraph) {
     delete pdGraph;
   }
   
+  /** Init function to be called after adding objects to the graph and before processing */
   void PrepareForProcessingPdGraph(PdGraph *pdGraph) {
     pdGraph->prepareForProcessing();
   }
   
+  /** Call this every frame to put and get audio data into and out of the graph */
   void ProcessPdGraph(PdGraph *pdGraph, float *audioInput, float *audioOutput) {
     pdGraph->process(audioInput, audioOutput);
+  }
+  
+  void defaultPrintHook(char *incoming) {
+    printf(incoming);
+  }
+  
+  /** Set a callback which accepts a char* and does something with the results of all Pd [print] objects. */
+  void SetPrintHook(PdGraph *pdGraph, void(*printHookIn)(char *)) {
+    pdGraph->setPrintHook(printHookIn);
   }
 }
 

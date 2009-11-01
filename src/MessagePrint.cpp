@@ -34,17 +34,26 @@ MessagePrint::MessagePrint(char *name, PdGraph *pdGraph, char *initString) : Mes
 }
 
 MessagePrint::~MessagePrint() {
-  // nothing to do
+  free(this->name);
 }
 
 void MessagePrint::processMessage(int inletIndex, PdMessage *message) {
   if (inletIndex == 0) {
+    char *full = NULL;
     char *out = message->toString();
+    
     if (this->name) {
-      printf("%s: %s\n", name, out);
+      int len = strlen(out) + strlen(this->name) + 5;
+      full = (char *)malloc(len);
+      snprintf(full, len, "%s: %s\n", name, out);
     } else {
-      printf("%s\n", out);
+      int len = strlen(out) + 2;
+      full = (char *)malloc(len);
+      snprintf(full, len, "%s\n", out);
     }
+    
+    pdGraph->printHook(full);
+    free(full);
     free(out);
   }
 }

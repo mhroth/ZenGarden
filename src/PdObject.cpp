@@ -558,7 +558,6 @@ PdObject *PdObject::newInstance(char *objectType, char *objectInitString, int bl
       return new MessagePowToDb(objectInitString);
     } else if (strcmp("print", token) == 0) {
       token = strtok(NULL, " ");
-      printf("token: %s\n", token);
       if (token == NULL) {
         return new MessagePrint("print", pdGraph, objectInitString);
       } else {
