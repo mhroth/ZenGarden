@@ -48,7 +48,9 @@ class PdMessage {
   
     void clear();
     void clearAndCopyFrom(PdMessage *message);
-  
+    
+    char *toString();
+
   protected:
     float blockIndex;
     List *elementList;

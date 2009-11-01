@@ -21,6 +21,8 @@
  */
 
 #include <math.h>
+#include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include "PdMessage.h"
 
@@ -78,4 +80,48 @@ void PdMessage::clearAndCopyFrom(PdMessage *message) {
     addElement(message->getElement(i)->copy());
   }
   blockIndex = message->getBlockIndex();
+}
+
+char *PdMessage::toString() {
+  // http://stackoverflow.com/questions/295013/using-sprintf-without-a-manually-allocated-buffer
+  int listlen = elementList->getNumElements();
+  //char *bits[listlen]; // each atom stored as a string
+  int lengths[listlen]; // how long is the string of each atom
+  char *finalString; // the final buffer we will pass back after concatenating all strings - user should free it
+  int size = 0; // the total length of our final buffer
+  int pos = 0;
+  
+  // loop through every element in our list of atoms
+  // first loop figures out how long our buffer should be
+  // chrism: apparently this might fail under MSVC because of snprintf(NULL) - do we care?
+  for (int i = 0; i < listlen; i++) {
+    lengths[i] = 0;
+    MessageElement *el = (MessageElement *)elementList->get(i);
+    if (el->getType() == SYMBOL) {
+      lengths[i] = snprintf(NULL, 0, "%s", el->getSymbol());
+    } else if (el->getType() == FLOAT) {
+      lengths[i] = snprintf(NULL, 0, "%g", el->getFloat());
+    }
+    // total length of our string is each atom plus a space, or \0 on the end
+    size += lengths[i] + 1;
+  }
+  
+  // now we do the piecewise concatenation into our final string
+  finalString = (char *)malloc(size);
+  for (int i = 0; i < listlen; i++) {
+    MessageElement *el = (MessageElement *)elementList->get(i);
+    // first element doesn't have a space before it
+    if (i > 0) {
+      strncat(finalString, " ", 1);
+      pos += 1;
+    }
+    // put a string representation of each atom into the final string
+    if (el->getType() == SYMBOL) {
+      snprintf(&finalString[pos], lengths[i] + 1, "%s", el->getSymbol());
+    } else if (el->getType() == FLOAT) {
+      snprintf(&finalString[pos], lengths[i] + 1, "%g", el->getFloat());
+    }
+    pos += lengths[i];
+  }
+  return finalString;
 }
