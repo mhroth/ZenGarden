@@ -48,7 +48,9 @@ libzengarden: ../libs/$(OS)/libzengarden.$(SO_EXTENSION)
 ../libs/$(OS)/libzengarden.$(SO_EXTENSION): ./me/rjdj/zengarden/jnizengarden.cpp $(OBJS)
 	$(call MAKE_SO, $@, $<, $(OBJS))
 
-examplegarden: me/rjdj/zengarden/*.java
+examplegarden: ../ZenGarden.jar
+
+../ZenGarden.jar: me/rjdj/zengarden/*.java
 	cd me/rjdj/zengarden/ && javac *.java
 	jar cfm ../ZenGarden.jar me/rjdj/zengarden/manifest me/rjdj/zengarden/*.class
 
