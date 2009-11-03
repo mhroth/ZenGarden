@@ -34,6 +34,13 @@
 #include "RemoteBufferReceiverObject.h"
 #include "TextObject.h"
 
+/*
+ * WARNING! This is a global variable, only because I couldn't get the program to compile in Xcode
+ * when trying to make this variable static in PdGraph.
+ * I feel stupid. But there are static PdGraph functions to access function.
+ */
+void (*printHook)(char *) = defaultPrintHook;
+
 PdGraph *PdGraph::newInstance(char *directory, char *filename, char *libraryDirectory, int blockSize, 
                               int numInputChannels, int numOutputChannels, int sampleRate) {
   PdGraph *pdGraph = NULL;
@@ -68,8 +75,6 @@ PdGraph::PdGraph(FILE *fp, char *directory, char *libraryDirectory, int blockSiz
   numBytesInBlock = blockSize * sizeof(float);
   
   this->directory = StaticUtils::copyString(directory);
-  
-  this->printHook = defaultPrintHook;
   
   nodeList = new List();
   adcList = new List();
@@ -440,7 +445,13 @@ void PdGraph::process(float *audioInput, float *audioOutput) {
 }
 
 void PdGraph::setPrintHook(void(*printHookIn)(char *)) {
-  printHook=printHookIn;
+  printHook = printHookIn;
+}
+
+void PdGraph::print(char *str) {
+  if (printHook != NULL) {
+    printHook(str);
+  }
 }
 
 /* Expose our PdGraph object with a pure C interface */
@@ -471,7 +482,6 @@ extern "C" {
   
   /** Set a callback which accepts a char* and does something with the results of all Pd [print] objects. */
   void SetPrintHook(PdGraph *pdGraph, void(*printHookIn)(char *)) {
-    pdGraph->setPrintHook(printHookIn);
+    PdGraph::setPrintHook(printHookIn);
   }
 }
-

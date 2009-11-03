@@ -559,9 +559,9 @@ PdObject *PdObject::newInstance(char *objectType, char *objectInitString, int bl
     } else if (strcmp("print", token) == 0) {
       token = strtok(NULL, " ");
       if (token == NULL) {
-        return new MessagePrint("print", pdGraph, objectInitString);
+        return new MessagePrint("print", objectInitString);
       } else {
-        return new MessagePrint(token, pdGraph, objectInitString);
+        return new MessagePrint(token, objectInitString);
       }
     } else if (strcmp("random", token) == 0) {
       token = strtok(NULL, " ");

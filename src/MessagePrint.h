@@ -28,12 +28,11 @@
 
 /**
  *  print
- *  This class does absolutely nothing :) Don't expect it to print anything.
  */
 class MessagePrint : public MessageInputMessageOutputObject {
   
   public:
-    MessagePrint(char *name, PdGraph *pdGraph, char *initString);
+    MessagePrint(char *name, char *initString);
     ~MessagePrint();
   
   protected:
