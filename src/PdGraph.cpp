@@ -34,6 +34,13 @@
 #include "RemoteBufferReceiverObject.h"
 #include "TextObject.h"
 
+/*
+ * WARNING! This is a global variable, only because I couldn't get the program to compile in Xcode
+ * when trying to make this variable static in PdGraph.
+ * I feel stupid. But there are static PdGraph functions to access function.
+ */
+void (*printHook)(char *) = defaultPrintHook;
+
 PdGraph *PdGraph::newInstance(char *directory, char *filename, char *libraryDirectory, int blockSize, 
                               int numInputChannels, int numOutputChannels, int sampleRate) {
   PdGraph *pdGraph = NULL;
@@ -75,6 +82,7 @@ PdGraph::PdGraph(FILE *fp, char *directory, char *libraryDirectory, int blockSiz
   delWriteList = new List();
   delayReceiverList = new List();
   sendList = new List();
+  printList = new List();
   receiveList = new List();
   tableList = new List();
   tableActorList = new List();
@@ -187,6 +195,7 @@ PdGraph::~PdGraph() {
   delete delWriteList;
   delete delayReceiverList;
   delete sendList;
+  delete printList;
   delete receiveList;
   delete tableList;
   delete tableActorList;
@@ -267,6 +276,8 @@ void PdGraph::addObject(PdObject *pdObject) {
   } else if (strcmp(objectName, "outlet") == 0 ||
              strcmp(objectName, "outlet~") == 0) {
     outletList->add(pdObject);
+  } else if (strcmp(objectName, "print") == 0) {
+    printList->add(pdObject);
   }
 }
 
@@ -350,6 +361,7 @@ List *PdGraph::flatten() {
     adcList->add(pdGraph->adcList);
     dacList->add(pdGraph->dacList);
     sendList->add(pdGraph->sendList);
+    printList->add(pdGraph->printList);
     receiveList->add(pdGraph->receiveList);
     delWriteList->add(pdGraph->delWriteList);
     delayReceiverList->add(pdGraph->delayReceiverList);
@@ -366,6 +378,7 @@ List *PdGraph::getOrderedEvaluationList(List *objectList) {
   // do not find all leaves of the graph. We only care about what is connected
   // to the dac~s (and also objects which typically have no outputs)
   leafList->add(dacList);
+  leafList->add(printList);
   leafList->add(delWriteList);
   //leafList->add(tableList); // no need to do because table isn't really process()ed
   
@@ -431,22 +444,44 @@ void PdGraph::process(float *audioInput, float *audioOutput) {
   }
 }
 
+void PdGraph::setPrintHook(void(*printHookIn)(char *)) {
+  printHook = printHookIn;
+}
+
+void PdGraph::print(char *str) {
+  if (printHook != NULL) {
+    printHook(str);
+  }
+}
+
 /* Expose our PdGraph object with a pure C interface */
 extern "C" {
+  /** Create a new ZenGarden graph to evaluate Pd patches */
   PdGraph *NewPdGraph(char *directory, char *filename, char *libraryDirectory, int blockSize, int numInputChannels, int numOutputChannels, int sampleRate) {
     return PdGraph::newInstance(directory, filename, libraryDirectory, blockSize, numInputChannels, numOutputChannels, sampleRate);
   }
   
+  /** Destroy an existing ZenGarden graph */
   void DeletePdGraph(PdGraph *pdGraph) {
     delete pdGraph;
   }
   
+  /** Init function to be called after adding objects to the graph and before processing */
   void PrepareForProcessingPdGraph(PdGraph *pdGraph) {
     pdGraph->prepareForProcessing();
   }
   
+  /** Call this every frame to put and get audio data into and out of the graph */
   void ProcessPdGraph(PdGraph *pdGraph, float *audioInput, float *audioOutput) {
     pdGraph->process(audioInput, audioOutput);
   }
+  
+  void defaultPrintHook(char *incoming) {
+    printf(incoming);
+  }
+  
+  /** Set a callback which accepts a char* and does something with the results of all Pd [print] objects. */
+  void SetPrintHook(PdGraph *pdGraph, void(*printHookIn)(char *)) {
+    PdGraph::setPrintHook(printHookIn);
+  }
 }
-

@@ -1,4 +1,4 @@
-from ctypes import *
+from ctypes import cdll, CFUNCTYPE, c_float, c_char, c_char_p
 from os import path, sep
 from sys import platform
 
@@ -38,6 +38,11 @@ class pyZenGarden:
     
     def process(self):
         self.zg.ProcessPdGraph(self.g, self.inBlock, self.outBlock)
+    
+    def setPrintHook(self, fn):
+        PRINT_HOOK_FUNC = CFUNCTYPE(None, c_char_p)
+        printHook = PRINT_HOOK_FUNC(fn)
+        self.zg.SetPrintHook(self.g, printHook)
 
 if __name__ == "__main__":
     import doctest
