@@ -26,6 +26,11 @@ else:
 zg = pyZenGarden(filename, "pd-patches", BLOCKSIZE, CHANNELS, CHANNELS, 22050)
 zg.prepare()
 
+def myPrintHook(instring):
+    print "Python from Pd -> ", instring,
+
+zg.setPrintHook(myPrintHook)
+
 #s = pygame.mixer.Sound("dubstep.ogg")
 s = pygame.sndarray.make_sound(zeros((BLOCKSIZE, CHANNELS)))
 a = pygame.sndarray.samples(s)

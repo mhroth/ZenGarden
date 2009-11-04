@@ -26,6 +26,10 @@
 #include "me_rjdj_zengarden_ZenGarden.h"
 #include "PdGraph.h"
 
+#define JNI_VERSION JNI_VERSION_1_4
+
+JavaVM *jvm = NULL; // global variable
+
 typedef struct {
   PdGraph *pdGraph;
   float *finputBuffer;
@@ -36,6 +40,23 @@ typedef struct {
   float *shortToFloatLookupTable;
   int numBytesInBlock;
 } PureDataMobileNativeVars;
+
+extern "C" {
+  void java_print(char *message) {
+    // (mhroth): this could be optimised very much, but we'll leave it for now
+    JNIEnv *env = NULL;
+    jint result = jvm->GetEnv((void **)&env, JNI_VERSION);
+    if (result == JNI_OK && env != NULL) {
+      // call System.out.println()
+      env->CallObjectMethod(
+        env->GetStaticObjectField(
+          env->FindClass("java/lang/System"),
+          env->GetStaticFieldID(env->FindClass("java/lang/System"), "out", "Ljava/io/PrintStream;")),
+        env->GetMethodID(env->FindClass("java/io/PrintStream"), "print", "(Ljava/lang/String;)V"),
+        env->NewStringUTF(message));
+    }
+  }
+}
 
 inline float shortSampleToFloat(short s, PureDataMobileNativeVars *pdmnv) {
   //pdmnv->finputBuffer[z] = ((float) cinputBuffer[j]) / 32767.0f;
@@ -50,22 +71,18 @@ inline float shortSampleToFloat(short s, PureDataMobileNativeVars *pdmnv) {
   }
 }
 
+JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *ur_jvm, void *reserved) {
+  // cache the java vm pointer
+  // used for getting a pointer to the java environment during callbacks
+  jvm = ur_jvm;
+  
+  return JNI_VERSION;
+}
+
 JNIEXPORT jlong JNICALL Java_me_rjdj_zengarden_ZenGarden_loadPdPatch(
     JNIEnv *env, jobject jobj, jstring jdirectory, jstring jfilename, jstring jlibraryDirectory, 
     jint blockSize, jint numInputChannels, jint numOutputChannels, jint sampleRate) {
-  /*
-   * deal with this later
-  #ifdef ANDROID || UNIX
-    void *libptr = dlopen("libzengarden.so", RTLD_LAZY); // load the library
-    if (libptr == NULL) {
-      dlclose(libptr);
-      env->ThrowNew(
-          env->FindClass("me/rjdj/zengarden/NativeLoadException"),
-          "Could not dynamically link to libzengarden.");
-      return (jlong) 0;
-    }
-  #endif
-  */
+
   PdGraph *pdGraph = NULL;
   char *cdirectory = (char *) env->GetStringUTFChars(jdirectory, NULL);
   char *cfilename = (char *) env->GetStringUTFChars(jfilename, NULL);
@@ -81,6 +98,8 @@ JNIEXPORT jlong JNICALL Java_me_rjdj_zengarden_ZenGarden_loadPdPatch(
         "PdGraph is NULL. Is the filename correct? Does the file exist? Are all of the referenced objects implemented?");
     return (jlong) 0;
   }
+  
+  pdGraph->setPrintHook(java_print);
   
   pdGraph->prepareForProcessing();
   

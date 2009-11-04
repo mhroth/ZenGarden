@@ -83,7 +83,7 @@ inline void MessageMessageBox::processMessage(int inletIndex, PdMessage *message
   if (inletIndex == 0) {
     for (int i = 0; i < listOfMessageElementLists->getNumElements(); i++) {
       PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-      outgoingMessage->setBlockIndex(message->getBlockIndex());
+      outgoingMessage->setBlockIndexAsFloat(message->getBlockIndexAsFloat());
       List *messageElementList = (List *) listOfMessageElementLists->get(i);
       int *variableIndex = (int *) listofVarableIndicies->get(i);
       for (int j = 0; j < messageElementList->getNumElements(); j++) {

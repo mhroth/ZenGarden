@@ -21,17 +21,41 @@
  */
 
 #include "MessagePrint.h"
+#include "StaticUtils.h"
 
-MessagePrint::MessagePrint(char *initString) : MessageInputMessageOutputObject(1, 1, initString) {
-  // nothing to do
+MessagePrint::MessagePrint(char *name, char *initString) : MessageInputMessageOutputObject(1, 1, initString) {
+  if (!strncmp(name, "-n", 2)) {
+    this->name = NULL;
+  } else {
+    this->name = StaticUtils::copyString(name);
+  }
+  this->pdGraph = pdGraph;
 }
 
 MessagePrint::~MessagePrint() {
-  // nothing to do
+  free(this->name);
 }
 
 void MessagePrint::processMessage(int inletIndex, PdMessage *message) {
-  // nothing to do
+  if (inletIndex == 0) {
+    char *full = NULL;
+    char *out = message->toString();
+    
+    if (this->name) {
+      int len = strlen(out) + strlen(this->name) + 5;
+      full = (char *)malloc(len);
+      snprintf(full, len, "%s: %s\n", name, out);
+    } else {
+      int len = strlen(out) + 2;
+      full = (char *)malloc(len);
+      snprintf(full, len, "%s\n", out);
+    }
+    
+    PdGraph::print(full);
+    
+    free(full);
+    free(out);
+  }
 }
 
 PdMessage *MessagePrint::newCanonicalMessage() {
