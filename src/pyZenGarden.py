@@ -21,7 +21,7 @@ class pyZenGarden:
         """
         if platform == "darwin":
             self.zg = cdll.LoadLibrary("libzengarden.dylib")
-        elif platform == "Linux2":
+        elif platform == "linux2":
             self.zg = cdll.LoadLibrary("libzengarden.so")
         else:
             raise pyZenGardenException("Sorry, your platform '%s' doesn't seem to be supported yet" % platform)
