@@ -4,9 +4,13 @@ By Martin Roth <mhroth@rjdj.me>
 
 ZenGarden is a standalone library for running Pure Data patches.
 
-It is beta quality software - expect bugs and don't expect everything to be implemented.
+It is beta quality software - expect bugs and don't expect everything to be
+implemented.
 
 https://github.com/mhroth/ZenGarden/
+
+Mailing list:
+http://groups.google.com/group/zengarden?pli=1
 
 Requirements
 ------------
@@ -16,19 +20,25 @@ libsndfile
 	- Debian GNU/Linux: apt-get install libsndfile1-dev
 
 java - for the java example - you need at least java5
-	- OSX: It's already installed
 	- Debian: apt-get install sun-java6-jdk
+
+python - for the python example
+	- ctypes (in Python 2.5 or greater)
+	- pygame - http://pygame.org/
 
 Run
 ---
 
-This runs the Java hosted example:
-	./runme.sh
+The following commands both optionally take the full path to a Pd patch as
+their first argument:
+
+ * `./runme-java.sh`
+ * `./runme-python.sh`
 
 Build
 -----
 
-Here is how to build the java demo from scratch.
+Here is how to build the library, JNI, etc. from scratch.
 	cd src
 	make
 
@@ -45,11 +55,12 @@ Advantages
 
 Why use ZenGarden?
 
-* Clean code
+* Clean code and API
 * Portable and embeddable
 	* Embedded devices, synthesizers
 	* Mobile phones
 	* Inside other languages
+	* LADSPA, VST, etc.
 * Compiling Pd as a library is non-trivial and requires modifications to Pd vanilla
 * Less bloat
 	* No GUI
