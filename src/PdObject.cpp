@@ -26,6 +26,7 @@
 #include "DspAdc.h"
 #include "DspBandpassFilter.h"
 #include "DspClip.h"
+#include "DspCosine.h"
 #include "DspDac.h"
 #include "DspDelayRead.h"
 #include "DspDelayWrite.h"
@@ -46,9 +47,6 @@
 #include "DspTableRead.h"
 #include "DspVariableDelay.h"
 #include "DspVCF.h"
-/*
-#include "DspCosine.h"
-*/
 
 #include "MessageAbsoluteValue.h"
 #include "MessageAdd.h"
@@ -197,6 +195,8 @@ PdObject *PdObject::newInstance(char *objectType, char *objectInitString, int bl
         float upperBound = (float) atof(nextToken);
         return new DspClip(lowerBound, upperBound, blockSize, objectInitString);
       }
+    } else if (strcmp(token, "cos~") == 0) {
+      return new DspCosine(blockSize, objectInitString);
     } else if (strcmp(token, "dac~") == 0 ||
                strcmp(token, "soundoutput") == 0) {
       return new DspDac(blockSize, objectInitString);

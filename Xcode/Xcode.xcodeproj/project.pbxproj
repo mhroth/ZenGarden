@@ -13,6 +13,7 @@
 		90378B9810964B4F00FCA5CB /* MessageMinimum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90378B9710964B4F00FCA5CB /* MessageMinimum.cpp */; };
 		90378B9B10964D8600FCA5CB /* MessageWrap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90378B9A10964D8600FCA5CB /* MessageWrap.cpp */; };
 		90378C271096554200FCA5CB /* MessageSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90378C251096554200FCA5CB /* MessageSnapshot.cpp */; };
+		904A6D1D10D902A50071E9B8 /* DspCosine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 904A6D1B10D902A50071E9B8 /* DspCosine.cpp */; };
 		907C759B10976DF100CD25FB /* libsndfile.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 907C759510976DA600CD25FB /* libsndfile.dylib */; };
 		907C769B10979F5700CD25FB /* DspAdd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 907C769A10979F5700CD25FB /* DspAdd.cpp */; };
 		907C772C1097BADC00CD25FB /* DspSubtract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 907C772B1097BADC00CD25FB /* DspSubtract.cpp */; };
@@ -143,6 +144,8 @@
 		90378B9A10964D8600FCA5CB /* MessageWrap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageWrap.cpp; path = ../src/MessageWrap.cpp; sourceTree = SOURCE_ROOT; };
 		90378C251096554200FCA5CB /* MessageSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageSnapshot.cpp; path = ../src/MessageSnapshot.cpp; sourceTree = SOURCE_ROOT; };
 		90378C261096554200FCA5CB /* MessageSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageSnapshot.h; path = ../src/MessageSnapshot.h; sourceTree = SOURCE_ROOT; };
+		904A6D1B10D902A50071E9B8 /* DspCosine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspCosine.cpp; path = ../src/DspCosine.cpp; sourceTree = SOURCE_ROOT; };
+		904A6D1C10D902A50071E9B8 /* DspCosine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspCosine.h; path = ../src/DspCosine.h; sourceTree = SOURCE_ROOT; };
 		907C759510976DA600CD25FB /* libsndfile.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsndfile.dylib; path = usr/local/lib/libsndfile.dylib; sourceTree = SDKROOT; };
 		907C769910979F5700CD25FB /* DspAdd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspAdd.h; path = ../src/DspAdd.h; sourceTree = SOURCE_ROOT; };
 		907C769A10979F5700CD25FB /* DspAdd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspAdd.cpp; path = ../src/DspAdd.cpp; sourceTree = SOURCE_ROOT; };
@@ -392,6 +395,8 @@
 				90FA6FFB1094A0A700E48F20 /* DspBandpassFilter.h */,
 				90FA6FFE1094A0A700E48F20 /* DspClip.cpp */,
 				90FA6FFF1094A0A700E48F20 /* DspClip.h */,
+				904A6D1B10D902A50071E9B8 /* DspCosine.cpp */,
+				904A6D1C10D902A50071E9B8 /* DspCosine.h */,
 				90FA70001094A0A700E48F20 /* DspDac.cpp */,
 				90FA70011094A0A700E48F20 /* DspDac.h */,
 				90FA70021094A0A700E48F20 /* DspDelayRead.cpp */,
@@ -773,6 +778,7 @@
 				907C772C1097BADC00CD25FB /* DspSubtract.cpp in Sources */,
 				907C77301097BB5400CD25FB /* DspMultiply.cpp in Sources */,
 				907C77341097BBAF00CD25FB /* DspDivide.cpp in Sources */,
+				904A6D1D10D902A50071E9B8 /* DspCosine.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -799,6 +805,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = Xcode;
+				RUN_CLANG_STATIC_ANALYZER = YES;
 			};
 			name = Debug;
 		};
@@ -816,6 +823,7 @@
 				OTHER_LDFLAGS = "";
 				PRELINK_LIBS = "";
 				PRODUCT_NAME = Xcode;
+				RUN_CLANG_STATIC_ANALYZER = YES;
 			};
 			name = Release;
 		};

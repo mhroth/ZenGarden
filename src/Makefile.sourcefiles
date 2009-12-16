@@ -3,6 +3,7 @@ LOCAL_SRC_FILES := \
 ./DspAdc.cpp \
 ./DspBandpassFilter.cpp \
 ./DspClip.cpp \
+./DspCosine.cpp \
 ./DspDac.cpp \
 ./DspDelayRead.cpp \
 ./DspDelayWrite.cpp \
