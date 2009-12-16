@@ -9,7 +9,7 @@ from pygame import locals
 
 from pyZenGarden import pyZenGarden
 
-BLOCKSIZE = 256
+BLOCKSIZE = 512
 CHANNELS = 2
 
 # initialise the pygame mixer
@@ -31,10 +31,14 @@ def myPrintHook(instring):
 
 zg.setPrintHook(myPrintHook)
 
-#s = pygame.mixer.Sound("dubstep.ogg")
-s = pygame.sndarray.make_sound(zeros((BLOCKSIZE, CHANNELS)))
-a = pygame.sndarray.samples(s)
-#a[0][0] = pow(2, 16) / 2
+s1 = pygame.sndarray.make_sound(zeros((BLOCKSIZE, CHANNELS)))
+s2 = pygame.sndarray.make_sound(zeros((BLOCKSIZE, CHANNELS)))
+o1 = pygame.sndarray.samples(s1)
+o2 = pygame.sndarray.samples(s2)
+
+sounds = [s1, s2]
+arrays = [o1, o2]
+current_buffer = 0
 
 c = pygame.mixer.find_channel()
 c.set_endevent(locals.USEREVENT)
@@ -42,15 +46,18 @@ c.set_endevent(locals.USEREVENT)
 s_ranger = xrange(BLOCKSIZE)
 c_ranger = xrange(CHANNELS)
 
-c.play(s)
+c.queue(sounds[current_buffer])
+c.queue(sounds[current_buffer + 1])
 
 try:
     while 1:
         if pygame.event.get(locals.USEREVENT):
+            # start playing the next buffer
             zg.process()
             for x in c_ranger:
                 for y in s_ranger:
-                    a[y][x] = zg.outBlock[y + x * BLOCKSIZE] * (pow(2, 16) / 2 - 1)
-            c.play(s)
+                    arrays[current_buffer][y][x] = zg.outBlock[y + x * BLOCKSIZE] * (pow(2, 16) / 2 - 1)
+            c.queue(sounds[current_buffer])
+            current_buffer = (current_buffer + 1) % 2
 except KeyboardInterrupt:
     print "done"
