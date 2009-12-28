@@ -12,7 +12,9 @@ CXXFLAGS = -g -Os -fPIC -Wall -I$(my-dir) $(SNDFILE_INCLUDE)
 
 # figure out what platform we're on
 
-OS=$(shell ./platform)
+ifndef OS
+	OS=$(shell ./platform)
+endif
 
 ifeq (,$(findstring Makefile.OS.$(OS),$(OS_MAKEFILES)))
 
@@ -29,14 +31,19 @@ else
 
 include Makefile.OS.$(OS)
 
-all: platform libzengarden libjnizengarden examplegarden
+all: platform libzengarden libzengarden-static libjnizengarden examplegarden
 
 platform: Makefile.OS.$(OS)
 	@echo "Building for the $(OS) platform"
 	@mkdir -p ../libs/$(OS)
 
 clean:
-	rm -rf $(LOCAL_MODULE).so *.o me/rjdj/zengarden/*.class ../ZenGarden.jar ../libs/$(OS)/*
+	rm -rf $(LOCAL_MODULE).so *.d *.o me/rjdj/zengarden/*.class ../ZenGarden.jar ../libs/$(OS)/*
+
+libzengarden-static: ../libs/$(OS)/libzengarden.a
+
+../libs/$(OS)/libzengarden.a: $(OBJS)
+	$(AR) rcs $@ $(OBJS)
 
 libjnizengarden: ../libs/$(OS)/libjnizengarden.$(JNI_EXTENSION)
 

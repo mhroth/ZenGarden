@@ -18,6 +18,7 @@ Requirements
 libsndfile
 	- OSX: port install libsndfile
 	- Debian GNU/Linux: apt-get install libsndfile1-dev
+	- Nintendo DS: *experimental* see below
 
 java - for the java example - you need at least java5
 	- Debian: apt-get install sun-java6-jdk
@@ -49,6 +50,29 @@ You can build individual components like so:
 	make libjnizengarden
 	# build the Java hosted example
 	make examplegarden
+
+Build: Nintendo DS
+------------------
+
+To build for Nintendo DS you first need to build libsndfile for NDS:
+ * Download it from http://www.mega-nerd.com/libsndfile/#Download
+ * Run the following commands in the directory where you unpacked the libsndfile source:
+
+	export PATH=$PATH:$DEVKITARM/bin/
+	./configure --enable-shared=no --enable-static=yes --disable-largefile --disable-alsa --disable-sqlite --host=arm-eabi --disable-external-libs --disable-test-coverage
+	make
+	# you may experience some errors to do with tests, but the .a file should be built anyway
+	# now copy the libsndfile.a library into your ZenGarden development directory
+	cp src/.libs/libsndfile.a ../ZenGarden/src/
+	# finally, copy the sndfile.h header file to the ZenGarden development directory
+	cp src/sndfile.h ../ZenGarden/src/
+
+Finally, to build a static library for the nintendo DS, invoke the following command:
+
+	OS=nds make libzengarden-static
+
+This will create ../libs/nds/libzengarden.a and you can use this library to
+statically link into your nintendo DS programs.
 
 Advantages
 ----------
