@@ -20,27 +20,24 @@
  *
  */
 
-#ifndef _MESSAGE_FLOAT_H_
-#define _MESSAGE_FLOAT_H_
+#ifndef _MESSAGE_PASSTHROUGH_H_
+#define _MESSAGE_PASSTHROUGH_H_
 
-#include "MessageObject.h"
+#include "MessageNamedObject.h"
 
-/** [f|float float] */
-class MessageFloat : public MessageObject {
-    
-  public:
-    MessageFloat(PdMessage *initMessage, PdGraph *graph);
-    MessageFloat(float constant, PdGraph *graph);
-    ~MessageFloat();
+/**
+ * The internal representation of all "passthrough" objects such as [inlet], [outlet], 
+ * [send], [receive]. These are all message objects that only send their input directly to the output. 
+ */
+class MessagePassthrough : public MessageNamedObject {
   
-    const char *getObjectLabel();
-    
+  public:
+    MessagePassthrough(PdMessage *initMessage, PdGraph *graph);
+    virtual ~MessagePassthrough();
+  
   private:
-    void init(float constant);
-    void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage(int outletIndex);
-    
-    float constant;
+    void receiveMessage(int inletIndex, PdMessage *message);
+  
 };
 
-#endif // _MESSAGE_FLOAT_H_
+#endif // _MESSAGE_PASSTHROUGH_H_

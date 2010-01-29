@@ -22,14 +22,31 @@
 
 #include "DspDac.h"
 
-DspDac::DspDac(int blockSize, char *initString) : DspInputDspOutputObject(2, 1, blockSize, initString) {
-  // nothing to do
+DspDac::DspDac(PdGraph *graph) : DspObject(0, graph->getNumOutputChannels(), 0, 0, graph) {
+  localDspBufferAtOutlet = (float **) malloc(numDspInlets * sizeof(float *));
+  for (int i = 0; i < numDspInlets; i++) {
+    localDspBufferAtOutlet[i] = graph->getGlobalDspBufferAtOutlet(i);
+  }
 }
 
 DspDac::~DspDac() {
-  // nothing to do
+  free(localDspBufferAtOutlet);
+  localDspBufferAtOutlet = NULL;
 }
 
-void DspDac::processDspToIndex(int newBlockIndex) {
-  // nothing to do
+const char *DspDac::getObjectLabel() {
+  return "dac~";
+}
+
+void DspDac::processDspToIndex(float blockIndex) {
+  // add the input to the dac~ to the global output
+  static float *inputBuffer = NULL;
+  static float *outputBuffer = NULL;
+  for (int i = 0; i < numDspInlets; i++) { // == numOutputChannels
+    inputBuffer = localDspBufferAtInlet[i];
+    outputBuffer = localDspBufferAtOutlet[i];
+    for (int j = 0; j < blockSizeInt; j++) {
+      outputBuffer[j] += inputBuffer[j];
+    }
+  }
 }

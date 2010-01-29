@@ -20,27 +20,23 @@
  *
  */
 
-#ifndef _MESSAGE_FLOAT_H_
-#define _MESSAGE_FLOAT_H_
+#ifndef _MESSAGE_PIPE_H_
+#define _MESSAGE_PIPE_H_
 
 #include "MessageObject.h"
 
-/** [f|float float] */
-class MessageFloat : public MessageObject {
-    
+class MessagePipe : public MessageObject {
+  
   public:
-    MessageFloat(PdMessage *initMessage, PdGraph *graph);
-    MessageFloat(float constant, PdGraph *graph);
-    ~MessageFloat();
+    MessagePipe(PdMessage *initMessage, PdGraph *pdGraph);
+    ~MessagePipe();
   
     const char *getObjectLabel();
     
   private:
-    void init(float constant);
     void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage(int outletIndex);
-    
-    float constant;
+  
+    double delayMs; // the delay in milliseconds
 };
 
-#endif // _MESSAGE_FLOAT_H_
+#endif // _MESSAGE_PIPE_H_

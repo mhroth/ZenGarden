@@ -22,29 +22,21 @@
 
 #include "MessageLoadbang.h"
 
-MessageLoadbang::MessageLoadbang(char *initString) : MessageInputMessageOutputObject(1, 1, initString) {
-  isFirstIteration = true;
-  isMarkedForEvaluation = false;
+MessageLoadbang::MessageLoadbang(PdGraph *graph) : MessageObject(0, 1, graph) {
+  PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+  outgoingMessage->setTimestamp(0.0);
+  graph->scheduleMessage(this, 0, outgoingMessage);
 }
 
 MessageLoadbang::~MessageLoadbang() {
   // nothing to do
 }
 
-void MessageLoadbang::process() {
-  resetOutgoingMessageBuffers();
-  if (isFirstIteration) {
-    isFirstIteration = false;
-    PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-    outgoingMessage->setBlockIndex(0);
-  }
+const char *MessageLoadbang::getObjectLabel() {
+  return "loadbang";
 }
 
-void MessageLoadbang::processMessage(int inletIndex, PdMessage *message) {
-  // nothing to do
-}
-
-PdMessage *MessageLoadbang::newCanonicalMessage() {
+PdMessage *MessageLoadbang::newCanonicalMessage(int outletIndex) {
   PdMessage *message = new PdMessage();
   message->addElement(new MessageElement());
   return message;

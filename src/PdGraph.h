@@ -23,79 +23,191 @@
 #ifndef _PD_GRAPH_H_
 #define _PD_GRAPH_H_
 
-#include <stdio.h>
-#include "DspTable.h"
-#include "List.h"
-#include "PdNodeInterface.h"
-#include "PdObject.h"
+#include "OrderedMessageQueue.h"
+#include "PdMessage.h"
+#include "PdNode.h"
 
-class PdGraph : public PdNodeInterface {
+class DspReceive;
+class DspSend;
+class MessageObject;
+class MessageReceive;
+class MessageSend;
+
+class PdGraph : public PdNode {
   
   public:
-    static PdGraph *newInstance(char *directory, char *filename, char *libraryDirectory,
-        int blockSize, int numInputChannels, int numOutputChannels, int sampleRate);
-    ~PdGraph();
   
-    char *getDirectory();
-    
-    PdNodeType getNodeType();
+    static PdGraph *newInstance(char *directory, char *filename, char *libraryDirectory,
+                                int blockSize, int numInputChannels, int numOutputChannels, 
+                                float sampleRate, PdGraph *parentGraph);
+    ~PdGraph();
     
     /**
-     * Add a <code>PdObject</code> to the graph.
+     * Schedules a <code>PdMessage</code> to be sent by the <code>MessageObject</code> from the
+     * <code>outletIndex</code> at the specified <code>time</code>.
      */
-    void addObject(PdObject *pdObject);
-  
-    void connect(PdObject *fromNode, int outletIndex, PdObject *toNode, int inletIndex);
+    void scheduleMessage(MessageObject *messageObject, int outletIndex, PdMessage *message);
     
-    DspTable *getTable(char *tag);  
+    /**  */
+    void processDsp();
+    
+    /**  */
+    void process(float *inputBuffers, float *outputBuffers);
+    
+    /** Turn the audio processing of this graph on or off. */
+    void setSwitch(bool switched);
   
-    PdObject *getObjectAtInlet(int inletIndex);
-    PdObject *getObjectAtOutlet(int outletList);
+    /** Returns <code>true</code> if the audio processing of this graph is turned on. <code>false</code> otherwise. */
+    bool isSwitchedOn();
+    
+    /** Set the current block size of this subgraph. */
+    void setBlockSize(int blockSize);
+    
+    /**
+     * Get the current block size of this subgraph.
+     */
+    int getBlockSize();
+    
+    /** Returns <code>true</code> of this graph has no parents, code>false</code> otherwise. */
+    bool isRootGraph();
+    
+    /** Sets the error print function for this graph. */
+    void setPrintErr(void (*printFunction)(char *));
+    
+    /** Sets the standard print function for this graph. */
+    void setPrintStd(void (*printFunction)(char *));
+    
+    /** Prints the given message to error output. */
+    void printErr(char *msg);
+    void printErr(const char *msg);
+    
+    /** Prints the given message to standard output. */
+    void printStd(char *msg);
+    void printStd(const char *msg);
+    
+    /** Get an argument that was passed to the graph. */
+    MessageElement *getArgument(int argIndex);
+    
+    /** Returns the global sample rate. */
+    float getSampleRate();
   
-    void prepareForProcessing();
+    PdNodeType getNodeType();
   
-    void process(float *inputBuffer, float *outputBuffer);
-
-    static void setPrintHook(void(*printHookIn)(char *));
-    static void print(char *str);
+    MessageObject *getObjectAtInlet(int inletIndex);
+  
+    MessageObject *getObjectAtOutlet(int outletIndex);
+  
+    float *getGlobalDspBufferAtInlet(int inletIndex);
+    float *getGlobalDspBufferAtOutlet(int outletIndex);
+  
+    /** Returns the timestamp of the beginning of the current block. */
+    double getBlockStartTimestamp();
+  
+    int getNumInputChannels();
+    int getNumOutputChannels();
+  
+    /** (Re-)Computes the tree and node processing ordering for dsp nodes. */
+    void computeProcessOrder();
     
   private:
-    PdGraph(FILE *fp, char *directory, char *libraryDirectory, int blockSize, int numInputChannels, int numOutputChannels, int sampleRate);
-    List *flatten();
-    List *getOrderedEvaluationList(List *objectList);
+    PdGraph(FILE *fp, char *directory, char *libraryDirectory, int blockSize, int numInputChannels, 
+            int numOutputChannels, float sampleRate, PdGraph *parentGraph);
   
-    /**
-     *  The root directory of the loaded patch.
-     */
-    char *directory;
+    /** Connect the given <code>MessageObject</code>s from the given outlet to the given inlet. */
+    void connect(MessageObject *fromObject, int outletIndex, MessageObject *toObject, int inletIndex);
+    
+    /** Create a new object based on its initialisation string. */
+    MessageObject *newObject(char *objectType, char *objectLabel, PdMessage *initMessage, PdGraph *graph);
   
+    /** Add the object to the graph, taking care of any special object registration. */
+    void addNode(PdNode *node);
+  
+    /** Globally register a [receive] object. Connect to registered [send] objects with the same name. */
+    void registerMessageReceive(MessageReceive *messageReceive);
+  
+    /** Globally register a [send] object. Connect to registered [message] objects with the same name. */
+    void registerMessageSend(MessageSend *messageSend);
+  
+    /** Globally register a [receive~] object. Connect to registered [send~] objects with the same name. */
+    void registerDspReceive(DspReceive *dspReceive);
+    
+    /** Globally register a [send] object. Connect to registered [receive~] objects with the same name. */
+    void registerDspSend(DspSend *dspSend);
+  
+    /** The unique id for this subgraph. Defines "$0". */
+    int graphId;
+  
+    /** Keeps track of the current global graph id. */
+    static int globalGraphId;
+  
+    /** The list of arguments to the graph. Stored as a <code>PdMessage</code> for simplicity. */
+    PdMessage *graphArguments;
+    
+    /** The number of audio input channels. */
     int numInputChannels;
+    
+    /** The number of audio output channels. */
     int numOutputChannels;
+    
+    /** True if the graph is switch on and should process audio. False otherwise. */
+    bool switched;
+    
+    /** The parent graph. NULL if this graph is the root. */
+    PdGraph *parentGraph;
+    
+    /** The global sample rate. */
+    float sampleRate;
+    
+    /** The DSP block size of this graph. */
     int blockSize;
-    int numBytesInBlock;
+    
+    /** A list of <i>all</i> <code>PdNode</code>s in this subgraph.  */
+    List *nodeList;
   
-    // lists to keep track of various objects which must be referenced later
-    List *nodeList; // all objects in the graph
-    List *adcList;
-    List *dacList;
-    List *delWriteList; // delwrite~ objects
-    List *delayReceiverList; // vd~ and delread~ objects
-    List *sendList;
-    List *receiveList;
-    List *printList;
-    List *tableList;
-    List *tableActorList; // list of all objects which interact with tables
-    List *inletList; // list of all inlet objects of a graph
-    List *outletList; // list of all outlet objects of a graph
-    List *subgraphList;
+    /** A list of all inlet (message or audio) nodes in this subgraph. */
+    List *inletList;
+    
+    /** A list of all outlet (message or audio) nodes in this subgraph. */
+    List *outletList;
   
-    List *orderedEvaluationList; // an ordered list of the object to be evaluated
+    /** A global list of all [send] objects. */
+    List *messageSendList;
   
-    //static void (*printHook)(char *str);
+    /** A global list of all [send~] objects. */
+    List *dspSendList;
+  
+    /** A global listof all [receive] objects. */
+    List *messageReceiveList;
+  
+    /** A global list of all [receive~] objects. */
+    List *dspReceiveList;
+    
+    /**
+     * A list of <code>PdNode</code>s which process audio and should be called from within the
+     * <code>processDsp()</code> loop.
+     */
+    List *dspNodeList;
+  
+    /** A message queue keeping track of all scheduled messages. */
+    OrderedMessageQueue *messageCallbackQueue;
+  
+    /** The start of the current block in milliseconds. */
+    double blockStartTimestamp;
+  
+    /** The duration of one block in milliseconds. */
+    double blockDurationMs;
+    
+    /** The local pointer to the error print function */
+    void (*printErrFunction)(char *);
+    
+    /** The local pointer to the standard print function */
+    void (*printStdFunction)(char *);
+  
+    int numBytesInInputBuffers;
+    int numBytesInOutputBuffers;
+  
+    float *globalDspInputBuffers;
+    float *globalDspOutputBuffers;
 };
-
-extern "C" {
-  void defaultPrintHook(char *incoming);
-}
 
 #endif // _PD_GRAPH_H_

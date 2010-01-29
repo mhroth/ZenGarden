@@ -20,27 +20,28 @@
  *
  */
 
-#ifndef _MESSAGE_FLOAT_H_
-#define _MESSAGE_FLOAT_H_
+#ifndef _ORDERED_MESSAGE_QUEUE_H_
+#define _ORDERED_MESSAGE_QUEUE_H_
 
-#include "MessageObject.h"
+#include "LinkedList.h"
+#include "MessageDestination.h"
+#include "PdMessage.h"
 
-/** [f|float float] */
-class MessageFloat : public MessageObject {
-    
-  public:
-    MessageFloat(PdMessage *initMessage, PdGraph *graph);
-    MessageFloat(float constant, PdGraph *graph);
-    ~MessageFloat();
+class OrderedMessageQueue : public LinkedList {
   
-    const char *getObjectLabel();
+  public:
+    OrderedMessageQueue();
+    ~OrderedMessageQueue();
     
-  private:
-    void init(float constant);
-    void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage(int outletIndex);
-    
-    float constant;
+    /** Inserts the message into the ordered queue based on its scheduled time. */
+    void insertMessage(MessageObject *messageObject, int outletIndex, PdMessage *message);
+  
+    /** Removes the given message from the queue. */
+    PdMessage *cancelMessage(int messageId);
+  
+  protected:
+    void *newDataHolder();
+    void deleteDataHolder(void *data);
 };
 
-#endif // _MESSAGE_FLOAT_H_
+#endif // _ORDERED_MESSAGE_QUEUE_H_

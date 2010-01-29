@@ -22,20 +22,58 @@
 
 #include "MessageAdd.h"
 
-MessageAdd::MessageAdd(char *initString) : MessageBinaryOperationObject(initString) {
-  left = 0.0f;
-  right = 0.0f;
+MessageAdd::MessageAdd(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
+  if (initMessage->getNumElements() > 0 &&
+      initMessage->getElement(0)->getType() == FLOAT) {
+    init(initMessage->getElement(0)->getFloat());
+  } else {
+    init(0.0f);
+  }
 }
 
-MessageAdd::MessageAdd(float constant, char *initString) : MessageBinaryOperationObject(initString) {
-  left = 0.0f;
-  right = constant;
+MessageAdd::MessageAdd(float constant, PdGraph *graph) : MessageObject(2, 1, graph) {
+  init(constant);
 }
 
 MessageAdd::~MessageAdd() {
   // nothing to do
 }
 
-inline float MessageAdd::performBinaryOperation(float left, float right) {
-  return left + right;
+void MessageAdd::init(float constant) {
+  this->constant = constant;
+}
+
+const char *MessageAdd::getObjectLabel() {
+  return "+";
+}
+
+void MessageAdd::processMessage(int inletIndex, PdMessage *message) {
+  switch (inletIndex) {
+    case 0: {
+      MessageElement *messageElement = message->getElement(0);
+      if (messageElement->getType() == FLOAT) {
+        PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+        outgoingMessage->getElement(0)->setFloat(messageElement->getFloat() + constant);
+        outgoingMessage->setTimestamp(message->getTimestamp());
+        sendMessage(0, outgoingMessage); // send a message from outlet 0
+      }
+      break;
+    }
+    case 1: {
+      MessageElement *messageElement = message->getElement(0);
+      if (messageElement->getType() == FLOAT) {
+        constant = messageElement->getFloat();
+      }
+      break;
+    }
+    default: {
+      break;
+    }
+  }  
+}
+
+PdMessage *MessageAdd::newCanonicalMessage(int outletIndex) {
+  PdMessage *message = new PdMessage();
+  message->addElement(new MessageElement(0.0f));
+  return message;
 }

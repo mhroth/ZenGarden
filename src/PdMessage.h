@@ -23,17 +23,20 @@
 #ifndef _PD_MESSAGE_H_
 #define _PD_MESSAGE_H_
 
+#include "LinkedList.h"
 #include "List.h"
 #include "MessageElement.h"
 
-/**
- * Implements a Pd message.
- */
+class MessageObject;
+class PdGraph;
+
+/** Implements a Pd message. */
 class PdMessage {
   
   public:
     PdMessage();
-    virtual ~PdMessage();
+    PdMessage(char *initString, PdGraph *graph);
+    ~PdMessage();
   
     MessageElement *getElement(int index);
   
@@ -41,18 +44,36 @@ class PdMessage {
   
     int getNumElements();
   
-    int getBlockIndex();
-    float getBlockIndexAsFloat();
-    void setBlockIndex(int blockIndex);
-    void setBlockIndexAsFloat(float blockIndex);
+    /** A convenience function to determine when in a block a message occurs. */
+    float getBlockIndex(double currentBlockTimestamp);
+  
+    /** Get the global timestamp of this message (in milliseconds). */
+    double getTimestamp();
+  
+    /** Set the global timestamp of this message (in milliseconds). */
+    void setTimestamp(double timestamp);
+  
+    bool isReserved();
+    void reserve(MessageObject *messageObject);
+    void unreserve(MessageObject *messageObject);
   
     void clear();
     void clearAndCopyFrom(PdMessage *message);
     
+    /**
+     * Create a string representation of the message. Suitable for use by the print object.
+     * The resulting string must be <code>free()</code>ed by the caller.
+     */
     char *toString();
+  
+    /** Returns the message id, a globally unique identifier for this message. */ 
+    int getMessageId();
 
-  protected:
-    float blockIndex;
+  private:
+    static int globalMessageId;
+    int messageId;
+    double timestamp;
+    LinkedList *reservedList;
     List *elementList;
 };
 

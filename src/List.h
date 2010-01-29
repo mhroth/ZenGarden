@@ -32,10 +32,10 @@ class List {
     List();
   
     /** The contents of the list are not destroyed. */
-    ~List();
+    virtual ~List();
   
     /** The number of elements currently in the list. */
-    int getNumElements();
+    int size();
   
     /** Add the element onto the end of the list */
     List *add(void *element);
@@ -53,6 +53,9 @@ class List {
     void *remove(int index);
   
     void *replace(int index, void *newElement);
+  
+    /** Returns <code>true</code> if the given element exists in the list. <code>false</code> otherwise. */
+    bool exists(void *element);
 
     /**
      * Resets the number of elements to zero.

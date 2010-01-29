@@ -20,27 +20,13 @@
  *
  */
 
-#ifndef _MESSAGE_FLOAT_H_
-#define _MESSAGE_FLOAT_H_
+#ifndef _CONNECTION_TYPE_H_
+#define _CONNECTION_TYPE_H_
 
-#include "MessageObject.h"
-
-/** [f|float float] */
-class MessageFloat : public MessageObject {
-    
-  public:
-    MessageFloat(PdMessage *initMessage, PdGraph *graph);
-    MessageFloat(float constant, PdGraph *graph);
-    ~MessageFloat();
-  
-    const char *getObjectLabel();
-    
-  private:
-    void init(float constant);
-    void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage(int outletIndex);
-    
-    float constant;
+/** An enumeration of the types of information that a connection provides. */
+enum ConnectionType {
+  MESSAGE,
+  DSP
 };
 
-#endif // _MESSAGE_FLOAT_H_
+#endif // _CONNECTION_TYPE_H_

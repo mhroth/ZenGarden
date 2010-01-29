@@ -21,42 +21,68 @@
  */
 
 #include "MessageFloat.h"
-#include "StaticUtils.h"
 
-MessageFloat::MessageFloat(char *initString) : MessageInputMessageOutputObject(2, 1, initString) {
-  constant = 0.0f;
+MessageFloat::MessageFloat(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
+  if (initMessage->getNumElements() > 0 &&
+      initMessage->getElement(0)->getType() == FLOAT) {
+    init(initMessage->getElement(0)->getFloat());
+  } else {
+    init(0.0f);
+  }
 }
 
-MessageFloat::MessageFloat(float newConstant, char *initString) : MessageInputMessageOutputObject(2, 1, initString) {
-  constant = newConstant;
+MessageFloat::MessageFloat(float constant, PdGraph *graph) : MessageObject(2, 1, graph) {
+  init(constant);
 }
 
 MessageFloat::~MessageFloat() {
   // nothing to do
 }
 
-inline void MessageFloat::processMessage(int inletIndex, PdMessage *message) {
-  if (inletIndex == 0) {
-    MessageElement *messageElement = message->getElement(0);
-    switch (messageElement->getType()) {
-      case FLOAT: {
-        constant = messageElement->getFloat();
-        // allow fallthrough
-      }
-      case BANG: {
-        PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-        outgoingMessage->getElement(0)->setFloat(constant);
-        outgoingMessage->setBlockIndex(message->getBlockIndex());
-        break;
-      }
-      default: {
-        break;
-      }
-    }
-  }
+void MessageFloat::init(float constant) {
+  this->constant = constant;
 }
 
-PdMessage *MessageFloat::newCanonicalMessage() {
+const char *MessageFloat::getObjectLabel() {
+  return "float";
+}
+
+void MessageFloat::processMessage(int inletIndex, PdMessage *message) {
+  switch (inletIndex) {
+    case 0: {
+      MessageElement *messageElement = message->getElement(0);
+      switch (messageElement->getType()) {
+        case FLOAT: {
+          constant = messageElement->getFloat();
+          // allow fallthrough
+        }
+        case BANG: {
+          PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+          outgoingMessage->getElement(0)->setFloat(constant);
+          outgoingMessage->setTimestamp(message->getTimestamp());
+          sendMessage(0, outgoingMessage);
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+      break;
+    }
+    case 1: {
+      MessageElement *messageElement = message->getElement(0);
+      if (messageElement->getType() == FLOAT) {
+        constant = messageElement->getFloat();
+      }
+      break;
+    }
+    default: {
+      break;
+    }
+  }  
+}
+
+PdMessage *MessageFloat::newCanonicalMessage(int outletIndex) {
   PdMessage *message = new PdMessage();
   message->addElement(new MessageElement(0.0f));
   return message;

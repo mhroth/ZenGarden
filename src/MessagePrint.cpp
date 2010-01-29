@@ -21,19 +21,28 @@
  */
 
 #include "MessagePrint.h"
-#include "StaticUtils.h"
 
-MessagePrint::MessagePrint(char *name, char *initString) : MessageInputMessageOutputObject(1, 1, initString) {
-  if (!strncmp(name, "-n", 2)) {
-    this->name = NULL;
+MessagePrint::MessagePrint(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 0, graph) {
+  if (initMessage->getNumElements() > 0) {
+    MessageElement *messageElement = initMessage->getElement(0);
+    if (messageElement->getType() == SYMBOL) {
+      if (strcmp(messageElement->getSymbol(), "-n") == 0) {
+        name = NULL;
+      } else {
+        name = StaticUtils::copyString(messageElement->getSymbol());
+      }
+    }
   } else {
-    this->name = StaticUtils::copyString(name);
+    name = StaticUtils::copyString((char *) "print");
   }
-  this->pdGraph = pdGraph;
 }
 
 MessagePrint::~MessagePrint() {
-  free(this->name);
+  free(name);
+}
+
+const char *MessagePrint::getObjectLabel() {
+  return "print";
 }
 
 void MessagePrint::processMessage(int inletIndex, PdMessage *message) {
@@ -41,7 +50,7 @@ void MessagePrint::processMessage(int inletIndex, PdMessage *message) {
     char *full = NULL;
     char *out = message->toString();
     
-    if (this->name) {
+    if (name != NULL) {
       int len = strlen(out) + strlen(this->name) + 5;
       full = (char *)malloc(len);
       snprintf(full, len, "%s: %s\n", name, out);
@@ -51,13 +60,9 @@ void MessagePrint::processMessage(int inletIndex, PdMessage *message) {
       snprintf(full, len, "%s\n", out);
     }
     
-    PdGraph::print(full);
+    graph->printStd(full);
     
     free(full);
     free(out);
   }
-}
-
-PdMessage *MessagePrint::newCanonicalMessage() {
-  return NULL;
 }

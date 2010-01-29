@@ -20,27 +20,16 @@
  *
  */
 
-#ifndef _MESSAGE_FLOAT_H_
-#define _MESSAGE_FLOAT_H_
+#include "MessagePassthrough.h"
 
-#include "MessageObject.h"
+MessagePassthrough::MessagePassthrough(PdMessage *initMessage, PdGraph *graph) : MessageNamedObject(initMessage->getElement(0)->getSymbol(), 1, 1, graph) {
+  // nothing to do
+}
 
-/** [f|float float] */
-class MessageFloat : public MessageObject {
-    
-  public:
-    MessageFloat(PdMessage *initMessage, PdGraph *graph);
-    MessageFloat(float constant, PdGraph *graph);
-    ~MessageFloat();
-  
-    const char *getObjectLabel();
-    
-  private:
-    void init(float constant);
-    void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage(int outletIndex);
-    
-    float constant;
-};
+MessagePassthrough::~MessagePassthrough() {
+  // nothing to do
+}
 
-#endif // _MESSAGE_FLOAT_H_
+void MessagePassthrough::receiveMessage(int inletIndex, PdMessage *message) {
+  sendMessage(0, message);
+}

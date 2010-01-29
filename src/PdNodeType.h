@@ -23,6 +23,7 @@
 #ifndef _PD_NODE_TYPE_H_
 #define _PD_NODE_TYPE_H_
 
+/** Distinguishes between the two types of nodes in a Pd Graph: objects and graphs. */
 enum PdNodeType {
   OBJECT,
   GRAPH

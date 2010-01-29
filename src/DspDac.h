@@ -23,18 +23,18 @@
 #ifndef _DSP_DAC_H_
 #define _DSP_DAC_H_
 
-#include "DspInputDspOutputObject.h"
+#include "DspObject.h"
 
-/**
- * dac~
- */
-class DspDac : public DspInputDspOutputObject {
+class DspDac : public DspObject {
   
   public:
-    DspDac(int blockSize, char *initString);
+    DspDac(PdGraph *graph);
     ~DspDac();
   
-    void processDspToIndex(int newBlockIndex);
+    const char *getObjectLabel();
+  
+  private:
+    void processDspToIndex(float blockIndex);
 };
 
 #endif // _DSP_DAC_H_

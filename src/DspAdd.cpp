@@ -22,52 +22,47 @@
 
 #include "DspAdd.h"
 
-DspAdd::DspAdd(int blockSize, char *initString) :
-    DspMessageInputDspOutputObject(2, 1, blockSize, initString) {
-  constant = 0.0f;
+DspAdd::DspAdd(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
+  if (initMessage->getNumElements() > 0 &&
+      initMessage->getElement(0)->getType() == FLOAT) {
+    init(initMessage->getElement(0)->getFloat());
+  } else {
+    init(0.0f);
+  }
 }
 
-DspAdd::DspAdd(float constant, int blockSize, char *initString) :
-    DspMessageInputDspOutputObject(2, 1, blockSize, initString) {
-  this->constant = constant;
+DspAdd::DspAdd(float constant, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
+  init(constant);
 }
 
 DspAdd::~DspAdd() {
   // nothing to do
 }
 
+void DspAdd::init(float constant) {
+  this->constant = constant;
+}
+
+const char *DspAdd::getObjectLabel() {
+  return "+~";
+}
+
 void DspAdd::processMessage(int inletIndex, PdMessage *message) {
-  if (inletIndex == 1) {
-    MessageElement *messageElement = message->getElement(0);
-    if (messageElement->getType() == FLOAT) {
-      processDspToIndex(message->getBlockIndex());
-      constant = messageElement->getFloat();
+  switch (inletIndex) {
+    case 1: {
+      MessageElement *messageElement = message->getElement(0);
+      if (messageElement->getType() == FLOAT) {
+        processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp()));
+        constant = messageElement->getFloat();
+      }
+      break;
+    }
+    default: {
+      break;
     }
   }
 }
 
-void DspAdd::processDspToIndex(int newBlockIndex) {
-  switch (signalPresedence) {
-    case DSP_DSP: {
-      float *inputBuffer0 = localDspBufferAtInlet[0];
-      float *inputBuffer1 = localDspBufferAtInlet[1];
-      float *outputBuffer = localDspBufferAtOutlet[0];
-      for (int i = blockIndexOfLastMessage; i < newBlockIndex; i++) {
-        outputBuffer[i] = inputBuffer0[i] + inputBuffer1[i];
-      }
-      blockIndexOfLastMessage = newBlockIndex;
-      break;
-    }
-    case DSP_MESSAGE: {
-      float *inputBuffer = localDspBufferAtInlet[0];
-      float *outputBuffer = localDspBufferAtOutlet[0];
-      for (int i = blockIndexOfLastMessage; i < newBlockIndex; i++) {
-        outputBuffer[i] = inputBuffer[i] + constant;
-      }
-      blockIndexOfLastMessage = newBlockIndex;
-    }
-    default: {
-      break; // MESSAGE_DSP and MESSAGE_MESSAGE should never happen.
-    }
-  }
+void DspAdd::processDspToIndex(float blockIndex) {
+  // TODO(mhroth)
 }

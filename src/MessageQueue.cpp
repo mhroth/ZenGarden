@@ -20,27 +20,27 @@
  *
  */
 
-#ifndef _MESSAGE_FLOAT_H_
-#define _MESSAGE_FLOAT_H_
+#include "MessageQueue.h"
 
-#include "MessageObject.h"
+MessageQueue::MessageQueue() : LinkedList() {
+  // nothing to do
+}
 
-/** [f|float float] */
-class MessageFloat : public MessageObject {
-    
-  public:
-    MessageFloat(PdMessage *initMessage, PdGraph *graph);
-    MessageFloat(float constant, PdGraph *graph);
-    ~MessageFloat();
-  
-    const char *getObjectLabel();
-    
-  private:
-    void init(float constant);
-    void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage(int outletIndex);
-    
-    float constant;
-};
+MessageQueue::~MessageQueue() {
+  // nothing to do
+}
 
-#endif // _MESSAGE_FLOAT_H_
+void MessageQueue::add(int inletIndex, PdMessage *message) {
+  void **data = LinkedList::add(); // add a new node to the list
+  MessageLetPair *messageLetPair = (MessageLetPair *) *data;
+  messageLetPair->index = inletIndex;
+  messageLetPair->message = message;
+}
+
+void *MessageQueue::newDataHolder() {
+  return malloc(sizeof(MessageLetPair));
+}
+
+void MessageQueue::deleteDataHolder(void *data) {
+  free((MessageQueue *) data);
+}

@@ -23,20 +23,23 @@
 #ifndef _DSP_ADD_H_
 #define _DSP_ADD_H_
 
-#include "DspMessageInputDspOutputObject.h"
+#include "DspObject.h"
 
-class DspAdd : public DspMessageInputDspOutputObject {
+/** [+~], [+~ float] */
+class DspAdd : public DspObject {
   
   public:
-    DspAdd(int blockSize, char *initString);
-    DspAdd(float constant, int blockSize, char *initString);
+    DspAdd(PdMessage *initMessage, PdGraph *graph);
+    DspAdd(float constant, PdGraph *graph);
     ~DspAdd();
-    
-  protected:
-    void processMessage(int inletIndex, PdMessage *message);
-    void processDspToIndex(int newBlockIndex);
+  
+    const char *getObjectLabel();
     
   private:
+    void init(float constant);
+    void processMessage(int inletIndex, PdMessage *message);
+    void processDspToIndex(float blockIndex);
+    
     float constant;
 };
 

@@ -23,20 +23,19 @@
 #ifndef _DSP_ADC_H_
 #define _DSP_ADC_H_
 
-#include "DspInputDspOutputObject.h"
+#include "DspObject.h"
 
-/**
- * adc~
- */
-class DspAdc : public DspInputDspOutputObject {
+class DspAdc : public DspObject {
   
   public:
-    DspAdc(int blockSize, char *initString);
+    DspAdc(PdGraph *graph);
     ~DspAdc();
   
-    void processDspToIndex(int newBlockIndex);
-  
-    void copyIntoDspBufferAtOutlet(int outletIndex, float *buffer);
+    const char *getObjectLabel();
+    
+  private:  
+    /** A temporary holder for the "true" <code>localDspBufferAtOutlet</code>. */
+    float **localDspBufferAtOutletX;
 };
 
 #endif // _DSP_ADC_H_

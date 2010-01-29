@@ -22,27 +22,32 @@
 
 #include <stdio.h>
 #include "PdGraph.h"
-#include "StaticUtils.h"
+
+#include "MessageAdd.h"
+#include "MessageDelay.h"
+#include "MessageFloat.h"
+#include "MessageInlet.h"
+#include "MessageLoadbang.h"
+#include "MessageOutlet.h"
+#include "MessagePipe.h"
+#include "MessagePrint.h"
+#include "MessageReceive.h"
+#include "MessageSend.h"
 
 #include "DspAdc.h"
 #include "DspDac.h"
-#include "DspSendReceive.h"
-#include "MessageFloat.h"
-#include "MessageSendReceive.h"
-#include "MessageSymbol.h"
-#include "RemoteBufferObject.h"
-#include "RemoteBufferReceiverObject.h"
-#include "TextObject.h"
 
-/*
- * WARNING! This is a global variable, only because I couldn't get the program to compile in Xcode
- * when trying to make this variable static in PdGraph.
- * I feel stupid. But there are static PdGraph functions to access function.
- */
-void (*printHook)(char *) = defaultPrintHook;
+/** A C-defined function implementing the default print behaviour. */
+void defaultPrintFunction(char *msg) {
+  printf("%s", msg);
+}
+
+// initialise the global graph counter
+int PdGraph::globalGraphId = 0;
 
 PdGraph *PdGraph::newInstance(char *directory, char *filename, char *libraryDirectory, int blockSize, 
-                              int numInputChannels, int numOutputChannels, int sampleRate) {
+                              int numInputChannels, int numOutputChannels, float sampleRate, 
+                              PdGraph *parentGraph) {
   PdGraph *pdGraph = NULL;
   
   char *filePath = StaticUtils::joinPaths(directory, filename);
@@ -56,7 +61,7 @@ PdGraph *PdGraph::newInstance(char *directory, char *filename, char *libraryDire
     line = fgets(line, MAX_CHARS_PER_LINE, fp);
     if (line != NULL) {
       if (strncmp(line, "#N canvas", strlen("#N canvas")) == 0) { // the first line *must* define a canvas
-        pdGraph = new PdGraph(fp, directory, libraryDirectory, blockSize, numInputChannels, numOutputChannels, sampleRate);
+        pdGraph = new PdGraph(fp, directory, libraryDirectory, blockSize, numInputChannels, numOutputChannels, sampleRate, parentGraph);
       } else {
         printf("WARNING | The first line of the pd file does not define a canvas:\n  \"%s\".\n", line);
       }
@@ -68,28 +73,49 @@ PdGraph *PdGraph::newInstance(char *directory, char *filename, char *libraryDire
   return pdGraph;
 }
 
-PdGraph::PdGraph(FILE *fp, char *directory, char *libraryDirectory, int blockSize, int numInputChannels, int numOutputChannels, int sampleRate) : PdNodeInterface() {
+PdGraph::PdGraph(FILE *fp, char *directory, char *libraryDirectory, int blockSize, int numInputChannels, int numOutputChannels, float sampleRate, PdGraph *parentGraph) : PdNode() {
   this->numInputChannels = numInputChannels;
   this->numOutputChannels = numOutputChannels;
   this->blockSize = blockSize;
-  numBytesInBlock = blockSize * sizeof(float);
-  
-  this->directory = StaticUtils::copyString(directory);
+  this->parentGraph = parentGraph;
+  blockStartTimestamp = 0.0;
+  blockDurationMs = ((double) blockSize / (double) sampleRate) * 1000.0;
+  switched = true; // graphs are switched on by default
   
   nodeList = new List();
-  adcList = new List();
-  dacList = new List();
-  delWriteList = new List();
-  delayReceiverList = new List();
-  sendList = new List();
-  printList = new List();
-  receiveList = new List();
-  tableList = new List();
-  tableActorList = new List();
+  dspNodeList = new List();
   inletList = new List();
   outletList = new List();
-  subgraphList = new List();
-  orderedEvaluationList = NULL;
+  
+  setPrintErr(defaultPrintFunction);
+  setPrintStd(defaultPrintFunction);
+  
+  graphId = globalGraphId++;
+  graphArguments = new PdMessage();
+  graphArguments->addElement(new MessageElement((float) graphId)); // $0
+  
+  if (parentGraph == NULL) {
+    // if this is the top-level graph
+    messageCallbackQueue = new OrderedMessageQueue();
+    numBytesInInputBuffers = numInputChannels * blockSize * sizeof(float);
+    numBytesInOutputBuffers = numOutputChannels * blockSize * sizeof(float);
+    globalDspInputBuffers = (float *) malloc(numBytesInInputBuffers);
+    globalDspOutputBuffers = (float *) malloc(numBytesInOutputBuffers);
+    messageReceiveList = new List();
+    messageSendList = new List();
+    dspReceiveList = new List();
+    dspSendList = new List();
+  } else {
+    messageCallbackQueue = NULL;
+    numBytesInInputBuffers = 0;
+    numBytesInOutputBuffers = 0;
+    globalDspInputBuffers = NULL;
+    globalDspOutputBuffers = NULL;
+    messageReceiveList = NULL;
+    messageSendList = NULL;
+    dspReceiveList = NULL;
+    dspSendList = NULL;
+  }
   
   const int MAX_CHARS_PER_LINE = 256;
   char *linePointer = (char *) malloc(MAX_CHARS_PER_LINE * sizeof(char));
@@ -100,9 +126,10 @@ PdGraph::PdGraph(FILE *fp, char *directory, char *libraryDirectory, int blockSiz
     if (strcmp(hashType, "#N") == 0) {
       char *objectType = strtok(NULL, " ");
       if (strcmp(objectType, "canvas") == 0) {
-        PdNodeInterface *pdNode = new PdGraph(fp, directory, libraryDirectory, blockSize, numInputChannels, numOutputChannels, sampleRate);
-        subgraphList->add(pdNode);
+        // a new subgraph is defined inline
+        PdNode *pdNode = new PdGraph(fp, directory, libraryDirectory, blockSize, numInputChannels, numOutputChannels, sampleRate, this);
         nodeList->add(pdNode);
+        dspNodeList->add(pdNode);
       } else {
         printf("WARNING | Unrecognised #N object type: \"%s\"", line);
       }
@@ -112,17 +139,21 @@ PdGraph::PdGraph(FILE *fp, char *directory, char *libraryDirectory, int blockSiz
           strcmp(objectType, "msg") == 0) {
         strtok(NULL, " "); // read the first canvas coordinate
         strtok(NULL, " "); // read the second canvas coordinate
-        char *objectInitString = strtok(NULL, ";"); // get the object initialisation string
-        PdNodeInterface *pdNode = PdObject::newInstance(objectType, objectInitString, blockSize, sampleRate, this);
+        char *objectLabel = strtok(NULL, " ;"); // delimit with " " or ";"
+        char *objectInitString = strtok(NULL, ";\n"); // get the object initialisation string
+        PdMessage *initMessage = new PdMessage(objectInitString, this);
+        PdNode *pdNode = newObject(objectType, objectLabel, initMessage, this);
+        delete initMessage;
         if (pdNode == NULL) {
           // object could not be instantiated, probably because the object is unknown
           // look for the object definition in an abstraction
           // first look in the local directory (the same directory as the original file)...
           char *filename = StaticUtils::joinPaths(objectInitString, ".pd");
-          pdNode = PdGraph::newInstance(directory, filename, libraryDirectory, blockSize, numInputChannels, numOutputChannels, sampleRate);
+          pdNode = PdGraph::newInstance(directory, filename, libraryDirectory, blockSize, numInputChannels, numOutputChannels, sampleRate, this);
           if (pdNode == NULL) {
             // ...and if that fails, look in the library directory
-            pdNode = PdGraph::newInstance(libraryDirectory, filename, libraryDirectory, blockSize, numInputChannels, numOutputChannels, sampleRate);
+            // TODO(mhroth): director_ies_
+            pdNode = PdGraph::newInstance(libraryDirectory, filename, libraryDirectory, blockSize, numInputChannels, numOutputChannels, sampleRate, this);
             if (pdNode == NULL) {
               free(filename);
               printf("ERROR | Unknown object or abstraction \"%s\".\n", objectInitString);
@@ -130,45 +161,47 @@ PdGraph::PdGraph(FILE *fp, char *directory, char *libraryDirectory, int blockSiz
             }
           }
           free(filename);
-          subgraphList->add(pdNode);
           nodeList->add(pdNode);
+          dspNodeList->add(pdNode);
         } else {
-          addObject((PdObject *) pdNode);
+          // add the object to the local graph and make any necessary registrations
+          addNode(pdNode);
         }
       } else if (strcmp(objectType, "connect") == 0) {
-        PdNodeInterface *fromNode = (PdNodeInterface *) nodeList->get(atoi(strtok(NULL, " ")));
+        PdNode *fromNode = (PdNode *) nodeList->get(atoi(strtok(NULL, " ")));
         int outletIndex = atoi(strtok(NULL, " "));
-        PdObject *fromObject = NULL;
+        MessageObject *fromObject = NULL;
         if (fromNode->getNodeType() == GRAPH) {
           fromObject = ((PdGraph *) fromNode)->getObjectAtOutlet(outletIndex);
         } else {
-          fromObject = ((PdObject *) fromNode)->getObjectAtOutlet(outletIndex);
+          fromObject = (MessageObject *) fromNode;
         }
         outletIndex = (fromNode->getNodeType() == GRAPH) ? 0 : outletIndex;
         
-        PdNodeInterface *toNode = (PdNodeInterface *) nodeList->get(atoi(strtok(NULL, " ")));
+        PdNode *toNode = (PdNode *) nodeList->get(atoi(strtok(NULL, " ")));
         int inletIndex = atoi(strtok(NULL, ";"));
-        PdObject *toObject = NULL;
+        MessageObject *toObject = NULL;
         if (toNode->getNodeType() == GRAPH) {
           toObject = ((PdGraph *) toNode)->getObjectAtInlet(inletIndex);
         } else {
-          toObject = ((PdObject *) toNode)->getObjectAtInlet(inletIndex);
+          toObject = (MessageObject *) toNode;
         }
         inletIndex = (toNode->getNodeType() == GRAPH) ? 0 : inletIndex;
         
         this->connect(fromObject, outletIndex, toObject, inletIndex);
       } else if (strcmp(objectType, "floatatom") == 0) {
         // defines a number box
-        char *objectInitString = strtok(NULL, ";");
-        nodeList->add(new MessageFloat(objectInitString));
+        nodeList->add(new MessageFloat(0.0f, this));
       } else if (strcmp(objectType, "symbolatom") == 0) {
-        char *objectInitString = strtok(NULL, ";");
-        nodeList->add(new MessageSymbol(objectInitString));
+        // TODO(mhroth)
+        //char *objectInitString = strtok(NULL, ";");
+        //nodeList->add(new MessageSymbol(objectInitString));
       } else if (strcmp(objectType, "restore") == 0) {
         break; // finished reading a subpatch. Return the object.
       } else if (strcmp(objectType, "text") == 0) {
-        char *objectInitString = strtok(NULL, ";");
-        nodeList->add(new TextObject(objectInitString));
+        // TODO(mhroth)
+        //char *objectInitString = strtok(NULL, ";");
+        //nodeList->add(new TextObject(objectInitString));
       } else if (strcmp(objectType, "declare") == 0) {
         // set environment for loading patch
         // TODO(mhroth): this doesn't do anything for us at the moment,
@@ -184,304 +217,383 @@ PdGraph::PdGraph(FILE *fp, char *directory, char *libraryDirectory, int blockSiz
 }
 
 PdGraph::~PdGraph() {
-  // delete all lists
-  // begin by deleting all nodes
-  for (int i = 0; i < nodeList->getNumElements(); i++) {
-    delete (PdNodeInterface *) nodeList->get(i);
+  if (isRootGraph()) {
+    delete messageCallbackQueue;
+    delete messageReceiveList;
+    delete messageSendList;
+    delete dspReceiveList;
+    delete dspSendList;
   }
-  delete nodeList;
-  delete adcList;
-  delete dacList;
-  delete delWriteList;
-  delete delayReceiverList;
-  delete sendList;
-  delete printList;
-  delete receiveList;
-  delete tableList;
-  delete tableActorList;
   delete inletList;
   delete outletList;
-  delete subgraphList;
-  if (orderedEvaluationList != NULL) {
-    // subgraphs have no orderedEvaluationList
-    delete orderedEvaluationList;
-  }
-  
-  free(directory);
-}
-
-PdObject *PdGraph::getObjectAtInlet(int inletIndex) {
-  return (PdObject *) inletList->get(inletIndex);
-}
-
-PdObject *PdGraph::getObjectAtOutlet(int outletIndex) {
-  return (PdObject *) outletList->get(outletIndex);
+  delete graphArguments;
+  free(globalDspInputBuffers);
+  free(globalDspOutputBuffers);
 }
 
 PdNodeType PdGraph::getNodeType() {
   return GRAPH;
 }
 
-char *PdGraph::getDirectory() {
-  return directory;
-}
-
-void PdGraph::connect(PdObject *fromObject, int outletIndex, PdObject *toObject, int inletIndex) {
-  toObject->addConnectionFromObjectToInlet(fromObject, outletIndex, inletIndex);
-}
-
-DspTable *PdGraph::getTable(char *tag) {
-  for (int i = 0; i < tableList->getNumElements(); i++) {
-    DspTable *dspTable = (DspTable *) tableList->get(i);
-    if (strcmp(dspTable->getTag(), tag) == 0) {
-      return dspTable;
+MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage *initMessage, PdGraph *graph) {
+  if (strcmp(objectType, "obj") == 0) {
+    if (strcmp(objectLabel, "+") == 0) {
+      return new MessageAdd(initMessage, graph);
+    } else if (strcmp(objectLabel, "float") == 0 ||
+        strcmp(objectLabel, "f") == 0) {
+      return new MessageFloat(initMessage, graph);
+    } else if (strcmp(objectLabel, "delay") == 0) {
+      return new MessageDelay(initMessage, graph);
+    } else if (strcmp(objectLabel, "inlet") == 0) {
+      return new MessageInlet(initMessage, graph);
+    } else if (strcmp(objectLabel, "loadbang") == 0) {
+      return new MessageLoadbang(graph);
+    } else if (strcmp(objectLabel, "pipe") == 0) {
+      return new MessagePipe(initMessage, graph);
+    } else if (strcmp(objectLabel, "print") == 0) {
+      return new MessagePrint(initMessage, graph);
+    } else if (strcmp(objectLabel, "outlet") == 0) {
+      return new MessageOutlet(initMessage, graph);
+    } else if (strcmp(objectLabel, "receive") == 0) {
+      return new MessageReceive(initMessage, graph);
+    } else if (strcmp(objectLabel, "send") == 0) {
+      return new MessageSend(initMessage, graph);
+    } else if (strcmp(objectLabel, "adc~") == 0) {
+      return new DspAdc(graph);
+    } else if (strcmp(objectLabel, "dac~") == 0) {
+      return new DspDac(graph);
     }
+  } else if (strcmp(objectType, "msg") == 0) {
+    // TODO(mhroth)
   }
+  
+  // ERROR!
+  printErr("Object not recognised.");
   return NULL;
 }
 
-void PdGraph::addObject(PdObject *pdObject) {
-  nodeList->add(pdObject);
+void PdGraph::addNode(PdNode *node) {
+  // TODO(mhroth)
   
-  char *objectName = strtok(pdObject->getInitString(), " ");
-  if (strcmp(objectName, "adc~") == 0 ||
-      strcmp(objectName, "soundinput") == 0) {
-    adcList->add(pdObject);
-  } else if (strcmp(objectName, "dac~") == 0 ||
-             strcmp(objectName, "soundoutput") == 0) {
-    dacList->add(pdObject);
-  } else if (strcmp(objectName, "send") == 0 ||
-             strcmp(objectName, "s") == 0 ||
-             strcmp(objectName, "send_external") == 0 ||
-             strcmp(objectName, "send~") == 0 ||
-             strcmp(objectName, "s~") == 0) {
-    sendList->add(pdObject);
-  } else if (strcmp(objectName, "receive") == 0 ||
-             strcmp(objectName, "r") == 0 ||
-             strcmp(objectName, "receive~") == 0 ||
-             strcmp(objectName, "r~") == 0) {
-    receiveList->add(pdObject);
-  } else if (strcmp(objectName, "delwrite~") == 0) {
-    delWriteList->add(pdObject);
-  } else if (strcmp(objectName, "delread~") == 0 ||
-             strcmp(objectName, "vd~") == 0) {
-    delayReceiverList->add(pdObject);
-  } else if (strcmp(objectName, "table") == 0) {
-    tableList->add(pdObject);
-  } else if (strcmp(objectName, "tabread4~") == 0) {
-    tableActorList->add(pdObject);
-  } else if (strcmp(objectName, "inlet") == 0 ||
-             strcmp(objectName, "inlet~") == 0) {
-    inletList->add(pdObject);
-  } else if (strcmp(objectName, "outlet") == 0 ||
-             strcmp(objectName, "outlet~") == 0) {
-    outletList->add(pdObject);
-  } else if (strcmp(objectName, "print") == 0) {
-    printList->add(pdObject);
+  // all nodes are added to the node list
+  nodeList->add(node);
+  
+  switch (node->getNodeType()) {
+    case GRAPH: {
+      dspNodeList->add(node);
+      break;
+    }
+    case OBJECT: {
+      MessageObject *object = (MessageObject *) node;
+      
+      if (strcmp(object->getObjectLabel(), "inlet") == 0) {
+        inletList->add(object);
+      } else if (strcmp(object->getObjectLabel(), "outlet") == 0) {
+        outletList->add(object);
+      } else if (strcmp(object->getObjectLabel(), "send") == 0) {
+        registerMessageSend((MessageSend *) object);
+      } else if (strcmp(object->getObjectLabel(), "receive") == 0) {
+        registerMessageReceive((MessageReceive *) object);
+      }
+      /*
+      else if (strcmp(object->getObjectLabel(), "send~") == 0) {
+        registerDspSend((DspSendReceive *) object);
+      } else if (strcmp(object->getObjectLabel(), "receive~") == 0) {
+        registerDspReceive((DspSendReceive *) object);
+      }
+      */
+      
+      break;
+    }
+    default: {
+      break;
+    }
   }
 }
 
-void PdGraph::prepareForProcessing() {
-  // reduce the graph to only PdObjects
-  List *objectList = flatten(); // this list contains *all* PdObjects in the graph,
-                                // including redundant or unused ones.
-  
-  // connect send(~) and receive(~) objects
-  for (int i = 0; i < receiveList->getNumElements(); i++) {
-    PdObject *receiveObject = (PdObject *) receiveList->get(i);
-    for (int j = 0; j < sendList->getNumElements(); j++) {
-      PdObject *sendObject = (PdObject *) sendList->get(j);
-      if (receiveObject->getObjectType() == sendObject->getObjectType()) {
-        switch (receiveObject->getObjectType()) {
-          case DSP: {
-            if (strcmp(((DspSendReceive *) receiveObject)->getTag(),
-                       ((DspSendReceive *) sendObject)->getTag()) == 0) {
-              this->connect(sendObject, 0, receiveObject, 0);
-            }
-            break;
-          }
-          case MESSAGE: {
-            if (strcmp(((MessageSendReceive *) receiveObject)->getTag(),
-                       ((MessageSendReceive *) sendObject)->getTag()) == 0) {
-              this->connect(sendObject, 0, receiveObject, 0);
-            }
-            break;
-          }
-          default: {
-            break;
-          }
+void PdGraph::connect(MessageObject *fromObject, int outletIndex, MessageObject *toObject, int inletIndex) {
+  toObject->addConnectionFromObjectToInlet(fromObject, outletIndex, inletIndex);
+  fromObject->addConnectionToObjectFromOutlet(toObject, inletIndex, outletIndex);
+}
+
+MessageObject *PdGraph::getObjectAtInlet(int inletIndex) {
+  return (MessageObject *) inletList->get(inletIndex);
+}
+
+MessageObject *PdGraph::getObjectAtOutlet(int outletIndex) {
+  return (MessageObject *) outletList->get(outletIndex);
+}
+
+double PdGraph::getBlockStartTimestamp() {
+  return blockStartTimestamp;
+}
+
+void PdGraph::scheduleMessage(MessageObject *messageObject, int outletIndex, PdMessage *message) {
+  if (isRootGraph()) {
+    message->reserve(messageObject);
+    messageCallbackQueue->insertMessage(messageObject, outletIndex, message);
+  } else {
+    parentGraph->scheduleMessage(messageObject, outletIndex, message);
+  }
+}
+
+float *PdGraph::getGlobalDspBufferAtInlet(int inletIndex) {
+  if (isRootGraph()) {
+    return globalDspInputBuffers + (inletIndex * blockSize);
+  } else {
+    return parentGraph->getGlobalDspBufferAtInlet(inletIndex);
+  }
+}
+
+float *PdGraph::getGlobalDspBufferAtOutlet(int outletIndex) {
+  if (isRootGraph()) {
+    return globalDspOutputBuffers + (outletIndex * blockSize);
+  } else {
+    return parentGraph->getGlobalDspBufferAtOutlet(outletIndex);
+  }
+}
+
+void PdGraph::registerMessageReceive(MessageReceive *messageReceive) {
+  if (isRootGraph()) {
+    messageReceiveList->add(messageReceive);
+  } else {
+    parentGraph->registerMessageReceive(messageReceive);
+  }
+}
+
+void PdGraph::registerMessageSend(MessageSend *messageSend) {
+  if (isRootGraph()) {
+    // ensure that no two senders exist with the same name
+    int size = messageSendList->size();
+    MessageSend *sendObject = NULL;
+    for (int i = 0; i < size; i++) {
+      sendObject = (MessageSend *) messageSendList->get(i);
+      if (strcmp(sendObject->getName(), messageSend->getName()) == 0) {
+        printErr("[send] object with duplicate name added to graph.");
+        return;
+      }
+    }
+
+    messageSendList->add(messageSend);
+    /* TODO(mhroth): add connections to all registered receivers with the same name
+    // add connection to the registered sender
+    MessageSendReceive *messageReceive = NULL;
+    int numReceivers = messageReceiveList->size();
+    for (int i = 0; i < numReceivers; i++) {
+      messageReceive = (MessageSendReceive *) messageReceiveList->get(i);
+      if (strcmp(messageReceive->getName(), messageSend->getName()) == 0) {
+        // TODO(mhroth): make sure that two nodes are not already connected
+        if (messageSend->isConnectedToViaOutgoing(messageReceive)) {
+          connect(messageSend, 0, messageReceive, 0);
         }
       }
     }
+    */
+  } else {
+    parentGraph->registerMessageSend(messageSend);
   }
-  
-  // connect delay receivers to delwrite~
-  for (int i = 0; i < delayReceiverList->getNumElements(); i++) {
-    RemoteBufferReceiverObject *bufferReceiver = (RemoteBufferReceiverObject *) delayReceiverList->get(i);
-    for (int j = 0; j < delWriteList->getNumElements(); j++) {
-      RemoteBufferObject *bufferObject = (RemoteBufferObject *) delWriteList->get(j);
-      if (strcmp(bufferReceiver->getTag(), bufferObject->getTag()) == 0) {
-        bufferReceiver->setRemoteBuffer(bufferObject);
-      }
-    }
-  }
-  
-  // connect table actors to table
-  for (int i = 0; i < tableActorList->getNumElements(); i++) {
-    RemoteBufferReceiverObject *bufferReceiver = (RemoteBufferReceiverObject *) tableActorList->get(i);
-    for (int j = 0; j < tableList->getNumElements(); j++) {
-      RemoteBufferObject *bufferObject = (RemoteBufferObject *) tableList->get(j);
-      if (strcmp(bufferReceiver->getTag(), bufferObject->getTag()) == 0) {
-        bufferReceiver->setRemoteBuffer(bufferObject);
-      }
-    }
-  }
-  
-  // get an ordered list of the nodes which need to be evaluated
-  orderedEvaluationList = getOrderedEvaluationList(objectList);
-  delete objectList;
 }
 
-List *PdGraph::flatten() {
-  List *objectList = new List();
-  for (int i = 0; i < nodeList->getNumElements(); i++) {
-    // add all OBJECTs in the current graph to the objectList
-    PdNodeInterface *pdNode = (PdNodeInterface *) nodeList->get(i);
-    if (pdNode->getNodeType() == OBJECT) {
-      objectList->add(pdNode);
-    }
+void PdGraph::registerDspReceive(DspReceive *dspReceive) {
+  if (isRootGraph()) {
+    dspReceiveList->add(dspReceive);
+  } else {
+    parentGraph->registerDspReceive(dspReceive);
   }
-  for (int i = 0; i < subgraphList->getNumElements(); i++) {
-    // flatten all of the subgraphs and add their special object lists
-    // to the local one
-    PdGraph *pdGraph = (PdGraph *) subgraphList->get(i);
-    List *subgraphObjectList = pdGraph->flatten();
-    objectList->add(subgraphObjectList);
-    delete subgraphObjectList;
-    adcList->add(pdGraph->adcList);
-    dacList->add(pdGraph->dacList);
-    sendList->add(pdGraph->sendList);
-    printList->add(pdGraph->printList);
-    receiveList->add(pdGraph->receiveList);
-    delWriteList->add(pdGraph->delWriteList);
-    delayReceiverList->add(pdGraph->delayReceiverList);
-    tableList->add(pdGraph->tableList);
-    tableActorList->add(pdGraph->tableActorList);
-  }
-  return objectList;
 }
 
-List *PdGraph::getOrderedEvaluationList(List *objectList) {
-  // find all leaves of the graph
-  List *leafList = new List();
-  
-  // do not find all leaves of the graph. We only care about what is connected
-  // to the dac~s (and also objects which typically have no outputs)
-  leafList->add(dacList);
-  leafList->add(printList);
-  leafList->add(delWriteList);
-  //leafList->add(tableList); // no need to do because table isn't really process()ed
-  
-  List *orderedEvaluationList = new List();
-  
-  for (int i = 0; i < leafList->getNumElements(); i++) {
-    PdObject *pdObject = (PdObject *) leafList->get(i);
-    List *list = pdObject->getEvaluationOrdering();
-    orderedEvaluationList->add(list);
-    delete list;
+void PdGraph::registerDspSend(DspSend *dspSend) {
+  if (isRootGraph()) {
+    // TODO(mhroth): add in duplicate detection
+    dspSendList->add(dspSend);
+  } else {
+    parentGraph->registerDspSend(dspSend);
   }
-  
-  printf("Ordered evaluation list (%i/%i active objects):\n", 
-      orderedEvaluationList->getNumElements(),  objectList->getNumElements());
-  for (int i = 0; i < orderedEvaluationList->getNumElements(); i++) {
-    PdObject *object = (PdObject *) orderedEvaluationList->get(i);
-    printf("%s\n", object->getInitString());
-  }
-  
-  delete leafList;
-  
-  return orderedEvaluationList;
 }
 
-void PdGraph::process(float *audioInput, float *audioOutput) {
-  // update the adc~s with the new input buffers
-  for (int i = 0; i < adcList->getNumElements(); i++) {
-    DspAdc *dspAdc = (DspAdc *) adcList->get(i);
-    for (int j = 0, k = 0; j < numInputChannels; j++, k+=blockSize) {
-      dspAdc->copyIntoDspBufferAtOutlet(j, audioInput + k);
-    }
+void PdGraph::process(float *inputBuffers, float *outputBuffers) {
+  // set up adc~ buffers
+  memcpy(globalDspInputBuffers, inputBuffers, numBytesInInputBuffers);
+  
+  // Send all messages for this block
+  MessageDestination *destination = NULL;
+  double nextBlockStartTimestamp = blockStartTimestamp + blockDurationMs;
+  while ((destination = (MessageDestination *) messageCallbackQueue->get(0)) != NULL &&
+         destination->message->getTimestamp() >= blockStartTimestamp &&
+         destination->message->getTimestamp() < nextBlockStartTimestamp) {
+    messageCallbackQueue->remove(0); // remove the message from the queue
+    destination->message->unreserve(destination->object);
+    destination->object->sendMessage(destination->index, destination->message);
   }
   
-  // process all of the nodes
-  for (int i = 0; i < orderedEvaluationList->getNumElements(); i++) {
-    PdObject *pdObject = (PdObject *) orderedEvaluationList->get(i);
-    pdObject->process();
-  }
+  // clear the global output audio buffers so that dac~ nodes can write to it
+  memset(globalDspOutputBuffers, 0, numBytesInOutputBuffers);
+  
+  // execute all audio objects in this graph
+  processDsp();
+  
+  // copy the output audio to the given buffer
+  memcpy(outputBuffers, globalDspOutputBuffers, numBytesInOutputBuffers);
+  
+  blockStartTimestamp = nextBlockStartTimestamp;
+}
 
-  if (dacList->getNumElements() > 0) {
-    DspDac *dspDac = (DspDac *) dacList->get(0);
-    for (int j = 0, k = 0; j < numOutputChannels; j++, k+=blockSize) {
-      float *dspBuffer = dspDac->getDspBufferAtInlet(j);
-      if (dspBuffer == NULL) { // account for case when there is no connection to a particular output channel
-        memset(audioOutput + k, 0, numBytesInBlock);
-      } else {
-        memcpy(audioOutput + k, dspBuffer, numBytesInBlock);
+void PdGraph::processDsp() {
+  if (switched) {
+    // DSP processing elements are only executed if the graph is switched on
+    int numNodes = dspNodeList->size();
+    PdNode *node = NULL;
+    //for (int i = 0; i < 1; i++) { // TODO(mhroth): iterate depending on local blocksize relative to parent
+      // execute all nodes which process audio
+      for (int j = 0; j < numNodes; j++) {
+        node = (PdNode *) dspNodeList->get(j);
+        node->processDsp();
       }
-    }
-    for (int i = 1; i < dacList->getNumElements(); i++) {
-      DspDac *dspDac = (DspDac *) dacList->get(i);
-      for (int j = 0, k = 0; j < numOutputChannels; j++, k+=blockSize) {
-        float *outputBuffer = audioOutput + k;
-        float *dspBuffer = dspDac->getDspBufferAtInlet(j);
-        if (dspBuffer != NULL) {
-          // sum the output of all dac~s to the output buffer
-          for (int z = 0; z < blockSize; z++) {
-            outputBuffer[z] += dspBuffer[z];
-          }
+    //}
+  }
+}
+
+// TODO(mhroth)
+void PdGraph::computeProcessOrder() {
+/*
+  dspNodeList->clear(); // reset the dsp node list
+  
+  // compute process order for local graph
+  List *leafNodeList = new List();
+  PdNode *node = NULL;
+  MessageObject *object = NULL;
+  for (int i = 0; i < nodeList->size(); i++) {
+    node = (PdNode *) nodeList->get(i);
+    switch (node->getNodeType()) {
+      case GRAPH: {
+        // compute process order for all subgraphs
+        ((PdGraph *) node)->computeProcessOrder();
+        break;
+      }
+      case OBJECT: {
+        // generate leaf node list
+        object = (MessageObject *) node;
+        if (object->isLeafNode() ||
+            strcmp(object->getObjectLabel(), "outlet~") == 0 ||
+            strcmp(object->getObjectLabel(), "send~") == 0 ||
+            strcmp(object->getObjectLabel(), "throw~") == 0) {
+          leafNodeList->add(object);
         }
+        break;
+      }
+      default: {
+        break;
       }
     }
   }
+  
+  // for all leaf nodes, order the tree
+  List *processList = new List();
+  for (int i = 0; i < leafNodeList->size(); i++) {
+    object = (MessageObject *) leafNodeList->get(i);
+    List *processSubList = object->getProcessOrder();
+    processList->add(processSubList);
+    delete processSubList;
+  }
+  
+  delete leafNodeList;
+  
+  // add only those nodes which process audio to the final list
+  for (int i = 0; i < processList->size(); i++) {
+    object = (MessageObject *) processList->get(i);
+    if (object->doesProcessAudio()) {
+      dspNodeList->add(object);
+    }
+  }
+  
+  delete processList;
+*/
 }
 
-void PdGraph::setPrintHook(void(*printHookIn)(char *)) {
-  printHook = printHookIn;
+int PdGraph::getBlockSize() {
+  return blockSize;
 }
 
-void PdGraph::print(char *str) {
-  if (printHook != NULL) {
-    printHook(str);
+void PdGraph::setBlockSize(int blockSize) {
+  // only update blocksize if it is <= the parent's
+  if (blockSize <= parentGraph->getBlockSize()) {
+    // TODO(mhroth)
+    this->blockSize = blockSize;
   }
 }
 
-/* Expose our PdGraph object with a pure C interface */
-extern "C" {
-  /** Create a new ZenGarden graph to evaluate Pd patches */
-  PdGraph *NewPdGraph(char *directory, char *filename, char *libraryDirectory, int blockSize, int numInputChannels, int numOutputChannels, int sampleRate) {
-    return PdGraph::newInstance(directory, filename, libraryDirectory, blockSize, numInputChannels, numOutputChannels, sampleRate);
+void PdGraph::setSwitch(bool switched) {
+  this->switched = switched;
+}
+
+bool PdGraph::isSwitchedOn() {
+  return switched;
+}
+
+bool PdGraph::isRootGraph() {
+  return (parentGraph == NULL);
+}
+      
+void PdGraph::setPrintErr(void (*printFunction)(char *)) {
+  if (isRootGraph()) {
+    printErrFunction = printFunction;
+  } else {
+    parentGraph->setPrintErr(printFunction);
   }
-  
-  /** Destroy an existing ZenGarden graph */
-  void DeletePdGraph(PdGraph *pdGraph) {
-    delete pdGraph;
+}
+
+void PdGraph::printErr(char *msg) {
+  if (isRootGraph()) {
+    printErrFunction(msg);
+  } else {
+    parentGraph->printErr(msg);
   }
-  
-  /** Init function to be called after adding objects to the graph and before processing */
-  void PrepareForProcessingPdGraph(PdGraph *pdGraph) {
-    pdGraph->prepareForProcessing();
+}
+
+void PdGraph::printErr(const char *msg) {
+  if (isRootGraph()) {
+    printErrFunction((char *) msg);
+  } else {
+    parentGraph->printErr(msg);
   }
-  
-  /** Call this every frame to put and get audio data into and out of the graph */
-  void ProcessPdGraph(PdGraph *pdGraph, float *audioInput, float *audioOutput) {
-    pdGraph->process(audioInput, audioOutput);
+}
+      
+void PdGraph::setPrintStd(void (*printFunction)(char *)) {
+  if (isRootGraph()) {
+    printStdFunction = printFunction;
+  } else {
+    parentGraph->setPrintStd(printFunction);
   }
-  
-  void defaultPrintHook(char *incoming) {
-    printf(incoming);
+}
+
+void PdGraph::printStd(char *msg) {
+  if (isRootGraph()) {
+    printStdFunction(msg);
+  } else {
+    parentGraph->printStd(msg);
   }
-  
-  /** Set a callback which accepts a char* and does something with the results of all Pd [print] objects. */
-  void SetPrintHook(PdGraph *pdGraph, void(*printHookIn)(char *)) {
-    PdGraph::setPrintHook(printHookIn);
+}
+
+void PdGraph::printStd(const char *msg) {
+  if (isRootGraph()) {
+    printStdFunction((char *) msg);
+  } else {
+    parentGraph->printStd(msg);
   }
+}
+
+MessageElement *PdGraph::getArgument(int argIndex) {
+  return graphArguments->getElement(argIndex);
+}
+
+float PdGraph::getSampleRate() {
+  return sampleRate;
+}
+
+int PdGraph::getNumInputChannels() {
+  return numInputChannels;
+}
+
+int PdGraph::getNumOutputChannels() {
+  return numOutputChannels;
 }

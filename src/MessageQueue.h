@@ -20,27 +20,25 @@
  *
  */
 
-#ifndef _MESSAGE_FLOAT_H_
-#define _MESSAGE_FLOAT_H_
+#ifndef _MESSAGE_QUEUE_H_
+#define _MESSAGE_QUEUE_H_
 
-#include "MessageObject.h"
+#include "LinkedList.h"
+#include "MessageLetPair.h"
 
-/** [f|float float] */
-class MessageFloat : public MessageObject {
-    
-  public:
-    MessageFloat(PdMessage *initMessage, PdGraph *graph);
-    MessageFloat(float constant, PdGraph *graph);
-    ~MessageFloat();
+class PdMessage;
+
+class MessageQueue : public LinkedList {
   
-    const char *getObjectLabel();
+  public:
+    MessageQueue();
+    ~MessageQueue();
     
-  private:
-    void init(float constant);
-    void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage(int outletIndex);
+    void add(int inletIndex, PdMessage *message);
     
-    float constant;
+    void *newDataHolder();
+    
+    void deleteDataHolder(void *data);
 };
 
-#endif // _MESSAGE_FLOAT_H_
+#endif // _MESSAGE_QUEUE_H_

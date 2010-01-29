@@ -94,3 +94,16 @@ float StaticUtils::sineApprox(float x) {
   //int y = *(int *)&x | 0x80000000;
   //return (1.273239544735163f * x) - (0.405284734569351f * x) * (*(float *)&y);
 }
+
+bool StaticUtils::isArgumentIndex(char *str) {
+  return (strncmp(str, "\\$", 1) == 0);
+}
+
+int StaticUtils::getArgumentIndex(char *str) {
+  if (StaticUtils::isArgumentIndex(str)) {
+    // TODO(mhroth): CHECK THIS!
+    return atoi(str+1); // the first character is '$'
+  } else {
+    return -1;
+  }
+}

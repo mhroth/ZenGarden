@@ -1,59 +1,48 @@
+/*
+ *  Copyright 2009 Reality Jockey, Ltd.
+ *                 info@rjdj.me
+ *                 http://rjdj.me/
+ * 
+ *  This file is part of ZenGarden.
+ *
+ *  ZenGarden is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  ZenGarden is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Lesser General Public License for more details.
+ *  
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with ZenGarden.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #include <stdlib.h>
 #include <stdio.h>
 
 #include "PdGraph.h"
 #include "StaticUtils.h"
 
-#include "MessageExternalSend.h"
-
-int main(int argc, char * const argv[]) {
+int main (int argc, char * const argv[]) {
   const int blockSize = 64;
   const int numInputChannels = 2;
   const int numOutputChannels = 2;
-  const int sampleRate = 22050;
-  const float floatHalfRandMax = (float) (RAND_MAX >> 1);
-  
-  PdGraph *graph = PdGraph::newInstance("/Users/mhroth/Desktop/", "64_osc.pd", "/Users/mhroth/rjdj/client/trunk/extradata/rjlib/",
-                                        blockSize, numInputChannels, numOutputChannels, sampleRate);
-  if (graph == NULL) {
-    printf("PdGraph could not be created. Is the filename correct?\n");
-    return 0;
-  }
-  
-  float audioInput[blockSize * numInputChannels];
-  float audioOutput[blockSize * numOutputChannels];
-  /*
-  char *objectInitString = StaticUtils::copyString("send_external #accelerate");
-  MessageExternalSend *sendAccelerate = new MessageExternalSend("#accelerate", objectInitString);
-  free(objectInitString);
-  graph->addObject(sendAccelerate);
-  PdMessage *accelerateMessage = new PdMessage();
-  accelerateMessage->addElement(new MessageElement(-1.0f));
-  accelerateMessage->addElement(new MessageElement(0.0f));
-  accelerateMessage->addElement(new MessageElement(-9.8f));
-  accelerateMessage->setBlockIndex(0);
-  */
-  graph->prepareForProcessing();
-  for (int z = 0; z < 1000000; z++) {
-   // pass in noise to the adc~s
-   for (int i = 0; i < blockSize * numInputChannels; i++) {
-     audioInput[i] = ((float) rand() / floatHalfRandMax) - 1.0f;
-   }
-   //sendAccelerate->setExternalMessage(accelerateMessage);
-   graph->process(audioInput, audioOutput);
-  /*
-   for (int i = 0; i < blockSize; i++) {
-     printf("%f ", audioOutput[i]);
-   }
-   printf("\n");
-   */
-  }
+  const float sampleRate = 22050.0f;
 
+  PdGraph *graph = PdGraph::newInstance("/Users/mhroth/workspace/pdm10/", "test.pd", "/Users/mhroth/rjdj/client/trunk/extradata/rjlib/",
+                                        blockSize, numInputChannels, numOutputChannels, sampleRate, NULL);
+  
+  float *inputBuffers = (float *) malloc(numInputChannels * blockSize * sizeof(float));
+  float *outputBuffers = (float *) malloc(numOutputChannels * blockSize * sizeof(float));
+  
+  for (int i = 0; i < 100; i++) {
+    graph->process(inputBuffers, outputBuffers);
+  }
+  
   delete graph;
-  
-  free(audioInput);
-  free(audioOutput);
-  //delete accelerateMessage;
-  
-  return 0;
+  free(inputBuffers);
+  free(outputBuffers);
 }

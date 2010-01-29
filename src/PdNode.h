@@ -20,27 +20,21 @@
  *
  */
 
-#ifndef _MESSAGE_FLOAT_H_
-#define _MESSAGE_FLOAT_H_
+#ifndef _PD_NODE_H_
+#define _PD_NODE_H_
 
-#include "MessageObject.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "List.h"
+#include "PdNodeType.h"
+#include "StaticUtils.h"
 
-/** [f|float float] */
-class MessageFloat : public MessageObject {
-    
-  public:
-    MessageFloat(PdMessage *initMessage, PdGraph *graph);
-    MessageFloat(float constant, PdGraph *graph);
-    ~MessageFloat();
+class PdNode {
   
-    const char *getObjectLabel();
-    
-  private:
-    void init(float constant);
-    void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage(int outletIndex);
-    
-    float constant;
+  public:
+    virtual void processDsp() = 0;
+    virtual PdNodeType getNodeType() = 0;
 };
 
-#endif // _MESSAGE_FLOAT_H_
+#endif // _PD_NODE_H_

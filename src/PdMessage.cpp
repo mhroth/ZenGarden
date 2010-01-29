@@ -24,18 +24,77 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "PdGraph.h"
 #include "PdMessage.h"
+#include "StaticUtils.h"
+
+int PdMessage::globalMessageId = 0;
 
 PdMessage::PdMessage() {
-  blockIndex = 0.0f;
   elementList = new List();
+  messageId = globalMessageId++;
+  timestamp = 0.0;
+  reservedList = new LinkedList();
+}
+
+PdMessage::PdMessage(char *initString, PdGraph *graph) {
+  elementList = new List();
+  messageId = globalMessageId++;
+  timestamp = 0.0;
+  reservedList = new LinkedList();
+  
+  char *token = strtok(initString, " ");
+  if (token != NULL) {
+    do {
+      if (StaticUtils::isNumeric(token)) {
+        addElement(new MessageElement(atof(token)));
+      } else if (strcmp(token, "float") == 0 ||
+                 strcmp(token, "f") == 0) {
+        addElement(new MessageElement(0.0f));
+      } else if (strcmp(token, "bang") == 0 ||
+                 strcmp(token, "b") == 0) {
+        addElement(new MessageElement());
+      } else if (strncmp(token, "\\$", 1) == 0) {
+        // element refers to a graph argument
+        MessageElement *argumentElement = graph->getArgument(atoi(token+1));
+        switch (argumentElement->getType()) {
+          case FLOAT: {
+            addElement(new MessageElement(argumentElement->getFloat()));
+            break;
+          }
+          case BANG: {
+            addElement(new MessageElement());
+            break;
+          }
+          case SYMBOL: {
+            addElement(new MessageElement(argumentElement->getSymbol()));
+            break;
+          }
+          default: {
+            break;
+          }
+        }
+      } else {
+        // element is symbolic
+        addElement(new MessageElement(token));
+      }
+    } while ((token = strtok(NULL, " ")) != NULL);
+  }
 }
 
 PdMessage::~PdMessage() {
-  for (int i = 0; i < elementList->getNumElements(); i++) {
+  // delete the element list
+  for (int i = 0; i < elementList->size(); i++) {
     delete (MessageElement *) elementList->get(i);
   }
   delete elementList;
+  
+  // delete the reserved list
+  delete reservedList;
+}
+
+int PdMessage::getMessageId() {
+  return messageId;
 }
 
 void PdMessage::addElement(MessageElement *messageElement) {
@@ -43,35 +102,44 @@ void PdMessage::addElement(MessageElement *messageElement) {
 }
 
 int PdMessage::getNumElements() {
-  return elementList->getNumElements();
+  return elementList->size();
 }
 
 MessageElement *PdMessage::getElement(int index) {
   return (MessageElement *) elementList->get(index);
 }
 
-int PdMessage::getBlockIndex() {
-  return lrintf(truncf(blockIndex));
+float PdMessage::getBlockIndex(double currentBlockTimestamp) {
+  return (float) (timestamp - currentBlockTimestamp);
 }
 
-float PdMessage::getBlockIndexAsFloat() {
-  return blockIndex;
+void PdMessage::setTimestamp(double timestamp) {
+  this->timestamp = timestamp;
 }
 
-void PdMessage::setBlockIndex(int blockIndex) {
-  this->blockIndex = (int) blockIndex;
+double PdMessage::getTimestamp() {
+  return timestamp;
 }
 
-void PdMessage::setBlockIndexAsFloat(float blockIndex) {
-  this->blockIndex = blockIndex;
+bool PdMessage::isReserved() {
+  return (reservedList->size() > 0);
+}
+
+void PdMessage::reserve(MessageObject *messageObject) {
+  void **data = reservedList->add();
+  *data = messageObject;
+}
+
+void PdMessage::unreserve(MessageObject *messageObject) {
+  reservedList->remove(messageObject);
 }
 
 void PdMessage::clear() {
-  for (int i = 0; i < elementList->getNumElements(); i++) {
+  for (int i = 0; i < elementList->size(); i++) {
     delete (MessageElement *) elementList->get(i);
   }
   elementList->clear();
-  blockIndex = 0;
+  timestamp = 0.0;
 }
 
 void PdMessage::clearAndCopyFrom(PdMessage *message) {
@@ -79,12 +147,12 @@ void PdMessage::clearAndCopyFrom(PdMessage *message) {
   for (int i = 0; i < message->getNumElements(); i++) {
     addElement(message->getElement(i)->copy());
   }
-  blockIndex = message->getBlockIndex();
+  timestamp = message->getTimestamp();
 }
 
 char *PdMessage::toString() {
   // http://stackoverflow.com/questions/295013/using-sprintf-without-a-manually-allocated-buffer
-  int listlen = elementList->getNumElements();
+  int listlen = elementList->size();
   //char *bits[listlen]; // each atom stored as a string
   int lengths[listlen]; // how long is the string of each atom
   char *finalString; // the final buffer we will pass back after concatenating all strings - user should free it
@@ -96,11 +164,23 @@ char *PdMessage::toString() {
   // chrism: apparently this might fail under MSVC because of snprintf(NULL) - do we care?
   for (int i = 0; i < listlen; i++) {
     lengths[i] = 0;
-    MessageElement *el = (MessageElement *)elementList->get(i);
-    if (el->getType() == SYMBOL) {
-      lengths[i] = snprintf(NULL, 0, "%s", el->getSymbol());
-    } else if (el->getType() == FLOAT) {
-      lengths[i] = snprintf(NULL, 0, "%g", el->getFloat());
+    MessageElement *el = (MessageElement *) elementList->get(i);
+    switch (el->getType()) {
+      case FLOAT: {
+        lengths[i] = snprintf(NULL, 0, "%g", el->getFloat());
+        break;
+      }
+      case BANG: {
+        lengths[i] = 4; //snprintf(NULL, 0, "%s", "bang");
+        break;
+      }
+      case SYMBOL: {
+        lengths[i] = snprintf(NULL, 0, "%s", el->getSymbol());
+        break;
+      }
+      default: {
+        break;
+      }
     }
     // total length of our string is each atom plus a space, or \0 on the end
     size += lengths[i] + 1;
@@ -116,10 +196,22 @@ char *PdMessage::toString() {
       pos += 1;
     }
     // put a string representation of each atom into the final string
-    if (el->getType() == SYMBOL) {
-      snprintf(&finalString[pos], lengths[i] + 1, "%s", el->getSymbol());
-    } else if (el->getType() == FLOAT) {
-      snprintf(&finalString[pos], lengths[i] + 1, "%g", el->getFloat());
+    switch (el->getType()) {
+      case FLOAT: {
+        snprintf(&finalString[pos], lengths[i] + 1, "%g", el->getFloat());
+        break;
+      }
+      case BANG: {
+        snprintf(&finalString[pos], lengths[i] + 1, "%s", "bang");
+        break;
+      }
+      case SYMBOL: {
+        snprintf(&finalString[pos], lengths[i] + 1, "%s", el->getSymbol());
+        break;
+      }
+      default: {
+        break;
+      }
     }
     pos += lengths[i];
   }

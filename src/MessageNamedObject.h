@@ -20,27 +20,23 @@
  *
  */
 
-#ifndef _MESSAGE_FLOAT_H_
-#define _MESSAGE_FLOAT_H_
+#ifndef _MESSAGE_NAMED_OBJECT_H_
+#define _MESSAGE_NAMED_OBJECT_H_
 
 #include "MessageObject.h"
 
-/** [f|float float] */
-class MessageFloat : public MessageObject {
-    
-  public:
-    MessageFloat(PdMessage *initMessage, PdGraph *graph);
-    MessageFloat(float constant, PdGraph *graph);
-    ~MessageFloat();
+/** This is the superclass of all named/remote objects. */
+class MessageNamedObject : public MessageObject {
   
-    const char *getObjectLabel();
+  public:
+    MessageNamedObject(char *initName, int numMessageInlets, int numMessageOutlets, PdGraph *graph);
+    virtual ~MessageNamedObject();
     
-  private:
-    void init(float constant);
-    void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage(int outletIndex);
+    char *getName();
     
-    float constant;
+  protected:
+    char *name;
+  
 };
 
-#endif // _MESSAGE_FLOAT_H_
+#endif // _MESSAGE_NAMED_OBJECT_H_

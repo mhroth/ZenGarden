@@ -23,20 +23,24 @@
 #ifndef _MESSAGE_ADD_H_
 #define _MESSAGE_ADD_H_
 
-#include "MessageBinaryOperationObject.h"
+#include "MessageObject.h"
 
-/**
- * +
- */
-class MessageAdd : public MessageBinaryOperationObject {
+/** [+], [+ float] */
+class MessageAdd : public MessageObject {
   
   public:
-    MessageAdd(char *initString);
-    MessageAdd(float constant, char *initString);
+    MessageAdd(PdMessage *initMessage, PdGraph *graph);
+    MessageAdd(float constant, PdGraph *graph);
     ~MessageAdd();
   
-  protected:
-    inline float performBinaryOperation(float left, float right);
+    const char *getObjectLabel();
+    
+  private:
+    void init(float constant);
+    void processMessage(int inletIndex, PdMessage *message);
+    PdMessage *newCanonicalMessage(int outletIndex);
+    
+    float constant;
 };
 
 #endif // _MESSAGE_ADD_H_

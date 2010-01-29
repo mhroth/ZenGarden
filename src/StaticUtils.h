@@ -33,6 +33,8 @@ class StaticUtils {
     };
     static char *joinPaths(const char *path0, const char *path1);
     static float sineApprox(float x);
+    static bool isArgumentIndex(char *str);
+    static int getArgumentIndex(char *str);
   
   private:
     StaticUtils(); // a private constructor. No instances of this object should be made.

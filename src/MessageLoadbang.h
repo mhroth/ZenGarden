@@ -23,25 +23,19 @@
 #ifndef _MESSAGE_LOADBANG_H_
 #define _MESSAGE_LOADBANG_H_
 
-#include "MessageInputMessageOutputObject.h"
+#include "MessageObject.h"
 
-/**
- * loadbang
- */
-class MessageLoadbang : public MessageInputMessageOutputObject {
-  
+/** [loadbang] */
+class MessageLoadbang : public MessageObject {
+    
   public:
-    MessageLoadbang(char *initString);
+    MessageLoadbang(PdGraph *graph);
     ~MessageLoadbang();
   
-    void process();
-  
-  protected:
-    void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage();
+    const char *getObjectLabel();
   
   private:
-    bool isFirstIteration;
+    PdMessage *newCanonicalMessage(int outletIndex);
 };
 
 #endif // _MESSAGE_LOADBANG_H_

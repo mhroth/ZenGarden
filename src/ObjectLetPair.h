@@ -20,27 +20,15 @@
  *
  */
 
-#ifndef _MESSAGE_FLOAT_H_
-#define _MESSAGE_FLOAT_H_
+#ifndef _OBJECT_LET_PAIR_H_
+#define _OBJECT_LET_PAIR_H_
 
-#include "MessageObject.h"
+class MessageObject;
 
-/** [f|float float] */
-class MessageFloat : public MessageObject {
-    
-  public:
-    MessageFloat(PdMessage *initMessage, PdGraph *graph);
-    MessageFloat(float constant, PdGraph *graph);
-    ~MessageFloat();
-  
-    const char *getObjectLabel();
-    
-  private:
-    void init(float constant);
-    void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage(int outletIndex);
-    
-    float constant;
-};
+/** A struct pairing an object and an inlet/outlet index.*/
+typedef struct {
+  MessageObject *object;
+  int index;
+} ObjectLetPair;
 
-#endif // _MESSAGE_FLOAT_H_
+#endif // _OBJECT_LET_PAIR_H_

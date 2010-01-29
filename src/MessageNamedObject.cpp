@@ -20,27 +20,17 @@
  *
  */
 
-#ifndef _MESSAGE_FLOAT_H_
-#define _MESSAGE_FLOAT_H_
+#include "MessageNamedObject.h"
+#include "StaticUtils.h"
 
-#include "MessageObject.h"
+MessageNamedObject::MessageNamedObject(char *initName, int numMessageInlets, int numMessageOutlets, PdGraph *graph) : MessageObject(numMessageInlets, numMessageOutlets, graph) {
+  name = StaticUtils::copyString(initName);
+}
 
-/** [f|float float] */
-class MessageFloat : public MessageObject {
-    
-  public:
-    MessageFloat(PdMessage *initMessage, PdGraph *graph);
-    MessageFloat(float constant, PdGraph *graph);
-    ~MessageFloat();
-  
-    const char *getObjectLabel();
-    
-  private:
-    void init(float constant);
-    void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage(int outletIndex);
-    
-    float constant;
-};
+MessageNamedObject::~MessageNamedObject() {
+  free(name);
+}
 
-#endif // _MESSAGE_FLOAT_H_
+char *MessageNamedObject::getName() {
+  return name;
+}

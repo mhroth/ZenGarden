@@ -20,73 +20,53 @@
  *
  */
 
-#include "MessageDelay.h"
+#include "MessagePipe.h"
 
-MessageDelay::MessageDelay(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
+MessagePipe::MessagePipe(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
   if (initMessage->getNumElements() > 0 &&
       initMessage->getElement(0)->getType() == FLOAT) {
-    init(initMessage->getElement(0)->getFloat());
+    delayMs = (double) initMessage->getElement(0)->getFloat();
   } else {
-    init(0.0f);
+    delayMs = 0.0;
   }
 }
 
-MessageDelay::MessageDelay(float delayMs, PdGraph *graph) : MessageObject(2, 1, graph) {
-  init(delayMs);
-}
-
-MessageDelay::~MessageDelay() {
+MessagePipe::~MessagePipe() {
   // nothing to do
 }
 
-void MessageDelay::init(float delayMs) {
-  this->delayMs = (double) delayMs;
+const char *MessagePipe::getObjectLabel() {
+  return "pipe";
 }
 
-const char *MessageDelay::getObjectLabel() {
-  return "delay";
-}
-
-void MessageDelay::processMessage(int inletIndex, PdMessage *message) {
+void MessagePipe::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
       MessageElement *messageElement = message->getElement(0);
       switch (messageElement->getType()) {
         case SYMBOL: {
-          if (strcmp(messageElement->getSymbol(), "stop") == 0) {
-            // TODO(mhroth): cancel the delay's action
+          if (strcmp(messageElement->getSymbol(), "flush") == 0) {
+            // TODO(mhroth): output all stored messages immediately
+            break;
+          } else if (strcmp(messageElement->getSymbol(), "clear") == 0) {
+            // TODO(mhroth): forget all stored messages
             break;
           }
           // allow fall-through
         }
         case FLOAT:
         case BANG: {
-          PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-          outgoingMessage->setTimestamp(message->getTimestamp() + delayMs);
-          graph->scheduleMessage(this, 0, outgoingMessage);
+          message->setTimestamp(message->getTimestamp() + delayMs);
+          graph->scheduleMessage(this, 0, message);
           break;
         }
         default: {
           break;
         }
       }
-      break;
-    }
-    case 1: {
-      MessageElement *messageElement = message->getElement(0);
-      if (messageElement->getType() == FLOAT) {
-        delayMs = (double) messageElement->getFloat();
-      }
-      break;
     }
     default: {
       break;
     }
   }
-}
-
-PdMessage *MessageDelay::newCanonicalMessage(int outletIndex) {
-  PdMessage *message = new PdMessage();
-  message->addElement(new MessageElement());
-  return message;
 }

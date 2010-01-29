@@ -23,30 +23,24 @@
 #ifndef _MESSAGE_DELAY_H_
 #define _MESSAGE_DELAY_H_
 
-#include "DspMessageInputMessageOutputObject.h"
+#include "MessageObject.h"
 
-/**
- * del
- *
- * This object doesn't really take dsp as an input, but it does have a sense of time
- * and must be able to fire events in relation to dsp.
- */
-class MessageDelay : public DspMessageInputMessageOutputObject {
+/** [delay float] */
+class MessageDelay : public MessageObject {
   
   public:
-    MessageDelay(int blockSize, int sampleRate, char *initString);
-    MessageDelay(float delayInMs, int blockSize, int sampleRate, char *initString);
+    MessageDelay(PdMessage *initMessage, PdGraph *graph);
+    MessageDelay(float delayMs, PdGraph *graph);
     ~MessageDelay();
-    
-  protected:
-    inline void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage();
-    inline void processDspToIndex(int newBlockIndex);
+  
+    const char *getObjectLabel();
     
   private:
-    float sampleRate;
-    int delayInSamples;
-    int numSamplesToDeadline;
+    void init(float delayMs);
+    void processMessage(int inletIndex, PdMessage *message);
+    PdMessage *newCanonicalMessage(int outletIndex);
+  
+    double delayMs;
 };
 
 #endif // _MESSAGE_DELAY_H_
