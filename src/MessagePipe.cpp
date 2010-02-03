@@ -21,6 +21,7 @@
  */
 
 #include "MessagePipe.h"
+#include "PdGraph.h"
 
 MessagePipe::MessagePipe(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
   if (initMessage->getNumElements() > 0 &&

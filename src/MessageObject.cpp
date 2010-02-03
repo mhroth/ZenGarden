@@ -23,7 +23,7 @@
 #include "MessageObject.h"
 #include "PdGraph.h"
 
-MessageObject::MessageObject(int numMessageInlets, int numMessageOutlets, PdGraph *graph) : PdNode() {
+MessageObject::MessageObject(int numMessageInlets, int numMessageOutlets, PdGraph *graph) {
   this->numMessageInlets = numMessageInlets;
   this->numMessageOutlets = numMessageOutlets;
   this->graph = graph;
@@ -71,10 +71,6 @@ MessageObject::~MessageObject() {
     delete messageOutletPools[i];
   }
   free(messageOutletPools);
-}
-
-PdNodeType MessageObject::getNodeType() {
-  return OBJECT;
 }
 
 ConnectionType MessageObject::getConnectionType(int outletIndex) { 

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,9 +23,9 @@
 #ifndef _PD_GRAPH_H_
 #define _PD_GRAPH_H_
 
+#include <stdio.h>
+#include "DspObject.h"
 #include "OrderedMessageQueue.h"
-#include "PdMessage.h"
-#include "PdNode.h"
 
 class DspReceive;
 class DspSend;
@@ -33,7 +33,7 @@ class MessageObject;
 class MessageReceive;
 class MessageSend;
 
-class PdGraph : public PdNode {
+class PdGraph : public DspObject {
   
   public:
   
@@ -47,12 +47,18 @@ class PdGraph : public PdNode {
      * <code>outletIndex</code> at the specified <code>time</code>.
      */
     void scheduleMessage(MessageObject *messageObject, int outletIndex, PdMessage *message);
+  
+    /**  */
+    void processMessage(int inletIndex, PdMessage *message);
     
     /**  */
     void processDsp();
     
     /**  */
     void process(float *inputBuffers, float *outputBuffers);
+  
+    /**  */
+    const char *getObjectLabel();
     
     /** Turn the audio processing of this graph on or off. */
     void setSwitch(bool switched);
@@ -63,9 +69,7 @@ class PdGraph : public PdNode {
     /** Set the current block size of this subgraph. */
     void setBlockSize(int blockSize);
     
-    /**
-     * Get the current block size of this subgraph.
-     */
+    /** Get the current block size of this subgraph. */
     int getBlockSize();
     
     /** Returns <code>true</code> of this graph has no parents, code>false</code> otherwise. */
@@ -91,12 +95,6 @@ class PdGraph : public PdNode {
     /** Returns the global sample rate. */
     float getSampleRate();
   
-    PdNodeType getNodeType();
-  
-    MessageObject *getObjectAtInlet(int inletIndex);
-  
-    MessageObject *getObjectAtOutlet(int outletIndex);
-  
     float *getGlobalDspBufferAtInlet(int inletIndex);
     float *getGlobalDspBufferAtOutlet(int outletIndex);
   
@@ -114,13 +112,13 @@ class PdGraph : public PdNode {
             int numOutputChannels, float sampleRate, PdGraph *parentGraph);
   
     /** Connect the given <code>MessageObject</code>s from the given outlet to the given inlet. */
-    void connect(MessageObject *fromObject, int outletIndex, MessageObject *toObject, int inletIndex);
+    void connect(int fromObjectIndex, int outletIndex, int toObjectIndex, int inletIndex);
     
     /** Create a new object based on its initialisation string. */
     MessageObject *newObject(char *objectType, char *objectLabel, PdMessage *initMessage, PdGraph *graph);
   
-    /** Add the object to the graph, taking care of any special object registration. */
-    void addNode(PdNode *node);
+    /** Add an object to the graph, taking care of any special object registration. */
+    void addObject(MessageObject *node);
   
     /** Globally register a [receive] object. Connect to registered [send] objects with the same name. */
     void registerMessageReceive(MessageReceive *messageReceive);

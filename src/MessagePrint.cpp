@@ -21,6 +21,7 @@
  */
 
 #include "MessagePrint.h"
+#include "PdGraph.h"
 
 MessagePrint::MessagePrint(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 0, graph) {
   if (initMessage->getNumElements() > 0) {

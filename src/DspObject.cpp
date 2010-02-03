@@ -21,11 +21,22 @@
  */
 
 #include "DspObject.h"
+#include "PdGraph.h"
 
-DspObject::DspObject(int numMessageInlets, int numDspInlets, int numMessageOutlets, int numDspOutlets, PdGraph *graph) : MessageObject(numMessageInlets, numMessageOutlets, graph) {
+DspObject::DspObject(int numMessageInlets, int numDspInlets, int numMessageOutlets, int numDspOutlets, PdGraph *graph) :
+    MessageObject(numMessageInlets, numMessageOutlets, graph) {
+  init(numDspInlets, numDspOutlets, graph->getBlockSize());
+}
+
+DspObject::DspObject(int numMessageInlets, int numDspInlets, int numMessageOutlets, int numDspOutlets, int blockSize, PdGraph *graph) : 
+    MessageObject(numMessageInlets, numMessageOutlets, graph) {
+  init(numDspInlets, numDspOutlets, blockSize);
+}
+
+void DspObject::init(int numDspInlets, int numDspOutlets, int blockSize) {
   this->numDspInlets = numDspInlets;
   this->numDspOutlets = numDspOutlets;
-  blockSizeInt = graph->getBlockSize();
+  blockSizeInt = blockSize;
   blockSizeFloat = (float) blockSizeInt;
   numBytesInBlock = blockSizeInt * sizeof(float);
   messageQueue = new MessageQueue();

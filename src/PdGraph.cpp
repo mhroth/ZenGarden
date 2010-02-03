@@ -20,8 +20,8 @@
  *
  */
 
-#include <stdio.h>
 #include "PdGraph.h"
+#include "StaticUtils.h"
 
 #include "MessageAdd.h"
 #include "MessageDelay.h"
@@ -73,7 +73,9 @@ PdGraph *PdGraph::newInstance(char *directory, char *filename, char *libraryDire
   return pdGraph;
 }
 
-PdGraph::PdGraph(FILE *fp, char *directory, char *libraryDirectory, int blockSize, int numInputChannels, int numOutputChannels, float sampleRate, PdGraph *parentGraph) : PdNode() {
+PdGraph::PdGraph(FILE *fp, char *directory, char *libraryDirectory, int blockSize, 
+    int numInputChannels, int numOutputChannels, float sampleRate, PdGraph *parentGraph) : 
+    DspObject(16, 16, 16, 16, blockSize, this) {
   this->numInputChannels = numInputChannels;
   this->numOutputChannels = numOutputChannels;
   this->blockSize = blockSize;
@@ -127,9 +129,9 @@ PdGraph::PdGraph(FILE *fp, char *directory, char *libraryDirectory, int blockSiz
       char *objectType = strtok(NULL, " ");
       if (strcmp(objectType, "canvas") == 0) {
         // a new subgraph is defined inline
-        PdNode *pdNode = new PdGraph(fp, directory, libraryDirectory, blockSize, numInputChannels, numOutputChannels, sampleRate, this);
-        nodeList->add(pdNode);
-        dspNodeList->add(pdNode);
+        PdGraph *graph = new PdGraph(fp, directory, libraryDirectory, blockSize, numInputChannels, numOutputChannels, sampleRate, this);
+        nodeList->add(graph);
+        dspNodeList->add(graph);
       } else {
         printf("WARNING | Unrecognised #N object type: \"%s\"", line);
       }
@@ -142,7 +144,7 @@ PdGraph::PdGraph(FILE *fp, char *directory, char *libraryDirectory, int blockSiz
         char *objectLabel = strtok(NULL, " ;"); // delimit with " " or ";"
         char *objectInitString = strtok(NULL, ";\n"); // get the object initialisation string
         PdMessage *initMessage = new PdMessage(objectInitString, this);
-        PdNode *pdNode = newObject(objectType, objectLabel, initMessage, this);
+        MessageObject *pdNode = newObject(objectType, objectLabel, initMessage, this);
         delete initMessage;
         if (pdNode == NULL) {
           // object could not be instantiated, probably because the object is unknown
@@ -165,30 +167,14 @@ PdGraph::PdGraph(FILE *fp, char *directory, char *libraryDirectory, int blockSiz
           dspNodeList->add(pdNode);
         } else {
           // add the object to the local graph and make any necessary registrations
-          addNode(pdNode);
+          addObject(pdNode);
         }
       } else if (strcmp(objectType, "connect") == 0) {
-        PdNode *fromNode = (PdNode *) nodeList->get(atoi(strtok(NULL, " ")));
+        int fromObjectIndex = atoi(strtok(NULL, " "));
         int outletIndex = atoi(strtok(NULL, " "));
-        MessageObject *fromObject = NULL;
-        if (fromNode->getNodeType() == GRAPH) {
-          fromObject = ((PdGraph *) fromNode)->getObjectAtOutlet(outletIndex);
-        } else {
-          fromObject = (MessageObject *) fromNode;
-        }
-        outletIndex = (fromNode->getNodeType() == GRAPH) ? 0 : outletIndex;
-        
-        PdNode *toNode = (PdNode *) nodeList->get(atoi(strtok(NULL, " ")));
+        int toObjectIndex = atoi(strtok(NULL, " "));
         int inletIndex = atoi(strtok(NULL, ";"));
-        MessageObject *toObject = NULL;
-        if (toNode->getNodeType() == GRAPH) {
-          toObject = ((PdGraph *) toNode)->getObjectAtInlet(inletIndex);
-        } else {
-          toObject = (MessageObject *) toNode;
-        }
-        inletIndex = (toNode->getNodeType() == GRAPH) ? 0 : inletIndex;
-        
-        this->connect(fromObject, outletIndex, toObject, inletIndex);
+        connect(fromObjectIndex, outletIndex, toObjectIndex, inletIndex);
       } else if (strcmp(objectType, "floatatom") == 0) {
         // defines a number box
         nodeList->add(new MessageFloat(0.0f, this));
@@ -230,9 +216,9 @@ PdGraph::~PdGraph() {
   free(globalDspInputBuffers);
   free(globalDspOutputBuffers);
 }
-
-PdNodeType PdGraph::getNodeType() {
-  return GRAPH;
+                              
+const char *PdGraph::getObjectLabel() {
+  return "pd";
 }
 
 MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage *initMessage, PdGraph *graph) {
@@ -272,56 +258,37 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
   return NULL;
 }
 
-void PdGraph::addNode(PdNode *node) {
+void PdGraph::addObject(MessageObject *node) {
   // TODO(mhroth)
   
   // all nodes are added to the node list
   nodeList->add(node);
   
-  switch (node->getNodeType()) {
-    case GRAPH: {
-      dspNodeList->add(node);
-      break;
-    }
-    case OBJECT: {
-      MessageObject *object = (MessageObject *) node;
-      
-      if (strcmp(object->getObjectLabel(), "inlet") == 0) {
-        inletList->add(object);
-      } else if (strcmp(object->getObjectLabel(), "outlet") == 0) {
-        outletList->add(object);
-      } else if (strcmp(object->getObjectLabel(), "send") == 0) {
-        registerMessageSend((MessageSend *) object);
-      } else if (strcmp(object->getObjectLabel(), "receive") == 0) {
-        registerMessageReceive((MessageReceive *) object);
-      }
-      /*
-      else if (strcmp(object->getObjectLabel(), "send~") == 0) {
-        registerDspSend((DspSendReceive *) object);
-      } else if (strcmp(object->getObjectLabel(), "receive~") == 0) {
-        registerDspReceive((DspSendReceive *) object);
-      }
-      */
-      
-      break;
-    }
-    default: {
-      break;
-    }
+  if (strcmp(node->getObjectLabel(), "pd") == 0) {
+    dspNodeList->add(node);
+  } else if (strcmp(node->getObjectLabel(), "inlet") == 0) {
+    inletList->add(node);
+  } else if (strcmp(node->getObjectLabel(), "outlet") == 0) {
+    outletList->add(node);
+  } else if (strcmp(node->getObjectLabel(), "send") == 0) {
+    registerMessageSend((MessageSend *) node);
+  } else if (strcmp(node->getObjectLabel(), "receive") == 0) {
+    registerMessageReceive((MessageReceive *) node);
   }
+  /*
+   else if (strcmp(object->getObjectLabel(), "send~") == 0) {
+   registerDspSend((DspSendReceive *) object);
+   } else if (strcmp(object->getObjectLabel(), "receive~") == 0) {
+   registerDspReceive((DspSendReceive *) object);
+   }
+   */
 }
 
-void PdGraph::connect(MessageObject *fromObject, int outletIndex, MessageObject *toObject, int inletIndex) {
+void PdGraph::connect(int fromObjectIndex, int outletIndex, int toObjectIndex, int inletIndex) {
+  MessageObject *fromObject = (MessageObject *) nodeList->get(fromObjectIndex);
+  MessageObject *toObject = (MessageObject *) nodeList->get(toObjectIndex);
   toObject->addConnectionFromObjectToInlet(fromObject, outletIndex, inletIndex);
   fromObject->addConnectionToObjectFromOutlet(toObject, inletIndex, outletIndex);
-}
-
-MessageObject *PdGraph::getObjectAtInlet(int inletIndex) {
-  return (MessageObject *) inletList->get(inletIndex);
-}
-
-MessageObject *PdGraph::getObjectAtOutlet(int outletIndex) {
-  return (MessageObject *) outletList->get(outletIndex);
 }
 
 double PdGraph::getBlockStartTimestamp() {
@@ -411,6 +378,12 @@ void PdGraph::registerDspSend(DspSend *dspSend) {
   }
 }
 
+void PdGraph::processMessage(int inletIndex, PdMessage *message) {
+  // simply pass the message on to the corresponding MessageInlet object.
+  MessageInlet *inlet = (MessageInlet *) inletList->get(inletIndex);
+  inlet->processMessage(0, message);
+}
+
 void PdGraph::process(float *inputBuffers, float *outputBuffers) {
   // set up adc~ buffers
   memcpy(globalDspInputBuffers, inputBuffers, numBytesInInputBuffers);
@@ -442,12 +415,12 @@ void PdGraph::processDsp() {
   if (switched) {
     // DSP processing elements are only executed if the graph is switched on
     int numNodes = dspNodeList->size();
-    PdNode *node = NULL;
+    DspObject *dspObject = NULL;
     //for (int i = 0; i < 1; i++) { // TODO(mhroth): iterate depending on local blocksize relative to parent
       // execute all nodes which process audio
       for (int j = 0; j < numNodes; j++) {
-        node = (PdNode *) dspNodeList->get(j);
-        node->processDsp();
+        dspObject = (DspObject *) dspNodeList->get(j);
+        dspObject->processDsp();
       }
     //}
   }

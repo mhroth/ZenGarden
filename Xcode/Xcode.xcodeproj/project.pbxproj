@@ -105,7 +105,6 @@
 		90398C9C1113564400E5A8B6 /* PdGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PdGraph.h; path = ../src/PdGraph.h; sourceTree = SOURCE_ROOT; };
 		90398C9D1113564400E5A8B6 /* PdMessage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PdMessage.cpp; path = ../src/PdMessage.cpp; sourceTree = SOURCE_ROOT; };
 		90398C9E1113564400E5A8B6 /* PdMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PdMessage.h; path = ../src/PdMessage.h; sourceTree = SOURCE_ROOT; };
-		90398C9F1113564400E5A8B6 /* PdNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PdNode.h; path = ../src/PdNode.h; sourceTree = SOURCE_ROOT; };
 		90398CA01113564400E5A8B6 /* PdNodeType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PdNodeType.h; path = ../src/PdNodeType.h; sourceTree = SOURCE_ROOT; };
 		90398CA11113564400E5A8B6 /* StaticUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StaticUtils.cpp; path = ../src/StaticUtils.cpp; sourceTree = SOURCE_ROOT; };
 		90398CA21113564400E5A8B6 /* StaticUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StaticUtils.h; path = ../src/StaticUtils.h; sourceTree = SOURCE_ROOT; };
@@ -190,7 +189,6 @@
 				90398C9C1113564400E5A8B6 /* PdGraph.h */,
 				90398C9D1113564400E5A8B6 /* PdMessage.cpp */,
 				90398C9E1113564400E5A8B6 /* PdMessage.h */,
-				90398C9F1113564400E5A8B6 /* PdNode.h */,
 				90398CA01113564400E5A8B6 /* PdNodeType.h */,
 				90398CA11113564400E5A8B6 /* StaticUtils.cpp */,
 				90398CA21113564400E5A8B6 /* StaticUtils.h */,

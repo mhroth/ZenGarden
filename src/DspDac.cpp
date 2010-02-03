@@ -21,6 +21,7 @@
  */
 
 #include "DspDac.h"
+#include "PdGraph.h"
 
 DspDac::DspDac(PdGraph *graph) : DspObject(0, graph->getNumOutputChannels(), 0, 0, graph) {
   localDspBufferAtOutlet = (float **) malloc(numDspInlets * sizeof(float *));

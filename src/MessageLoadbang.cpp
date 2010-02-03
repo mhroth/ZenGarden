@@ -21,6 +21,7 @@
  */
 
 #include "MessageLoadbang.h"
+#include "PdGraph.h"
 
 MessageLoadbang::MessageLoadbang(PdGraph *graph) : MessageObject(0, 1, graph) {
   PdMessage *outgoingMessage = getNextOutgoingMessage(0);

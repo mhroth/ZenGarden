@@ -21,7 +21,6 @@
  */
 
 #include <stdlib.h>
-#include <string.h>
 #include "MessageElement.h"
 #include "StaticUtils.h"
 

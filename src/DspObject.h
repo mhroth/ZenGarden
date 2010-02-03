@@ -23,6 +23,7 @@
 #ifndef _DSP_OBJECT_H_
 #define _DSP_OBJECT_H_
 
+#include <string.h>
 #include "MessageLetPair.h"
 #include "MessageObject.h"
 #include "MessageQueue.h"
@@ -35,7 +36,17 @@
 class DspObject : public MessageObject {
   
   public:
+    /** The nominal constructor. */
     DspObject(int numMessageInlets, int numDspInlets, int numMessageOutlets, int numDspOutlets, PdGraph *graph);
+  
+    /** 
+     * This constructor is used exclisvely by <code>PdGraph</code>.
+     * <code>DspObject</code> requires the blocksize in order to instantiate, however <code>PdGraph</code>
+     * is a subclass of <code>DspObject</code> and thus the fields of the latter are not yet initialised
+     * when the fomer fields are filled in.
+     */
+    DspObject(int numMessageInlets, int numDspInlets, int numMessageOutlets, int numDspOutlets, int blockSize, PdGraph *graph);
+    
     virtual ~DspObject();
     
     void receiveMessage(int inletIndex, PdMessage *message);
@@ -56,7 +67,7 @@ class DspObject : public MessageObject {
     bool isRootNode();
     bool isLeafNode();
     
-  protected:
+  protected:  
     virtual void processDspToIndex(float blockIndex);
     
     /** The number of dsp inlets of this object. */
@@ -80,6 +91,10 @@ class DspObject : public MessageObject {
   
     List **incomingDspConnectionsListAtInlet;
     List **outgoingDspConnectionsListAtOutlet;
+  
+  private:
+    /** This function encapsulates the common code between the two constructors. */
+    void init(int numDspInlets, int numDspOutlets, int blockSize);
 };
 
 #endif // _DSP_OBJECT_H_

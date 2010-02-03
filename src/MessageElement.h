@@ -23,6 +23,7 @@
 #ifndef _PD_MESSAGE_ELEMENT_H_
 #define _PD_MESSAGE_ELEMENT_H_
 
+#include <string.h>
 #include "List.h"
 #include "MessageElementType.h"
 

@@ -21,6 +21,7 @@
  */
 
 #include "DspAdd.h"
+#include "PdGraph.h"
 
 DspAdd::DspAdd(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
   if (initMessage->getNumElements() > 0 &&

@@ -25,11 +25,12 @@
 
 #include "ConnectionType.h"
 #include "ObjectLetPair.h"
-#include "PdGraph.h"
 #include "PdMessage.h"
-#include "PdNode.h"
+#include "StaticUtils.h"
 
-class MessageObject : public PdNode {
+class PdGraph;
+
+class MessageObject {
   
   public:
     MessageObject(int numMessageInlets, int numMessageOutlets, PdGraph *graph);
@@ -51,8 +52,6 @@ class MessageObject : public PdNode {
     
     /** <code>MessageObject</code>s by default do not process any audio */
     virtual void processDsp();
-  
-    PdNodeType getNodeType();
   
     /** Returns the connection type of the given outlet. */
     virtual ConnectionType getConnectionType(int outletIndex);

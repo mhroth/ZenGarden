@@ -21,6 +21,7 @@
  */
 
 #include "MessageDelay.h"
+#include "PdGraph.h"
 
 MessageDelay::MessageDelay(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
   if (initMessage->getNumElements() > 0 &&
