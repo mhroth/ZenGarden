@@ -1,8 +1,8 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
- * 
+ *
  *  This file is part of ZenGarden.
  *
  *  ZenGarden is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU Lesser General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with ZenGarden.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -33,6 +33,7 @@
 #include "MessagePrint.h"
 #include "MessageReceive.h"
 #include "MessageSend.h"
+#include "MessageSubtract.h"
 
 #include "DspAdc.h"
 #include "DspDac.h"
@@ -45,11 +46,11 @@ void defaultPrintFunction(char *msg) {
 // initialise the global graph counter
 int PdGraph::globalGraphId = 0;
 
-PdGraph *PdGraph::newInstance(char *directory, char *filename, char *libraryDirectory, int blockSize, 
-                              int numInputChannels, int numOutputChannels, float sampleRate, 
+PdGraph *PdGraph::newInstance(char *directory, char *filename, char *libraryDirectory, int blockSize,
+                              int numInputChannels, int numOutputChannels, float sampleRate,
                               PdGraph *parentGraph) {
   PdGraph *pdGraph = NULL;
-  
+
   char *filePath = StaticUtils::joinPaths(directory, filename);
   FILE *fp = fopen(filePath, "r");
   free(filePath);
@@ -69,12 +70,12 @@ PdGraph *PdGraph::newInstance(char *directory, char *filename, char *libraryDire
     free(linePointer);
     fclose(fp);
   }
-  
+
   return pdGraph;
 }
 
-PdGraph::PdGraph(FILE *fp, char *directory, char *libraryDirectory, int blockSize, 
-    int numInputChannels, int numOutputChannels, float sampleRate, PdGraph *parentGraph) : 
+PdGraph::PdGraph(FILE *fp, char *directory, char *libraryDirectory, int blockSize,
+    int numInputChannels, int numOutputChannels, float sampleRate, PdGraph *parentGraph) :
     DspObject(16, 16, 16, 16, blockSize, this) {
   this->numInputChannels = numInputChannels;
   this->numOutputChannels = numOutputChannels;
@@ -83,19 +84,19 @@ PdGraph::PdGraph(FILE *fp, char *directory, char *libraryDirectory, int blockSiz
   blockStartTimestamp = 0.0;
   blockDurationMs = ((double) blockSize / (double) sampleRate) * 1000.0;
   switched = true; // graphs are switched on by default
-  
+
   nodeList = new List();
   dspNodeList = new List();
   inletList = new List();
   outletList = new List();
-  
+
   setPrintErr(defaultPrintFunction);
   setPrintStd(defaultPrintFunction);
-  
+
   graphId = globalGraphId++;
   graphArguments = new PdMessage();
   graphArguments->addElement(new MessageElement((float) graphId)); // $0
-  
+
   if (parentGraph == NULL) {
     // if this is the top-level graph
     messageCallbackQueue = new OrderedMessageQueue();
@@ -118,11 +119,11 @@ PdGraph::PdGraph(FILE *fp, char *directory, char *libraryDirectory, int blockSiz
     dspReceiveList = NULL;
     dspSendList = NULL;
   }
-  
+
   const int MAX_CHARS_PER_LINE = 256;
   char *linePointer = (char *) malloc(MAX_CHARS_PER_LINE * sizeof(char));
   char *line = linePointer;
-  
+
   while ((line = fgets(line, MAX_CHARS_PER_LINE, fp)) != NULL) {
     char *hashType = strtok(line, " ");
     if (strcmp(hashType, "#N") == 0) {
@@ -216,7 +217,7 @@ PdGraph::~PdGraph() {
   free(globalDspInputBuffers);
   free(globalDspOutputBuffers);
 }
-                              
+
 const char *PdGraph::getObjectLabel() {
   return "pd";
 }
@@ -225,6 +226,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
   if (strcmp(objectType, "obj") == 0) {
     if (strcmp(objectLabel, "+") == 0) {
       return new MessageAdd(initMessage, graph);
+    } else if (strcmp(objectLabel, "-") == 0) {
+      return new MessageSubtract(initMessage, graph);
     } else if (strcmp(objectLabel, "float") == 0 ||
         strcmp(objectLabel, "f") == 0) {
       return new MessageFloat(initMessage, graph);
@@ -252,7 +255,7 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
   } else if (strcmp(objectType, "msg") == 0) {
     // TODO(mhroth)
   }
-  
+
   // ERROR!
   printErr("Object not recognised.");
   return NULL;
@@ -260,10 +263,10 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
 
 void PdGraph::addObject(MessageObject *node) {
   // TODO(mhroth)
-  
+
   // all nodes are added to the node list
   nodeList->add(node);
-  
+
   if (strcmp(node->getObjectLabel(), "pd") == 0) {
     dspNodeList->add(node);
   } else if (strcmp(node->getObjectLabel(), "inlet") == 0) {
@@ -387,7 +390,7 @@ void PdGraph::processMessage(int inletIndex, PdMessage *message) {
 void PdGraph::process(float *inputBuffers, float *outputBuffers) {
   // set up adc~ buffers
   memcpy(globalDspInputBuffers, inputBuffers, numBytesInInputBuffers);
-  
+
   // Send all messages for this block
   MessageDestination *destination = NULL;
   double nextBlockStartTimestamp = blockStartTimestamp + blockDurationMs;
@@ -398,16 +401,16 @@ void PdGraph::process(float *inputBuffers, float *outputBuffers) {
     destination->message->unreserve(destination->object);
     destination->object->sendMessage(destination->index, destination->message);
   }
-  
+
   // clear the global output audio buffers so that dac~ nodes can write to it
   memset(globalDspOutputBuffers, 0, numBytesInOutputBuffers);
-  
+
   // execute all audio objects in this graph
   processDsp();
-  
+
   // copy the output audio to the given buffer
   memcpy(outputBuffers, globalDspOutputBuffers, numBytesInOutputBuffers);
-  
+
   blockStartTimestamp = nextBlockStartTimestamp;
 }
 
@@ -430,7 +433,7 @@ void PdGraph::processDsp() {
 void PdGraph::computeProcessOrder() {
 /*
   dspNodeList->clear(); // reset the dsp node list
-  
+
   // compute process order for local graph
   List *leafNodeList = new List();
   PdNode *node = NULL;
@@ -459,7 +462,7 @@ void PdGraph::computeProcessOrder() {
       }
     }
   }
-  
+
   // for all leaf nodes, order the tree
   List *processList = new List();
   for (int i = 0; i < leafNodeList->size(); i++) {
@@ -468,9 +471,9 @@ void PdGraph::computeProcessOrder() {
     processList->add(processSubList);
     delete processSubList;
   }
-  
+
   delete leafNodeList;
-  
+
   // add only those nodes which process audio to the final list
   for (int i = 0; i < processList->size(); i++) {
     object = (MessageObject *) processList->get(i);
@@ -478,7 +481,7 @@ void PdGraph::computeProcessOrder() {
       dspNodeList->add(object);
     }
   }
-  
+
   delete processList;
 */
 }
@@ -506,7 +509,7 @@ bool PdGraph::isSwitchedOn() {
 bool PdGraph::isRootGraph() {
   return (parentGraph == NULL);
 }
-      
+
 void PdGraph::setPrintErr(void (*printFunction)(char *)) {
   if (isRootGraph()) {
     printErrFunction = printFunction;
@@ -530,7 +533,7 @@ void PdGraph::printErr(const char *msg) {
     parentGraph->printErr(msg);
   }
 }
-      
+
 void PdGraph::setPrintStd(void (*printFunction)(char *)) {
   if (isRootGraph()) {
     printStdFunction = printFunction;
