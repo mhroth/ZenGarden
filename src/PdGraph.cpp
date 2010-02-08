@@ -25,9 +25,11 @@
 
 #include "MessageAdd.h"
 #include "MessageDelay.h"
+#include "MessageDivide.h"
 #include "MessageFloat.h"
 #include "MessageInlet.h"
 #include "MessageLoadbang.h"
+#include "MessageMultiply.h"
 #include "MessageOutlet.h"
 #include "MessagePipe.h"
 #include "MessagePrint.h"
@@ -228,6 +230,10 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageAdd(initMessage, graph);
     } else if (strcmp(objectLabel, "-") == 0) {
       return new MessageSubtract(initMessage, graph);
+    } else if (strcmp(objectLabel, "*") == 0) {
+      return new MessageMultiply(initMessage, graph);
+    } else if (strcmp(objectLabel, "/") == 0) {
+      return new MessageDivide(initMessage, graph);
     } else if (strcmp(objectLabel, "float") == 0 ||
         strcmp(objectLabel, "f") == 0) {
       return new MessageFloat(initMessage, graph);
