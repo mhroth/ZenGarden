@@ -1,8 +1,8 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009, 2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
- * 
+ *
  *  This file is part of ZenGarden.
  *
  *  ZenGarden is free software: you can redistribute it and/or modify
@@ -14,29 +14,33 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU Lesser General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with ZenGarden.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
-#ifndef _MESSAGE_LESS_THAN_H_
-#define _MESSAGE_LESS_THAN_H_
+#ifndef _MESSAGE_LESSTHAN_H_
+#define _MESSAGE_LESSTHAN_H_
 
-#include "MessageBinaryOperationObject.h"
+#include "MessageObject.h"
 
-/**
- * <
- */
-class MessageLessThan : public MessageBinaryOperationObject {
-  
+/** [<], [< float] */
+class MessageLessThan : public MessageObject {
+
   public:
-    MessageLessThan(char *initString);
-    MessageLessThan(float constant, char *initString);
+    MessageLessThan(PdMessage *initMessage, PdGraph *graph);
+    MessageLessThan(float constant, PdGraph *graph);
     ~MessageLessThan();
-    
-  protected:
-    inline float performBinaryOperation(float left, float right);
+
+    const char *getObjectLabel();
+
+  private:
+    void init(float constant);
+    void processMessage(int inletIndex, PdMessage *message);
+    PdMessage *newCanonicalMessage(int outletIndex);
+
+    float constant;
 };
 
-#endif // _MESSAGE_LESS_THAN_H_
+#endif // _MESSAGE_LESSTHAN_H_

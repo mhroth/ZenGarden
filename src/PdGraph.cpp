@@ -26,10 +26,16 @@
 #include "MessageAdd.h"
 #include "MessageDelay.h"
 #include "MessageDivide.h"
+#include "MessageEqualsEquals.h"
 #include "MessageFloat.h"
+#include "MessageGreaterThan.h"
+#include "MessageGreaterThanOrEqualTo.h"
 #include "MessageInlet.h"
+#include "MessageLessThan.h"
+#include "MessageLessThanOrEqualTo.h"
 #include "MessageLoadbang.h"
 #include "MessageMultiply.h"
+#include "MessageNotEquals.h"
 #include "MessageOutlet.h"
 #include "MessagePipe.h"
 #include "MessagePrint.h"
@@ -234,6 +240,18 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageMultiply(initMessage, graph);
     } else if (strcmp(objectLabel, "/") == 0) {
       return new MessageDivide(initMessage, graph);
+    } else if (strcmp(objectLabel, ">") == 0) {
+      return new MessageGreaterThan(initMessage, graph);
+    } else if (strcmp(objectLabel, ">=") == 0) {
+      return new MessageGreaterThanOrEqualTo(initMessage, graph);
+    } else if (strcmp(objectLabel, "<") == 0) {
+      return new MessageLessThan(initMessage, graph);
+    } else if (strcmp(objectLabel, "<=") == 0) {
+      return new MessageLessThanOrEqualTo(initMessage, graph);
+    } else if (strcmp(objectLabel, "==") == 0) {
+      return new MessageEqualsEquals(initMessage, graph);
+    } else if (strcmp(objectLabel, "!=") == 0) {
+      return new MessageNotEquals(initMessage, graph);
     } else if (strcmp(objectLabel, "float") == 0 ||
         strcmp(objectLabel, "f") == 0) {
       return new MessageFloat(initMessage, graph);
