@@ -191,6 +191,10 @@ bool DspObject::isRootNode() {
   if (!MessageObject::isRootNode()) {
     return false;
   } else {
+    if (strcmp(getObjectLabel(), "receive~") == 0 ||
+        strcmp(getObjectLabel(), "catch~") == 0) {
+      return true;
+    }
     for (int i = 0; i < numDspInlets; i++) {
       if (incomingDspConnectionsListAtInlet[i]->size() > 0) {
         return false;
@@ -204,6 +208,10 @@ bool DspObject::isLeafNode() {
   if (!MessageObject::isLeafNode()) {
     return false;
   } else {
+    if (strcmp(getObjectLabel(), "send~") == 0 ||
+        strcmp(getObjectLabel(), "throw~") == 0) {
+      return true;
+    }
     for (int i = 0; i < numDspOutlets; i++) {
       if (outgoingDspConnectionsListAtOutlet[i]->size() > 0) {
         return false;
@@ -211,4 +219,18 @@ bool DspObject::isLeafNode() {
     }
     return true;
   }
+}
+
+List *DspObject::getProcessOrder() {
+  List *processList = MessageObject::getProcessOrder();
+  for (int i = 0; i < numDspInlets; i++) {
+    for (int j = 0; j < incomingDspConnectionsListAtInlet[i]->size(); j++) {
+      ObjectLetPair *objectLetPair = (ObjectLetPair *) incomingDspConnectionsListAtInlet[i]->get(j);
+      List *parentProcessList = objectLetPair->object->getProcessOrder();
+      processList->add(parentProcessList);
+      delete parentProcessList;
+    }
+  }
+  // no need to add this object if it is a root note because MessageObject::getProcessOrder() takes care of that
+  return processList;
 }

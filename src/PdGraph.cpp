@@ -427,36 +427,30 @@ void PdGraph::processDsp() {
 }
 
 // TODO(mhroth)
-void PdGraph::computeProcessOrder() {
-/*
-  dspNodeList->clear(); // reset the dsp node list
+void PdGraph::computeDspProcessOrder() {
   
+  /* clear/reset dspNodeList
+   * find all leaf nodes in nodeList. this includes PdGraphs as they are objects as well
+   * for each leaf node, generate an ordering for all of the nodes in the current graph
+   * the basic idea is to compute the full process order in each subgraph. The problem is that
+   * some objects have connections that take you out of the graph, such as receive/~, catch~. And
+   * some objects should be considered leaves, through they are not, such as send/~ and throw~.
+   * Special cases/allowances must be made for these nodes. inlet/~ and outlet/~ nodes need not
+   * be specially handled as they do not link to outside of the graph. They are handled internally.
+   * Finally, all non-dsp nodes must be removed from this list in order to derive the dsp process order.
+   */
+
   // compute process order for local graph
+  
+  // generate the leafnode list
   List *leafNodeList = new List();
-  PdNode *node = NULL;
   MessageObject *object = NULL;
   for (int i = 0; i < nodeList->size(); i++) {
-    node = (PdNode *) nodeList->get(i);
-    switch (node->getNodeType()) {
-      case GRAPH: {
-        // compute process order for all subgraphs
-        ((PdGraph *) node)->computeProcessOrder();
-        break;
-      }
-      case OBJECT: {
-        // generate leaf node list
-        object = (MessageObject *) node;
-        if (object->isLeafNode() ||
-            strcmp(object->getObjectLabel(), "outlet~") == 0 ||
-            strcmp(object->getObjectLabel(), "send~") == 0 ||
-            strcmp(object->getObjectLabel(), "throw~") == 0) {
-          leafNodeList->add(object);
-        }
-        break;
-      }
-      default: {
-        break;
-      }
+    object = (MessageObject *) nodeList->get(i);
+    // TODO(mhroth): clear ordered flag
+    // generate leaf node list
+    if (object->isLeafNode()) { // isLeafNode() takes into account send/~ and throw~ objects
+      leafNodeList->add(object);
     }
   }
   
@@ -472,6 +466,7 @@ void PdGraph::computeProcessOrder() {
   delete leafNodeList;
   
   // add only those nodes which process audio to the final list
+  dspNodeList->clear(); // reset the dsp node list
   for (int i = 0; i < processList->size(); i++) {
     object = (MessageObject *) processList->get(i);
     if (object->doesProcessAudio()) {
@@ -480,7 +475,11 @@ void PdGraph::computeProcessOrder() {
   }
   
   delete processList;
-*/
+}
+
+List *PdGraph::getProcessOrder() {
+  computeDspProcessOrder(); // compute the internal process order
+  return DspObject::getProcessOrder(); // then just call the super's getProcessOrder().
 }
 
 int PdGraph::getBlockSize() {

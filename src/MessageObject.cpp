@@ -27,6 +27,7 @@ MessageObject::MessageObject(int numMessageInlets, int numMessageOutlets, PdGrap
   this->numMessageInlets = numMessageInlets;
   this->numMessageOutlets = numMessageOutlets;
   this->graph = graph;
+  this->isOrdered = false;
   
   // initialise incoming connections list
   incomingMessageConnectionsListAtInlet = (List **) malloc(numMessageInlets * sizeof(List *));
@@ -143,6 +144,9 @@ PdMessage *MessageObject::newCanonicalMessage(int outletIndex) {
 }
 
 bool MessageObject::isRootNode() {
+  if (strcmp(getObjectLabel(), "receive") == 0) {
+    return true;
+  }
   for (int i = 0; i < numMessageInlets; i++) {
     if (incomingMessageConnectionsListAtInlet[i]->size() > 0) {
       return false;
@@ -152,10 +156,35 @@ bool MessageObject::isRootNode() {
 }
 
 bool MessageObject::isLeafNode() {
+  if (strcmp(getObjectLabel(), "send") == 0) {
+    return true;
+  }
   for (int i = 0; i < numMessageOutlets; i++) {
     if (outgoingMessageConnectionsListAtOutlet[i]->size() > 0) {
       return false;
     }
   }
   return true;
+}
+
+List *MessageObject::getProcessOrder() {
+  if (isOrdered) {
+    // if this object has already been ordered, then move on
+    return new List();
+  } else {
+    isOrdered = true;
+    List *processList = new List();
+    if (!isRootNode()) {
+      for (int i = 0; i < numMessageInlets; i++) {
+        for (int j = 0; j < incomingMessageConnectionsListAtInlet[i]->size(); j++) {
+          ObjectLetPair *objectLetPair = (ObjectLetPair *) incomingMessageConnectionsListAtInlet[i]->get(j);
+          List *parentProcessList = objectLetPair->object->getProcessOrder();
+          processList->add(parentProcessList);
+          delete parentProcessList;
+        }
+      }
+    }
+    processList->add(this);
+    return processList;
+  }
 }

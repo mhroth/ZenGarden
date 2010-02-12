@@ -105,7 +105,9 @@ class PdGraph : public DspObject {
     int getNumOutputChannels();
   
     /** (Re-)Computes the tree and node processing ordering for dsp nodes. */
-    void computeProcessOrder();
+    void computeDspProcessOrder();
+  
+    List *getProcessOrder();
     
   private:
     PdGraph(FILE *fp, char *directory, char *libraryDirectory, int blockSize, int numInputChannels, 

@@ -23,7 +23,6 @@
 #ifndef _DSP_OBJECT_H_
 #define _DSP_OBJECT_H_
 
-#include <string.h>
 #include "MessageLetPair.h"
 #include "MessageObject.h"
 #include "MessageQueue.h"
@@ -66,6 +65,7 @@ class DspObject : public MessageObject {
   
     bool isRootNode();
     bool isLeafNode();
+    virtual List *getProcessOrder();
     
   protected:  
     virtual void processDspToIndex(float blockIndex);

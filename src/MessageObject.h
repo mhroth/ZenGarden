@@ -65,13 +65,27 @@ class MessageObject {
     /** Returns the label for this object. This is effectively a string representation of the object type. */
     virtual const char *getObjectLabel() = 0;
   
+    /** Returns <code>true</code> if this object processes audio, <code>false</code> otherwise. */
     virtual bool doesProcessAudio();
   
-    /** Returns <code>true</code> if this object is a root in the Pd tree. <code>false</code> otherwise. */
+   /**
+    * Returns <code>true</code> if this object is a root in the Pd tree. <code>false</code> otherwise.
+    * This function is used only while computing the process order of objects. For this reason it also
+    * returns true in the cases when the object is receive, receive~, or catch~.
+    */
     virtual bool isRootNode();
   
-    /** Returns <code>true</code> if this object is a leaf in the Pd tree. <code>false</code> otherwise. */
+    /**
+     * Returns <code>true</code> if this object is a leaf in the Pd tree. <code>false</code> otherwise.
+     * This function is used only while computing the process order of objects. For this reason it also
+     * returns true in the cases when the object is send, send~, or throw~.
+     */
     virtual bool isLeafNode();
+  
+    /** Returns an ordered list of all parent objects of this object. */
+    virtual List *getProcessOrder();
+  
+    // TODO(mhroth): one day there will have to be a recusive function to reset the isOrdered flag.
     
   protected:
     /** Returns a message that can be sent from the given outlet. */
@@ -86,6 +100,9 @@ class MessageObject {
     List **incomingMessageConnectionsListAtInlet;
     List **outgoingMessageConnectionsListAtOutlet;
     List **messageOutletPools;
+  
+    /** A flag indicating that this object has already been considered when ordering the process tree. */
+    bool isOrdered;
 };
 
 #endif // _MESSAGE_OBJECT_H_
