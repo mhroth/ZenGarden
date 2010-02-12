@@ -44,7 +44,7 @@ void MessageDivide::init(float constant) {
 }
 
 const char *MessageDivide::getObjectLabel() {
-  return "+";
+  return "/";
 }
 
 void MessageDivide::processMessage(int inletIndex, PdMessage *message) {
@@ -53,7 +53,7 @@ void MessageDivide::processMessage(int inletIndex, PdMessage *message) {
       MessageElement *messageElement = message->getElement(0);
       if (messageElement->getType() == FLOAT) {
         PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-        outgoingMessage->getElement(0)->setFloat(messageElement->getFloat() / constant);
+        outgoingMessage->getElement(0)->setFloat((constant == 0.0f) ? 0.0f : messageElement->getFloat() / constant);
         outgoingMessage->setTimestamp(message->getTimestamp());
         sendMessage(0, outgoingMessage); // send a message from outlet 0
       }
