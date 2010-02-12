@@ -1,8 +1,8 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009, 2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
- * 
+ *
  *  This file is part of ZenGarden.
  *
  *  ZenGarden is free software: you can redistribute it and/or modify
@@ -14,29 +14,33 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU Lesser General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with ZenGarden.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
-#ifndef _MESSAGE_EQUALS_EQUALS_H_
-#define _MESSAGE_EQUALS_EQUALS_H_
+#ifndef _MESSAGE_EQUALSEQUALS_H_
+#define _MESSAGE_EQUALSEQUALS_H_
 
-#include "MessageBinaryOperationObject.h"
+#include "MessageObject.h"
 
-/**
- * ==
- */
-class MessageEqualsEquals : public MessageBinaryOperationObject {
-  
+/** [==], [== float] */
+class MessageEqualsEquals : public MessageObject {
+
   public:
-    MessageEqualsEquals(char *initString);
-    MessageEqualsEquals(float constant, char *initString);
+    MessageEqualsEquals(PdMessage *initMessage, PdGraph *graph);
+    MessageEqualsEquals(float constant, PdGraph *graph);
     ~MessageEqualsEquals();
-    
-  protected:
-    inline float performBinaryOperation(float left, float right);
+
+    const char *getObjectLabel();
+
+  private:
+    void init(float constant);
+    void processMessage(int inletIndex, PdMessage *message);
+    PdMessage *newCanonicalMessage(int outletIndex);
+
+    float constant;
 };
 
-#endif // _MESSAGE_EQUALS_EQUALS_H_
+#endif // _MESSAGE_EQUALSEQUALS_H_

@@ -1,8 +1,8 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009, 2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
- * 
+ *
  *  This file is part of ZenGarden.
  *
  *  ZenGarden is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU Lesser General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with ZenGarden.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -23,20 +23,24 @@
 #ifndef _MESSAGE_MULTIPLY_H_
 #define _MESSAGE_MULTIPLY_H_
 
-#include "MessageBinaryOperationObject.h"
+#include "MessageObject.h"
 
-/**
- * *
- */
-class MessageMultiply : public MessageBinaryOperationObject {
-  
+/** [*], [* float] */
+class MessageMultiply : public MessageObject {
+
   public:
-    MessageMultiply(char *initString);
-    MessageMultiply(float constant, char *initString);
+    MessageMultiply(PdMessage *initMessage, PdGraph *graph);
+    MessageMultiply(float constant, PdGraph *graph);
     ~MessageMultiply();
-    
-  protected:
-    inline float performBinaryOperation(float left, float right);
+
+    const char *getObjectLabel();
+
+  private:
+    void init(float constant);
+    void processMessage(int inletIndex, PdMessage *message);
+    PdMessage *newCanonicalMessage(int outletIndex);
+
+    float constant;
 };
 
 #endif // _MESSAGE_MULTIPLY_H_

@@ -34,6 +34,16 @@
 		90398CBA1113564400E5A8B6 /* PdGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C9B1113564400E5A8B6 /* PdGraph.cpp */; };
 		90398CBB1113564400E5A8B6 /* PdMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C9D1113564400E5A8B6 /* PdMessage.cpp */; };
 		90398CBC1113564400E5A8B6 /* StaticUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398CA11113564400E5A8B6 /* StaticUtils.cpp */; };
+		908A373E1125DF6D00558388 /* MessageEqualsEquals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908A37321125DF6D00558388 /* MessageEqualsEquals.cpp */; };
+		908A373F1125DF6D00558388 /* MessageGreaterThan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908A37341125DF6D00558388 /* MessageGreaterThan.cpp */; };
+		908A37401125DF6D00558388 /* MessageGreaterThanOrEqualTo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908A37361125DF6D00558388 /* MessageGreaterThanOrEqualTo.cpp */; };
+		908A37411125DF6D00558388 /* MessageLessThan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908A37381125DF6D00558388 /* MessageLessThan.cpp */; };
+		908A37421125DF6D00558388 /* MessageLessThanOrEqualTo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908A373A1125DF6D00558388 /* MessageLessThanOrEqualTo.cpp */; };
+		908A37431125DF6D00558388 /* MessageNotEquals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908A373C1125DF6D00558388 /* MessageNotEquals.cpp */; };
+		908A374D1125DFF800558388 /* MessageMultiply.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908A37491125DFF800558388 /* MessageMultiply.cpp */; };
+		908A374E1125DFF800558388 /* MessageSine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908A374B1125DFF800558388 /* MessageSine.cpp */; };
+		908A37581125E07100558388 /* MessageDivide.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908A37541125E07100558388 /* MessageDivide.cpp */; };
+		908A37591125E07100558388 /* MessageSubtract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908A37561125E07100558388 /* MessageSubtract.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -108,6 +118,26 @@
 		90398CA01113564400E5A8B6 /* PdNodeType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PdNodeType.h; path = ../src/PdNodeType.h; sourceTree = SOURCE_ROOT; };
 		90398CA11113564400E5A8B6 /* StaticUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StaticUtils.cpp; path = ../src/StaticUtils.cpp; sourceTree = SOURCE_ROOT; };
 		90398CA21113564400E5A8B6 /* StaticUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StaticUtils.h; path = ../src/StaticUtils.h; sourceTree = SOURCE_ROOT; };
+		908A37321125DF6D00558388 /* MessageEqualsEquals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageEqualsEquals.cpp; path = ../src/MessageEqualsEquals.cpp; sourceTree = SOURCE_ROOT; };
+		908A37331125DF6D00558388 /* MessageEqualsEquals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageEqualsEquals.h; path = ../src/MessageEqualsEquals.h; sourceTree = SOURCE_ROOT; };
+		908A37341125DF6D00558388 /* MessageGreaterThan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageGreaterThan.cpp; path = ../src/MessageGreaterThan.cpp; sourceTree = SOURCE_ROOT; };
+		908A37351125DF6D00558388 /* MessageGreaterThan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageGreaterThan.h; path = ../src/MessageGreaterThan.h; sourceTree = SOURCE_ROOT; };
+		908A37361125DF6D00558388 /* MessageGreaterThanOrEqualTo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageGreaterThanOrEqualTo.cpp; path = ../src/MessageGreaterThanOrEqualTo.cpp; sourceTree = SOURCE_ROOT; };
+		908A37371125DF6D00558388 /* MessageGreaterThanOrEqualTo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageGreaterThanOrEqualTo.h; path = ../src/MessageGreaterThanOrEqualTo.h; sourceTree = SOURCE_ROOT; };
+		908A37381125DF6D00558388 /* MessageLessThan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageLessThan.cpp; path = ../src/MessageLessThan.cpp; sourceTree = SOURCE_ROOT; };
+		908A37391125DF6D00558388 /* MessageLessThan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageLessThan.h; path = ../src/MessageLessThan.h; sourceTree = SOURCE_ROOT; };
+		908A373A1125DF6D00558388 /* MessageLessThanOrEqualTo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageLessThanOrEqualTo.cpp; path = ../src/MessageLessThanOrEqualTo.cpp; sourceTree = SOURCE_ROOT; };
+		908A373B1125DF6D00558388 /* MessageLessThanOrEqualTo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageLessThanOrEqualTo.h; path = ../src/MessageLessThanOrEqualTo.h; sourceTree = SOURCE_ROOT; };
+		908A373C1125DF6D00558388 /* MessageNotEquals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageNotEquals.cpp; path = ../src/MessageNotEquals.cpp; sourceTree = SOURCE_ROOT; };
+		908A373D1125DF6D00558388 /* MessageNotEquals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageNotEquals.h; path = ../src/MessageNotEquals.h; sourceTree = SOURCE_ROOT; };
+		908A37491125DFF800558388 /* MessageMultiply.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageMultiply.cpp; path = ../src/MessageMultiply.cpp; sourceTree = SOURCE_ROOT; };
+		908A374A1125DFF800558388 /* MessageMultiply.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageMultiply.h; path = ../src/MessageMultiply.h; sourceTree = SOURCE_ROOT; };
+		908A374B1125DFF800558388 /* MessageSine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageSine.cpp; path = ../src/MessageSine.cpp; sourceTree = SOURCE_ROOT; };
+		908A374C1125DFF800558388 /* MessageSine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageSine.h; path = ../src/MessageSine.h; sourceTree = SOURCE_ROOT; };
+		908A37541125E07100558388 /* MessageDivide.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageDivide.cpp; path = ../src/MessageDivide.cpp; sourceTree = SOURCE_ROOT; };
+		908A37551125E07100558388 /* MessageDivide.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageDivide.h; path = ../src/MessageDivide.h; sourceTree = SOURCE_ROOT; };
+		908A37561125E07100558388 /* MessageSubtract.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageSubtract.cpp; path = ../src/MessageSubtract.cpp; sourceTree = SOURCE_ROOT; };
+		908A37571125E07100558388 /* MessageSubtract.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageSubtract.h; path = ../src/MessageSubtract.h; sourceTree = SOURCE_ROOT; };
 		C6859E8B029090EE04C91782 /* pdm10.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = pdm10.1; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -155,15 +185,29 @@
 				90398C7A1113564400E5A8B6 /* MessageDelay.h */,
 				90398C7B1113564400E5A8B6 /* MessageDestination.h */,
 				90398C7C1113564400E5A8B6 /* MessageElement.cpp */,
+				908A37541125E07100558388 /* MessageDivide.cpp */,
+				908A37551125E07100558388 /* MessageDivide.h */,
 				90398C7D1113564400E5A8B6 /* MessageElement.h */,
 				90398C7E1113564400E5A8B6 /* MessageElementType.h */,
+				908A37321125DF6D00558388 /* MessageEqualsEquals.cpp */,
+				908A37331125DF6D00558388 /* MessageEqualsEquals.h */,
 				90398C7F1113564400E5A8B6 /* MessageFloat.cpp */,
 				90398C801113564400E5A8B6 /* MessageFloat.h */,
+				908A37341125DF6D00558388 /* MessageGreaterThan.cpp */,
+				908A37351125DF6D00558388 /* MessageGreaterThan.h */,
+				908A37361125DF6D00558388 /* MessageGreaterThanOrEqualTo.cpp */,
+				908A37371125DF6D00558388 /* MessageGreaterThanOrEqualTo.h */,
 				90398C811113564400E5A8B6 /* MessageInlet.cpp */,
 				90398C821113564400E5A8B6 /* MessageInlet.h */,
+				908A37381125DF6D00558388 /* MessageLessThan.cpp */,
+				908A37391125DF6D00558388 /* MessageLessThan.h */,
+				908A373A1125DF6D00558388 /* MessageLessThanOrEqualTo.cpp */,
+				908A373B1125DF6D00558388 /* MessageLessThanOrEqualTo.h */,
 				90398C831113564400E5A8B6 /* MessageLetPair.h */,
 				90398C841113564400E5A8B6 /* MessageLoadbang.cpp */,
 				90398C851113564400E5A8B6 /* MessageLoadbang.h */,
+				908A37491125DFF800558388 /* MessageMultiply.cpp */,
+				908A374A1125DFF800558388 /* MessageMultiply.h */,
 				90398C861113564400E5A8B6 /* MessageNamedObject.cpp */,
 				90398C871113564400E5A8B6 /* MessageNamedObject.h */,
 				90398C881113564400E5A8B6 /* MessageObject.cpp */,
@@ -182,10 +226,16 @@
 				90398C951113564400E5A8B6 /* MessageReceive.h */,
 				90398C961113564400E5A8B6 /* MessageSend.cpp */,
 				90398C971113564400E5A8B6 /* MessageSend.h */,
+				908A37561125E07100558388 /* MessageSubtract.cpp */,
+				908A37571125E07100558388 /* MessageSubtract.h */,
 				90398C981113564400E5A8B6 /* ObjectLetPair.h */,
 				90398C991113564400E5A8B6 /* OrderedMessageQueue.cpp */,
 				90398C9A1113564400E5A8B6 /* OrderedMessageQueue.h */,
 				90398C9B1113564400E5A8B6 /* PdGraph.cpp */,
+				908A374B1125DFF800558388 /* MessageSine.cpp */,
+				908A374C1125DFF800558388 /* MessageSine.h */,
+				908A373C1125DF6D00558388 /* MessageNotEquals.cpp */,
+				908A373D1125DF6D00558388 /* MessageNotEquals.h */,
 				90398C9C1113564400E5A8B6 /* PdGraph.h */,
 				90398C9D1113564400E5A8B6 /* PdMessage.cpp */,
 				90398C9E1113564400E5A8B6 /* PdMessage.h */,
@@ -281,6 +331,16 @@
 				90398CBA1113564400E5A8B6 /* PdGraph.cpp in Sources */,
 				90398CBB1113564400E5A8B6 /* PdMessage.cpp in Sources */,
 				90398CBC1113564400E5A8B6 /* StaticUtils.cpp in Sources */,
+				908A373E1125DF6D00558388 /* MessageEqualsEquals.cpp in Sources */,
+				908A373F1125DF6D00558388 /* MessageGreaterThan.cpp in Sources */,
+				908A37401125DF6D00558388 /* MessageGreaterThanOrEqualTo.cpp in Sources */,
+				908A37411125DF6D00558388 /* MessageLessThan.cpp in Sources */,
+				908A37421125DF6D00558388 /* MessageLessThanOrEqualTo.cpp in Sources */,
+				908A37431125DF6D00558388 /* MessageNotEquals.cpp in Sources */,
+				908A374D1125DFF800558388 /* MessageMultiply.cpp in Sources */,
+				908A374E1125DFF800558388 /* MessageSine.cpp in Sources */,
+				908A37581125E07100558388 /* MessageDivide.cpp in Sources */,
+				908A37591125E07100558388 /* MessageSubtract.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
