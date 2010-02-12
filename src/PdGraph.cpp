@@ -41,6 +41,7 @@
 #include "MessagePrint.h"
 #include "MessageReceive.h"
 #include "MessageSend.h"
+#include "MessageSine.h"
 #include "MessageSubtract.h"
 
 #include "DspAdc.h"
@@ -255,6 +256,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
     } else if (strcmp(objectLabel, "float") == 0 ||
         strcmp(objectLabel, "f") == 0) {
       return new MessageFloat(initMessage, graph);
+    } else if (StaticUtils::isNumeric(objectLabel)){
+      return new MessageFloat(atof(objectLabel), graph);
     } else if (strcmp(objectLabel, "delay") == 0) {
       return new MessageDelay(initMessage, graph);
     } else if (strcmp(objectLabel, "inlet") == 0) {
@@ -271,6 +274,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageReceive(initMessage, graph);
     } else if (strcmp(objectLabel, "send") == 0) {
       return new MessageSend(initMessage, graph);
+    } else if (strcmp(objectLabel, "sin") == 0) {
+      return new MessageSine(initMessage, graph);
     } else if (strcmp(objectLabel, "adc~") == 0) {
       return new DspAdc(graph);
     } else if (strcmp(objectLabel, "dac~") == 0) {
@@ -281,7 +286,7 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
   }
 
   // ERROR!
-  printErr("Object not recognised.");
+  printErr("Object not recognised.\n");
   return NULL;
 }
 
