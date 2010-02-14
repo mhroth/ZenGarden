@@ -80,6 +80,7 @@ PdGraph *PdGraph::newInstance(char *directory, char *filename, char *libraryDire
     fclose(fp);
   }
 
+  pdGraph->computeDspProcessOrder();
   return pdGraph;
 }
 
@@ -420,6 +421,9 @@ void PdGraph::process(float *inputBuffers, float *outputBuffers) {
   // set up adc~ buffers
   memcpy(globalDspInputBuffers, inputBuffers, numBytesInInputBuffers);
 
+  // clear the global output audio buffers so that dac~ nodes can write to it
+  memset(globalDspOutputBuffers, 0, numBytesInOutputBuffers);
+  
   // Send all messages for this block
   MessageDestination *destination = NULL;
   double nextBlockStartTimestamp = blockStartTimestamp + blockDurationMs;
@@ -430,9 +434,6 @@ void PdGraph::process(float *inputBuffers, float *outputBuffers) {
     destination->message->unreserve(destination->object);
     destination->object->sendMessage(destination->index, destination->message);
   }
-
-  // clear the global output audio buffers so that dac~ nodes can write to it
-  memset(globalDspOutputBuffers, 0, numBytesInOutputBuffers);
 
   // execute all audio objects in this graph
   processDsp();
@@ -499,7 +500,8 @@ void PdGraph::computeDspProcessOrder() {
 
   // add only those nodes which process audio to the final list
   dspNodeList->clear(); // reset the dsp node list
-  for (int i = 0; i < processList->size(); i++) {
+  for (int i = processList->size()-1; i >= 0; i--) {
+    // reverse order of process list such that the dsp elements at the top of the graph are processed first
     object = (MessageObject *) processList->get(i);
     if (object->doesProcessAudio()) {
       dspNodeList->add(object);

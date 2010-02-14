@@ -24,6 +24,7 @@
 #include "PdGraph.h"
 
 DspDac::DspDac(PdGraph *graph) : DspObject(0, graph->getNumOutputChannels(), 0, 0, graph) {
+  // localDspBufferAtOutlet is otherwise unused because DspDac is initialised with 0 dsp outlets
   localDspBufferAtOutlet = (float **) malloc(numDspInlets * sizeof(float *));
   for (int i = 0; i < numDspInlets; i++) {
     localDspBufferAtOutlet[i] = graph->getGlobalDspBufferAtOutlet(i);
