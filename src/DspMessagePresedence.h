@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -24,10 +24,10 @@
 #define _DSP_MESSAGE_PRESEDENCE_H_
 
 enum DspMessagePresedence {
-  DSP_DSP = 0,
-  DSP_MESSAGE = 1,
-  MESSAGE_DSP = 2,
-  MESSAGE_MESSAGE = 3
+  DSP_DSP,
+  DSP_MESSAGE,
+  MESSAGE_DSP,
+  MESSAGE_MESSAGE
 };
 
 #endif // _DSP_MESSAGE_PRESEDENCE_H_

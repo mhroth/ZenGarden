@@ -36,7 +36,6 @@ class MessageSend;
 class PdGraph : public DspObject {
   
   public:
-  
     static PdGraph *newInstance(char *directory, char *filename, char *libraryDirectory,
                                 int blockSize, int numInputChannels, int numOutputChannels, 
                                 float sampleRate, PdGraph *parentGraph);

@@ -109,8 +109,8 @@ MessageElement *PdMessage::getElement(int index) {
   return (MessageElement *) elementList->get(index);
 }
 
-float PdMessage::getBlockIndex(double currentBlockTimestamp) {
-  return (float) (timestamp - currentBlockTimestamp);
+float PdMessage::getBlockIndex(double currentBlockTimestamp, float sampleRate) {
+  return ((float) (timestamp - currentBlockTimestamp)) * sampleRate;
 }
 
 void PdMessage::setTimestamp(double timestamp) {

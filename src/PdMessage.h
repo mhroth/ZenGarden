@@ -45,7 +45,7 @@ class PdMessage {
     int getNumElements();
   
     /** A convenience function to determine when in a block a message occurs. */
-    float getBlockIndex(double currentBlockTimestamp);
+    float getBlockIndex(double currentBlockTimestamp, float sampleRate);
   
     /** Get the global timestamp of this message (in milliseconds). */
     double getTimestamp();

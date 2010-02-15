@@ -46,6 +46,7 @@
 
 #include "DspAdc.h"
 #include "DspDac.h"
+#include "DspOsc.h"
 
 /** A C-defined function implementing the default print behaviour. */
 void defaultPrintFunction(char *msg) {
@@ -90,6 +91,7 @@ PdGraph::PdGraph(FILE *fp, char *directory, char *libraryDirectory, int blockSiz
   this->numInputChannels = numInputChannels;
   this->numOutputChannels = numOutputChannels;
   this->blockSize = blockSize;
+  this->sampleRate = sampleRate;
   this->parentGraph = parentGraph;
   blockStartTimestamp = 0.0;
   blockDurationMs = ((double) blockSize / (double) sampleRate) * 1000.0;
@@ -281,6 +283,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new DspAdc(graph);
     } else if (strcmp(objectLabel, "dac~") == 0) {
       return new DspDac(graph);
+    } else if (strcmp(objectLabel, "osc~") == 0) {
+      return new DspOsc(initMessage, graph);
     }
   } else if (strcmp(objectType, "msg") == 0) {
     // TODO(mhroth)

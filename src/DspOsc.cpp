@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -20,36 +20,34 @@
  *
  */
 
-#include <math.h>
 #include "DspOsc.h"
+#include "PdGraph.h"
 
 // initialise the static class variables
 float *DspOsc::cos_table = NULL;
 int DspOsc::refCount = 0;
 
-DspOsc::DspOsc(int blockSize, int sampleRate, char *initString) : 
-    DspMessageInputDspOutputObject(2, 1, blockSize, initString) {
-  frequency = 0.0f;
-  init(sampleRate);
+DspOsc::DspOsc(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
+  if (initMessage->getNumElements() > 0 &&
+      initMessage->getElement(0)->getType() == FLOAT) {
+    frequency = initMessage->getElement(0)->getFloat();
+  } else {
+    frequency = 0.0f;
+  }
+  init(graph->getSampleRate());
 }
 
-DspOsc::DspOsc(float frequency, int blockSize, int sampleRate, char *initString) : 
-    DspMessageInputDspOutputObject(2, 1, blockSize, initString) {
-  this->frequency = fabsf(frequency);
-  init(sampleRate);
-}
-
-void DspOsc::init(int sampleRate) {
+void DspOsc::init(float sampleRate) {
   this->sampleRate = sampleRate;
-  phase = 0;
+  phase = 0.0f;
   index = 0.0f;
   refCount++;
   if (cos_table == NULL) {
-    cos_table = (float *) malloc((sampleRate+1) * sizeof(float));
+    cos_table = (float *) malloc((lrintf(truncf(sampleRate))+1) * sizeof(float));
     for (int i = 0; i < sampleRate; i++) {
-      cos_table[i] = cosf(2.0f * M_PI * (float) i / (float) sampleRate);
+      cos_table[i] = cosf(2.0f * M_PI * (float) i / sampleRate);
     }
-    cos_table[sampleRate] = cos_table[0];
+    cos_table[lrintf(truncf(sampleRate))] = cos_table[0];
   }
 }
 
@@ -60,46 +58,48 @@ DspOsc::~DspOsc() {
   }
 }
 
+const char *DspOsc::getObjectLabel() {
+  return "osc~";
+}
+
 void DspOsc::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: { // update the frequency
       MessageElement *messageElement = message->getElement(0);
       if (messageElement->getType() == FLOAT) {
-        processDspToIndex(message->getBlockIndex());
+        processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
         frequency = fabsf(messageElement->getFloat());
-        blockIndexOfLastMessage = message->getBlockIndex();
       }
       break;
     }
     case 1: { // update the phase
-      MessageElement *messageElement = message->getElement(0);
-      if (messageElement->getType() == FLOAT) {
-        processDspToIndex(message->getBlockIndex());
-        phase = (int) messageElement->getFloat();
-        blockIndexOfLastMessage = message->getBlockIndex();
-      }
+      // TODO(mhroth)
+      break;
     }
     default: {
-      break; // ERROR!
+      break;
     }
   }
 }
 
-void DspOsc::processDspToIndex(int newBlockIndex) {
-  switch (signalPresedence) {
+void DspOsc::processDspToIndex(float blockIndex) {
+  switch (signalPrecedence) {
     case DSP_DSP: {
       // TODO(mhroth)
       break;
     }
     case DSP_MESSAGE: {
+      /*
+       * TODO(mhroth)
       float *inputBuffer = localDspBufferAtInlet[0];
       float *outputBuffer = localDspBufferAtOutlet[0];
-      for (int i = blockIndexOfLastMessage; i < newBlockIndex; index += inputBuffer[i++]) {
+      for (int i = lrintf(truncf(blockIndexOfLastMessage)); i < newBlockIndex; index += inputBuffer[i++]) {
         if (index >= sampleRate) {
           index -= sampleRate;
         }
         outputBuffer[i] = cos_table[lrintf(index)];
       }
+      */
       break;
     }
     case MESSAGE_DSP: {
@@ -107,8 +107,9 @@ void DspOsc::processDspToIndex(int newBlockIndex) {
       break;
     }
     case MESSAGE_MESSAGE: {
+      int blockIndexInt = lrintf(truncf(blockIndex));
       float *outputBuffer = localDspBufferAtOutlet[0];
-      for (int i = blockIndexOfLastMessage; i < newBlockIndex; i++, index += frequency) {
+      for (int i = lrintf(truncf(blockIndexOfLastMessage)); i < blockIndexInt; i++, index += frequency) {
         if (index >= sampleRate) {
           index -= sampleRate;
         }
@@ -117,4 +118,5 @@ void DspOsc::processDspToIndex(int newBlockIndex) {
       break;
     }
   }
+  blockIndexOfLastMessage = blockIndex; // update the block index of the last message
 }

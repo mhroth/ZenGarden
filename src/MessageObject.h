@@ -51,6 +51,7 @@ class MessageObject {
     void sendMessage(int outletIndex, PdMessage *message);
     
     /** <code>MessageObject</code>s by default do not process any audio */
+    // TODO(mhroth): can't we move this function to DspObject?
     virtual void processDsp();
   
     /** Returns the connection type of the given outlet. */
@@ -62,7 +63,7 @@ class MessageObject {
     /** Establish a connection to another object from this object. */
     virtual void addConnectionToObjectFromOutlet(MessageObject *messageObject, int inletIndex, int outletIndex);
   
-    /** Returns the label for this object. This is effectively a string representation of the object type. */
+    /** Returns the label for this object. */
     virtual const char *getObjectLabel() = 0;
   
     /** Returns <code>true</code> if this object processes audio, <code>false</code> otherwise. */

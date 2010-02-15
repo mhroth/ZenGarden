@@ -53,7 +53,7 @@ void DspAdd::processMessage(int inletIndex, PdMessage *message) {
     case 1: {
       MessageElement *messageElement = message->getElement(0);
       if (messageElement->getType() == FLOAT) {
-        processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp()));
+        processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
         constant = messageElement->getFloat();
       }
       break;
@@ -66,4 +66,5 @@ void DspAdd::processMessage(int inletIndex, PdMessage *message) {
 
 void DspAdd::processDspToIndex(float blockIndex) {
   // TODO(mhroth)
+  blockIndexOfLastMessage = blockIndex;
 }

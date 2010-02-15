@@ -23,6 +23,8 @@
 #ifndef _DSP_OBJECT_H_
 #define _DSP_OBJECT_H_
 
+#include <math.h>
+#include "DspMessagePresedence.h"
 #include "MessageLetPair.h"
 #include "MessageObject.h"
 #include "MessageQueue.h"
@@ -39,7 +41,7 @@ class DspObject : public MessageObject {
     DspObject(int numMessageInlets, int numDspInlets, int numMessageOutlets, int numDspOutlets, PdGraph *graph);
   
     /** 
-     * This constructor is used exclisvely by <code>PdGraph</code>.
+     * This constructor is used exclusively by <code>PdGraph</code>.
      * <code>DspObject</code> requires the blocksize in order to instantiate, however <code>PdGraph</code>
      * is a subclass of <code>DspObject</code> and thus the fields of the latter are not yet initialised
      * when the fomer fields are filled in.
@@ -81,8 +83,14 @@ class DspObject : public MessageObject {
     int blockSizeInt;
     float blockSizeFloat;
   
+    /** The sample index of the last received message, relative to the beginning of the current block. */
+    float blockIndexOfLastMessage;
+  
     /** The local message queue. Messages that are pending for the next block. */
     MessageQueue *messageQueue;
+  
+    /** Indicates if messages or signals should take precedence on two inlet <code>DspObject</code>s. */
+    DspMessagePresedence signalPrecedence;
   
     int numBytesInBlock;
   

@@ -38,6 +38,8 @@ void DspObject::init(int numDspInlets, int numDspOutlets, int blockSize) {
   this->numDspOutlets = numDspOutlets;
   blockSizeInt = blockSize;
   blockSizeFloat = (float) blockSizeInt;
+  blockIndexOfLastMessage = 0.0f;
+  signalPrecedence = MESSAGE_MESSAGE;
   numBytesInBlock = blockSizeInt * sizeof(float);
   messageQueue = new MessageQueue();
   
@@ -181,6 +183,7 @@ void DspObject::processDsp() {
   
   // process remainder of block
   processDspToIndex(blockSizeFloat);
+  blockIndexOfLastMessage = 0.0f; // reset the block index of the last received message
 }
 
 void DspObject::processDspToIndex(float blockIndex) {

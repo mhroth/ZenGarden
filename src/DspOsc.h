@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,27 +23,26 @@
 #ifndef _DSP_OSC_H_
 #define _DSP_OSC_H_
 
-#include "DspMessageInputDspOutputObject.h"
+#include "DspObject.h"
 
-/**
- * osc~
- */
-class DspOsc : public DspMessageInputDspOutputObject {
+/** [osc~], [osc~ float] */
+class DspOsc : public DspObject {
   
   public:
-    DspOsc(int blockSize, int sampleRate, char *initString); // and oscillator of default zero frequency
-    DspOsc(float frequency, int blockSize, int sampleRate, char *initString); // for adding a constant to a dsp stream
+    DspOsc(PdMessage *initMessage, PdGraph *graph); // and oscillator of default zero frequency
     ~DspOsc();
+  
+    const char *getObjectLabel();
     
   protected:
     void processMessage(int inletIndex, PdMessage *message);
-    void processDspToIndex(int newBlockIndex);
+    void processDspToIndex(float blockIndex);
     
   private:
     /**
      * Used in the multiple constructors of this object to maintain a single point of initialising all variables.
      */
-    void init(int sampleRate);
+    void init(float sampleRate);
     
     int sampleRate;
     float frequency; // frequency and phase are stored as integers because they are used
