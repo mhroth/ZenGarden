@@ -222,12 +222,18 @@ PdGraph::~PdGraph() {
     delete messageSendList;
     delete dspReceiveList;
     delete dspSendList;
+    free(globalDspInputBuffers);
+    free(globalDspOutputBuffers);
   }
   delete inletList;
   delete outletList;
   delete graphArguments;
-  free(globalDspInputBuffers);
-  free(globalDspOutputBuffers);
+  
+  // delete all constituent nodes
+  for (int i = 0; i < nodeList->size(); i++) {
+    MessageObject *messageObject = (MessageObject *) nodeList->get(i);
+    delete messageObject;
+  }
 }
 
 const char *PdGraph::getObjectLabel() {
@@ -513,6 +519,13 @@ void PdGraph::computeDspProcessOrder() {
   }
 
   delete processList;
+  
+  // print dsp evaluation order for debugging
+  printf("--- ordered evaluation list ---\n");
+  for (int i = 0; i < dspNodeList->size(); i++) {
+    MessageObject *messageObject = (MessageObject *) dspNodeList->get(i);
+    printf("%s\n", messageObject->getObjectLabel());
+  }
 }
 
 List *PdGraph::getProcessOrder() {
