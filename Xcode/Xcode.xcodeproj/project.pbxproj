@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		8DD76F6A0486A84900D96B5E /* pdm10.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6859E8B029090EE04C91782 /* pdm10.1 */; };
+		90275B42112880D900FFAEC7 /* DspOsc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90275B40112880D900FFAEC7 /* DspOsc.cpp */; };
 		90398CA31113564400E5A8B6 /* DspAdc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C6A1113564400E5A8B6 /* DspAdc.cpp */; };
 		90398CA41113564400E5A8B6 /* DspAdd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C6C1113564400E5A8B6 /* DspAdd.cpp */; };
 		90398CA51113564400E5A8B6 /* DspDac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C6E1113564400E5A8B6 /* DspDac.cpp */; };
@@ -61,6 +62,8 @@
 
 /* Begin PBXFileReference section */
 		8DD76F6C0486A84900D96B5E /* pdm10 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = pdm10; sourceTree = BUILT_PRODUCTS_DIR; };
+		90275B40112880D900FFAEC7 /* DspOsc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspOsc.cpp; path = ../src/DspOsc.cpp; sourceTree = SOURCE_ROOT; };
+		90275B41112880D900FFAEC7 /* DspOsc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspOsc.h; path = ../src/DspOsc.h; sourceTree = SOURCE_ROOT; };
 		90398C691113564400E5A8B6 /* ConnectionType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConnectionType.h; path = ../src/ConnectionType.h; sourceTree = SOURCE_ROOT; };
 		90398C6A1113564400E5A8B6 /* DspAdc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspAdc.cpp; path = ../src/DspAdc.cpp; sourceTree = SOURCE_ROOT; };
 		90398C6B1113564400E5A8B6 /* DspAdc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspAdc.h; path = ../src/DspAdc.h; sourceTree = SOURCE_ROOT; };
@@ -138,6 +141,7 @@
 		908A37551125E07100558388 /* MessageDivide.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageDivide.h; path = ../src/MessageDivide.h; sourceTree = SOURCE_ROOT; };
 		908A37561125E07100558388 /* MessageSubtract.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageSubtract.cpp; path = ../src/MessageSubtract.cpp; sourceTree = SOURCE_ROOT; };
 		908A37571125E07100558388 /* MessageSubtract.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageSubtract.h; path = ../src/MessageSubtract.h; sourceTree = SOURCE_ROOT; };
+		90AA54D511295EF900E8796B /* DspMessagePresedence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspMessagePresedence.h; path = ../src/DspMessagePresedence.h; sourceTree = SOURCE_ROOT; };
 		C6859E8B029090EE04C91782 /* pdm10.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = pdm10.1; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -172,8 +176,11 @@
 				90398C6D1113564400E5A8B6 /* DspAdd.h */,
 				90398C6E1113564400E5A8B6 /* DspDac.cpp */,
 				90398C6F1113564400E5A8B6 /* DspDac.h */,
+				90AA54D511295EF900E8796B /* DspMessagePresedence.h */,
 				90398C701113564400E5A8B6 /* DspObject.cpp */,
 				90398C711113564400E5A8B6 /* DspObject.h */,
+				90275B40112880D900FFAEC7 /* DspOsc.cpp */,
+				90275B41112880D900FFAEC7 /* DspOsc.h */,
 				90398C721113564400E5A8B6 /* LinkedList.cpp */,
 				90398C731113564400E5A8B6 /* LinkedList.h */,
 				90398C741113564400E5A8B6 /* List.cpp */,
@@ -210,6 +217,8 @@
 				908A374A1125DFF800558388 /* MessageMultiply.h */,
 				90398C861113564400E5A8B6 /* MessageNamedObject.cpp */,
 				90398C871113564400E5A8B6 /* MessageNamedObject.h */,
+				908A373C1125DF6D00558388 /* MessageNotEquals.cpp */,
+				908A373D1125DF6D00558388 /* MessageNotEquals.h */,
 				90398C881113564400E5A8B6 /* MessageObject.cpp */,
 				90398C891113564400E5A8B6 /* MessageObject.h */,
 				90398C8A1113564400E5A8B6 /* MessageOutlet.cpp */,
@@ -226,16 +235,14 @@
 				90398C951113564400E5A8B6 /* MessageReceive.h */,
 				90398C961113564400E5A8B6 /* MessageSend.cpp */,
 				90398C971113564400E5A8B6 /* MessageSend.h */,
+				908A374B1125DFF800558388 /* MessageSine.cpp */,
+				908A374C1125DFF800558388 /* MessageSine.h */,
 				908A37561125E07100558388 /* MessageSubtract.cpp */,
 				908A37571125E07100558388 /* MessageSubtract.h */,
 				90398C981113564400E5A8B6 /* ObjectLetPair.h */,
 				90398C991113564400E5A8B6 /* OrderedMessageQueue.cpp */,
 				90398C9A1113564400E5A8B6 /* OrderedMessageQueue.h */,
 				90398C9B1113564400E5A8B6 /* PdGraph.cpp */,
-				908A374B1125DFF800558388 /* MessageSine.cpp */,
-				908A374C1125DFF800558388 /* MessageSine.h */,
-				908A373C1125DF6D00558388 /* MessageNotEquals.cpp */,
-				908A373D1125DF6D00558388 /* MessageNotEquals.h */,
 				90398C9C1113564400E5A8B6 /* PdGraph.h */,
 				90398C9D1113564400E5A8B6 /* PdMessage.cpp */,
 				90398C9E1113564400E5A8B6 /* PdMessage.h */,
@@ -341,6 +348,7 @@
 				908A374E1125DFF800558388 /* MessageSine.cpp in Sources */,
 				908A37581125E07100558388 /* MessageDivide.cpp in Sources */,
 				908A37591125E07100558388 /* MessageSubtract.cpp in Sources */,
+				90275B42112880D900FFAEC7 /* DspOsc.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -354,12 +362,14 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"_GLIBCXX_DEBUG=1",
 					"_GLIBCXX_DEBUG_PEDANTIC=1",
 				);
+				GENERATE_PROFILING_CODE = NO;
 				INSTALL_PATH = /usr/local/bin;
 				PRODUCT_NAME = pdm10;
 			};
@@ -370,7 +380,10 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
+				GENERATE_PROFILING_CODE = NO;
 				INSTALL_PATH = /usr/local/bin;
 				PRODUCT_NAME = pdm10;
 			};
