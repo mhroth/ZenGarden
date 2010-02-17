@@ -39,6 +39,7 @@
 #include "MessageOutlet.h"
 #include "MessagePipe.h"
 #include "MessagePrint.h"
+#include "MessageRandom.h"
 #include "MessageReceive.h"
 #include "MessageSend.h"
 #include "MessageSine.h"
@@ -280,6 +281,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessagePrint(initMessage, graph);
     } else if (strcmp(objectLabel, "outlet") == 0) {
       return new MessageOutlet(initMessage, graph);
+    } else if (strcmp(objectLabel, "random") == 0) {
+      return new MessageRandom(initMessage, graph);
     } else if (strcmp(objectLabel, "receive") == 0) {
       return new MessageReceive(initMessage, graph);
     } else if (strcmp(objectLabel, "send") == 0) {

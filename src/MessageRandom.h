@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,24 +23,28 @@
 #ifndef _MESSAGE_RANDOM_H_
 #define _MESSAGE_RANDOM_H_
 
-#include "MessageInputMessageOutputObject.h"
+#include "MersenneTwister.h"
+#include "MessageObject.h"
 
-/**
- * random
- */
-class MessageRandom : public MessageInputMessageOutputObject {
+class PdGraph;
+
+/** [random], [random float] */
+class MessageRandom : public MessageObject {
   
   public:
-    MessageRandom(char *initString);
-    MessageRandom(int N, char *initString);
+    MessageRandom(PdMessage *initMessage, PdGraph *graph);
+    MessageRandom(int N, PdGraph *graph);
     ~MessageRandom();
+  
+    const char *getObjectLabel();
     
   protected:
     void processMessage(int inletIndex, PdMessage *message);
     PdMessage *newCanonicalMessage();
     
   private:
-    int N;
+    int max_inc; // random output is in range [0, max_inc]
+    MTRand *twister;
 };
 
 #endif // _MESSAGE_RANDOM_H_
