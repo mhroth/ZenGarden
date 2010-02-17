@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -20,22 +20,26 @@
  *
  */
 
-#include <stdlib.h>
 #include "DspNoise.h"
+#include "PdGraph.h"
 
-const float DspNoise::floatHalfRandMax = (float) (RAND_MAX >> 1);
-
-DspNoise::DspNoise(int blockSize, char *initString) : DspInputDspOutputObject(1, 1, blockSize, initString) {
-  // nothing to do
+DspNoise::DspNoise(PdGraph *graph) : DspObject(1, 0, 0, 1, graph->getBlockSize(), graph) {
+  twister = new MTRand(); // use new seed
 }
 
 DspNoise::~DspNoise() {
-  // nothing to do
+  delete twister;
 }
 
-void DspNoise::processDspToIndex(int newBlockIndex) {
+const char *DspNoise::getObjectLabel() {
+  return "noise~";
+}
+
+void DspNoise::processDspToIndex(float blockIndex) {
+  int blockIndexInt = lrintf(truncf(blockIndex));
   float *outputBuffer = localDspBufferAtOutlet[0];
-  for (int i = 0; i < blockSize; i++) {
-    outputBuffer[i] = ((float) rand() / floatHalfRandMax) - 1.0f; // result is [-1.0f, 1.0f]
+  for (int i = lrintf(truncf(blockIndexOfLastMessage)); i < blockIndexInt; i++) {
+    outputBuffer[i] = ((float) twister->rand(2.0)) - 1.0f;
   }
+  blockIndexOfLastMessage = blockIndex;
 }

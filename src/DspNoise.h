@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,22 +23,25 @@
 #ifndef _DSP_NOISE_H_
 #define _DSP_NOISE_H_
 
-#include "DspInputDspOutputObject.h"
+#include "DspObject.h"
+#include "MersenneTwister.h"
 
-/**
- * noise~
- */
-class DspNoise : public DspInputDspOutputObject {
+class PdGraph;
+
+/** [noise~] */
+class DspNoise : public DspObject {
     
   public:
-    DspNoise(int blockSize, char *initString);
+    DspNoise(PdGraph *graph);
     ~DspNoise();
+  
+    const char *getObjectLabel();
     
   protected:
-    void processDspToIndex(int newBlockIndex);
+    void processDspToIndex(float newBlockIndex);
   
   private:
-    const static float floatHalfRandMax;
+    MTRand *twister;
 };
 
 #endif // _DSP_NOISE_H_

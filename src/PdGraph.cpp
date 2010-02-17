@@ -46,6 +46,7 @@
 
 #include "DspAdc.h"
 #include "DspDac.h"
+#include "DspNoise.h"
 #include "DspOsc.h"
 
 /** A C-defined function implementing the default print behaviour. */
@@ -289,6 +290,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new DspAdc(graph);
     } else if (strcmp(objectLabel, "dac~") == 0) {
       return new DspDac(graph);
+    } else if (strcmp(objectLabel, "noise~") == 0) {
+      return new DspNoise(graph);
     } else if (strcmp(objectLabel, "osc~") == 0) {
       return new DspOsc(initMessage, graph);
     }

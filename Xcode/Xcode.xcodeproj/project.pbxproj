@@ -45,6 +45,7 @@
 		908A374E1125DFF800558388 /* MessageSine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908A374B1125DFF800558388 /* MessageSine.cpp */; };
 		908A37581125E07100558388 /* MessageDivide.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908A37541125E07100558388 /* MessageDivide.cpp */; };
 		908A37591125E07100558388 /* MessageSubtract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908A37561125E07100558388 /* MessageSubtract.cpp */; };
+		90AD9673112C043600F45418 /* DspNoise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90AD9671112C043600F45418 /* DspNoise.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -142,6 +143,9 @@
 		908A37561125E07100558388 /* MessageSubtract.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageSubtract.cpp; path = ../src/MessageSubtract.cpp; sourceTree = SOURCE_ROOT; };
 		908A37571125E07100558388 /* MessageSubtract.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageSubtract.h; path = ../src/MessageSubtract.h; sourceTree = SOURCE_ROOT; };
 		90AA54D511295EF900E8796B /* DspMessagePresedence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspMessagePresedence.h; path = ../src/DspMessagePresedence.h; sourceTree = SOURCE_ROOT; };
+		90AD965D112C020700F45418 /* MersenneTwister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MersenneTwister.h; path = ../src/MersenneTwister.h; sourceTree = SOURCE_ROOT; };
+		90AD9671112C043600F45418 /* DspNoise.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspNoise.cpp; path = ../src/DspNoise.cpp; sourceTree = SOURCE_ROOT; };
+		90AD9672112C043600F45418 /* DspNoise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspNoise.h; path = ../src/DspNoise.h; sourceTree = SOURCE_ROOT; };
 		C6859E8B029090EE04C91782 /* pdm10.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = pdm10.1; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -177,6 +181,8 @@
 				90398C6E1113564400E5A8B6 /* DspDac.cpp */,
 				90398C6F1113564400E5A8B6 /* DspDac.h */,
 				90AA54D511295EF900E8796B /* DspMessagePresedence.h */,
+				90AD9671112C043600F45418 /* DspNoise.cpp */,
+				90AD9672112C043600F45418 /* DspNoise.h */,
 				90398C701113564400E5A8B6 /* DspObject.cpp */,
 				90398C711113564400E5A8B6 /* DspObject.h */,
 				90275B40112880D900FFAEC7 /* DspOsc.cpp */,
@@ -186,6 +192,7 @@
 				90398C741113564400E5A8B6 /* List.cpp */,
 				90398C751113564400E5A8B6 /* List.h */,
 				90398C761113564400E5A8B6 /* main.cpp */,
+				90AD965D112C020700F45418 /* MersenneTwister.h */,
 				90398C771113564400E5A8B6 /* MessageAdd.cpp */,
 				90398C781113564400E5A8B6 /* MessageAdd.h */,
 				90398C791113564400E5A8B6 /* MessageDelay.cpp */,
@@ -349,6 +356,7 @@
 				908A37581125E07100558388 /* MessageDivide.cpp in Sources */,
 				908A37591125E07100558388 /* MessageSubtract.cpp in Sources */,
 				90275B42112880D900FFAEC7 /* DspOsc.cpp in Sources */,
+				90AD9673112C043600F45418 /* DspNoise.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
