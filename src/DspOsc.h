@@ -38,12 +38,7 @@ class DspOsc : public DspObject {
     void processMessage(int inletIndex, PdMessage *message);
     void processDspToIndex(float blockIndex);
     
-  private:
-    /**
-     * Used in the multiple constructors of this object to maintain a single point of initialising all variables.
-     */
-    void init(float sampleRate);
-    
+  private:    
     int sampleRate;
     float frequency; // frequency and phase are stored as integers because they are used
     int phase;     // in for-loops to traverse the lookup table

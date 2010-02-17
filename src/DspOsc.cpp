@@ -34,11 +34,8 @@ DspOsc::DspOsc(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, g
   } else {
     frequency = 0.0f;
   }
-  init(graph->getSampleRate());
-}
-
-void DspOsc::init(float sampleRate) {
-  this->sampleRate = sampleRate;
+  
+  this->sampleRate = graph->getSampleRate();
   phase = 0.0f;
   index = 0.0f;
   refCount++;
@@ -67,7 +64,7 @@ void DspOsc::processMessage(int inletIndex, PdMessage *message) {
     case 0: { // update the frequency
       MessageElement *messageElement = message->getElement(0);
       if (messageElement->getType() == FLOAT) {
-        processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
+        processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), sampleRate));
         frequency = fabsf(messageElement->getFloat());
       }
       break;
