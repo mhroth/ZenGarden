@@ -71,8 +71,7 @@ void MessageRandom::processMessage(int inletIndex, PdMessage *message) {
       }
     }
     case 1: {
-      if (message->getNumElements() &&
-          message->getElement(0)->getType() == FLOAT) {
+      if (message->getElement(0)->getType() == FLOAT) {
         max_inc = ((int) message->getElement(0)->getFloat()) - 1;
       }
       break;
