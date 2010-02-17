@@ -33,11 +33,11 @@ List::List() {
 List::~List() {
   free(arrayList);
 }
-
+/*
 int List::size() {
   return numElements;
 }
-
+*/
 List *List::add(void *element) {
   if (numElements + 1 > maxLength) {
     growArrayList();
@@ -90,7 +90,7 @@ void *List::toArray() {
   memcpy(array, arrayList, numElements * sizeof(void *));
   return array;
 }
-
+/*
 void *List::get(int index) {
   if (index < 0 || index >= numElements) {
     return NULL;
@@ -98,7 +98,7 @@ void *List::get(int index) {
     return arrayList[index];
   }
 }
-
+*/
 void *List::replace(int index, void *newElement) {
   if (index < 0 || index >= numElements) {
     return NULL;

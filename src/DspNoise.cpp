@@ -36,9 +36,9 @@ const char *DspNoise::getObjectLabel() {
 }
 
 void DspNoise::processDspToIndex(float blockIndex) {
-  int blockIndexInt = lrintf(truncf(blockIndex));
+  int blockIndexInt = lrintf(floorf(blockIndex));
   float *outputBuffer = localDspBufferAtOutlet[0];
-  for (int i = lrintf(truncf(blockIndexOfLastMessage)); i < blockIndexInt; i++) {
+  for (int i = lrintf(ceilf(blockIndexOfLastMessage)); i < blockIndexInt; i++) {
     outputBuffer[i] = ((float) twister->rand(2.0)) - 1.0f;
   }
   blockIndexOfLastMessage = blockIndex;

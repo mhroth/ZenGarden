@@ -35,7 +35,7 @@ class List {
     virtual ~List();
   
     /** The number of elements currently in the list. */
-    int size();
+    inline int size() { return numElements; }
   
     /** Add the element onto the end of the list */
     List *add(void *element);
@@ -48,7 +48,8 @@ class List {
   
     void *toArray();
   
-    void *get(int index);
+    /** Returns the indexed element in the list. */
+    inline void *get(int index) { return arrayList[index]; }
   
     void *remove(int index);
   

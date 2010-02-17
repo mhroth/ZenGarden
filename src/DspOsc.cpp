@@ -104,9 +104,9 @@ void DspOsc::processDspToIndex(float blockIndex) {
       break;
     }
     case MESSAGE_MESSAGE: {
-      int blockIndexInt = lrintf(truncf(blockIndex));
+      int blockIndexInt = lrintf(floorf(blockIndex));
       float *outputBuffer = localDspBufferAtOutlet[0];
-      for (int i = lrintf(truncf(blockIndexOfLastMessage)); i < blockIndexInt; i++, index += frequency) {
+      for (int i = lrintf(ceilf(blockIndexOfLastMessage)); i < blockIndexInt; i++, index += frequency) {
         if (index >= sampleRate) {
           index -= sampleRate;
         }
