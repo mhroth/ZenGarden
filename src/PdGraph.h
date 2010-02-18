@@ -47,6 +47,9 @@ class PdGraph : public DspObject {
      */
     void scheduleMessage(MessageObject *messageObject, int outletIndex, PdMessage *message);
   
+    /** Cancel a scheduled <code>PdMessage</code> according to its id. */
+    void cancelMessage(MessageObject *messageObject, int outletIndex, PdMessage *message);
+  
     /**  */
     void processMessage(int inletIndex, PdMessage *message);
     

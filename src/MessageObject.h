@@ -95,7 +95,11 @@ class MessageObject {
     /** Sends the given message to all connected objects at the given outlet index. */
     void sendMessage(int outletIndex, PdMessage *message);
   
-    /** This callback is executed before a scheduled message is sent. */
+    /**
+     * This callback is executed before a scheduled message is sent. The <code>MessageObject</code>
+     * may use the hook to perform some other action when a scheduled message must be sent, such
+     * as scheduling another message (e.g., in the case of <code>MessageMetro</code>).
+     */
     virtual void scheduledMessageHook(int outletIndex, PdMessage *message);
     
     /** Returns a new message for use at the given outlet. */

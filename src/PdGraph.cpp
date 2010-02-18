@@ -34,6 +34,7 @@
 #include "MessageLessThan.h"
 #include "MessageLessThanOrEqualTo.h"
 #include "MessageLoadbang.h"
+#include "MessageMetro.h"
 #include "MessageMultiply.h"
 #include "MessageNotEquals.h"
 #include "MessageOutlet.h"
@@ -275,6 +276,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageInlet(initMessage, graph);
     } else if (strcmp(objectLabel, "loadbang") == 0) {
       return new MessageLoadbang(graph);
+    } else if (strcmp(objectLabel, "metro") == 0) {
+      return new MessageMetro(initMessage, graph);
     } else if (strcmp(objectLabel, "pipe") == 0) {
       return new MessagePipe(initMessage, graph);
     } else if (strcmp(objectLabel, "print") == 0) {
@@ -350,6 +353,15 @@ void PdGraph::scheduleMessage(MessageObject *messageObject, int outletIndex, PdM
     messageCallbackQueue->insertMessage(messageObject, outletIndex, message);
   } else {
     parentGraph->scheduleMessage(messageObject, outletIndex, message);
+  }
+}
+
+void PdGraph::cancelMessage(MessageObject *messageObject, int outletIndex, PdMessage *message) {
+  if (isRootGraph()) {
+    // TODO(mhroth): fill this in!
+    message->unreserve(messageObject);
+  } else {
+    parentGraph->cancelMessage(messageObject, outletIndex, message);
   }
 }
 

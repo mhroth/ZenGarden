@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -20,81 +20,106 @@
  *
  */
 
-#include <stdlib.h>
-#include <stdio.h>
 #include "MessageMetro.h"
-#include "StaticUtils.h"
+#include "PdGraph.h"
 
-MessageMetro::MessageMetro(int blockSize, int sampleRate, char *initString) : MessageInputMessageOutputObject(2, 1, initString) {
-  
-  this->sampleRate = (float) sampleRate;
-  this->blockSize = blockSize;
-  intervalInSamples = -1; // no interval has been set
-  index = 0;
-  isOn = false;
+MessageMetro::MessageMetro(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
+  if (initMessage->getNumElements() > 0 &&
+      initMessage->getElement(0)->getType() == FLOAT) {
+    intervalInMs = (double) initMessage->getElement(0)->getFloat();
+  } else {
+    intervalInMs = 1000.0; // default to 1 second
+  }
+  pendingMessage = NULL;
 }
 
-MessageMetro::MessageMetro(float intervalInMs, int blockSize, int sampleRate, char *initString) : MessageInputMessageOutputObject(2, 1, initString) {
-  this->sampleRate = (float) sampleRate;
-  this->blockSize = blockSize;
-  intervalInSamples = (int) StaticUtils::millisecondsToSamples(intervalInMs, this->sampleRate);
-  index = 0;
-  isOn = false;
+MessageMetro::MessageMetro(float intervalInMs, PdGraph *graph) : MessageObject(2, 1, graph) {
+  this->intervalInMs = (double) intervalInMs;
+  pendingMessage = NULL;
 }
 
 MessageMetro::~MessageMetro() {
   // nothing to do
 }
 
+const char *MessageMetro::getObjectLabel() {
+  return "metro";
+}
+
 void MessageMetro::processMessage(int inletIndex, PdMessage *message) {
+  MessageElement *messageElement = message->getElement(0);
   switch (inletIndex) {
-    case 0: { // the left inlet turns the metro on or off
-      // a bang toggles the state
-      // 1.0f explicitly turns it on
-      // 0.0f explicitly turns it off
-      MessageElement *messageElement = message->getElement(0);
-      if ((isOn && messageElement->getType() == FLOAT && messageElement->getFloat() == 0.0f) ||
-          (isOn && messageElement->getType() == BANG)) {
-        // turn off (currently in on state)
-        if (index + message->getBlockIndex() > intervalInSamples) {
-          // TODO(mhroth): the metro will be on and fire before the message takes effect
+    case 0: {
+      switch (messageElement->getType()) {
+        case FLOAT: {
+          if (messageElement->getFloat() == 0.0f) {
+            // stop the metro
+            cancelMessage();
+          } else { // should be == 1, but we allow any non-zero float to start the metro
+            // start the metro
+            
+            // send a bang right now
+            PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+            outgoingMessage->setTimestamp(message->getTimestamp());
+            sendMessage(0, outgoingMessage);
+            
+            // schedule the next message
+            scheduleMessage(message->getTimestamp());
+          }
+          break;
         }
-        isOn = false;
-      } else if ((!isOn && messageElement->getType() == FLOAT && messageElement->getFloat() == 1.0f) ||
-                 (!isOn && messageElement->getType() == BANG)) {
-        // turn on (currently in off state)
-        // metro should fire a message as soon as it is turned on
-        isOn = true;
-        index = 0 - message->getBlockIndex();
-        PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-        outgoingMessage->setBlockIndex(message->getBlockIndex());
+        case SYMBOL: {
+          if (strcmp(messageElement->getSymbol(), "stop") == 0) {
+            // stop the metro
+            cancelMessage();
+          }
+          break;
+        }
+        case BANG: {
+          // start the metro
+          
+          // send a bang right now
+          PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+          outgoingMessage->setTimestamp(message->getTimestamp());
+          sendMessage(0, outgoingMessage);
+          
+          // schedule the next message
+          scheduleMessage(message->getTimestamp());
+          break;
+        }
+        default: {
+          break;
+        }
       }
       break;
     }
     case 1: {
-      // TODO(mhroth): probably not correct for blockIndex != 0
-      MessageElement *messageElement = message->getElement(0);
       if (messageElement->getType() == FLOAT) {
-        intervalInSamples = (int) StaticUtils::millisecondsToSamples(messageElement->getFloat(), sampleRate);
+        intervalInMs = (double) messageElement->getFloat();
       }
       break;
     }
   }
 }
 
-void MessageMetro::process() {
-  MessageInputMessageOutputObject::process();
-  if (isOn) {
-    index += blockSize;
-    if (index > intervalInSamples) {
-      index -= intervalInSamples;
-      PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-      outgoingMessage->setBlockIndex(index);
-    }
+void MessageMetro::scheduledMessageHook(int outletIndex, PdMessage *message) {
+  scheduleMessage(message->getTimestamp());
+}
+
+void MessageMetro::scheduleMessage(double currentTime) {
+  pendingMessage = getNextOutgoingMessage(0);
+  pendingMessage->setTimestamp(currentTime + intervalInMs);
+  graph->scheduleMessage(this, 0, pendingMessage);
+}
+
+void MessageMetro::cancelMessage() {
+  if (pendingMessage != NULL) {
+    graph->cancelMessage(this, 0, pendingMessage);
+    pendingMessage = NULL;
   }
 }
 
-PdMessage *MessageMetro::newCanonicalMessage() {
+PdMessage *MessageMetro::newCanonicalMessage(int outletIndex) {
   PdMessage *message = new PdMessage();
   message->addElement(new MessageElement());
   return message;

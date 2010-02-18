@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,29 +23,31 @@
 #ifndef _MESSAGE_METRO_H_
 #define _MESSAGE_METRO_H_
 
-#include "MessageInputMessageOutputObject.h"
+#include "MessageObject.h"
 
-/**
- * metro
- */
-class MessageMetro : public MessageInputMessageOutputObject {
+class PdGraph;
+
+/** [metro], [metro float] */
+class MessageMetro : public MessageObject {
   
   public:
-    MessageMetro(int blockSize, int sampleRate, char *initString);
-    MessageMetro(float intervalInMs, int blockSize, int sampleRate, char *initString);
+    MessageMetro(PdMessage *iniMessage, PdGraph *graph);
+    MessageMetro(float intervalInMs, PdGraph *graph);
     ~MessageMetro();
-    
-  protected:
-    void process();
-    void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage();
+  
+    const char *getObjectLabel();
     
   private:
-    bool isOn;
-    int intervalInSamples;
-    int index;
-    int blockSize;
-    float sampleRate;
+    void scheduledMessageHook(int outletIndex, PdMessage *message);
+    void processMessage(int inletIndex, PdMessage *message);
+    PdMessage *newCanonicalMessage(int outletIndex);
+  
+    /** A helped function to schedule the next message, from the current time. */
+    void scheduleMessage(double currentTime);
+    void cancelMessage();
+  
+    PdMessage *pendingMessage;
+    double intervalInMs;
 };
 
 #endif // _MESSAGE_METRO_H_

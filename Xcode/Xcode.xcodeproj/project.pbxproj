@@ -47,6 +47,7 @@
 		908A37591125E07100558388 /* MessageSubtract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908A37561125E07100558388 /* MessageSubtract.cpp */; };
 		90AD9673112C043600F45418 /* DspNoise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90AD9671112C043600F45418 /* DspNoise.cpp */; };
 		90AD96D1112C394700F45418 /* MessageRandom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90AD96CF112C394700F45418 /* MessageRandom.cpp */; };
+		90B7E5EC112DC221009ED161 /* MessageMetro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90B7E5EA112DC221009ED161 /* MessageMetro.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -149,6 +150,8 @@
 		90AD9672112C043600F45418 /* DspNoise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspNoise.h; path = ../src/DspNoise.h; sourceTree = SOURCE_ROOT; };
 		90AD96CF112C394700F45418 /* MessageRandom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageRandom.cpp; path = ../src/MessageRandom.cpp; sourceTree = SOURCE_ROOT; };
 		90AD96D0112C394700F45418 /* MessageRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageRandom.h; path = ../src/MessageRandom.h; sourceTree = SOURCE_ROOT; };
+		90B7E5EA112DC221009ED161 /* MessageMetro.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageMetro.cpp; path = ../src/MessageMetro.cpp; sourceTree = SOURCE_ROOT; };
+		90B7E5EB112DC221009ED161 /* MessageMetro.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageMetro.h; path = ../src/MessageMetro.h; sourceTree = SOURCE_ROOT; };
 		C6859E8B029090EE04C91782 /* pdm10.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = pdm10.1; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -223,6 +226,8 @@
 				90398C831113564400E5A8B6 /* MessageLetPair.h */,
 				90398C841113564400E5A8B6 /* MessageLoadbang.cpp */,
 				90398C851113564400E5A8B6 /* MessageLoadbang.h */,
+				90B7E5EA112DC221009ED161 /* MessageMetro.cpp */,
+				90B7E5EB112DC221009ED161 /* MessageMetro.h */,
 				908A37491125DFF800558388 /* MessageMultiply.cpp */,
 				908A374A1125DFF800558388 /* MessageMultiply.h */,
 				90398C861113564400E5A8B6 /* MessageNamedObject.cpp */,
@@ -363,6 +368,7 @@
 				90275B42112880D900FFAEC7 /* DspOsc.cpp in Sources */,
 				90AD9673112C043600F45418 /* DspNoise.cpp in Sources */,
 				90AD96D1112C394700F45418 /* MessageRandom.cpp in Sources */,
+				90B7E5EC112DC221009ED161 /* MessageMetro.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
