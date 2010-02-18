@@ -47,8 +47,8 @@ class MessageObject {
     /** The message logic of an object. */
     virtual void processMessage(int inletIndex, PdMessage *message);
     
-    /** Sends the given message to all connected objects at the given outlet index. */
-    void sendMessage(int outletIndex, PdMessage *message);
+    /** Send a message which had been previously scheduled to all the outgoing object. */
+    void sendScheduledMessage(int outletIndex, PdMessage *message);
     
     /** <code>MessageObject</code>s by default do not process any audio */
     // TODO(mhroth): can't we move this function to DspObject?
@@ -91,6 +91,12 @@ class MessageObject {
   protected:
     /** Returns a message that can be sent from the given outlet. */
     PdMessage *getNextOutgoingMessage(int outletIndex);
+  
+    /** Sends the given message to all connected objects at the given outlet index. */
+    void sendMessage(int outletIndex, PdMessage *message);
+  
+    /** This callback is executed before a scheduled message is sent. */
+    virtual void scheduledMessageHook(int outletIndex, PdMessage *message);
     
     /** Returns a new message for use at the given outlet. */
     virtual PdMessage *newCanonicalMessage(int outletIndex);

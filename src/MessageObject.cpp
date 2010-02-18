@@ -82,6 +82,18 @@ void MessageObject::receiveMessage(int inletIndex, PdMessage *message) {
   processMessage(inletIndex, message);
 }
 
+void MessageObject::sendScheduledMessage(int outletIndex, PdMessage *message) {
+  // the object is notified that a scheduled message is being sent
+  scheduledMessageHook(outletIndex, message);
+  
+  // the message is sent
+  sendMessage(outletIndex, message);
+}
+
+void MessageObject::scheduledMessageHook(int outletIndex, PdMessage *message) {
+  // does nothing by default
+}
+
 void MessageObject::sendMessage(int outletIndex, PdMessage *message) {
   List *outgoingMessageConnectionsList = outgoingMessageConnectionsListAtOutlet[outletIndex];
   int numConnectionsAtOutlet = outgoingMessageConnectionsList->size();
