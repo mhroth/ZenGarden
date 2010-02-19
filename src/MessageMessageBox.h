@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,24 +23,22 @@
 #ifndef _MESSAGE_MESSAGE_BOX_H_
 #define _MESSAGE_MESSAGE_BOX_H_
 
-#include "MessageInputMessageOutputObject.h"
+#include "MessageObject.h"
 
-/**
- * Implements a message box bject.
- */
-class MessageMessageBox : public MessageInputMessageOutputObject {
+/** Implements the functionality of Pd's message box. */
+class MessageMessageBox : public MessageObject {
     
   public:
-    MessageMessageBox(char *initString);
+    MessageMessageBox(char *initString, PdGraph *graph);
     ~MessageMessageBox();
-    
-  protected:
-    inline void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage();
+  
+    const char *getObjectLabel();
   
   private:
-    List *listOfMessageElementLists;
-    List *listofVarableIndicies;
+    void processMessage(int inletIndex, PdMessage *message);
+    PdMessage *newCanonicalMessage(int outletIndex);
+  
+    List *messageList;
 };
 
 #endif // _MESSAGE_MESSAGE_BOX_H_

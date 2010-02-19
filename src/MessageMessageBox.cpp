@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -20,120 +20,81 @@
  *
  */
 
-#include "MessageElement.h"
 #include "MessageMessageBox.h"
 
-MessageMessageBox::MessageMessageBox(char *initString) : MessageInputMessageOutputObject(1, 1, initString) {
-  // this constructor is a bit pained, but so be it
-  listOfMessageElementLists = new List();
-  listofVarableIndicies = new List();
+/*
+ * The message box is overloaded with many kinds of functionality.
+ * A) The simplest case is one where only one message is specified, including a list of primitives
+ * which should be included in one message. The list may also include variable indicies (in the form
+ * of, e.g. $1, $2, etc.) which refer to those locations in the incoming message which triggers
+ * the message box.
+ * B) A slightly more complicated case is where several messages in the form of A) are separated
+ * by a comma (','). Each of the messages is processed and sent independently from the message box
+ * when it is triggered.
+ * C) The most complex case is where messages in the form of B) are separated by a semicolon (';').
+ * TODO(mhroth): err... how exactly does case C) work?
+ * 
+ * TODO(mhroth): <code>MessageMessageBox</code> currently only supports case A).
+ */
+MessageMessageBox::MessageMessageBox(char *initString, PdGraph *graph) : MessageObject(1, 1, graph) {
+  messageList = new List();
   
-  {
-    List *initList = MessageElement::toList(initString);
-    List *messageElementList = new List(); // WARNING: it is assumed that the first element is not "\\,"
-    listOfMessageElementLists->add((void *) messageElementList);
-    for (int i = 0; i < initList->getNumElements(); i++) {
-      MessageElement *messageElement = (MessageElement *) initList->get(i);
-      if (messageElement->getType() == SYMBOL &&
-          strcmp(messageElement->getSymbol(), "\\,") == 0) {
-        delete messageElement;
-        messageElementList = new List();
-        listOfMessageElementLists->add((void *) messageElementList);
-      } else {
-        messageElementList->add(messageElement);
-      }
-    }
-    delete initList;
-  }
-  
-  for (int i = 0; i < listOfMessageElementLists->getNumElements(); i++) {
-    List *messageElementList = (List *) listOfMessageElementLists->get(i);
-    int *variableIndex = (int *) malloc(messageElementList->getNumElements() * sizeof(int));
-    listofVarableIndicies->add(variableIndex);
-    for (int i = 0; i < messageElementList->getNumElements(); i++) {
-      MessageElement *messageElement = (MessageElement *) messageElementList->get(i);
-      if (messageElement->getType() == SYMBOL &&
-          strncmp(messageElement->getSymbol(), "\\$", strlen("\\$")) == 0) {
-        // -1 to account for zero-based indexing
-        variableIndex[i] = atoi(strtok(messageElement->getSymbol(), "\\$")) - 1;
-      } else {
-        variableIndex[i] = -1;
-      }
-    }
+  char *token = strtok(initString, ",");
+  while (token != NULL) {
+    // pass graph as NULL in order to prevent $X argument resolution
+    PdMessage *message = new PdMessage(token, NULL);
+    messageList->add(message);
+    
+    token = strtok(NULL, ","); // get the next message string
   }
 }
 
 MessageMessageBox::~MessageMessageBox() {
-  for (int i = 0; i < listOfMessageElementLists->getNumElements(); i++) {
-    List *messageElementList = (List *) listOfMessageElementLists->get(i);
-    for (int j = 0; j < messageElementList->getNumElements(); j++) {
-      delete (MessageElement *) messageElementList->get(j);
-    }
-    delete messageElementList;
+  // delete the message list and all of the messages in it
+  for (int i = 0; i < messageList->size(); i++) {
+    PdMessage *message = (PdMessage *) messageList->get(i);
+    delete message;
   }
-  delete listOfMessageElementLists;
-  
-  for (int i = 0; i < listofVarableIndicies->getNumElements(); i++) {
-    free(listofVarableIndicies->get(i));
-  }
-  delete listofVarableIndicies;
+  delete messageList;
 }
 
-inline void MessageMessageBox::processMessage(int inletIndex, PdMessage *message) {
-  if (inletIndex == 0) {
-    for (int i = 0; i < listOfMessageElementLists->getNumElements(); i++) {
-      PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-      outgoingMessage->setBlockIndexAsFloat(message->getBlockIndexAsFloat());
-      List *messageElementList = (List *) listOfMessageElementLists->get(i);
-      int *variableIndex = (int *) listofVarableIndicies->get(i);
-      for (int j = 0; j < messageElementList->getNumElements(); j++) {
-        if (variableIndex[j] > -1) {
-          MessageElement *messageElement = message->getElement(variableIndex[j]);
-          if (messageElement != NULL) {
-            MessageElement *outgoingMessageElement = outgoingMessage->getElement(j);
-            switch (messageElement->getType()) {
-              case FLOAT: {
-                outgoingMessageElement->setFloat(messageElement->getFloat());
-                break;
-              }
-              case SYMBOL: {
-                outgoingMessageElement->setSymbol(messageElement->getSymbol());
-                break;
-              }
-              case BANG: {
-                // or should this be outgoingMessageElement->setFloat(1.0f)?
-                outgoingMessageElement->setBang();
-                break;
-              }
-              default: {
-                break;
-              }
-            }
+const char *MessageMessageBox::getObjectLabel() {
+  return "msg";
+}
+
+void MessageMessageBox::processMessage(int inletIndex, PdMessage *message) {
+  for (int i = 0; i < messageList->size(); i++) {
+    PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+    outgoingMessage->setTimestamp(message->getTimestamp());
+    outgoingMessage->clearAndCopyFrom((PdMessage *) messageList->get(i));
+    for (int j = 0; j < outgoingMessage->getNumElements(); j++) {
+      MessageElement *messageElement = outgoingMessage->getElement(j);
+      if (messageElement->getType() == SYMBOL && 
+          StaticUtils::isArgumentIndex(messageElement->getSymbol())) {
+        // WARNING: there is no check here to ensure that the argument index is in the range of 
+        // available message elements
+        int argumentIndex = StaticUtils::getArgumentIndex(messageElement->getSymbol());
+        switch (message->getElement(argumentIndex)->getType()) {
+          case FLOAT: {
+            messageElement->setFloat(message->getElement(argumentIndex)->getFloat());
+            break;
+          }
+          case SYMBOL: {
+            messageElement->setSymbol(message->getElement(argumentIndex)->getSymbol());
+            break;
+          }
+          default: {
+            // bang case should never happen
+            break;
           }
         }
       }
     }
+    sendMessage(0, outgoingMessage);
   }
 }
 
-/*
- * This is a clever hack (I swear!). processMessage() always calls for messages from
- * getNextOutgoingMessage() in the same order. newCanonicalMessage() keeps track of
- * how many times it has been called and implicitly returns the correct type of message
- * to getNextOutgoingMessage().
- */
-PdMessage *MessageMessageBox::newCanonicalMessage() {
-  static int messageIndex = 0;
-  
-  List *messageElementList = (List *) listOfMessageElementLists->get(messageIndex);
-  PdMessage *message = new PdMessage();
-  for (int i = 0; i < messageElementList->getNumElements(); i++) {
-    message->addElement(((MessageElement *) messageElementList->get(i))->copy());
-  }
-  
-  if (++messageIndex >= listOfMessageElementLists->getNumElements()) {
-    messageIndex = 0;
-  }
-  
-  return message;
+PdMessage *MessageMessageBox::newCanonicalMessage(int outletIndex) {
+  // return only a simple PdMessage, as it will be cleared anyway
+  return new PdMessage();
 }
