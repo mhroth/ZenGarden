@@ -42,6 +42,7 @@
 #include "MessageLessThanOrEqualTo.h"
 #include "MessageLoadbang.h"
 #include "MessageLog.h"
+#include "MessageMessageBox.h"
 #include "MessageMetro.h"
 #include "MessageMultiply.h"
 #include "MessageNotEquals.h"
@@ -164,8 +165,7 @@ PdGraph::PdGraph(FILE *fp, char *directory, char *libraryDirectory, int blockSiz
       }
     } else if (strcmp(hashType, "#X") == 0) {
       char *objectType = strtok(NULL, " ");
-      if (strcmp(objectType, "obj") == 0 ||
-          strcmp(objectType, "msg") == 0) {
+      if (strcmp(objectType, "obj") == 0) {
         strtok(NULL, " "); // read the first canvas coordinate
         strtok(NULL, " "); // read the second canvas coordinate
         char *objectLabel = strtok(NULL, " ;"); // delimit with " " or ";"
@@ -196,6 +196,12 @@ PdGraph::PdGraph(FILE *fp, char *directory, char *libraryDirectory, int blockSiz
           // add the object to the local graph and make any necessary registrations
           addObject(pdNode);
         }
+      } else if (strcmp(objectType, "msg") == 0) {
+        strtok(NULL, " "); // read the first canvas coordinate
+        strtok(NULL, " "); // read the second canvas coordinate
+        char *objectInitString = strtok(NULL, ";\n"); // get the message initialisation string
+        MessageMessageBox *messageBox = new MessageMessageBox(objectInitString, this);
+        addObject(messageBox);
       } else if (strcmp(objectType, "connect") == 0) {
         int fromObjectIndex = atoi(strtok(NULL, " "));
         int outletIndex = atoi(strtok(NULL, " "));

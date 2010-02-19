@@ -102,6 +102,7 @@ bool StaticUtils::isArgumentIndex(char *str) {
 int StaticUtils::getArgumentIndex(char *str) {
   if (StaticUtils::isArgumentIndex(str)) {
     // TODO(mhroth): CHECK THIS!
+    // assumes that the argument index is only one character ([0,9])
     return atoi(str+1); // the first character is '$'
   } else {
     return -1;

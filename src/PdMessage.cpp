@@ -54,9 +54,14 @@ PdMessage::PdMessage(char *initString, PdGraph *graph) {
       } else if (strcmp(token, "bang") == 0 ||
                  strcmp(token, "b") == 0) {
         addElement(new MessageElement());
-      } else if (strncmp(token, "\\$", 1) == 0) {
+      } else if (StaticUtils::isArgumentIndex(token) && graph != NULL) {
         // element refers to a graph argument
-        MessageElement *argumentElement = graph->getArgument(atoi(token+1));
+        /*
+         * if no graph is given, then the argument is parsed as a SYMBOL. This functionality is
+         * mainly used in <code>MessageMessageBox</code> which does not take its arguments from
+         * the surrounding graph, namely from incoming messages.
+         */
+        MessageElement *argumentElement = graph->getArgument(StaticUtils::getArgumentIndex(token));
         switch (argumentElement->getType()) {
           case FLOAT: {
             addElement(new MessageElement(argumentElement->getFloat()));
