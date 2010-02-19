@@ -1,8 +1,8 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009, 2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
- * 
+ *
  *  This file is part of ZenGarden.
  *
  *  ZenGarden is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU Lesser General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with ZenGarden.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -23,23 +23,23 @@
 #ifndef _MESSAGE_INTEGER_H_
 #define _MESSAGE_INTEGER_H_
 
-#include "MessageInputMessageOutputObject.h"
+#include "MessageObject.h"
 
-/**
- * int
- */
-class MessageInteger : public MessageInputMessageOutputObject {
-  
+/** [int], [int float] */
+class MessageInteger : public MessageObject {
+
   public:
-    MessageInteger(char *initString);
-    MessageInteger(float constant, char *initString);
+    MessageInteger(PdMessage *initMessage, PdGraph *graph);
+    MessageInteger(float constant, PdGraph *graph);
     ~MessageInteger();
-    
-  protected:
-    void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage();
-    
+
+    const char *getObjectLabel();
+
   private:
+    void init(float constant);
+    void processMessage(int inletIndex, PdMessage *message);
+    PdMessage *newCanonicalMessage(int outletIndex);
+
     float constant;
 };
 

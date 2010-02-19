@@ -39,8 +39,6 @@ class MessageAbsoluteValue : public MessageObject {
   private:
     void processMessage(int inletIndex, PdMessage *message);
     PdMessage *newCanonicalMessage(int outletIndex);
-
-    float constant;
 };
 
 #endif // _MESSAGE_ABSOLUTEVALUE_H_

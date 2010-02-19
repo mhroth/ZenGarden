@@ -1,8 +1,8 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009, 2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
- * 
+ *
  *  This file is part of ZenGarden.
  *
  *  ZenGarden is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU Lesser General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with ZenGarden.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -23,16 +23,29 @@
 #include <math.h>
 #include "MessageInteger.h"
 
-MessageInteger::MessageInteger(char *initString) : MessageInputMessageOutputObject(2, 2, initString) {
-  constant = 0.0f;
+MessageInteger::MessageInteger(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
+  if (initMessage->getNumElements() > 0 &&
+      initMessage->getElement(0)->getType() == FLOAT) {
+    init(initMessage->getElement(0)->getFloat());
+  } else {
+    init(0.0f);
+  }
 }
 
-MessageInteger::MessageInteger(float threshold, char *initString) : MessageInputMessageOutputObject(2, 2, initString) {
-  this->constant = constant;
+MessageInteger::MessageInteger(float constant, PdGraph *graph) : MessageObject(2, 1, graph) {
+  init(constant);
 }
 
 MessageInteger::~MessageInteger() {
   // nothing to do
+}
+
+void MessageInteger::init(float constant) {
+  this->constant = constant;
+}
+
+const char *MessageInteger::getObjectLabel() {
+  return "int";
 }
 
 void MessageInteger::processMessage(int inletIndex, PdMessage *message) {
@@ -41,25 +54,26 @@ void MessageInteger::processMessage(int inletIndex, PdMessage *message) {
       MessageElement *messageElement = message->getElement(0);
       switch (messageElement->getType()) {
         case FLOAT: {
-          constant = rintf(messageElement->getFloat());
-          
+          constant = truncf(messageElement->getFloat());
           // allow fallthrough
         }
         case BANG: {
           PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-          outgoingMessage->setBlockIndexAsFloat(message->getBlockIndexAsFloat());
           outgoingMessage->getElement(0)->setFloat(constant);
+          outgoingMessage->setTimestamp(message->getTimestamp());
+          sendMessage(0, outgoingMessage); // send a message from outlet 0
           break;
         }
         default: {
           break;
         }
       }
+      break;
     }
     case 1: {
       MessageElement *messageElement = message->getElement(0);
       if (messageElement->getType() == FLOAT) {
-        constant = rintf(messageElement->getFloat());
+        constant = truncf(messageElement->getFloat());
       }
       break;
     }
@@ -69,7 +83,7 @@ void MessageInteger::processMessage(int inletIndex, PdMessage *message) {
   }
 }
 
-PdMessage *MessageInteger::newCanonicalMessage() {
+PdMessage *MessageInteger::newCanonicalMessage(int outletIndex) {
   PdMessage *message = new PdMessage();
   message->addElement(new MessageElement(0.0f));
   return message;
