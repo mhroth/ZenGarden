@@ -1,8 +1,8 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009, 2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
- * 
+ *
  *  This file is part of ZenGarden.
  *
  *  ZenGarden is free software: you can redistribute it and/or modify
@@ -14,16 +14,20 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU Lesser General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with ZenGarden.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
-#include <math.h>
 #include "MessageCosine.h"
 
-MessageCosine::MessageCosine(char *initString) : MessageUnaryOperationObject(initString) {
+MessageCosine::MessageCosine(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
+  // nothing to do
+}
+
+
+MessageCosine::MessageCosine(PdGraph *graph) : MessageObject(1, 1, graph) {
   // nothing to do
 }
 
@@ -31,6 +35,24 @@ MessageCosine::~MessageCosine() {
   // nothing to do
 }
 
-float MessageCosine::performUnaryOperation(float input) {
-  return cosf(input);
+const char *MessageCosine::getObjectLabel() {
+  return "cos";
+}
+
+void MessageCosine::processMessage(int inletIndex, PdMessage *message) {
+  if (inletIndex == 0) {
+    MessageElement *messageElement = message->getElement(0);
+    if (messageElement->getType() == FLOAT) {
+      PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+      outgoingMessage->getElement(0)->setFloat(cosf(messageElement->getFloat()));
+      outgoingMessage->setTimestamp(message->getTimestamp());
+      sendMessage(0, outgoingMessage); // send a message from outlet 0
+    }
+  }
+}
+
+PdMessage *MessageCosine::newCanonicalMessage(int outletIndex) {
+  PdMessage *message = new PdMessage();
+  message->addElement(new MessageElement(0.0f));
+  return message;
 }
