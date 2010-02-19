@@ -20,19 +20,19 @@
  *
  */
 
-#ifndef _MESSAGE_ABSOLUTEVALUE_H_
-#define _MESSAGE_ABSOLUTEVALUE_H_
+#ifndef _MESSAGE_ARCTANGENT_H_
+#define _MESSAGE_ARCTANGENT_H_
 
 #include <math.h>
 #include "MessageObject.h"
 
-/** [abs] */
-class MessageAbsoluteValue : public MessageObject {
+/** [atan] */
+class MessageArcTangent : public MessageObject {
 
   public:
-    MessageAbsoluteValue(PdMessage *initMessage, PdGraph *graph);
-    MessageAbsoluteValue(PdGraph *graph);
-    ~MessageAbsoluteValue();
+    MessageArcTangent(PdMessage *initMessage, PdGraph *graph);
+    MessageArcTangent(PdGraph *graph);
+    ~MessageArcTangent();
 
     const char *getObjectLabel();
 
@@ -43,4 +43,5 @@ class MessageAbsoluteValue : public MessageObject {
     float constant;
 };
 
-#endif // _MESSAGE_ABSOLUTEVALUE_H_
+#endif // _MESSAGE_ARCTANGENT_H_
+

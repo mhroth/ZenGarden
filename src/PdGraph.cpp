@@ -23,10 +23,15 @@
 #include "PdGraph.h"
 #include "StaticUtils.h"
 
+#include "MessageAbsoluteValue.h"
 #include "MessageAdd.h"
+#include "MessageArcTangent.h"
+#include "MessageArcTangent2.h"
+#include "MessageCosine.h"
 #include "MessageDelay.h"
 #include "MessageDivide.h"
 #include "MessageEqualsEquals.h"
+#include "MessageExp.h"
 #include "MessageFloat.h"
 #include "MessageGreaterThan.h"
 #include "MessageGreaterThanOrEqualTo.h"
@@ -34,6 +39,7 @@
 #include "MessageLessThan.h"
 #include "MessageLessThanOrEqualTo.h"
 #include "MessageLoadbang.h"
+#include "MessageLog.h"
 #include "MessageMetro.h"
 #include "MessageMultiply.h"
 #include "MessageNotEquals.h"
@@ -45,6 +51,7 @@
 #include "MessageSend.h"
 #include "MessageSine.h"
 #include "MessageSubtract.h"
+#include "MessageTangent.h"
 
 #include "DspAdc.h"
 #include "DspDac.h"
@@ -231,7 +238,7 @@ PdGraph::~PdGraph() {
   delete inletList;
   delete outletList;
   delete graphArguments;
-  
+
   // delete all constituent nodes
   for (int i = 0; i < nodeList->size(); i++) {
     MessageObject *messageObject = (MessageObject *) nodeList->get(i);
@@ -245,7 +252,9 @@ const char *PdGraph::getObjectLabel() {
 
 MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage *initMessage, PdGraph *graph) {
   if (strcmp(objectType, "obj") == 0) {
-    if (strcmp(objectLabel, "+") == 0) {
+    if (strcmp(objectLabel, "abs") == 0) {
+      return new MessageAbsoluteValue(initMessage, graph);
+    } else if (strcmp(objectLabel, "+") == 0) {
       return new MessageAdd(initMessage, graph);
     } else if (strcmp(objectLabel, "-") == 0) {
       return new MessageSubtract(initMessage, graph);
@@ -253,6 +262,10 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageMultiply(initMessage, graph);
     } else if (strcmp(objectLabel, "/") == 0) {
       return new MessageDivide(initMessage, graph);
+    } else if (strcmp(objectLabel, "exp") == 0) {
+      return new MessageExp(initMessage, graph);
+    } else if (strcmp(objectLabel, "log") == 0) {
+      return new MessageLog(initMessage, graph);
     } else if (strcmp(objectLabel, ">") == 0) {
       return new MessageGreaterThan(initMessage, graph);
     } else if (strcmp(objectLabel, ">=") == 0) {
@@ -292,6 +305,14 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageSend(initMessage, graph);
     } else if (strcmp(objectLabel, "sin") == 0) {
       return new MessageSine(initMessage, graph);
+    } else if (strcmp(objectLabel, "cos") == 0) {
+      return new MessageCosine(initMessage, graph);
+    } else if (strcmp(objectLabel, "tan") == 0) {
+      return new MessageTangent(initMessage, graph);
+    } else if (strcmp(objectLabel, "atan") == 0) {
+      return new MessageArcTangent(initMessage, graph);
+    } else if (strcmp(objectLabel, "atan2") == 0) {
+      return new MessageArcTangent2(initMessage, graph);
     } else if (strcmp(objectLabel, "adc~") == 0) {
       return new DspAdc(graph);
     } else if (strcmp(objectLabel, "dac~") == 0) {
@@ -451,7 +472,7 @@ void PdGraph::process(float *inputBuffers, float *outputBuffers) {
 
   // clear the global output audio buffers so that dac~ nodes can write to it
   memset(globalDspOutputBuffers, 0, numBytesInOutputBuffers);
-  
+
   // Send all messages for this block
   MessageDestination *destination = NULL;
   double nextBlockStartTimestamp = blockStartTimestamp + blockDurationMs;
@@ -489,7 +510,7 @@ void PdGraph::processDsp() {
 
 // TODO(mhroth)
 void PdGraph::computeDspProcessOrder() {
-  
+
   /* clear/reset dspNodeList
    * find all leaf nodes in nodeList. this includes PdGraphs as they are objects as well
    * for each leaf node, generate an ordering for all of the nodes in the current graph
@@ -502,7 +523,7 @@ void PdGraph::computeDspProcessOrder() {
    */
 
   // compute process order for local graph
-  
+
   // generate the leafnode list
   List *leafNodeList = new List();
   MessageObject *object = NULL;
@@ -537,7 +558,7 @@ void PdGraph::computeDspProcessOrder() {
   }
 
   delete processList;
-  
+
   // print dsp evaluation order for debugging
   printf("--- ordered evaluation list ---\n");
   for (int i = 0; i < dspNodeList->size(); i++) {

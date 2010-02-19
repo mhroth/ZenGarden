@@ -20,38 +20,38 @@
  *
  */
 
-#include "MessageExp.h"
+#include "MessageArcTangent.h"
 
-MessageExp::MessageExp(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
+MessageArcTangent::MessageArcTangent(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
   // nothing to do
 }
 
 
-MessageExp::MessageExp(PdGraph *graph) : MessageObject(1, 1, graph) {
+MessageArcTangent::MessageArcTangent(PdGraph *graph) : MessageObject(1, 1, graph) {
   // nothing to do
 }
 
-MessageExp::~MessageExp() {
+MessageArcTangent::~MessageArcTangent() {
   // nothing to do
 }
 
-const char *MessageExp::getObjectLabel() {
-  return "exp";
+const char *MessageArcTangent::getObjectLabel() {
+  return "atan";
 }
 
-void MessageExp::processMessage(int inletIndex, PdMessage *message) {
+void MessageArcTangent::processMessage(int inletIndex, PdMessage *message) {
   if (inletIndex == 0) {
     MessageElement *messageElement = message->getElement(0);
     if (messageElement->getType() == FLOAT) {
       PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-      outgoingMessage->getElement(0)->setFloat(expf(messageElement->getFloat()));
+      outgoingMessage->getElement(0)->setFloat(atanf(messageElement->getFloat()));
       outgoingMessage->setTimestamp(message->getTimestamp());
       sendMessage(0, outgoingMessage); // send a message from outlet 0
     }
   }
 }
 
-PdMessage *MessageExp::newCanonicalMessage(int outletIndex) {
+PdMessage *MessageArcTangent::newCanonicalMessage(int outletIndex) {
   PdMessage *message = new PdMessage();
   message->addElement(new MessageElement(0.0f));
   return message;

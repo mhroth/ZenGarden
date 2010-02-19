@@ -36,7 +36,7 @@ MessageTangent::~MessageTangent() {
 }
 
 const char *MessageTangent::getObjectLabel() {
-  return "sin";
+  return "tan";
 }
 
 void MessageTangent::processMessage(int inletIndex, PdMessage *message) {
