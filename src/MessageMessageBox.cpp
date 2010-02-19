@@ -71,21 +71,25 @@ void MessageMessageBox::processMessage(int inletIndex, PdMessage *message) {
       MessageElement *messageElement = outgoingMessage->getElement(j);
       if (messageElement->getType() == SYMBOL && 
           StaticUtils::isArgumentIndex(messageElement->getSymbol())) {
-        // WARNING: there is no check here to ensure that the argument index is in the range of 
-        // available message elements
         int argumentIndex = StaticUtils::getArgumentIndex(messageElement->getSymbol());
-        switch (message->getElement(argumentIndex)->getType()) {
-          case FLOAT: {
-            messageElement->setFloat(message->getElement(argumentIndex)->getFloat());
-            break;
-          }
-          case SYMBOL: {
-            messageElement->setSymbol(message->getElement(argumentIndex)->getSymbol());
-            break;
-          }
-          default: {
-            // bang case should never happen
-            break;
+        if (argumentIndex >= message->getNumElements()) {
+          // if argument is out of range
+          messageElement->setFloat(0.0f); // default value
+        } else {
+          // argument is in range
+          switch (message->getElement(argumentIndex)->getType()) {
+            case FLOAT: {
+              messageElement->setFloat(message->getElement(argumentIndex)->getFloat());
+              break;
+            }
+            case SYMBOL: {
+              messageElement->setSymbol(message->getElement(argumentIndex)->getSymbol());
+              break;
+            }
+            default: {
+              messageElement->setFloat(0.0f); // default value
+              break;
+            }
           }
         }
       }
