@@ -28,6 +28,7 @@
 #include "MessageArcTangent.h"
 #include "MessageArcTangent2.h"
 #include "MessageCosine.h"
+#include "MessageChange.h"
 #include "MessageDelay.h"
 #include "MessageDivide.h"
 #include "MessageEqualsEquals.h"
@@ -36,6 +37,7 @@
 #include "MessageGreaterThan.h"
 #include "MessageGreaterThanOrEqualTo.h"
 #include "MessageInlet.h"
+#include "MessageInteger.h"
 #include "MessageLessThan.h"
 #include "MessageLessThanOrEqualTo.h"
 #include "MessageLoadbang.h"
@@ -45,12 +47,14 @@
 #include "MessageNotEquals.h"
 #include "MessageOutlet.h"
 #include "MessagePipe.h"
+#include "MessagePow.h"
 #include "MessagePrint.h"
 #include "MessageRandom.h"
 #include "MessageReceive.h"
 #include "MessageSend.h"
 #include "MessageSine.h"
 #include "MessageSubtract.h"
+#include "MessageSqrt.h"
 #include "MessageTangent.h"
 
 #include "DspAdc.h"
@@ -264,8 +268,12 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageDivide(initMessage, graph);
     } else if (strcmp(objectLabel, "exp") == 0) {
       return new MessageExp(initMessage, graph);
+    } else if (strcmp(objectLabel, "pow") == 0) {
+      return new MessagePow(initMessage, graph);
     } else if (strcmp(objectLabel, "log") == 0) {
       return new MessageLog(initMessage, graph);
+    } else if (strcmp(objectLabel, "sqrt") == 0) {
+      return new MessageSqrt(initMessage, graph);
     } else if (strcmp(objectLabel, ">") == 0) {
       return new MessageGreaterThan(initMessage, graph);
     } else if (strcmp(objectLabel, ">=") == 0) {
@@ -287,6 +295,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageDelay(initMessage, graph);
     } else if (strcmp(objectLabel, "inlet") == 0) {
       return new MessageInlet(initMessage, graph);
+    } else if (strcmp(objectLabel, "int") == 0) {
+      return new MessageInteger(initMessage, graph);
     } else if (strcmp(objectLabel, "loadbang") == 0) {
       return new MessageLoadbang(graph);
     } else if (strcmp(objectLabel, "metro") == 0) {
@@ -321,6 +331,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new DspNoise(graph);
     } else if (strcmp(objectLabel, "osc~") == 0) {
       return new DspOsc(initMessage, graph);
+    } else if (strcmp(objectLabel, "change") == 0) {
+      return new MessageChange(initMessage, graph);
     }
   } else if (strcmp(objectType, "msg") == 0) {
     // TODO(mhroth)
