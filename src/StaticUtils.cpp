@@ -96,15 +96,44 @@ float StaticUtils::sineApprox(float x) {
 }
 
 bool StaticUtils::isArgumentIndex(char *str) {
-  return (strncmp(str, "\\$", 1) == 0);
+  return (strncmp(str, "\\$", 2) == 0);
 }
 
 int StaticUtils::getArgumentIndex(char *str) {
   if (StaticUtils::isArgumentIndex(str)) {
-    // TODO(mhroth): CHECK THIS!
     // assumes that the argument index is only one character ([0,9])
-    return atoi(str+1); // the first character is '$'
+    return atoi(str+2); // the first two characters are '\\$'
   } else {
     return -1;
   }
+}
+
+List *StaticUtils::tokenizeString(char *str, const char *delim) {
+  List *tokenizedStrings = new List();
+  char *head = str;
+  char *tail = NULL;
+  while ((tail = strstr(head, delim)) != NULL) {
+    int numBytes = tail-head;
+    char *nextToken = (char *) malloc(numBytes+1);
+    memcpy(nextToken, head, numBytes);
+    nextToken[numBytes] = '\0';
+    tokenizedStrings->add(nextToken);
+    head = tail + strlen(delim);
+  }
+  if (head < str + strlen(str)) {
+    int numBytes = str + strlen(str) - head;
+    char *nextToken = (char *) malloc(numBytes+1);
+    memcpy(nextToken, head, numBytes);
+    nextToken[numBytes] = '\0';
+    tokenizedStrings->add(nextToken);
+  }
+  return tokenizedStrings;
+}
+
+void StaticUtils::destroyTokenizedStringList(List *list) {
+  for (int i = 0; i < list->size(); i++) {
+    char *str = (char *) list->get(i);
+    free(str);
+  }
+  delete list;
 }

@@ -23,6 +23,8 @@
 #ifndef _STATIC_UTILS_H_
 #define _STATIC_UTILS_H_
 
+#include "List.h"
+
 class StaticUtils {
   
   public:
@@ -35,6 +37,8 @@ class StaticUtils {
     static float sineApprox(float x);
     static bool isArgumentIndex(char *str);
     static int getArgumentIndex(char *str);
+    static List *tokenizeString(char *str, const char *delim);
+    static void destroyTokenizedStringList(List *tokenList);
   
   private:
     StaticUtils(); // a private constructor. No instances of this object should be made.

@@ -34,19 +34,20 @@
  * C) The most complex case is where messages in the form of B) are separated by a semicolon (';').
  * TODO(mhroth): err... how exactly does case C) work?
  * 
- * TODO(mhroth): <code>MessageMessageBox</code> currently only supports case A).
+ * TODO(mhroth): <code>MessageMessageBox</code> currently cases A) and B), including argument $X
+ * resolution and replacement.
  */
-MessageMessageBox::MessageMessageBox(char *initString, PdGraph *graph) : MessageObject(1, 1, graph) {
+MessageMessageBox::MessageMessageBox(char *initString, PdGraph *graph) : MessageObject(1, 1, graph) {  
   messageList = new List();
   
-  char *token = strtok(initString, ",");
-  while (token != NULL) {
-    // pass graph as NULL in order to prevent $X argument resolution
-    PdMessage *message = new PdMessage(token, NULL);
+  List *messageInitList = StaticUtils::tokenizeString(initString, "\\,");
+  
+  for (int i = 0; i < messageInitList->size(); i++) {
+    PdMessage *message = new PdMessage((char *) messageInitList->get(i), NULL);
     messageList->add(message);
-    
-    token = strtok(NULL, ","); // get the next message string
   }
+  
+  StaticUtils::destroyTokenizedStringList(messageInitList);
 }
 
 MessageMessageBox::~MessageMessageBox() {
@@ -71,7 +72,7 @@ void MessageMessageBox::processMessage(int inletIndex, PdMessage *message) {
       MessageElement *messageElement = outgoingMessage->getElement(j);
       if (messageElement->getType() == SYMBOL && 
           StaticUtils::isArgumentIndex(messageElement->getSymbol())) {
-        int argumentIndex = StaticUtils::getArgumentIndex(messageElement->getSymbol());
+        int argumentIndex = StaticUtils::getArgumentIndex(messageElement->getSymbol()) - 1;
         if (argumentIndex >= message->getNumElements()) {
           // if argument is out of range
           messageElement->setFloat(0.0f); // default value
