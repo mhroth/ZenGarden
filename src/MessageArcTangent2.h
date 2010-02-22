@@ -31,7 +31,7 @@ class MessageArcTangent2 : public MessageObject {
 
   public:
     MessageArcTangent2(PdMessage *initMessage, PdGraph *graph);
-    MessageArcTangent2(float constant, PdGraph *graph);
+    MessageArcTangent2(PdGraph *graph);
     ~MessageArcTangent2();
 
     const char *getObjectLabel();

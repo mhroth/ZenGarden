@@ -1,8 +1,8 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009, 2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
- * 
+ *
  *  This file is part of ZenGarden.
  *
  *  ZenGarden is free software: you can redistribute it and/or modify
@@ -14,29 +14,66 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU Lesser General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with ZenGarden.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
-#include <math.h>
 #include "MessagePow.h"
 
-MessagePow::MessagePow(char *initString) : MessageBinaryOperationObject(initString) {
-  left = 0.0f;
-  right = 0.0f;
+MessagePow::MessagePow(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
+  if (initMessage->getNumElements() > 0 &&
+      initMessage->getElement(0)->getType() == FLOAT) {
+    init(initMessage->getElement(0)->getFloat());
+  } else {
+    init(0.0f);
+  }
 }
 
-MessagePow::MessagePow(float constant, char *initString) : MessageBinaryOperationObject(initString) {
-  left = 0.0f;
-  right = constant;
+MessagePow::MessagePow(float constant, PdGraph *graph) : MessageObject(2, 1, graph) {
+  init(constant);
 }
 
 MessagePow::~MessagePow() {
   // nothing to do
 }
 
-inline float MessagePow::performBinaryOperation(float left, float right) {
-  return powf(left, right);
+void MessagePow::init(float constant) {
+  this->constant = constant;
+}
+
+const char *MessagePow::getObjectLabel() {
+  return "pow";
+}
+
+void MessagePow::processMessage(int inletIndex, PdMessage *message) {
+  switch (inletIndex) {
+    case 0: {
+      MessageElement *messageElement = message->getElement(0);
+      if (messageElement->getType() == FLOAT) {
+        PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+        outgoingMessage->getElement(0)->setFloat(powf(messageElement->getFloat(), constant));
+        outgoingMessage->setTimestamp(message->getTimestamp());
+        sendMessage(0, outgoingMessage); // send a message from outlet 0
+      }
+      break;
+    }
+    case 1: {
+      MessageElement *messageElement = message->getElement(0);
+      if (messageElement->getType() == FLOAT) {
+        constant = messageElement->getFloat();
+      }
+      break;
+    }
+    default: {
+      break;
+    }
+  }
+}
+
+PdMessage *MessagePow::newCanonicalMessage(int outletIndex) {
+  PdMessage *message = new PdMessage();
+  message->addElement(new MessageElement(0.0f));
+  return message;
 }

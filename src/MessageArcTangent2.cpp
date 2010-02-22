@@ -31,10 +31,6 @@ MessageArcTangent2::MessageArcTangent2(PdMessage *initMessage, PdGraph *graph) :
   }
 }
 
-MessageArcTangent2::MessageArcTangent2(float constant, PdGraph *graph) : MessageObject(2, 1, graph) {
-  init(constant);
-}
-
 MessageArcTangent2::~MessageArcTangent2() {
   // nothing to do
 }

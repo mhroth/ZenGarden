@@ -1,8 +1,8 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009, 2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
- * 
+ *
  *  This file is part of ZenGarden.
  *
  *  ZenGarden is free software: you can redistribute it and/or modify
@@ -14,25 +14,29 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU Lesser General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with ZenGarden.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
-#include <stdlib.h>
 #include "MessageChange.h"
 
-MessageChange::MessageChange(char *initString) : MessageInputMessageOutputObject(1, 1, initString) {
-  left = 0.0f;
-}
-
-MessageChange::MessageChange(float initialValue, char *initString) : MessageInputMessageOutputObject(1, 1, initString) {
-  left = initialValue;
+MessageChange::MessageChange(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
+  if (initMessage->getNumElements() > 0 &&
+      initMessage->getElement(0)->getType() == FLOAT) {
+    prevValue = initMessage->getElement(0)->getFloat();
+  } else {
+    prevValue = 0.0f;
+  }
 }
 
 MessageChange::~MessageChange() {
   // nothing to do
+}
+
+const char *MessageChange::getObjectLabel() {
+  return "change";
 }
 
 void MessageChange::processMessage(int inletIndex, PdMessage *message) {
@@ -42,27 +46,32 @@ void MessageChange::processMessage(int inletIndex, PdMessage *message) {
       switch (messageElement->getType()) {
         case FLOAT: {
           // output only if input is different than what is already there
-          float input = messageElement->getFloat();
-          if (input != left) {
-            PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-            outgoingMessage->setBlockIndex(message->getBlockIndex());
-            outgoingMessage->getElement(0)->setFloat(input);
-            left = input;
-          }
-          break;
+            if (messageElement->getFloat() != prevValue) {
+              PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+              outgoingMessage->getElement(0)->setFloat(messageElement->getFloat());
+              outgoingMessage->setTimestamp(message->getTimestamp());
+              prevValue = messageElement->getFloat();
+              sendMessage(0, outgoingMessage);
+            }
+            break;
         }
         case BANG: {
           // force output
           PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-          outgoingMessage->setBlockIndex(message->getBlockIndex());
-          outgoingMessage->getElement(0)->setFloat(left);
+          outgoingMessage->getElement(0)->setFloat(prevValue);
+          outgoingMessage->setTimestamp(message->getTimestamp());
+          sendMessage(0, outgoingMessage);
           break;
         }
         case SYMBOL: {
           if (strcmp(messageElement->getSymbol(), "set") == 0) {
             MessageElement *messageElement1 = message->getElement(1);
             if (messageElement1 != NULL && messageElement1->getType() == FLOAT) {
-              left = messageElement1->getFloat();
+              setValue = messageElement1->getFloat();
+              PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+              outgoingMessage->getElement(0)->setFloat(setValue);
+              outgoingMessage->setTimestamp(message->getTimestamp());
+              sendMessage(0, outgoingMessage);
             }
           }
           break;
@@ -79,9 +88,8 @@ void MessageChange::processMessage(int inletIndex, PdMessage *message) {
   }
 }
 
-PdMessage *MessageChange::newCanonicalMessage() {
+PdMessage *MessageChange::newCanonicalMessage(int outletIndex) {
   PdMessage *message = new PdMessage();
-  MessageElement *messageElement = new MessageElement(0.0f);
-  message->addElement(messageElement);
+  message->addElement(new MessageElement(0.0f));
   return message;
 }

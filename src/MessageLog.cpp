@@ -44,7 +44,7 @@ void MessageLog::processMessage(int inletIndex, PdMessage *message) {
     MessageElement *messageElement = message->getElement(0);
     if (messageElement->getType() == FLOAT) {
       PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-      outgoingMessage->getElement(0)->setFloat(logf(messageElement->getFloat()));
+      outgoingMessage->getElement(0)->setFloat((messageElement->getFloat() <= 0.0f ? -1000 : logf(messageElement->getFloat())));
       outgoingMessage->setTimestamp(message->getTimestamp());
       sendMessage(0, outgoingMessage); // send a message from outlet 0
     }
