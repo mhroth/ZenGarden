@@ -292,13 +292,21 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageEqualsEquals(initMessage, graph);
     } else if (strcmp(objectLabel, "!=") == 0) {
       return new MessageNotEquals(initMessage, graph);
+    } else if (strcmp(objectLabel, "atan") == 0) {
+      return new MessageArcTangent(initMessage, graph);
+    } else if (strcmp(objectLabel, "atan2") == 0) {
+      return new MessageArcTangent2(initMessage, graph);
+    } else if (strcmp(objectLabel, "change") == 0) {
+      return new MessageChange(initMessage, graph);
+    } else if (strcmp(objectLabel, "cos") == 0) {
+      return new MessageCosine(initMessage, graph);
+    } else if (strcmp(objectLabel, "delay") == 0) {
+      return new MessageDelay(initMessage, graph);
     } else if (strcmp(objectLabel, "float") == 0 ||
-        strcmp(objectLabel, "f") == 0) {
+               strcmp(objectLabel, "f") == 0) {
       return new MessageFloat(initMessage, graph);
     } else if (StaticUtils::isNumeric(objectLabel)){
       return new MessageFloat(atof(objectLabel), graph);
-    } else if (strcmp(objectLabel, "delay") == 0) {
-      return new MessageDelay(initMessage, graph);
     } else if (strcmp(objectLabel, "inlet") == 0) {
       return new MessageInlet(initMessage, graph);
     } else if (strcmp(objectLabel, "int") == 0) {
@@ -315,20 +323,16 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageOutlet(initMessage, graph);
     } else if (strcmp(objectLabel, "random") == 0) {
       return new MessageRandom(initMessage, graph);
-    } else if (strcmp(objectLabel, "receive") == 0) {
+    } else if (strcmp(objectLabel, "receive") == 0 ||
+               strcmp(objectLabel, "r") == 0) {
       return new MessageReceive(initMessage, graph);
-    } else if (strcmp(objectLabel, "send") == 0) {
+    } else if (strcmp(objectLabel, "send") == 0 ||
+               strcmp(objectLabel, "s") == 0) {
       return new MessageSend(initMessage, graph);
     } else if (strcmp(objectLabel, "sin") == 0) {
       return new MessageSine(initMessage, graph);
-    } else if (strcmp(objectLabel, "cos") == 0) {
-      return new MessageCosine(initMessage, graph);
     } else if (strcmp(objectLabel, "tan") == 0) {
       return new MessageTangent(initMessage, graph);
-    } else if (strcmp(objectLabel, "atan") == 0) {
-      return new MessageArcTangent(initMessage, graph);
-    } else if (strcmp(objectLabel, "atan2") == 0) {
-      return new MessageArcTangent2(initMessage, graph);
     } else if (strcmp(objectLabel, "adc~") == 0) {
       return new DspAdc(graph);
     } else if (strcmp(objectLabel, "dac~") == 0) {
@@ -337,8 +341,6 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new DspNoise(graph);
     } else if (strcmp(objectLabel, "osc~") == 0) {
       return new DspOsc(initMessage, graph);
-    } else if (strcmp(objectLabel, "change") == 0) {
-      return new MessageChange(initMessage, graph);
     }
   } else if (strcmp(objectType, "msg") == 0) {
     // TODO(mhroth)
@@ -453,7 +455,7 @@ void PdGraph::registerMessageSend(MessageSend *messageSend) {
     if (getMessageSend(messageSend->getName()) != NULL) {
       printErr("[send] object with duplicate name added to graph.");
     } else {
-      // keep track of the receive object
+      // keep track of the send object
       messageSendList->add(messageSend);
       
       // add connections to all registered receivers with the same name
