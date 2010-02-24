@@ -117,12 +117,16 @@ class PdGraph : public DspObject {
   
     /** Connect the given <code>MessageObject</code>s from the given outlet to the given inlet. */
     void connect(int fromObjectIndex, int outletIndex, int toObjectIndex, int inletIndex);
+    void connect(MessageObject *fromObject, int outletIndex, MessageObject *toObject, int inletIndex);
     
     /** Create a new object based on its initialisation string. */
     MessageObject *newObject(char *objectType, char *objectLabel, PdMessage *initMessage, PdGraph *graph);
   
     /** Add an object to the graph, taking care of any special object registration. */
     void addObject(MessageObject *node);
+  
+    /** Returns the <code>MessageSend</code> object with the given name. */
+    MessageSend *getMessageSend(char *name);
   
     /** Globally register a [receive] object. Connect to registered [send] objects with the same name. */
     void registerMessageReceive(MessageReceive *messageReceive);

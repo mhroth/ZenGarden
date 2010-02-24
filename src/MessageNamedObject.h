@@ -25,7 +25,11 @@
 
 #include "MessageObject.h"
 
-/** This is the superclass of all named/remote objects. */
+/**
+ * This is the superclass of all named/remote objects.
+ * It provides all subclasses with with a <code>name</code> field, by which the object can be 
+ * referred to.
+ */
 class MessageNamedObject : public MessageObject {
   
   public:

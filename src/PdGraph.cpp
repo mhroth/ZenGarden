@@ -355,9 +355,7 @@ void PdGraph::addObject(MessageObject *node) {
   // all nodes are added to the node list
   nodeList->add(node);
 
-  if (strcmp(node->getObjectLabel(), "pd") == 0) {
-    dspNodeList->add(node);
-  } else if (strcmp(node->getObjectLabel(), "inlet") == 0) {
+  if (strcmp(node->getObjectLabel(), "inlet") == 0) {
     inletList->add(node);
   } else if (strcmp(node->getObjectLabel(), "outlet") == 0) {
     outletList->add(node);
@@ -375,11 +373,15 @@ void PdGraph::addObject(MessageObject *node) {
    */
 }
 
+void PdGraph::connect(MessageObject *fromObject, int outletIndex, MessageObject *toObject, int inletIndex) {
+  toObject->addConnectionFromObjectToInlet(fromObject, outletIndex, inletIndex);
+  fromObject->addConnectionToObjectFromOutlet(toObject, inletIndex, outletIndex);
+}
+
 void PdGraph::connect(int fromObjectIndex, int outletIndex, int toObjectIndex, int inletIndex) {
   MessageObject *fromObject = (MessageObject *) nodeList->get(fromObjectIndex);
   MessageObject *toObject = (MessageObject *) nodeList->get(toObjectIndex);
-  toObject->addConnectionFromObjectToInlet(fromObject, outletIndex, inletIndex);
-  fromObject->addConnectionToObjectFromOutlet(toObject, inletIndex, outletIndex);
+  connect(fromObject, outletIndex, toObject, inletIndex);
 }
 
 double PdGraph::getBlockStartTimestamp() {
@@ -420,9 +422,26 @@ float *PdGraph::getGlobalDspBufferAtOutlet(int outletIndex) {
   }
 }
 
+MessageSend *PdGraph::getMessageSend(char *name) {
+  for (int i = 0; i < messageSendList->size(); i++) {
+    MessageSend *messageSend = (MessageSend *) messageSendList->get(i);
+    if (strcmp(messageSend->getName(), name) == 0) {
+      return messageSend;
+    }
+  }
+  return NULL;
+}
+
 void PdGraph::registerMessageReceive(MessageReceive *messageReceive) {
   if (isRootGraph()) {
+    // keep track of the receive object
     messageReceiveList->add(messageReceive);
+    
+    // connect the potentially existing send to this receive object
+    MessageSend *messageSend = getMessageSend(messageReceive->getName());
+    if (messageSend != NULL) {
+      connect(messageSend, 0, messageReceive, 0);
+    }
   } else {
     parentGraph->registerMessageReceive(messageReceive);
   }
@@ -431,31 +450,21 @@ void PdGraph::registerMessageReceive(MessageReceive *messageReceive) {
 void PdGraph::registerMessageSend(MessageSend *messageSend) {
   if (isRootGraph()) {
     // ensure that no two senders exist with the same name
-    int size = messageSendList->size();
-    MessageSend *sendObject = NULL;
-    for (int i = 0; i < size; i++) {
-      sendObject = (MessageSend *) messageSendList->get(i);
-      if (strcmp(sendObject->getName(), messageSend->getName()) == 0) {
-        printErr("[send] object with duplicate name added to graph.");
-        return;
-      }
-    }
-
-    messageSendList->add(messageSend);
-    /* TODO(mhroth): add connections to all registered receivers with the same name
-    // add connection to the registered sender
-    MessageSendReceive *messageReceive = NULL;
-    int numReceivers = messageReceiveList->size();
-    for (int i = 0; i < numReceivers; i++) {
-      messageReceive = (MessageSendReceive *) messageReceiveList->get(i);
-      if (strcmp(messageReceive->getName(), messageSend->getName()) == 0) {
-        // TODO(mhroth): make sure that two nodes are not already connected
-        if (messageSend->isConnectedToViaOutgoing(messageReceive)) {
+    if (getMessageSend(messageSend->getName()) != NULL) {
+      printErr("[send] object with duplicate name added to graph.");
+    } else {
+      // keep track of the receive object
+      messageSendList->add(messageSend);
+      
+      // add connections to all registered receivers with the same name
+      for (int i = 0; i < messageReceiveList->size(); i++) {
+        MessageReceive *messageReceive = (MessageReceive *) messageReceiveList->get(i);
+        if (strcmp(messageReceive->getName(), messageSend->getName()) == 0) {
+          // the two objects cannot already be connected as the send is guaranteed to be new
           connect(messageSend, 0, messageReceive, 0);
         }
       }
     }
-    */
   } else {
     parentGraph->registerMessageSend(messageSend);
   }
