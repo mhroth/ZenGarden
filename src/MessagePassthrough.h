@@ -35,9 +35,7 @@ class MessagePassthrough : public MessageNamedObject {
     MessagePassthrough(PdMessage *initMessage, PdGraph *graph);
     virtual ~MessagePassthrough();
   
-  private:
-    void receiveMessage(int inletIndex, PdMessage *message);
-  
+    void receiveMessage(int inletIndex, PdMessage *message);  
 };
 
 #endif // _MESSAGE_PASSTHROUGH_H_

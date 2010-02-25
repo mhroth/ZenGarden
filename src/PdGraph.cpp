@@ -472,6 +472,21 @@ void PdGraph::registerMessageSend(MessageSend *messageSend) {
   }
 }
 
+void PdGraph::dispatchMessageToNamedReceivers(char *name, PdMessage *message) {
+  if (isRootGraph()) {
+    // TODO(mhroth): This could be done MUCH more efficiently with a hashlist datastructure to
+    // store all receivers.
+    for (int i = 0; i < messageReceiveList->size(); i++) {
+      MessageReceive *messageReceive = (MessageReceive *) messageReceiveList->get(i);
+      if (strcmp(messageReceive->getName(), name) == 0) {
+        messageReceive->receiveMessage(0, message);
+      }
+    }
+  } else {
+    dispatchMessageToNamedReceivers(name, message);
+  }
+}
+
 void PdGraph::registerDspReceive(DspReceive *dspReceive) {
   if (isRootGraph()) {
     dspReceiveList->add(dspReceive);

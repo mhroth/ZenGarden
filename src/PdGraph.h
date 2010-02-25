@@ -110,6 +110,14 @@ class PdGraph : public DspObject {
     void computeDspProcessOrder();
   
     List *getProcessOrder();
+  
+    /**
+     * Sends the given message to all [receive] objects with the given <code>name</code>.
+     * This function is used by message boxes to send messages described be the syntax:
+     * ;
+     * name message;
+     */
+    void dispatchMessageToNamedReceivers(char *name, PdMessage *message);
     
   private:
     PdGraph(FILE *fp, char *directory, char *libraryDirectory, int blockSize, int numInputChannels, 
@@ -131,7 +139,7 @@ class PdGraph : public DspObject {
     /** Globally register a [receive] object. Connect to registered [send] objects with the same name. */
     void registerMessageReceive(MessageReceive *messageReceive);
   
-    /** Globally register a [send] object. Connect to registered [message] objects with the same name. */
+    /** Globally register a [send] object. Connect to registered [receive] objects with the same name. */
     void registerMessageSend(MessageSend *messageSend);
   
     /** Globally register a [receive~] object. Connect to registered [send~] objects with the same name. */
