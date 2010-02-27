@@ -26,6 +26,7 @@
 #include <stdio.h>
 #include "DspObject.h"
 #include "OrderedMessageQueue.h"
+#include "PdFileParser.h"
 
 class DspReceive;
 class DspSend;
@@ -120,7 +121,7 @@ class PdGraph : public DspObject {
     void dispatchMessageToNamedReceivers(char *name, PdMessage *message);
     
   private:
-    PdGraph(FILE *fp, char *directory, char *libraryDirectory, int blockSize, int numInputChannels, 
+    PdGraph(PdFileParser *fileParser, char *directory, char *libraryDirectory, int blockSize, int numInputChannels, 
             int numOutputChannels, float sampleRate, PdGraph *parentGraph);
   
     /** Connect the given <code>MessageObject</code>s from the given outlet to the given inlet. */

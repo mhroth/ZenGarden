@@ -77,30 +77,21 @@ PdGraph *PdGraph::newInstance(char *directory, char *filename, char *libraryDire
   PdGraph *pdGraph = NULL;
 
   char *filePath = StaticUtils::joinPaths(directory, filename);
-  FILE *fp = fopen(filePath, "r");
+  PdFileParser *fileParser = new PdFileParser(filePath);
   free(filePath);
-  filePath = NULL;
-  if (fp != NULL) {
-    const int MAX_CHARS_PER_LINE = 256;
-    char *linePointer = (char *) malloc(MAX_CHARS_PER_LINE * sizeof(char));
-    char *line = linePointer;
-    line = fgets(line, MAX_CHARS_PER_LINE, fp);
-    if (line != NULL) {
-      if (strncmp(line, "#N canvas", strlen("#N canvas")) == 0) { // the first line *must* define a canvas
-        pdGraph = new PdGraph(fp, directory, libraryDirectory, blockSize, numInputChannels, numOutputChannels, sampleRate, parentGraph);
-      } else {
-        printf("WARNING | The first line of the pd file does not define a canvas:\n  \"%s\".\n", line);
-      }
-    }
-    free(linePointer);
-    fclose(fp);
+  
+  char *line = fileParser->nextMessage();
+  if (line != NULL && strncmp(line, "#N canvas", strlen("#N canvas")) == 0) {
+    pdGraph = new PdGraph(fileParser, directory, libraryDirectory, blockSize, numInputChannels, numOutputChannels, sampleRate, parentGraph);
+  } else {
+    printf("WARNING | The first line of the pd file does not define a canvas:\n  \"%s\".\n", line);
   }
-
+  delete fileParser;
   pdGraph->computeDspProcessOrder();
   return pdGraph;
 }
 
-PdGraph::PdGraph(FILE *fp, char *directory, char *libraryDirectory, int blockSize,
+PdGraph::PdGraph(PdFileParser *fileParser, char *directory, char *libraryDirectory, int blockSize,
     int numInputChannels, int numOutputChannels, float sampleRate, PdGraph *parentGraph) :
     DspObject(16, 16, 16, 16, blockSize, this) {
   this->numInputChannels = numInputChannels;
@@ -147,17 +138,14 @@ PdGraph::PdGraph(FILE *fp, char *directory, char *libraryDirectory, int blockSiz
     dspSendList = NULL;
   }
 
-  const int MAX_CHARS_PER_LINE = 256;
-  char *linePointer = (char *) malloc(MAX_CHARS_PER_LINE * sizeof(char));
-  char *line = linePointer;
-
-  while ((line = fgets(line, MAX_CHARS_PER_LINE, fp)) != NULL) {
+  char *line = NULL;
+  while ((line = fileParser->nextMessage()) != NULL) {
     char *hashType = strtok(line, " ");
     if (strcmp(hashType, "#N") == 0) {
       char *objectType = strtok(NULL, " ");
       if (strcmp(objectType, "canvas") == 0) {
         // a new subgraph is defined inline
-        PdGraph *graph = new PdGraph(fp, directory, libraryDirectory, blockSize, numInputChannels, numOutputChannels, sampleRate, this);
+        PdGraph *graph = new PdGraph(fileParser, directory, libraryDirectory, blockSize, numInputChannels, numOutputChannels, sampleRate, this);
         nodeList->add(graph);
         dspNodeList->add(graph);
       } else {
@@ -232,7 +220,6 @@ PdGraph::PdGraph(FILE *fp, char *directory, char *libraryDirectory, int blockSiz
       printf("WARNING | Unrecognised hash type on line \"%s\".\n", line);
     }
   }
-  free(linePointer);
 }
 
 PdGraph::~PdGraph() {
@@ -475,7 +462,7 @@ void PdGraph::registerMessageSend(MessageSend *messageSend) {
 void PdGraph::dispatchMessageToNamedReceivers(char *name, PdMessage *message) {
   if (isRootGraph()) {
     // TODO(mhroth): This could be done MUCH more efficiently with a hashlist datastructure to
-    // store all receivers.
+    // store all receivers for a given name.
     for (int i = 0; i < messageReceiveList->size(); i++) {
       MessageReceive *messageReceive = (MessageReceive *) messageReceiveList->get(i);
       if (strcmp(messageReceive->getName(), name) == 0) {

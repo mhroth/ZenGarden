@@ -43,6 +43,7 @@
 		90398CBA1113564400E5A8B6 /* PdGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C9B1113564400E5A8B6 /* PdGraph.cpp */; };
 		90398CBB1113564400E5A8B6 /* PdMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C9D1113564400E5A8B6 /* PdMessage.cpp */; };
 		90398CBC1113564400E5A8B6 /* StaticUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398CA11113564400E5A8B6 /* StaticUtils.cpp */; };
+		908687A41138467800C87D5C /* PdFileParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908687A31138467800C87D5C /* PdFileParser.cpp */; };
 		908A373E1125DF6D00558388 /* MessageEqualsEquals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908A37321125DF6D00558388 /* MessageEqualsEquals.cpp */; };
 		908A373F1125DF6D00558388 /* MessageGreaterThan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908A37341125DF6D00558388 /* MessageGreaterThan.cpp */; };
 		908A37401125DF6D00558388 /* MessageGreaterThanOrEqualTo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908A37361125DF6D00558388 /* MessageGreaterThanOrEqualTo.cpp */; };
@@ -60,6 +61,7 @@
 		90C0514F11347FC500117E4B /* MessageInteger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90C0514811347FC500117E4B /* MessageInteger.cpp */; };
 		90C0515011347FC500117E4B /* MessagePow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90C0514A11347FC500117E4B /* MessagePow.cpp */; };
 		90C0515111347FC500117E4B /* MessageSqrt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90C0514C11347FC500117E4B /* MessageSqrt.cpp */; };
+		90C051B61134DCB200117E4B /* MessageLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90C051B41134DCB200117E4B /* MessageLine.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -151,6 +153,8 @@
 		90398C9E1113564400E5A8B6 /* PdMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PdMessage.h; path = ../src/PdMessage.h; sourceTree = SOURCE_ROOT; };
 		90398CA11113564400E5A8B6 /* StaticUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StaticUtils.cpp; path = ../src/StaticUtils.cpp; sourceTree = SOURCE_ROOT; };
 		90398CA21113564400E5A8B6 /* StaticUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StaticUtils.h; path = ../src/StaticUtils.h; sourceTree = SOURCE_ROOT; };
+		908687A21138467800C87D5C /* PdFileParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PdFileParser.h; path = ../src/PdFileParser.h; sourceTree = SOURCE_ROOT; };
+		908687A31138467800C87D5C /* PdFileParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PdFileParser.cpp; path = ../src/PdFileParser.cpp; sourceTree = SOURCE_ROOT; };
 		908A37321125DF6D00558388 /* MessageEqualsEquals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageEqualsEquals.cpp; path = ../src/MessageEqualsEquals.cpp; sourceTree = SOURCE_ROOT; };
 		908A37331125DF6D00558388 /* MessageEqualsEquals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageEqualsEquals.h; path = ../src/MessageEqualsEquals.h; sourceTree = SOURCE_ROOT; };
 		908A37341125DF6D00558388 /* MessageGreaterThan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageGreaterThan.cpp; path = ../src/MessageGreaterThan.cpp; sourceTree = SOURCE_ROOT; };
@@ -187,6 +191,8 @@
 		90C0514B11347FC500117E4B /* MessagePow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessagePow.h; path = ../src/MessagePow.h; sourceTree = SOURCE_ROOT; };
 		90C0514C11347FC500117E4B /* MessageSqrt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageSqrt.cpp; path = ../src/MessageSqrt.cpp; sourceTree = SOURCE_ROOT; };
 		90C0514D11347FC500117E4B /* MessageSqrt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageSqrt.h; path = ../src/MessageSqrt.h; sourceTree = SOURCE_ROOT; };
+		90C051B41134DCB200117E4B /* MessageLine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageLine.cpp; path = ../src/MessageLine.cpp; sourceTree = SOURCE_ROOT; };
+		90C051B51134DCB200117E4B /* MessageLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageLine.h; path = ../src/MessageLine.h; sourceTree = SOURCE_ROOT; };
 		C6859E8B029090EE04C91782 /* pdm10.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = pdm10.1; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -273,6 +279,8 @@
 				908A373A1125DF6D00558388 /* MessageLessThanOrEqualTo.cpp */,
 				908A373B1125DF6D00558388 /* MessageLessThanOrEqualTo.h */,
 				90398C831113564400E5A8B6 /* MessageLetPair.h */,
+				90C051B41134DCB200117E4B /* MessageLine.cpp */,
+				90C051B51134DCB200117E4B /* MessageLine.h */,
 				90398C841113564400E5A8B6 /* MessageLoadbang.cpp */,
 				90398C851113564400E5A8B6 /* MessageLoadbang.h */,
 				90266AE6112ED31D00E3F6F1 /* MessageLog.cpp */,
@@ -320,6 +328,8 @@
 				90398C9A1113564400E5A8B6 /* OrderedMessageQueue.h */,
 				90398C9B1113564400E5A8B6 /* PdGraph.cpp */,
 				90398C9C1113564400E5A8B6 /* PdGraph.h */,
+				908687A31138467800C87D5C /* PdFileParser.cpp */,
+				908687A21138467800C87D5C /* PdFileParser.h */,
 				90398C9D1113564400E5A8B6 /* PdMessage.cpp */,
 				90398C9E1113564400E5A8B6 /* PdMessage.h */,
 				90398CA11113564400E5A8B6 /* StaticUtils.cpp */,
@@ -439,6 +449,8 @@
 				90C0514F11347FC500117E4B /* MessageInteger.cpp in Sources */,
 				90C0515011347FC500117E4B /* MessagePow.cpp in Sources */,
 				90C0515111347FC500117E4B /* MessageSqrt.cpp in Sources */,
+				90C051B61134DCB200117E4B /* MessageLine.cpp in Sources */,
+				908687A41138467800C87D5C /* PdFileParser.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

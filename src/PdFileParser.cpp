@@ -25,24 +25,35 @@
 PdFileParser::PdFileParser(char *filePath) {
   fp = fopen(filePath, "r");
   if (fp == NULL) {
-    // TODO(mhroth): error condition
+    // error condition
+    isDone = true;
+  } else {
+    line = (char *) calloc(LINE_LENGTH, sizeof(char));
+    nextLine();
+    buffer = NULL;
+    isDone = false;
   }
-  line = (char *) calloc(LINE_LENGTH, sizeof(char));
-  nextLine();
-  buffer = (char *) malloc(LINE_LENGTH *sizeof(char));
-  isDone = false;
 }
 
 PdFileParser::~PdFileParser() {
+  free(line);
+  free(buffer);
   fclose(fp);
   fp = NULL;
 }
 
+/*
+ * This function creates and destroys lots of memory, basically every time that a new string is
+ * considered. I find this a bit dirty and would like to make it one buffer. However, for the time-
+ * being, this approach works and is robust.
+ */
 char *PdFileParser::nextMessage() {
   if (!isDone) {
-    memcpy(buffer, line, strlen(line)+1); // copy line to buffer
+    free(buffer);
+    buffer = StaticUtils::copyString(line); // copy line to buffer 
     while (nextLine() != NULL &&
-           !(strncmp(line, "#X", 2) == 0 || strncmp(line, "#N", 2) == 0 || strncmp(line, "#A", 2) == 0)) {
+           !(strncmp(line, "#X", 2) == 0 || strncmp(line, "#N", 2) == 0 || 
+             strncmp(line, "#A", 2) == 0)) {
       char *temp = buffer;
       buffer = StaticUtils::joinPaths(buffer, line);
       free(temp);
