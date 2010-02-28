@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -20,27 +20,15 @@
  *
  */
 
-#ifndef _MESSAGE_MESSAGE_BOX_H_
-#define _MESSAGE_MESSAGE_BOX_H_
+#ifndef _MESSAGE_NAMED_DESTINATION_H_
+#define _MESSAGE_NAMED_DESTINATION_H_
 
-#include "MessageNamedDestination.h"
-#include "MessageObject.h"
+class PdMessage;
 
-/** Implements the functionality of Pd's message box. */
-class MessageMessageBox : public MessageObject {
-    
-  public:
-    MessageMessageBox(char *initString, PdGraph *graph);
-    ~MessageMessageBox();
-  
-    const char *getObjectLabel();
-  
-  private:
-    void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage(int outletIndex);
-  
-    List *localMessageList;
-    List *remoteMessageList;
-};
+/** A struct containing the destination of a message.*/
+typedef struct {
+  char *name;
+  PdMessage *message;
+} MessageNamedDestination;
 
-#endif // _MESSAGE_MESSAGE_BOX_H_
+#endif // _MESSAGE_NAMED_DESTINATION_H_

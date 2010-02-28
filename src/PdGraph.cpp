@@ -157,7 +157,7 @@ PdGraph::PdGraph(PdFileParser *fileParser, char *directory, char *libraryDirecto
         strtok(NULL, " "); // read the first canvas coordinate
         strtok(NULL, " "); // read the second canvas coordinate
         char *objectLabel = strtok(NULL, " ;"); // delimit with " " or ";"
-        char *objectInitString = strtok(NULL, ";\n"); // get the object initialisation string
+        char *objectInitString = strtok(NULL, ";"); // get the object initialisation string
         PdMessage *initMessage = new PdMessage(objectInitString, this);
         MessageObject *pdNode = newObject(objectType, objectLabel, initMessage, this);
         delete initMessage;
@@ -187,7 +187,7 @@ PdGraph::PdGraph(PdFileParser *fileParser, char *directory, char *libraryDirecto
       } else if (strcmp(objectType, "msg") == 0) {
         strtok(NULL, " "); // read the first canvas coordinate
         strtok(NULL, " "); // read the second canvas coordinate
-        char *objectInitString = strtok(NULL, ";\n"); // get the message initialisation string
+        char *objectInitString = strtok(NULL, ""); // get the message initialisation string
         MessageMessageBox *messageBox = new MessageMessageBox(objectInitString, this);
         addObject(messageBox);
       } else if (strcmp(objectType, "connect") == 0) {
