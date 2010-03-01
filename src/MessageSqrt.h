@@ -38,7 +38,6 @@ class MessageSqrt : public MessageObject {
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage(int outletIndex);
 };
 
 #endif // _MESSAGE_SQRT_H_

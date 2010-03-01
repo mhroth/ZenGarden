@@ -50,9 +50,3 @@ void MessageSqrt::processMessage(int inletIndex, PdMessage *message) {
     }
   }
 }
-
-PdMessage *MessageSqrt::newCanonicalMessage(int outletIndex) {
-  PdMessage *message = new PdMessage();
-  message->addElement(new MessageElement(0.0f));
-  return message;
-}

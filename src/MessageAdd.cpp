@@ -71,9 +71,3 @@ void MessageAdd::processMessage(int inletIndex, PdMessage *message) {
     }
   }
 }
-
-PdMessage *MessageAdd::newCanonicalMessage(int outletIndex) {
-  PdMessage *message = new PdMessage();
-  message->addElement(new MessageElement(0.0f));
-  return message;
-}

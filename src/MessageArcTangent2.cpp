@@ -67,9 +67,3 @@ void MessageArcTangent2::processMessage(int inletIndex, PdMessage *message) {
     }
   }
 }
-
-PdMessage *MessageArcTangent2::newCanonicalMessage(int outletIndex) {
-  PdMessage *message = new PdMessage();
-  message->addElement(new MessageElement(0.0f));
-  return message;
-}

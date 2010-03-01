@@ -38,7 +38,6 @@ class MessageDelay : public MessageObject {
   private:
     void init(float delayMs);
     void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage(int outletIndex);
   
     double delayMs;
 };

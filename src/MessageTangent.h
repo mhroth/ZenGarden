@@ -38,7 +38,6 @@ class MessageTangent : public MessageObject {
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage(int outletIndex);
 };
 
 #endif // _MESSAGE_TANGENT_H_

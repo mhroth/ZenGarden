@@ -40,7 +40,6 @@ class MessageRandom : public MessageObject {
     
   protected:
     void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage();
     
   private:
     int max_inc; // random output is in range [0, max_inc]

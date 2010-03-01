@@ -38,7 +38,6 @@ class MessageArcTangent : public MessageObject {
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage(int outletIndex);
 };
 
 #endif // _MESSAGE_ARCTANGENT_H_

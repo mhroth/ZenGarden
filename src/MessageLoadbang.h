@@ -33,9 +33,6 @@ class MessageLoadbang : public MessageObject {
     ~MessageLoadbang();
   
     const char *getObjectLabel();
-  
-  private:
-    PdMessage *newCanonicalMessage(int outletIndex);
 };
 
 #endif // _MESSAGE_LOADBANG_H_

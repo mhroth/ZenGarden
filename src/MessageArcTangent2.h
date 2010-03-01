@@ -39,7 +39,6 @@ class MessageArcTangent2 : public MessageObject {
   private:
     void init(float constant);
     void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage(int outletIndex);
 
     float constant;
 };

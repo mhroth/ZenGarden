@@ -85,9 +85,3 @@ void MessageDelay::processMessage(int inletIndex, PdMessage *message) {
     }
   }
 }
-
-PdMessage *MessageDelay::newCanonicalMessage(int outletIndex) {
-  PdMessage *message = new PdMessage();
-  message->addElement(new MessageElement());
-  return message;
-}

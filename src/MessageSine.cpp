@@ -50,9 +50,3 @@ void MessageSine::processMessage(int inletIndex, PdMessage *message) {
     }
   }
 }
-
-PdMessage *MessageSine::newCanonicalMessage(int outletIndex) {
-  PdMessage *message = new PdMessage();
-  message->addElement(new MessageElement(0.0f));
-  return message;
-}

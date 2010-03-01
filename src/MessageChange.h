@@ -37,7 +37,6 @@ class MessageChange : public MessageObject {
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage(int outletIndex);
 
     float prevValue, setValue;
 };

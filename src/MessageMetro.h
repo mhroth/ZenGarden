@@ -40,7 +40,6 @@ class MessageMetro : public MessageObject {
   private:
     void scheduledMessageHook(int outletIndex, PdMessage *message);
     void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage(int outletIndex);
   
     /** A helped function to schedule the next message, from the current time. */
     void scheduleMessage(double currentTime);

@@ -38,7 +38,6 @@ class MessageGreaterThanOrEqualTo : public MessageObject {
   private:
     void init(float constant);
     void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage(int outletIndex);
 
     float constant;
 };

@@ -50,9 +50,3 @@ void MessageLog::processMessage(int inletIndex, PdMessage *message) {
     }
   }
 }
-
-PdMessage *MessageLog::newCanonicalMessage(int outletIndex) {
-  PdMessage *message = new PdMessage();
-  message->addElement(new MessageElement(0.0f));
-  return message;
-}

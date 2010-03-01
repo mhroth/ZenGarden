@@ -118,9 +118,3 @@ void MessageMetro::cancelMessage() {
     pendingMessage = NULL;
   }
 }
-
-PdMessage *MessageMetro::newCanonicalMessage(int outletIndex) {
-  PdMessage *message = new PdMessage();
-  message->addElement(new MessageElement());
-  return message;
-}

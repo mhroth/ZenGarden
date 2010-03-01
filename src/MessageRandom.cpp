@@ -81,9 +81,3 @@ void MessageRandom::processMessage(int inletIndex, PdMessage *message) {
     }
   }
 }
-
-PdMessage *MessageRandom::newCanonicalMessage() {
-  PdMessage *message = new PdMessage();
-  message->addElement(new MessageElement(0.0f));
-  return message;
-}

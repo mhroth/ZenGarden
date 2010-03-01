@@ -36,9 +36,3 @@ MessageLoadbang::~MessageLoadbang() {
 const char *MessageLoadbang::getObjectLabel() {
   return "loadbang";
 }
-
-PdMessage *MessageLoadbang::newCanonicalMessage(int outletIndex) {
-  PdMessage *message = new PdMessage();
-  message->addElement(new MessageElement());
-  return message;
-}

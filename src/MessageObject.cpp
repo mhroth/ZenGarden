@@ -152,7 +152,10 @@ PdMessage *MessageObject::getNextOutgoingMessage(int outletIndex) {
 }
 
 PdMessage *MessageObject::newCanonicalMessage(int outletIndex) {
-  return NULL; // default implementation returns nothing
+  // default implementation returns a message with one element
+  PdMessage *outgoingMessage = new PdMessage();
+  outgoingMessage->addElement(new MessageElement());
+  return outgoingMessage;
 }
 
 bool MessageObject::isRootNode() {
