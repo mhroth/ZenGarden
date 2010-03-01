@@ -147,9 +147,9 @@ void PdMessage::clear() {
   timestamp = 0.0;
 }
 
-void PdMessage::clearAndCopyFrom(PdMessage *message) {
+void PdMessage::clearAndCopyFrom(PdMessage *message, int startIndex) {
   clear();
-  for (int i = 0; i < message->getNumElements(); i++) {
+  for (int i = startIndex; i < message->getNumElements(); i++) {
     addElement(message->getElement(i)->copy());
   }
   timestamp = message->getTimestamp();
