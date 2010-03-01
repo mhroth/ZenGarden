@@ -52,7 +52,7 @@ libjnizengarden: ../libs/$(OS)/libjnizengarden.$(JNI_EXTENSION)
 
 libzengarden: ../libs/$(OS)/libzengarden.$(SO_EXTENSION)
 
-../libs/$(OS)/libzengarden.$(SO_EXTENSION): ./me/rjdj/zengarden/jnizengarden.cpp $(OBJS)
+../libs/$(OS)/libzengarden.$(SO_EXTENSION): $(OBJS)
 	$(call MAKE_SO, $@, $<, $(OBJS))
 
 examplegarden: ../ZenGarden.jar
