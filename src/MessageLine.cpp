@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -20,37 +20,51 @@
  *
  */
 
-#include <math.h>
 #include "MessageLine.h"
-#include "StaticUtils.h"
+#include "PdGraph.h"
 
-MessageLine::MessageLine(int blockSize, int sampleRate, char *initString) : 
-    DspMessageInputMessageOutputObject(2, 1, blockSize, initString) {
-  this->sampleRate = (float) sampleRate;
-  grainRateInSamples = (int) StaticUtils::millisecondsToSamples(100.0f, sampleRate);
-  samplesToTarget = -1;
-  target = 0.0f;
-  lastValue = 0.0f;
+MessageLine::MessageLine(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
+  switch (initMessage->getNumElements()) {
+    case 1: {
+      if (initMessage->getElement(0)->getType() == FLOAT) {
+        currentValue = initMessage->getElement(0)->getFloat();
+      } else {
+        currentValue = 0.0f;
+      }
+      grainRate = DEFAULT_GRAIN_RATE;
+      slope = 0.0f;
+      break;
+    }
+    case 2: {
+      if (initMessage->getElement(0)->getType() == FLOAT &&
+          initMessage->getElement(1)->getType() == FLOAT) {
+        currentValue = initMessage->getElement(0)->getFloat();
+        grainRate = (double) initMessage->getElement(1)->getFloat();
+      } else {
+        currentValue = 0.0f;
+        grainRate = DEFAULT_GRAIN_RATE;
+      }
+      slope = 0.0f;
+      break;
+    }
+    default: {
+      currentValue = 0.0f;
+      grainRate = DEFAULT_GRAIN_RATE;
+      slope = 0.0f;
+      break;
+    }
+  }
+}
+
+MessageLine::MessageLine(float initValue, PdGraph *graph) : MessageObject(1, 1, graph) {
+  this->currentValue = initValue;
+  grainRate = DEFAULT_GRAIN_RATE;
   slope = 0.0f;
 }
 
-MessageLine::MessageLine(float initialValue, int blockSize, int sampleRate, char *initString) : 
-    DspMessageInputMessageOutputObject(2, 1, blockSize, initString) {
-  this->sampleRate = (float) sampleRate;
-  grainRateInSamples = (int) StaticUtils::millisecondsToSamples(100.0f, sampleRate);
-  samplesToTarget = -1;
-  target = initialValue;
-  lastValue = initialValue;
-  slope = 0.0f;
-}
-
-MessageLine::MessageLine(float initialValue, float grainRate, int blockSize, int sampleRate, char *initString) : 
-    DspMessageInputMessageOutputObject(2, 1, blockSize, initString) {
-  this->sampleRate = (float) sampleRate;
-  grainRateInSamples = (int) StaticUtils::millisecondsToSamples(grainRate, sampleRate);
-  samplesToTarget = -1;
-  target = initialValue;
-  lastValue = initialValue;
+MessageLine::MessageLine(float initValue, float grainRate, PdGraph *graph) : MessageObject(1, 1, graph) {
+  this->currentValue = initValue;
+  this->grainRate = (double) grainRate;
   slope = 0.0f;
 }
 
@@ -61,44 +75,40 @@ MessageLine::~MessageLine() {
 void MessageLine::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
-      MessageElement *messageElement = message->getElement(0);
-      switch (messageElement->getType()) {
-        case FLOAT: {
-          MessageElement *messageElement1 = message->getElement(1);
-          if (messageElement1 != NULL && messageElement1->getType() == FLOAT) {
-            // start a new line
-            processDspToIndex(message->getBlockIndex());
-            float delayInMs = StaticUtils::millisecondsToSamples(
-                messageElement1->getFloat(), sampleRate);
-            samplesToTarget = lrintf(delayInMs);
-            target = messageElement->getFloat();
-            slope = (target - lastValue) / delayInMs;
-          } else {
-            // set the current value
-            processDspToIndex(message->getBlockIndex());
-            target = messageElement->getFloat();
-            lastValue = target;
-            slope = 0.0f;
-            samplesToTarget = -1;
+      switch (message->getNumElements()) {
+        case 1: {
+          if (message->getElement(0)->getType() == FLOAT) {
+            // jump to the given value
+            PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+            outgoingMessage->setTimestamp(message->getTimestamp());
+            
+            currentValue = message->getElement(0)->getFloat();
+            // TODO(mhroth): cancel any callbacks
+            
+            outgoingMessage->getElement(0)->setFloat(currentValue);
+            sendMessage(0, outgoingMessage);
           }
-          PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-          outgoingMessage->getElement(0)->setFloat(lastValue);
-          outgoingMessage->setBlockIndex(message->getBlockIndex());
           break;
         }
-        case SYMBOL: {
-          MessageElement *messageElement = message->getElement(0);
-          if (strcmp(messageElement->getSymbol(), "stop") == 0) {
-            processDspToIndex(message->getBlockIndex());
-            samplesToTarget = -1;
-          } else if (strcmp(messageElement->getSymbol(), "set") == 0) {
-            MessageElement *messageElement1 = message->getElement(0);
-            if (messageElement1 != NULL && messageElement1->getType() == FLOAT) {
-              processDspToIndex(message->getBlockIndex());
-              target = messageElement1->getFloat();
-              lastValue = target;
-              samplesToTarget = -1;
-            }
+        case 2: {
+          if (message->getElement(0)->getType() == FLOAT &&
+              message->getElement(1)->getType() == FLOAT) {
+            // set value and target
+            targetValue = message->getElement(0)->getFloat();
+            float duration = message->getElement(1)->getFloat();
+            slope = (targetValue - currentValue) / duration;
+            
+            // send the current message
+            PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+            outgoingMessage->setTimestamp(message->getTimestamp());
+            outgoingMessage->getElement(0)->setFloat(currentValue);
+            sendMessage(0, outgoingMessage);
+            
+            // schedule the next message
+            pendingMessage = getNextOutgoingMessage(0);
+            pendingMessage->setTimestamp(message->getTimestamp() + grainRate);
+            pendingMessage->getElement(0)->setFloat(currentValue + slope);
+            graph->scheduleMessage(this, 0, pendingMessage);
           }
           break;
         }
@@ -112,30 +122,5 @@ void MessageLine::processMessage(int inletIndex, PdMessage *message) {
       // not sure what to do in this case
       break;
     }
-    default: {
-      break;
-    }
-  }
-}
-
-PdMessage *MessageLine::newCanonicalMessage() {
-  PdMessage *message = new PdMessage();
-  message->addElement(new MessageElement(0.0f));
-  return message;
-}
-
-void MessageLine::processDspToIndex(int newBlockIndex) {
-  int processLength = newBlockIndex - blockIndexOfLastMessage;
-  if (samplesToTarget >= 0 && processLength > 0) {
-    if (samplesToTarget < processLength) {
-      lastValue += slope;
-      PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-      outgoingMessage->getElement(0)->setFloat(lastValue);
-      outgoingMessage->setBlockIndex(samplesToTarget);
-      samplesToTarget = samplesToTarget - processLength + grainRateInSamples;
-    } else {
-      samplesToTarget -= processLength;
-    }
-    blockIndexOfLastMessage = newBlockIndex;
   }
 }

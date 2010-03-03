@@ -21,8 +21,7 @@
  */
 
 #include "MessageMessageBox.h"
-
-#include <stdio.h>
+#include "PdGraph.h"
 
 /*
  * The message box is overloaded with many kinds of functionality.
@@ -89,7 +88,7 @@ void MessageMessageBox::processMessage(int inletIndex, PdMessage *message) {
   for (int i = 0; i < localMessageList->size(); i++) {
     PdMessage *outgoingMessage = getNextOutgoingMessage(0);
     outgoingMessage->setTimestamp(message->getTimestamp());
-    outgoingMessage->clearAndCopyFrom((PdMessage *) localMessageList->get(i));
+    outgoingMessage->clearAndCopyFrom((PdMessage *) localMessageList->get(i), 0);
     for (int j = 0; j < outgoingMessage->getNumElements(); j++) {
       MessageElement *messageElement = outgoingMessage->getElement(j);
       if (messageElement->getType() == SYMBOL && 
@@ -125,21 +124,51 @@ void MessageMessageBox::processMessage(int inletIndex, PdMessage *message) {
   // send local messages
   for (int i = 0; i < localMessageList->size(); i++) {
     PdMessage *messageTemplate = (PdMessage *) localMessageList->get(i);
-    PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-    outgoingMessage->setTimestamp(message->getTimestamp());
-    // create new message based on incoming message
+    PdMessage *outgoingMessage = getNextResolvedMessage(messageTemplate, message);
     sendMessage(0, outgoingMessage);
   }
   
   // send remote messages
   for (int i = 0; i < remoteMessageList->size(); i++) {
     MessageNamedDestination *namedDestination = (MessageNamedDestination *) remoteMessageList->get(i);
-    PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-    outgoingMessage->setTimestamp(message->getTimestamp());
-    // create new message based on incoming message
+    PdMessage *outgoingMessage = getNextResolvedMessage(namedDestination->message, message);
     graph->dispatchMessageToNamedReceivers(namedDestination->name, outgoingMessage);
   }
   */
+}
+
+PdMessage *MessageMessageBox::getNextResolvedMessage(PdMessage *templateMessage, PdMessage *incomingMessage) {
+  PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+  outgoingMessage->clearAndCopyFrom(templateMessage, 0);
+  outgoingMessage->setTimestamp(incomingMessage->getTimestamp());
+  for (int j = 0; j < outgoingMessage->getNumElements(); j++) {
+    MessageElement *messageElement = outgoingMessage->getElement(j);
+    if (messageElement->getType() == SYMBOL && 
+        StaticUtils::isArgumentIndex(messageElement->getSymbol())) {
+      int argumentIndex = StaticUtils::getArgumentIndex(messageElement->getSymbol()) - 1;
+      if (argumentIndex >= incomingMessage->getNumElements()) {
+        // if argument is out of range
+        messageElement->setFloat(0.0f); // default value
+      } else {
+        // argument is in range
+        switch (incomingMessage->getElement(argumentIndex)->getType()) {
+          case FLOAT: {
+            messageElement->setFloat(incomingMessage->getElement(argumentIndex)->getFloat());
+            break;
+          }
+          case SYMBOL: {
+            messageElement->setSymbol(incomingMessage->getElement(argumentIndex)->getSymbol());
+            break;
+          }
+          default: {
+            messageElement->setFloat(0.0f); // default value
+            break;
+          }
+        }
+      }
+    }
+  }
+  return outgoingMessage;
 }
 
 PdMessage *MessageMessageBox::newCanonicalMessage(int outletIndex) {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,28 +23,28 @@
 #ifndef _MESSAGE_LINE_H_
 #define _MESSAGE_LINE_H_
 
-#include "DspMessageInputMessageOutputObject.h"
+#include "MessageObject.h"
 
-class MessageLine : public DspMessageInputMessageOutputObject {
+class PdGraph;
+
+/** [line], [line f], [line f f] */
+class MessageLine : public MessageObject {
   
   public:
-    MessageLine(int blockSize, int sampleRate, char *initString);
-    MessageLine(float initialValue, int blockSize, int sampleRate,char *initString);
-    MessageLine(float initialValue, float grainRate, int blockSize, int sampleRate, char *initString);
+    MessageLine(PdMessage *initMessage, PdGraph *graph);
+    MessageLine(float initValue, PdGraph *graph);
+    MessageLine(float initValue, float grainRate, PdGraph *graph);
     ~MessageLine();
-  
-  protected:
-    void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage();
-    void processDspToIndex(int newBlockIndex);
-    
+
   private:
-    float sampleRate;
-    int grainRateInSamples;
-    int samplesToTarget;
-    float target;
-    float lastValue;
+    void processMessage(int inletIndex, PdMessage *message);
+  
+    double grainRate;
     float slope;
+    float currentValue;
+    float targetValue;
+    PdMessage *pendingMessage;
+    static const double DEFAULT_GRAIN_RATE = 20.0; // 20ms
 };
 
 #endif // _MESSAGE_LINE_H_

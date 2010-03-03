@@ -38,6 +38,7 @@ class MessageMessageBox : public MessageObject {
   private:
     void processMessage(int inletIndex, PdMessage *message);
     PdMessage *newCanonicalMessage(int outletIndex);
+    PdMessage *getNextResolvedMessage(PdMessage *templateMessage, PdMessage *incomingMessage);
   
     List *localMessageList;
     List *remoteMessageList;
