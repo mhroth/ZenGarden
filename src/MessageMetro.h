@@ -38,7 +38,7 @@ class MessageMetro : public MessageObject {
     const char *getObjectLabel();
     
   private:
-    void scheduledMessageHook(int outletIndex, PdMessage *message);
+    void postSendMessageHook(int outletIndex, PdMessage *message);
     void processMessage(int inletIndex, PdMessage *message);
   
     /** A helped function to schedule the next message, from the current time. */

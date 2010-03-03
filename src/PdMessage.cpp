@@ -115,7 +115,8 @@ MessageElement *PdMessage::getElement(int index) {
 }
 
 float PdMessage::getBlockIndex(double currentBlockTimestamp, float sampleRate) {
-  return ((float) (timestamp - currentBlockTimestamp)) * sampleRate;
+  // sampleRate is in samples/second, but we need samples/millisecond
+  return ((float) (timestamp - currentBlockTimestamp)) * sampleRate / 1000.0f;
 }
 
 void PdMessage::setTimestamp(double timestamp) {

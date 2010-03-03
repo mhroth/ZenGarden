@@ -134,10 +134,12 @@ float *DspObject::getDspBufferAtOutlet(int outletIndex) {
 }
 
 void DspObject::receiveMessage(int inletIndex, PdMessage *message) {
+  // Queue the message to be processed during the DSP round only if the graph is switched on.
+  // Otherwise messages would begin to pile up.
   if (graph->isSwitchedOn()) {
-    // Queue the message to be processed during the DSP round only if the graph is switched on.
-    // Otherwise messages would begin to pile up.
-    message->reserve(this); // reserve the message so that it won't be reused by the issuing object
+    // reserve the message so that it won't be reused by the issuing object.
+    // The message is released once it is consumed in processDsp().
+    message->reserve(this);
     messageQueue->add(inletIndex, message);
   }
 }

@@ -102,7 +102,7 @@ void MessageMetro::processMessage(int inletIndex, PdMessage *message) {
   }
 }
 
-void MessageMetro::scheduledMessageHook(int outletIndex, PdMessage *message) {
+void MessageMetro::postSendMessageHook(int outletIndex, PdMessage *message) {
   scheduleMessage(message->getTimestamp());
 }
 
