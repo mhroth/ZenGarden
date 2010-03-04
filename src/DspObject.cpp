@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -113,6 +113,9 @@ void DspObject::addConnectionFromObjectToInlet(MessageObject *messageObject, int
     objectLetPair->object = messageObject;
     objectLetPair->index = outletIndex;
     incomingDspConnectionsList->add(objectLetPair);
+    
+    // set signal precedence
+    signalPrecedence = (DspMessagePresedence) (signalPrecedence | (0x1 << inletIndex));
   }
 }
 
