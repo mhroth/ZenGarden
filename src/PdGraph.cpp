@@ -59,6 +59,7 @@
 #include "MessageTangent.h"
 
 #include "DspAdc.h"
+#include "DspAdd.h"
 #include "DspDac.h"
 #include "DspNoise.h"
 #include "DspOsc.h"
@@ -320,6 +321,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageSine(initMessage, graph);
     } else if (strcmp(objectLabel, "tan") == 0) {
       return new MessageTangent(initMessage, graph);
+    } else if (strcmp(objectLabel, "+~") == 0) {
+      return new DspAdd(initMessage, graph);
     } else if (strcmp(objectLabel, "adc~") == 0) {
       return new DspAdc(graph);
     } else if (strcmp(objectLabel, "dac~") == 0) {
