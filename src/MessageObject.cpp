@@ -51,13 +51,21 @@ MessageObject::MessageObject(int numMessageInlets, int numMessageOutlets, PdGrap
 MessageObject::~MessageObject() {
   // delete incoming connections list
   for (int i = 0; i < numMessageInlets; i++) {
-    delete incomingMessageConnectionsListAtInlet[i];
+    List *list = incomingMessageConnectionsListAtInlet[i];
+    for (int j = 0; j < list->size(); j++) {
+      free(list->get(j));
+    }
+    delete list;
   }
   free(incomingMessageConnectionsListAtInlet);
   
   // delete outgoing connections list
   for (int i = 0; i < numMessageOutlets; i++) {
-    delete outgoingMessageConnectionsListAtOutlet[i];
+    List *list = outgoingMessageConnectionsListAtOutlet[i];
+    for (int j = 0; j < list->size(); j++) {
+      free(list->get(j));
+    }
+    delete list;
   }
   free(outgoingMessageConnectionsListAtOutlet);
   

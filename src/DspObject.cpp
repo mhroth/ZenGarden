@@ -73,13 +73,21 @@ DspObject::~DspObject() {
   
   // free the incoming dsp connections list
   for (int i = 0; i < numDspInlets; i++) {
-    delete incomingDspConnectionsListAtInlet[i];
+    List *list = incomingDspConnectionsListAtInlet[i];
+    for (int j = 0; j < list->size(); j++) {
+      free(list->get(j));
+    }
+    delete list;
   }
   free(incomingDspConnectionsListAtInlet);
   
   // free the outgoing dsp connections list
   for (int i = 0; i < numDspOutlets; i++) {
-    delete outgoingDspConnectionsListAtOutlet[i];
+    List *list = outgoingDspConnectionsListAtOutlet[i];
+    for (int j = 0; j < list->size(); j++) {
+      free(list->get(j));
+    }
+    delete list;
   }
   free(outgoingDspConnectionsListAtOutlet);
   

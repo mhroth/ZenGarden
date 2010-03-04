@@ -234,6 +234,7 @@ PdGraph::~PdGraph() {
     free(globalDspInputBuffers);
     free(globalDspOutputBuffers);
   }
+  delete dspNodeList;
   delete inletList;
   delete outletList;
   delete graphArguments;
