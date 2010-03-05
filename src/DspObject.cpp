@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -73,13 +73,21 @@ DspObject::~DspObject() {
   
   // free the incoming dsp connections list
   for (int i = 0; i < numDspInlets; i++) {
-    delete incomingDspConnectionsListAtInlet[i];
+    List *list = incomingDspConnectionsListAtInlet[i];
+    for (int j = 0; j < list->size(); j++) {
+      free(list->get(j));
+    }
+    delete list;
   }
   free(incomingDspConnectionsListAtInlet);
   
   // free the outgoing dsp connections list
   for (int i = 0; i < numDspOutlets; i++) {
-    delete outgoingDspConnectionsListAtOutlet[i];
+    List *list = outgoingDspConnectionsListAtOutlet[i];
+    for (int j = 0; j < list->size(); j++) {
+      free(list->get(j));
+    }
+    delete list;
   }
   free(outgoingDspConnectionsListAtOutlet);
   
@@ -113,6 +121,9 @@ void DspObject::addConnectionFromObjectToInlet(MessageObject *messageObject, int
     objectLetPair->object = messageObject;
     objectLetPair->index = outletIndex;
     incomingDspConnectionsList->add(objectLetPair);
+    
+    // set signal precedence
+    signalPrecedence = (DspMessagePresedence) (signalPrecedence | (0x1 << inletIndex));
   }
 }
 

@@ -86,17 +86,15 @@ void DspOsc::processDspToIndex(float blockIndex) {
       break;
     }
     case DSP_MESSAGE: {
-      /*
-       * TODO(mhroth)
+      int blockIndexInt = lrintf(floorf(blockIndex));
       float *inputBuffer = localDspBufferAtInlet[0];
       float *outputBuffer = localDspBufferAtOutlet[0];
-      for (int i = lrintf(truncf(blockIndexOfLastMessage)); i < newBlockIndex; index += inputBuffer[i++]) {
+      for (int i = lrintf(ceilf(blockIndexOfLastMessage)); i < blockIndexInt; index += inputBuffer[i++]) {
         if (index >= sampleRate) {
           index -= sampleRate;
         }
         outputBuffer[i] = cos_table[lrintf(index)];
       }
-      */
       break;
     }
     case MESSAGE_DSP: {
@@ -108,6 +106,8 @@ void DspOsc::processDspToIndex(float blockIndex) {
       float *outputBuffer = localDspBufferAtOutlet[0];
       for (int i = lrintf(ceilf(blockIndexOfLastMessage)); i < blockIndexInt; i++, index += frequency) {
         if (index >= sampleRate) {
+          // TODO(mhroth): under adverse conditions, the frequency will be higher than the sample rate,
+          // and the index will overflow
           index -= sampleRate;
         }
         outputBuffer[i] = cos_table[lrintf(index)];

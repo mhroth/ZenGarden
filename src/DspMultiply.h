@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,20 +23,22 @@
 #ifndef _DSP_MULTIPLY_H_
 #define _DSP_MULTIPLY_H_
 
-#include "DspMessageInputDspOutputObject.h"
+#include "DspObject.h"
 
-class DspMultiply : public DspMessageInputDspOutputObject {
+class DspMultiply : public DspObject {
   
   public:
-    DspMultiply(int blockSize, char *initString);
-    DspMultiply(float constant, int blockSize, char *initString);
+    DspMultiply(PdMessage *initMessage, PdGraph *graph);
+    DspMultiply(float constant, PdGraph *graph);
     ~DspMultiply();
-    
-  protected:
-    void processMessage(int inletIndex, PdMessage *message);
-    void processDspToIndex(int newBlockIndex);
+  
+    const char *getObjectLabel();
     
   private:
+    void init(float constant);
+    void processMessage(int inletIndex, PdMessage *message);
+    void processDspToIndex(float blockIndex);
+    
     float constant;
 };
 

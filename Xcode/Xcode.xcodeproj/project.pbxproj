@@ -17,6 +17,7 @@
 		90266AF9112ED3A000E3F6F1 /* MessageAbsoluteValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90266AF7112ED3A000E3F6F1 /* MessageAbsoluteValue.cpp */; };
 		90266B15112ED86E00E3F6F1 /* MessageMessageBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90266B13112ED86E00E3F6F1 /* MessageMessageBox.cpp */; };
 		90275B42112880D900FFAEC7 /* DspOsc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90275B40112880D900FFAEC7 /* DspOsc.cpp */; };
+		9038BC04113FFF8500ABE744 /* DspMultiply.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9038BC02113FFF8500ABE744 /* DspMultiply.cpp */; };
 		90398CA31113564400E5A8B6 /* DspAdc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C6A1113564400E5A8B6 /* DspAdc.cpp */; };
 		90398CA41113564400E5A8B6 /* DspAdd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C6C1113564400E5A8B6 /* DspAdd.cpp */; };
 		90398CA51113564400E5A8B6 /* DspDac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C6E1113564400E5A8B6 /* DspDac.cpp */; };
@@ -97,6 +98,8 @@
 		90266B14112ED86E00E3F6F1 /* MessageMessageBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageMessageBox.h; path = ../src/MessageMessageBox.h; sourceTree = SOURCE_ROOT; };
 		90275B40112880D900FFAEC7 /* DspOsc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspOsc.cpp; path = ../src/DspOsc.cpp; sourceTree = SOURCE_ROOT; };
 		90275B41112880D900FFAEC7 /* DspOsc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspOsc.h; path = ../src/DspOsc.h; sourceTree = SOURCE_ROOT; };
+		9038BC02113FFF8500ABE744 /* DspMultiply.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspMultiply.cpp; path = ../src/DspMultiply.cpp; sourceTree = SOURCE_ROOT; };
+		9038BC03113FFF8500ABE744 /* DspMultiply.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspMultiply.h; path = ../src/DspMultiply.h; sourceTree = SOURCE_ROOT; };
 		90398C691113564400E5A8B6 /* ConnectionType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConnectionType.h; path = ../src/ConnectionType.h; sourceTree = SOURCE_ROOT; };
 		90398C6A1113564400E5A8B6 /* DspAdc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspAdc.cpp; path = ../src/DspAdc.cpp; sourceTree = SOURCE_ROOT; };
 		90398C6B1113564400E5A8B6 /* DspAdc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspAdc.h; path = ../src/DspAdc.h; sourceTree = SOURCE_ROOT; };
@@ -230,6 +233,8 @@
 				90398C6E1113564400E5A8B6 /* DspDac.cpp */,
 				90398C6F1113564400E5A8B6 /* DspDac.h */,
 				90AA54D511295EF900E8796B /* DspMessagePresedence.h */,
+				9038BC02113FFF8500ABE744 /* DspMultiply.cpp */,
+				9038BC03113FFF8500ABE744 /* DspMultiply.h */,
 				90AD9671112C043600F45418 /* DspNoise.cpp */,
 				90AD9672112C043600F45418 /* DspNoise.h */,
 				90398C701113564400E5A8B6 /* DspObject.cpp */,
@@ -453,6 +458,7 @@
 				90C0515111347FC500117E4B /* MessageSqrt.cpp in Sources */,
 				90C051B61134DCB200117E4B /* MessageLine.cpp in Sources */,
 				908687A41138467800C87D5C /* PdFileParser.cpp in Sources */,
+				9038BC04113FFF8500ABE744 /* DspMultiply.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
