@@ -22,7 +22,6 @@
 
 #include <math.h>
 #include <string.h>
-#include "MessageExternalSend.h"
 #include "me_rjdj_zengarden_ZenGarden.h"
 #include "PdGraph.h"
 
@@ -42,18 +41,32 @@ typedef struct {
 } PureDataMobileNativeVars;
 
 extern "C" {
-  void java_print(char *message) {
+  void java_print_std(char *message) {
     // (mhroth): this could be optimised very much, but we'll leave it for now
     JNIEnv *env = NULL;
     jint result = jvm->GetEnv((void **)&env, JNI_VERSION);
     if (result == JNI_OK && env != NULL) {
-      // call System.out.println()
+      // call System.out.print()
       env->CallObjectMethod(
-        env->GetStaticObjectField(
-          env->FindClass("java/lang/System"),
-          env->GetStaticFieldID(env->FindClass("java/lang/System"), "out", "Ljava/io/PrintStream;")),
-        env->GetMethodID(env->FindClass("java/io/PrintStream"), "print", "(Ljava/lang/String;)V"),
-        env->NewStringUTF(message));
+          env->GetStaticObjectField(
+              env->FindClass("java/lang/System"),
+              env->GetStaticFieldID(env->FindClass("java/lang/System"), "out", "Ljava/io/PrintStream;")),
+          env->GetMethodID(env->FindClass("java/io/PrintStream"), "print", "(Ljava/lang/String;)V"),
+          env->NewStringUTF(message));
+    }
+  }
+  
+  void java_print_err(char *message) {
+    JNIEnv *env = NULL;
+    jint result = jvm->GetEnv((void **)&env, JNI_VERSION);
+    if (result == JNI_OK && env != NULL) {
+      // call System.err.print()
+      env->CallObjectMethod(
+          env->GetStaticObjectField(
+              env->FindClass("java/lang/System"),
+              env->GetStaticFieldID(env->FindClass("java/lang/System"), "err", "Ljava/io/PrintStream;")),
+          env->GetMethodID(env->FindClass("java/io/PrintStream"), "print", "(Ljava/lang/String;)V"),
+          env->NewStringUTF(message));
     }
   }
 }
@@ -87,7 +100,8 @@ JNIEXPORT jlong JNICALL Java_me_rjdj_zengarden_ZenGarden_loadPdPatch(
   char *cdirectory = (char *) env->GetStringUTFChars(jdirectory, NULL);
   char *cfilename = (char *) env->GetStringUTFChars(jfilename, NULL);
   char *clibraryDirectory = (char *) env->GetStringUTFChars(jlibraryDirectory, NULL);
-  pdGraph = PdGraph::newInstance(cdirectory, cfilename, clibraryDirectory, blockSize, 2, 2, sampleRate);
+  pdGraph = PdGraph::newInstance(cdirectory, cfilename, clibraryDirectory, blockSize, 
+      numInputChannels, numOutputChannels, sampleRate, NULL);
   env->ReleaseStringUTFChars(jdirectory, cdirectory);
   env->ReleaseStringUTFChars(jfilename, cfilename);
   env->ReleaseStringUTFChars(jlibraryDirectory, clibraryDirectory);
@@ -99,9 +113,8 @@ JNIEXPORT jlong JNICALL Java_me_rjdj_zengarden_ZenGarden_loadPdPatch(
     return (jlong) 0;
   }
   
-  pdGraph->setPrintHook(java_print);
-  
-  pdGraph->prepareForProcessing();
+  pdGraph->setPrintStd(java_print_std);
+  pdGraph->setPrintErr(java_print_err);
   
   // initialise the PureDataMobile native variables
   PureDataMobileNativeVars *pdmnv = (PureDataMobileNativeVars *) malloc(sizeof(PureDataMobileNativeVars));
