@@ -71,7 +71,7 @@ void DspAdd::processDspToIndex(float blockIndex) {
       float *inputBuffer0 = localDspBufferAtInlet[0];
       float *inputBuffer1 = localDspBufferAtInlet[1];
       float *outputBuffer = localDspBufferAtOutlet[0];
-      for (int i = lrintf(ceilf(blockIndex)); i < blockIndexInt; i++) {
+      for (int i = lrintf(ceilf(blockIndexOfLastMessage)); i < blockIndexInt; i++) {
         outputBuffer[i] = inputBuffer0[i] + inputBuffer1[i];
       }
       break;
@@ -80,7 +80,7 @@ void DspAdd::processDspToIndex(float blockIndex) {
       int blockIndexInt = lrintf(floorf(blockIndex));
       float *inputBuffer = localDspBufferAtInlet[0];
       float *outputBuffer = localDspBufferAtOutlet[0];
-      for (int i = lrintf(ceilf(blockIndex)); i < blockIndexInt; i++) {
+      for (int i = lrintf(ceilf(blockIndexOfLastMessage)); i < blockIndexInt; i++) {
         outputBuffer[i] = inputBuffer[i] + constant;
       }
       break;
