@@ -171,10 +171,20 @@ void DspObject::processDsp() {
       case 0: {
         break; // nothing to do
       }
-      default: {
+      case 1: {
+        // copy the single connection's output buffer to the input buffer
         objectLetPair = (ObjectLetPair *) incomingDspConnectionsList->get(0);
         remoteOutputBuffer = ((DspObject *) objectLetPair->object)->getDspBufferAtOutlet(objectLetPair->index);
         memcpy(localInputBuffer, remoteOutputBuffer, numBytesInBlock);
+        break;
+      }
+      default: { // numConnections > 1
+        // copy the single connection's output buffer to the input buffer
+        objectLetPair = (ObjectLetPair *) incomingDspConnectionsList->get(0);
+        remoteOutputBuffer = ((DspObject *) objectLetPair->object)->getDspBufferAtOutlet(objectLetPair->index);
+        memcpy(localInputBuffer, remoteOutputBuffer, numBytesInBlock);
+        
+        // add the remaining output buffers to the input buffer
         for (int j = 1; j < numConnections; j++) {
           objectLetPair = (ObjectLetPair *) incomingDspConnectionsList->get(j);
           remoteOutputBuffer = ((DspObject *) objectLetPair->object)->getDspBufferAtOutlet(objectLetPair->index);
