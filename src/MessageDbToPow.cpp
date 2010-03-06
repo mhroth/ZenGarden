@@ -22,14 +22,9 @@
 
 #include "MessageDbToPow.h"
 
-MessageDbToPow::MessageDbToPow(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
-  // nothing to do
-}
-
 MessageDbToPow::MessageDbToPow(PdGraph *graph) : MessageObject(1, 1, graph) {
   // nothing to do
 }
-
 
 MessageDbToPow::~MessageDbToPow() {
   // nothing to do

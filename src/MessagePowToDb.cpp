@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009, 2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -21,10 +21,6 @@
  */
 
 #include "MessagePowToDb.h"
-
-MessagePowToDb::MessagePowToDb(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
-  // nothing to do
-}
 
 MessagePowToDb::MessagePowToDb(PdGraph *graph) : MessageObject(1, 1, graph) {
   // nothing to do

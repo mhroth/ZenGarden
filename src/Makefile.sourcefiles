@@ -15,6 +15,7 @@ LOCAL_SRC_FILES := \
 ./MessageBang.cpp \
 ./MessageChange.cpp \
 ./MessageCosine.cpp \
+./MessageDbToPow.cpp \
 ./MessageDelay.cpp \
 ./MessageDivide.cpp \
 ./MessageElement.cpp \
@@ -39,6 +40,7 @@ LOCAL_SRC_FILES := \
 ./MessagePassthrough.cpp \
 ./MessagePipe.cpp \
 ./MessagePow.cpp \
+./MessagePowToDb.cpp \
 ./MessagePrint.cpp \
 ./MessageQueue.cpp \
 ./MessageRandom.cpp \

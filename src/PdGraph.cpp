@@ -266,9 +266,9 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
     } else if (strcmp(objectLabel, "pow") == 0) {
       return new MessagePow(initMessage, graph);
     } else if (strcmp(objectLabel, "powtodb") == 0) {
-      return new MessagePowToDb(initMessage, graph);
+      return new MessagePowToDb(graph);
     } else if (strcmp(objectLabel, "dbtopow") == 0) {
-      return new MessageDbToPow(initMessage, graph);
+      return new MessageDbToPow(graph);
     } else if (strcmp(objectLabel, "log") == 0) {
       return new MessageLog(initMessage, graph);
     } else if (strcmp(objectLabel, "sqrt") == 0) {

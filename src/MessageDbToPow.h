@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009, 2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -30,7 +30,6 @@
 class MessageDbToPow : public MessageObject {
 
   public:
-    MessageDbToPow(PdMessage *initMessage, PdGraph *graph);
     MessageDbToPow(PdGraph *graph);
     ~MessageDbToPow();
 
