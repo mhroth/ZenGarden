@@ -49,6 +49,7 @@ LOCAL_SRC_FILES := \
 ./MessageSine.cpp \
 ./MessageSqrt.cpp \
 ./MessageSubtract.cpp \
+./MessageSwitch.cpp \
 ./MessageTangent.cpp \
 ./OrderedMessageQueue.cpp \
 ./PdFileParser.cpp \

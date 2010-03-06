@@ -57,8 +57,9 @@
 #include "MessageReceive.h"
 #include "MessageSend.h"
 #include "MessageSine.h"
-#include "MessageSubtract.h"
 #include "MessageSqrt.h"
+#include "MessageSubtract.h"
+#include "MessageSwitch.h"
 #include "MessageTangent.h"
 
 #include "DspAdc.h"
@@ -345,6 +346,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new DspNoise(graph);
     } else if (strcmp(objectLabel, "osc~") == 0) {
       return new DspOsc(initMessage, graph);
+    } else if (strcmp(objectLabel, "switch~") == 0) {
+      return new MessageSwitch(initMessage, graph);
     }
   } else if (strcmp(objectType, "msg") == 0) {
     // TODO(mhroth)
