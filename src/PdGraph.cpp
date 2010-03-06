@@ -253,11 +253,7 @@ const char *PdGraph::getObjectLabel() {
 
 MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage *initMessage, PdGraph *graph) {
   if (strcmp(objectType, "obj") == 0) {
-    if (strcmp(objectLabel, "abs") == 0) {
-      return new MessageAbsoluteValue(initMessage, graph);
-    } else if (strcmp(objectLabel, "bang") == 0) {
-      return new MessageBang(initMessage, graph);
-    } else if (strcmp(objectLabel, "+") == 0) {
+    if (strcmp(objectLabel, "+") == 0) {
       return new MessageAdd(initMessage, graph);
     } else if (strcmp(objectLabel, "-") == 0) {
       return new MessageSubtract(initMessage, graph);
@@ -265,8 +261,6 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageMultiply(initMessage, graph);
     } else if (strcmp(objectLabel, "/") == 0) {
       return new MessageDivide(initMessage, graph);
-    } else if (strcmp(objectLabel, "exp") == 0) {
-      return new MessageExp(initMessage, graph);
     } else if (strcmp(objectLabel, "pow") == 0) {
       return new MessagePow(initMessage, graph);
     } else if (strcmp(objectLabel, "log") == 0) {
@@ -285,16 +279,23 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageEqualsEquals(initMessage, graph);
     } else if (strcmp(objectLabel, "!=") == 0) {
       return new MessageNotEquals(initMessage, graph);
+    } else if (strcmp(objectLabel, "abs") == 0) {
+      return new MessageAbsoluteValue(initMessage, graph);
     } else if (strcmp(objectLabel, "atan") == 0) {
       return new MessageArcTangent(initMessage, graph);
     } else if (strcmp(objectLabel, "atan2") == 0) {
       return new MessageArcTangent2(initMessage, graph);
+    } else if (strcmp(objectLabel, "bang") == 0 ||
+               strcmp(objectLabel, "bng") == 0) {
+      return new MessageBang(graph);
     } else if (strcmp(objectLabel, "change") == 0) {
       return new MessageChange(initMessage, graph);
     } else if (strcmp(objectLabel, "cos") == 0) {
       return new MessageCosine(initMessage, graph);
     } else if (strcmp(objectLabel, "delay") == 0) {
       return new MessageDelay(initMessage, graph);
+    } else if (strcmp(objectLabel, "exp") == 0) {
+      return new MessageExp(initMessage, graph);
     } else if (strcmp(objectLabel, "float") == 0 ||
                strcmp(objectLabel, "f") == 0) {
       return new MessageFloat(initMessage, graph);

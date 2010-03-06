@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009, 2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -25,11 +25,10 @@
 
 #include "MessageObject.h"
 
-/** [bang] */
+/** [bang], [bng] */
 class MessageBang : public MessageObject {
 
   public:
-    MessageBang(PdMessage *initMessage, PdGraph *graph);
     MessageBang(PdGraph *graph);
     ~MessageBang();
 

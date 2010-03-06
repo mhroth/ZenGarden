@@ -12,6 +12,7 @@ LOCAL_SRC_FILES := \
 ./MessageAdd.cpp \
 ./MessageArcTangent.cpp \
 ./MessageArcTangent2.cpp \
+./MessageBang.cpp \
 ./MessageChange.cpp \
 ./MessageCosine.cpp \
 ./MessageDelay.cpp \
