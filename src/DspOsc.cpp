@@ -44,7 +44,7 @@ DspOsc::DspOsc(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, g
     for (int i = 0; i < sampleRate; i++) {
       cos_table[i] = cosf(2.0f * M_PI * (float) i / sampleRate);
     }
-    cos_table[lrintf(truncf(sampleRate))] = cos_table[0];
+    cos_table[(int) truncf(sampleRate)] = cos_table[0];
   }
 }
 
@@ -86,14 +86,14 @@ void DspOsc::processDspToIndex(float blockIndex) {
       break;
     }
     case DSP_MESSAGE: {
-      int blockIndexInt = lrintf(floorf(blockIndex));
+      int blockIndexInt = getEndSampleIndex(blockIndex);
       float *inputBuffer = localDspBufferAtInlet[0];
       float *outputBuffer = localDspBufferAtOutlet[0];
-      for (int i = lrintf(ceilf(blockIndexOfLastMessage)); i < blockIndexInt; index += inputBuffer[i++]) {
+      for (int i = getStartSampleIndex(); i < blockIndexInt; index += inputBuffer[i++]) {
         if (index >= sampleRate) {
           index -= sampleRate;
         }
-        outputBuffer[i] = cos_table[lrintf(index)];
+        outputBuffer[i] = cos_table[(int) index];
       }
       break;
     }
@@ -102,15 +102,15 @@ void DspOsc::processDspToIndex(float blockIndex) {
       break;
     }
     case MESSAGE_MESSAGE: {
-      int blockIndexInt = lrintf(floorf(blockIndex));
+      int blockIndexInt = getEndSampleIndex(blockIndex);
       float *outputBuffer = localDspBufferAtOutlet[0];
-      for (int i = lrintf(ceilf(blockIndexOfLastMessage)); i < blockIndexInt; i++, index += frequency) {
+      for (int i = getStartSampleIndex(); i < blockIndexInt; i++, index += frequency) {
         if (index >= sampleRate) {
           // TODO(mhroth): under adverse conditions, the frequency will be higher than the sample rate,
           // and the index will overflow
           index -= sampleRate;
         }
-        outputBuffer[i] = cos_table[lrintf(index)];
+        outputBuffer[i] = cos_table[(int) index];
       }
       break;
     }

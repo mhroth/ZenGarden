@@ -71,6 +71,16 @@ class DspObject : public MessageObject {
     
   protected:  
     virtual void processDspToIndex(float blockIndex);
+  
+    /** Returns the start sample index as an integer when computing output buffers in <code>processDspToIndex()</code>. */
+    inline int getStartSampleIndex() {
+      return (int) ceilf(blockIndexOfLastMessage);
+    }
+  
+    /** Returns the end sample index as an integer when computing output buffers in <code>processDspToIndex()</code>. */
+    inline int getEndSampleIndex(float blockIndex) {
+      return (int) floorf(blockIndex);
+    }
     
     /** The number of dsp inlets of this object. */
     int numDspInlets;

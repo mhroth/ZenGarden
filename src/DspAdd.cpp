@@ -67,20 +67,20 @@ void DspAdd::processMessage(int inletIndex, PdMessage *message) {
 void DspAdd::processDspToIndex(float blockIndex) {
   switch (signalPrecedence) {
     case DSP_DSP: {
-      int blockIndexInt = lrintf(floorf(blockIndex));
+      int blockIndexInt = getEndSampleIndex(blockIndex);
       float *inputBuffer0 = localDspBufferAtInlet[0];
       float *inputBuffer1 = localDspBufferAtInlet[1];
       float *outputBuffer = localDspBufferAtOutlet[0];
-      for (int i = lrintf(ceilf(blockIndexOfLastMessage)); i < blockIndexInt; i++) {
+      for (int i = getStartSampleIndex(); i < blockIndexInt; i++) {
         outputBuffer[i] = inputBuffer0[i] + inputBuffer1[i];
       }
       break;
     }
     case DSP_MESSAGE: {
-      int blockIndexInt = lrintf(floorf(blockIndex));
+      int blockIndexInt = getEndSampleIndex(blockIndex);
       float *inputBuffer = localDspBufferAtInlet[0];
       float *outputBuffer = localDspBufferAtOutlet[0];
-      for (int i = lrintf(ceilf(blockIndexOfLastMessage)); i < blockIndexInt; i++) {
+      for (int i = getStartSampleIndex(); i < blockIndexInt; i++) {
         outputBuffer[i] = inputBuffer[i] + constant;
       }
       break;

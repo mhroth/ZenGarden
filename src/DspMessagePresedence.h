@@ -24,9 +24,16 @@
 #define _DSP_MESSAGE_PRESEDENCE_H_
 
 enum DspMessagePresedence {
+  /** left-inlet: DSP, right-inline: DSP */
   DSP_DSP = 3,
+  
+  /** left-inlet: DSP, right-inline: MESSAGE */
   DSP_MESSAGE = 1,
+  
+  /** left-inlet: MESSAGE, right-inline: DSP */
   MESSAGE_DSP = 2,
+  
+  /** left-inlet: MESSAGE, right-inline: MESSAGE */
   MESSAGE_MESSAGE = 0
 };
 
