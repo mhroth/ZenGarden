@@ -1,8 +1,8 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009, 2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
- * 
+ *
  *  This file is part of ZenGarden.
  *
  *  ZenGarden is free software: you can redistribute it and/or modify
@@ -14,24 +14,39 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU Lesser General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with ZenGarden.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
-#include <math.h>
 #include "MessageDbToPow.h"
 
-MessageDbToPow::MessageDbToPow(char *initString) : MessageUnaryOperationObject(initString) {
+MessageDbToPow::MessageDbToPow(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
   // nothing to do
 }
+
+MessageDbToPow::MessageDbToPow(PdGraph *graph) : MessageObject(1, 1, graph) {
+  // nothing to do
+}
+
 
 MessageDbToPow::~MessageDbToPow() {
   // nothing to do
 }
 
-float MessageDbToPow::performUnaryOperation(float input) {
-  float rms = 0.00001f * powf(10.0f, input / 20.0f);
-  return rms * rms;
+const char *MessageDbToPow::getObjectLabel() {
+  return "dbtopow";
+}
+
+void MessageDbToPow::processMessage(int inletIndex, PdMessage *message) {
+  if (inletIndex == 0) {
+    MessageElement *messageElement = message->getElement(0);
+    if (messageElement->getType() == FLOAT) {
+      PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+      outgoingMessage->getElement(0)->setFloat(powf(0.00001f * powf(10.0f,(messageElement->getFloat())/20.0f),2.0f));
+      outgoingMessage->setTimestamp(message->getTimestamp());
+      sendMessage(0, outgoingMessage); // send a message from outlet 0
+    }
+  }
 }

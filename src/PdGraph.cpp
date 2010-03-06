@@ -32,6 +32,7 @@
 #include "MessageChange.h"
 #include "MessageDelay.h"
 #include "MessageDivide.h"
+#include "MessageDbToPow.h"
 #include "MessageEqualsEquals.h"
 #include "MessageExp.h"
 #include "MessageFloat.h"
@@ -50,6 +51,7 @@
 #include "MessageOutlet.h"
 #include "MessagePipe.h"
 #include "MessagePow.h"
+#include "MessagePowToDb.h"
 #include "MessagePrint.h"
 #include "MessageRandom.h"
 #include "MessageReceive.h"
@@ -269,6 +271,10 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageExp(initMessage, graph);
     } else if (strcmp(objectLabel, "pow") == 0) {
       return new MessagePow(initMessage, graph);
+    } else if (strcmp(objectLabel, "powtodb") == 0) {
+      return new MessagePowToDb(initMessage, graph);
+    } else if (strcmp(objectLabel, "dbtopow") == 0) {
+      return new MessageDbToPow(initMessage, graph);
     } else if (strcmp(objectLabel, "log") == 0) {
       return new MessageLog(initMessage, graph);
     } else if (strcmp(objectLabel, "sqrt") == 0) {
