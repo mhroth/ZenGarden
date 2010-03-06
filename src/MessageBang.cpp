@@ -1,8 +1,8 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009, 2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
- * 
+ *
  *  This file is part of ZenGarden.
  *
  *  ZenGarden is free software: you can redistribute it and/or modify
@@ -14,15 +14,21 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU Lesser General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with ZenGarden.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
 #include "MessageBang.h"
+#include "PdGraph.h"
 
-MessageBang::MessageBang(char *initString) : MessageInputMessageOutputObject(1, 1, initString) {
+MessageBang::MessageBang(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
+  // nothing to do
+}
+
+
+MessageBang::MessageBang(PdGraph *graph) : MessageObject(1, 1, graph) {
   // nothing to do
 }
 
@@ -30,16 +36,14 @@ MessageBang::~MessageBang() {
   // nothing to do
 }
 
-void MessageBang::processMessage(int inletIndex, PdMessage *message) {
-  if (inletIndex == 0) {
-    // output a bang regardless of what is received
-    PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-    outgoingMessage->setBlockIndex(message->getBlockIndex());
-  }
+const char *MessageBang::getObjectLabel() {
+  return "bang";
 }
 
-PdMessage *MessageBang::newCanonicalMessage() {
-  PdMessage *message = new PdMessage();
-  message->addElement(new MessageElement());
-  return message;
+void MessageBang::processMessage(int inletIndex, PdMessage *message) {
+  if (inletIndex == 0) {
+    PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+    outgoingMessage->setTimestamp(0.0);
+    graph->scheduleMessage(this, 0, outgoingMessage);
+  }
 }

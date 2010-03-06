@@ -27,6 +27,7 @@
 #include "MessageAdd.h"
 #include "MessageArcTangent.h"
 #include "MessageArcTangent2.h"
+#include "MessageBang.h"
 #include "MessageCosine.h"
 #include "MessageChange.h"
 #include "MessageDelay.h"
@@ -81,7 +82,7 @@ PdGraph *PdGraph::newInstance(char *directory, char *filename, char *libraryDire
   char *filePath = StaticUtils::joinPaths(directory, filename);
   PdFileParser *fileParser = new PdFileParser(filePath);
   free(filePath);
-  
+
   char *line = fileParser->nextMessage();
   if (line != NULL && strncmp(line, "#N canvas", strlen("#N canvas")) == 0) {
     pdGraph = new PdGraph(fileParser, directory, libraryDirectory, blockSize, numInputChannels, numOutputChannels, sampleRate, parentGraph);
@@ -254,6 +255,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
   if (strcmp(objectType, "obj") == 0) {
     if (strcmp(objectLabel, "abs") == 0) {
       return new MessageAbsoluteValue(initMessage, graph);
+    } else if (strcmp(objectLabel, "bang") == 0) {
+      return new MessageBang(initMessage, graph);
     } else if (strcmp(objectLabel, "+") == 0) {
       return new MessageAdd(initMessage, graph);
     } else if (strcmp(objectLabel, "-") == 0) {
@@ -432,7 +435,7 @@ void PdGraph::registerMessageReceive(MessageReceive *messageReceive) {
   if (isRootGraph()) {
     // keep track of the receive object
     messageReceiveList->add(messageReceive);
-    
+
     // connect the potentially existing send to this receive object
     MessageSend *messageSend = getMessageSend(messageReceive->getName());
     if (messageSend != NULL) {
@@ -451,7 +454,7 @@ void PdGraph::registerMessageSend(MessageSend *messageSend) {
     } else {
       // keep track of the send object
       messageSendList->add(messageSend);
-      
+
       // add connections to all registered receivers with the same name
       for (int i = 0; i < messageReceiveList->size(); i++) {
         MessageReceive *messageReceive = (MessageReceive *) messageReceiveList->get(i);
