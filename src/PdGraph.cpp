@@ -320,7 +320,7 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
     } else if (strcmp(objectLabel, "print") == 0) {
       return new MessagePrint(initMessage, graph);
     } else if (strcmp(objectLabel, "outlet") == 0) {
-      return new MessageOutlet(initMessage, graph);
+      return new MessageOutlet(graph);
     } else if (strcmp(objectLabel, "random") == 0) {
       return new MessageRandom(initMessage, graph);
     } else if (strcmp(objectLabel, "receive") == 0 ||
@@ -365,6 +365,7 @@ void PdGraph::addObject(MessageObject *node) {
     inletList->add(node);
   } else if (strcmp(node->getObjectLabel(), "outlet") == 0) {
     outletList->add(node);
+    ((MessageOutlet *) node)->setOutletIndex(outletList->size()-1);
   } else if (strcmp(node->getObjectLabel(), "send") == 0) {
     registerMessageSend((MessageSend *) node);
   } else if (strcmp(node->getObjectLabel(), "receive") == 0) {

@@ -21,9 +21,10 @@
  */
 
 #include "MessageOutlet.h"
+#include "PdGraph.h"
 
-MessageOutlet::MessageOutlet(PdMessage *initMessage, PdGraph *graph) : MessagePassthrough(initMessage, graph) {
-  // nothing to do
+MessageOutlet::MessageOutlet(PdGraph *graph) : MessageObject(1, 1, graph) {
+  outletIndex = 0; // default value
 }
 
 MessageOutlet::~MessageOutlet() {
@@ -32,4 +33,12 @@ MessageOutlet::~MessageOutlet() {
 
 const char *MessageOutlet::getObjectLabel() {
   return "outlet";
+}
+
+void MessageOutlet::setOutletIndex(int outletIndex) {
+  this->outletIndex = outletIndex;
+}
+
+void MessageOutlet::processMessage(int inletIndex, PdMessage *message) {
+  graph->sendMessage(outletIndex, message);
 }

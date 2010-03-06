@@ -23,17 +23,28 @@
 #ifndef _MESSAGE_OUTLET_H_
 #define _MESSAGE_OUTLET_H_
 
-#include "MessagePassthrough.h"
+#include "MessageObject.h"
 
 /** [outlet] */
-class MessageOutlet : public MessagePassthrough {
+class MessageOutlet : public MessageObject {
   
   public:
-    MessageOutlet(PdMessage *initMessage, PdGraph *graph);
+    MessageOutlet(PdGraph *graph);
     ~MessageOutlet();
     
     const char *getObjectLabel();
   
+    /**
+     * Set the outlet index of this object in the parent-graph.
+     * This function should <b>always</b> be called after initialisation. The default outlet index
+     * is zero.
+     */
+    void setOutletIndex(int outletIndex);
+  
+  private:
+    void processMessage(int inletIndex, PdMessage *message);
+  
+    int outletIndex;
 };
 
 #endif // _MESSAGE_OUTLET_H_
