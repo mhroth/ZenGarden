@@ -633,6 +633,12 @@ ConnectionType PdGraph::getConnectionType(int outletIndex) {
   return messageObject->getConnectionType(0);
 }
 
+bool PdGraph::doesProcessAudio() {
+  // This graph processes audio if it contains any nodes which process audio.
+  // This works because graph objects are only created after they have been filled with objects.
+  return (dspNodeList->size() > 0);
+}
+
 int PdGraph::getBlockSize() {
   return blockSize;
 }

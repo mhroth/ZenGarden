@@ -70,6 +70,8 @@ class PdGraph : public DspObject {
     const char *getObjectLabel();
   
     ConnectionType getConnectionType(int outletIndex);
+  
+    bool doesProcessAudio();
     
     /** Turn the audio processing of this graph on or off. */
     void setSwitch(bool switched);

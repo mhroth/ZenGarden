@@ -63,7 +63,7 @@ class DspObject : public MessageObject {
       
     void addConnectionToObjectFromOutlet(MessageObject *messageObject, int inletIndex, int outletIndex);
   
-    bool doesProcessAudio();
+    virtual bool doesProcessAudio();
   
     bool isRootNode();
     bool isLeafNode();
