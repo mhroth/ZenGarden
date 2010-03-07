@@ -22,7 +22,7 @@
 
 #include "MessageInlet.h"
 
-MessageInlet::MessageInlet(PdMessage *initMessage, PdGraph *graph) : MessagePassthrough(initMessage, graph) {
+MessageInlet::MessageInlet(PdGraph *graph) : MessageObject(1, 1, graph) {
   // nothing to do
 }
 
@@ -32,4 +32,8 @@ MessageInlet::~MessageInlet() {
 
 const char *MessageInlet::getObjectLabel() {
   return "inlet";
+}
+
+void MessageInlet::processMessage(int inletIndex, PdMessage *message) {
+  sendMessage(0, message);
 }

@@ -50,7 +50,7 @@ class DspObject : public MessageObject {
     
     virtual ~DspObject();
     
-    void receiveMessage(int inletIndex, PdMessage *message);
+    virtual void receiveMessage(int inletIndex, PdMessage *message);
     
     void processDsp();
   

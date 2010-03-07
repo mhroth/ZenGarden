@@ -309,7 +309,7 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
     } else if (StaticUtils::isNumeric(objectLabel)){
       return new MessageFloat(atof(objectLabel), graph);
     } else if (strcmp(objectLabel, "inlet") == 0) {
-      return new MessageInlet(initMessage, graph);
+      return new MessageInlet(graph);
     } else if (strcmp(objectLabel, "int") == 0) {
       return new MessageInteger(initMessage, graph);
     } else if (strcmp(objectLabel, "loadbang") == 0) {
@@ -512,10 +512,14 @@ void PdGraph::registerDspSend(DspSend *dspSend) {
   }
 }
 
+void PdGraph::receiveMessage(int inletIndex, PdMessage *message) {
+  processMessage(inletIndex, message);
+}
+
 void PdGraph::processMessage(int inletIndex, PdMessage *message) {
   // simply pass the message on to the corresponding MessageInlet object.
   MessageInlet *inlet = (MessageInlet *) inletList->get(inletIndex);
-  inlet->processMessage(0, message);
+  inlet->receiveMessage(0, message);
 }
 
 void PdGraph::process(float *inputBuffers, float *outputBuffers) {
@@ -560,7 +564,6 @@ void PdGraph::processDsp() {
   }
 }
 
-// TODO(mhroth)
 void PdGraph::computeDspProcessOrder() {
 
   /* clear/reset dspNodeList
@@ -622,6 +625,12 @@ void PdGraph::computeDspProcessOrder() {
 List *PdGraph::getProcessOrder() {
   computeDspProcessOrder(); // compute the internal process order
   return DspObject::getProcessOrder(); // then just call the super's getProcessOrder().
+}
+
+ConnectionType PdGraph::getConnectionType(int outletIndex) {
+  // return the connection type depending on the type of outlet object
+  MessageObject *messageObject = (MessageObject *) outletList->get(outletIndex);
+  return messageObject->getConnectionType(0);
 }
 
 int PdGraph::getBlockSize() {

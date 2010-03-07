@@ -51,6 +51,12 @@ class PdGraph : public DspObject {
     /** Cancel a scheduled <code>PdMessage</code> according to its id. */
     void cancelMessage(MessageObject *messageObject, int outletIndex, PdMessage *message);
   
+    /* 
+     * Messages arriving at <code>PdGraph</code>s are processed immediately (passed on to inlet
+     * objects, unlike with super-<code>DspObject</code> objects.
+     */
+    void receiveMessage(int inletIndex, PdMessage *message);
+  
     /**  */
     void processMessage(int inletIndex, PdMessage *message);
     
@@ -62,6 +68,8 @@ class PdGraph : public DspObject {
   
     /**  */
     const char *getObjectLabel();
+  
+    ConnectionType getConnectionType(int outletIndex);
     
     /** Turn the audio processing of this graph on or off. */
     void setSwitch(bool switched);

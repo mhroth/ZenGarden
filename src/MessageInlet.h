@@ -23,16 +23,19 @@
 #ifndef _MESSAGE_INLET_H_
 #define _MESSAGE_INLET_H_
 
-#include "MessagePassthrough.h"
+#include "MessageObject.h"
 
 /** [inlet] */
-class MessageInlet : public MessagePassthrough {
+class MessageInlet : public MessageObject {
   
-public:
-  MessageInlet(PdMessage *initMessage, PdGraph *graph);
-  ~MessageInlet();
-  
-  const char *getObjectLabel();
+  public:
+    MessageInlet(PdGraph *graph);
+    ~MessageInlet();
+    
+    const char *getObjectLabel();
+    
+  private:
+    void processMessage(int inletIndex, PdMessage *message);
   
 };
 
