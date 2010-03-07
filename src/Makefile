@@ -8,7 +8,7 @@ OBJS := $(foreach FILE,$(LOCAL_SRC_FILES),$(FILE:.cpp=.o))
 SNDFILE_INCLUDE = `pkg-config --cflags sndfile`
 SNDFILE_LIB = `pkg-config --libs sndfile`
 
-CXXFLAGS = -g -Os -fPIC -Wall -I$(my-dir) $(SNDFILE_INCLUDE)
+CXXFLAGS = -g -O3 -fPIC -Wall -I$(my-dir) $(SNDFILE_INCLUDE)
 
 # figure out what platform we're on
 
