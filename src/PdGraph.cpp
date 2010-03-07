@@ -614,11 +614,13 @@ void PdGraph::computeDspProcessOrder() {
 
   delete processList;
 
-  // print dsp evaluation order for debugging
-  printf("--- ordered evaluation list ---\n");
-  for (int i = 0; i < dspNodeList->size(); i++) {
-    MessageObject *messageObject = (MessageObject *) dspNodeList->get(i);
-    printf("%s\n", messageObject->getObjectLabel());
+  if (dspNodeList->size() > 0) {
+    // print dsp evaluation order for debugging, but only if there are any nodes to list
+    printf("--- ordered evaluation list ---\n");
+    for (int i = 0; i < dspNodeList->size(); i++) {
+      MessageObject *messageObject = (MessageObject *) dspNodeList->get(i);
+      printf("%s\n", messageObject->getObjectLabel());
+    }
   }
 }
 
