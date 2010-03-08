@@ -537,7 +537,7 @@ void PdGraph::process(float *inputBuffers, float *outputBuffers) {
          destination->message->getTimestamp() < nextBlockStartTimestamp) {
     messageCallbackQueue->remove(0); // remove the message from the queue
     destination->message->unreserve(destination->object);
-    destination->object->sendMessage(destination->index, destination->message);
+    destination->object->sendScheduledMessage(destination->index, destination->message);
   }
 
   // execute all audio objects in this graph

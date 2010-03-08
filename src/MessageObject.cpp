@@ -97,6 +97,10 @@ void MessageObject::sendMessage(int outletIndex, PdMessage *message) {
     ObjectLetPair *objectLetPair = (ObjectLetPair *) outgoingMessageConnectionsList->get(i);
     objectLetPair->object->receiveMessage(objectLetPair->index, message);
   }
+}
+
+void MessageObject::sendScheduledMessage(int outletIndex, PdMessage *message) {
+  sendMessage(outletIndex, message);
   
   postSendMessageHook(outletIndex, message);
 }

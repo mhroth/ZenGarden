@@ -49,6 +49,9 @@ class MessageObject {
   
     /** Sends the given message to all connected objects at the given outlet index. */
     void sendMessage(int outletIndex, PdMessage *message);
+  
+    /** Sends a scheduled message, and also calls the <code>postSendMessageHook()</code>. */
+    void sendScheduledMessage(int outletIndex, PdMessage *message);
     
     /** <code>MessageObject</code>s by default do not process any audio */
     // TODO(mhroth): can't we move this function to DspObject?
