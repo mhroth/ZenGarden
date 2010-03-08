@@ -51,23 +51,20 @@ void MessageSymbol::setSymbol(char *newSymbol) {
 }
 
 void MessageSymbol::processMessage(int inletIndex, PdMessage *message) {
-  if (inletIndex == 0) {
-    MessageElement *messageElement = message->getElement(0);
-    switch (messageElement->getType()) {
-      case SYMBOL: {
-        setSymbol(messageElement->getSymbol());
-        // allow fallthrough
-      }
-      case BANG: {
-        PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-        outgoingMessage->setTimestamp(message->getTimestamp());
-        outgoingMessage->getElement(0)->setSymbol(symbol);
-        sendMessage(0, outgoingMessage);
-        break;
-      }
-      default: {
-        break;
-      }
+  switch (message->getElement(0)->getType()) {
+    case SYMBOL: {
+      setSymbol(message->getElement(0)->getSymbol());
+      // allow fallthrough
+    }
+    case BANG: {
+      PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+      outgoingMessage->setTimestamp(message->getTimestamp());
+      outgoingMessage->getElement(0)->setSymbol(symbol);
+      sendMessage(0, outgoingMessage);
+      break;
+    }
+    default: {
+      break;
     }
   }
 }
