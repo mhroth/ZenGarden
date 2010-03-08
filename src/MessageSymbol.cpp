@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -21,28 +21,32 @@
  */
 
 #include "MessageSymbol.h"
-#include "StaticUtils.h"
 
-MessageSymbol::MessageSymbol(char *initString) : MessageInputMessageOutputObject(1, 1, initString) {
+MessageSymbol::MessageSymbol(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
   symbol = NULL;
-  setSymbol("");
+  if (initMessage->getNumElements() > 0 &&
+      initMessage->getElement(0)->getType() == SYMBOL) {
+    setSymbol(initMessage->getElement(0)->getSymbol());
+  } else {
+    setSymbol("");
+  }
 }
 
-MessageSymbol::MessageSymbol(char *newSymbol, char *initString) : MessageInputMessageOutputObject(1, 1, initString) {
+MessageSymbol::MessageSymbol(char *newSymbol, PdGraph *graph) : MessageObject(1, 1, graph) {
   symbol = NULL;
   setSymbol(newSymbol);
 }
 
 MessageSymbol::~MessageSymbol() {
-  if (symbol == NULL) {
-    free(symbol);
-  }
+  free(symbol);
+}
+
+const char *MessageSymbol::getObjectLabel() {
+  return "symbol";
 }
 
 void MessageSymbol::setSymbol(char *newSymbol) {
-  if (symbol != NULL) {
-    free(symbol);
-  }
+  free(symbol);
   symbol = StaticUtils::copyString(newSymbol);
 }
 
@@ -56,8 +60,9 @@ void MessageSymbol::processMessage(int inletIndex, PdMessage *message) {
       }
       case BANG: {
         PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+        outgoingMessage->setTimestamp(message->getTimestamp());
         outgoingMessage->getElement(0)->setSymbol(symbol);
-        outgoingMessage->setBlockIndex(message->getBlockIndex());
+        sendMessage(0, outgoingMessage);
         break;
       }
       default: {
@@ -65,10 +70,4 @@ void MessageSymbol::processMessage(int inletIndex, PdMessage *message) {
       }
     }
   }
-}
-
-PdMessage *MessageSymbol::newCanonicalMessage() {
-  PdMessage *message = new PdMessage();
-  message->addElement(new MessageElement());
-  return message;
 }

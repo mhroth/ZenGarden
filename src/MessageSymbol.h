@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,18 +23,19 @@
 #ifndef _MESSAGE_SYMBOL_H_
 #define _MESSAGE_SYMBOL_H_
 
-#include "MessageInputMessageOutputObject.h"
+#include "MessageObject.h"
 
-class MessageSymbol : public MessageInputMessageOutputObject {
+class MessageSymbol : public MessageObject {
   
   public:
-    MessageSymbol(char *initString);
-    MessageSymbol(char *newSymbol, char *initString);
+    MessageSymbol(PdMessage *initMessage, PdGraph *graph);
+    MessageSymbol(char *newSymbol, PdGraph *graph);
     ~MessageSymbol();
+  
+    const char *getObjectLabel();
     
   protected:
     void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage();
     
   private:
     void setSymbol(char *newSymbol);

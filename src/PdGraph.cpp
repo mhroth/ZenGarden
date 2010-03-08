@@ -60,6 +60,7 @@
 #include "MessageSqrt.h"
 #include "MessageSubtract.h"
 #include "MessageSwitch.h"
+#include "MessageSymbol.h"
 #include "MessageTangent.h"
 
 #include "DspAdc.h"
@@ -203,14 +204,11 @@ PdGraph::PdGraph(PdFileParser *fileParser, char *directory, char *libraryDirecto
         int inletIndex = atoi(strtok(NULL, ";"));
         connect(fromObjectIndex, outletIndex, toObjectIndex, inletIndex);
       } else if (strcmp(objectType, "floatatom") == 0) {
-        // defines a number box
-        nodeList->add(new MessageFloat(0.0f, this));
+        addObject(new MessageFloat(0.0f, this)); // defines a number box
       } else if (strcmp(objectType, "symbolatom") == 0) {
-        // TODO(mhroth)
-        //char *objectInitString = strtok(NULL, ";");
-        //nodeList->add(new MessageSymbol(objectInitString));
+        addObject(new MessageSymbol("", graph)); // defines a symbol box
       } else if (strcmp(objectType, "restore") == 0) {
-        break; // finished reading a subpatch. Return the object.
+        break; // finished reading a subpatch. Return the graph.
       } else if (strcmp(objectType, "text") == 0) {
         // TODO(mhroth)
         //char *objectInitString = strtok(NULL, ";");
@@ -332,6 +330,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageSend(initMessage, graph);
     } else if (strcmp(objectLabel, "sin") == 0) {
       return new MessageSine(initMessage, graph);
+    } else if (strcmp(objectLabel, "symbol") == 0) {
+      return new MessageSymbol(initMessage, graph);
     } else if (strcmp(objectLabel, "tan") == 0) {
       return new MessageTangent(initMessage, graph);
     } else if (strcmp(objectLabel, "+~") == 0) {
