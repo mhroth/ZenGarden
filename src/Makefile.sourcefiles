@@ -6,6 +6,7 @@ LOCAL_SRC_FILES := \
 ./DspNoise.cpp \
 ./DspObject.cpp \
 ./DspOsc.cpp \
+./DspOutlet.cpp \
 ./LinkedList.cpp \
 ./List.cpp \
 ./MessageAbsoluteValue.cpp \

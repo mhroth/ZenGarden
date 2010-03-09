@@ -69,6 +69,7 @@
 #include "DspMultiply.h"
 #include "DspNoise.h"
 #include "DspOsc.h"
+#include "DspOutlet.h"
 
 /** A C-defined function implementing the default print behaviour. */
 void defaultPrintFunction(char *msg) {
@@ -346,6 +347,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new DspNoise(graph);
     } else if (strcmp(objectLabel, "osc~") == 0) {
       return new DspOsc(initMessage, graph);
+    } else if (strcmp(objectLabel, "outlet~") == 0) {
+      return new DspOutlet(graph);
     } else if (strcmp(objectLabel, "switch~") == 0) {
       return new MessageSwitch(initMessage, graph);
     }
