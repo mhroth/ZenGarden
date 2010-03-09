@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009, 2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -21,7 +21,6 @@
  */
 
 #include "MessageBang.h"
-#include "PdGraph.h"
 
 MessageBang::MessageBang(PdGraph *graph) : MessageObject(1, 1, graph) {
   // nothing to do
@@ -36,9 +35,7 @@ const char *MessageBang::getObjectLabel() {
 }
 
 void MessageBang::processMessage(int inletIndex, PdMessage *message) {
-  if (inletIndex == 0) {
-    PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-    outgoingMessage->setTimestamp(0.0);
-    graph->scheduleMessage(this, 0, outgoingMessage);
-  }
+  PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+  outgoingMessage->setTimestamp(message->getTimestamp());
+  sendMessage(0, outgoingMessage);
 }
