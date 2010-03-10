@@ -376,6 +376,9 @@ void PdGraph::addObject(MessageObject *node) {
     registerMessageSend((MessageSend *) node);
   } else if (strcmp(node->getObjectLabel(), "receive") == 0) {
     registerMessageReceive((MessageReceive *) node);
+  } else if (strcmp(node->getObjectLabel(), "outlet~") == 0) {
+    outletList->add(node);
+    ((DspOutlet *) node)->setOutletIndex(outletList->size()-1);
   }
   /*
    else if (strcmp(object->getObjectLabel(), "send~") == 0) {
