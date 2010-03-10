@@ -52,7 +52,7 @@ class DspObject : public MessageObject {
     
     virtual void receiveMessage(int inletIndex, PdMessage *message);
     
-    void processDsp();
+    virtual void processDsp();
   
     /** Returns the connection type of the given outlet. */
     virtual ConnectionType getConnectionType(int outletIndex);
@@ -67,7 +67,7 @@ class DspObject : public MessageObject {
   
     bool isRootNode();
     bool isLeafNode();
-    virtual List *getProcessOrder();
+    List *getProcessOrder();
     
   protected:  
     virtual void processDspToIndex(float blockIndex);

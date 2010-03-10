@@ -120,8 +120,6 @@ class PdGraph : public DspObject {
     /** (Re-)Computes the tree and node processing ordering for dsp nodes. */
     void computeDspProcessOrder();
   
-    List *getProcessOrder();
-  
     /**
      * Sends the given message to all [receive] objects with the given <code>name</code>.
      * This function is used by message boxes to send messages described be the syntax:
@@ -208,8 +206,8 @@ class PdGraph : public DspObject {
     List *dspReceiveList;
     
     /**
-     * A list of <code>PdNode</code>s which process audio and should be called from within the
-     * <code>processDsp()</code> loop.
+     * A list of all <code>DspObject</code>s in this graph, in the order in which they should be
+     * called in the <code>processDsp()</code> loop.
      */
     List *dspNodeList;
   

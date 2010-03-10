@@ -95,7 +95,6 @@ PdGraph *PdGraph::newInstance(char *directory, char *filename, char *libraryDire
     printf("WARNING | The first line of the pd file does not define a canvas:\n  \"%s\".\n", line);
   }
   delete fileParser;
-  pdGraph->computeDspProcessOrder();
   return pdGraph;
 }
 
@@ -154,8 +153,7 @@ PdGraph::PdGraph(PdFileParser *fileParser, char *directory, char *libraryDirecto
       if (strcmp(objectType, "canvas") == 0) {
         // a new subgraph is defined inline
         PdGraph *graph = new PdGraph(fileParser, directory, libraryDirectory, blockSize, numInputChannels, numOutputChannels, sampleRate, this);
-        nodeList->add(graph);
-        dspNodeList->add(graph);
+        addObject(graph);
       } else {
         printf("WARNING | Unrecognised #N object type: \"%s\"", line);
       }
@@ -186,8 +184,7 @@ PdGraph::PdGraph(PdFileParser *fileParser, char *directory, char *libraryDirecto
             }
           }
           free(filename);
-          nodeList->add(pdNode);
-          dspNodeList->add(pdNode);
+          addObject(pdNode);
         } else {
           // add the object to the local graph and make any necessary registrations
           addObject(pdNode);
@@ -225,6 +222,8 @@ PdGraph::PdGraph(PdFileParser *fileParser, char *directory, char *libraryDirecto
       printf("WARNING | Unrecognised hash type on line \"%s\".\n", line);
     }
   }
+      
+  computeDspProcessOrder();
 }
 
 PdGraph::~PdGraph() {
@@ -376,6 +375,9 @@ void PdGraph::addObject(MessageObject *node) {
     registerMessageSend((MessageSend *) node);
   } else if (strcmp(node->getObjectLabel(), "receive") == 0) {
     registerMessageReceive((MessageReceive *) node);
+  } else if (strcmp(node->getObjectLabel(), "inlet~") == 0) {
+    // TODO
+    inletList->add(node);
   } else if (strcmp(node->getObjectLabel(), "outlet~") == 0) {
     outletList->add(node);
     ((DspOutlet *) node)->setOutletIndex(outletList->size()-1);
@@ -628,11 +630,6 @@ void PdGraph::computeDspProcessOrder() {
       printf("%s\n", messageObject->getObjectLabel());
     }
   }
-}
-
-List *PdGraph::getProcessOrder() {
-  computeDspProcessOrder(); // compute the internal process order
-  return DspObject::getProcessOrder(); // then just call the super's getProcessOrder().
 }
 
 ConnectionType PdGraph::getConnectionType(int outletIndex) {

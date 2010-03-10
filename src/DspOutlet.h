@@ -53,7 +53,7 @@ class DspOutlet : public DspObject {
     int outletIndex;
   
     /** A temporary holder for the "true" <code>localDspBufferAtInlet</code>. */
-    float *tempLocalDspBufferAtInlet;
+    float *tempLocalDspBuffer;
 };
 
 #endif // _DSP_OUTLET_H_
