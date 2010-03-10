@@ -20,41 +20,32 @@
  *
  */
 
-#ifndef _DSP_OUTLET_H_
-#define _DSP_OUTLET_H_
+#ifndef _DSP_INLET_H_
+#define _DSP_INLET_H_
 
 #include "DspObject.h"
 
 class PdGraph;
 
-/** [oulet~] */
+/** [inlet~] */
 /*
- * <code>DspOutlet</code> increases its efficiency (of making its input appear at the output of the
- * parent graph) by replacing its own inlet buffer as the outlet buffer of its parent-graph. In this
- * way, when audio streams are implicitly added at the outlet object's inlet, the result
- * automatically appears at the outlet buffer of the parent graph. Superfluous calls to
- * <code>memcpy()</code> are avoided.
+ * <code>DspInlet</code> uses much the same strategy of buffer replacement as <code>DspOutlet</code>.
+ * In this case, the parent-graph's inlet buffer replaces this object's outlet buffer. Thus, when
+ * the parent graph fills its inlet buffer, this object's outlet buffer is immediately filled
+ * and no further computations must be done.
  */
-class DspOutlet : public DspObject {
-  
+class DspInlet : public DspObject {
   public:
-    DspOutlet(PdGraph *graph);
-    ~DspOutlet();
+    DspInlet(PdGraph *graph);
+    ~DspInlet();
   
     const char *getObjectLabel();
   
-    /**
-     * Set the outlet index of this object in the parent-graph.
-     * This function should <b>always</b> be called after initialisation. The default outlet index
-     * is zero.
-     */
-    void setOutletIndex(int outletIndex);
+    /** Set the parent-graph's inlet buffer. The buffer will replace this object's output buffer. */
+    void setInletBuffer(float *graphInletBuffer);
   
   private:
-    int outletIndex;
-  
-    /** A temporary holder for the "true" <code>localDspBufferAtInlet</code>. */
     float *tempLocalDspBuffer;
 };
 
-#endif // _DSP_OUTLET_H_
+#endif // _DSP_INLET_H_

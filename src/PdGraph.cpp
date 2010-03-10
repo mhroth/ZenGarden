@@ -66,6 +66,7 @@
 #include "DspAdc.h"
 #include "DspAdd.h"
 #include "DspDac.h"
+#include "DspInlet.h"
 #include "DspMultiply.h"
 #include "DspNoise.h"
 #include "DspOsc.h"
@@ -342,6 +343,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new DspAdc(graph);
     } else if (strcmp(objectLabel, "dac~") == 0) {
       return new DspDac(graph);
+    } else if (strcmp(objectLabel, "inlet~") == 0) {
+      return new DspInlet(this);
     } else if (strcmp(objectLabel, "noise~") == 0) {
       return new DspNoise(graph);
     } else if (strcmp(objectLabel, "osc~") == 0) {
@@ -376,7 +379,8 @@ void PdGraph::addObject(MessageObject *node) {
   } else if (strcmp(node->getObjectLabel(), "receive") == 0) {
     registerMessageReceive((MessageReceive *) node);
   } else if (strcmp(node->getObjectLabel(), "inlet~") == 0) {
-    // TODO
+    inletList->add(node);
+    ((DspInlet *) node)->setInletBuffer(localDspBufferAtInlet[inletList->size()-1]);
     inletList->add(node);
   } else if (strcmp(node->getObjectLabel(), "outlet~") == 0) {
     outletList->add(node);
@@ -558,6 +562,7 @@ void PdGraph::process(float *inputBuffers, float *outputBuffers) {
 }
 
 void PdGraph::processDsp() {
+  // TODO(mhroth): must fill input buffers with incoming audio (otherwise inlet~ doesn't work)
   if (switched) {
     // DSP processing elements are only executed if the graph is switched on
     int numNodes = dspNodeList->size();

@@ -86,7 +86,8 @@ void DspMultiply::processDspToIndex(float blockIndex) {
       break;
     }
     case MESSAGE_DSP:
-    case MESSAGE_MESSAGE: {
+    case MESSAGE_MESSAGE:
+    default: {
       break; // nothing to do
     }
   }
