@@ -21,7 +21,6 @@
  */
 
 #include "MessageTrigger.h"
-#include "PdGraph.h"
 
 MessageTrigger::MessageTrigger(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, initMessage->getNumElements(), graph) {
   numCasts = initMessage->getNumElements();

@@ -57,11 +57,10 @@ class PdGraph : public DspObject {
      */
     void receiveMessage(int inletIndex, PdMessage *message);
   
-    /**  */
     void processMessage(int inletIndex, PdMessage *message);
     
-    /**  */
-    void processDsp();
+    /* This functions implements the sub-graph's audio loop. */
+    void processDspToIndex(float blockIndex);
     
     /**  */
     void process(float *inputBuffers, float *outputBuffers);

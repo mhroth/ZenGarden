@@ -565,8 +565,9 @@ void PdGraph::process(float *inputBuffers, float *outputBuffers) {
   blockStartTimestamp = nextBlockStartTimestamp;
 }
 
-void PdGraph::processDsp() {
-  // TODO(mhroth): must fill input buffers with incoming audio (otherwise inlet~ doesn't work)
+void PdGraph::processDspToIndex(float blockIndex) {
+  // the dsp loop of graphs is implemented in processDspToIndex() so that the DspObject's 
+  // processDsp() can sum all incoming audio signals
   if (switched) {
     // DSP processing elements are only executed if the graph is switched on
     int numNodes = dspNodeList->size();
