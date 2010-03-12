@@ -40,7 +40,10 @@ class MessageTrigger : public MessageObject {
   private:
     void processMessage(int inletIndex, PdMessage *message);
   
+    /** The length of the <code>castArray</code>. */
     int numCasts;
+  
+    /** A list of the message types to cast the outlet of each outlet to. */
     MessageElementType *castArray;
 };
 

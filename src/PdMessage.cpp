@@ -43,7 +43,7 @@ PdMessage::PdMessage(char *initString, PdGraph *graph) {
   timestamp = 0.0;
   reservedList = new LinkedList();
   
-  char *token = strtok(initString, " ");
+  char *token = strtok(initString, " ;");
   if (token != NULL) {
     do {
       if (StaticUtils::isNumeric(token)) {
@@ -83,7 +83,7 @@ PdMessage::PdMessage(char *initString, PdGraph *graph) {
         // element is symbolic
         addElement(new MessageElement(token));
       }
-    } while ((token = strtok(NULL, " ")) != NULL);
+    } while ((token = strtok(NULL, " ;")) != NULL);
   }
 }
 
