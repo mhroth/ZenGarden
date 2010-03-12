@@ -67,6 +67,7 @@
 		90C0515011347FC500117E4B /* MessagePow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90C0514A11347FC500117E4B /* MessagePow.cpp */; };
 		90C0515111347FC500117E4B /* MessageSqrt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90C0514C11347FC500117E4B /* MessageSqrt.cpp */; };
 		90C051B61134DCB200117E4B /* MessageLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90C051B41134DCB200117E4B /* MessageLine.cpp */; };
+		90C76BBF114AD15800887B04 /* MessageUntil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90C76BBE114AD15800887B04 /* MessageUntil.cpp */; };
 		90C9436B114A868200B78515 /* MessageTrigger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90C94369114A868200B78515 /* MessageTrigger.cpp */; };
 		90C9444E114AAA3600B78515 /* MessageDbToRms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90C9444C114AAA3600B78515 /* MessageDbToRms.cpp */; };
 		90C94455114AAA9300B78515 /* MessageMidiToFrequency.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90C94453114AAA9300B78515 /* MessageMidiToFrequency.cpp */; };
@@ -219,6 +220,8 @@
 		90C0514D11347FC500117E4B /* MessageSqrt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageSqrt.h; path = ../src/MessageSqrt.h; sourceTree = SOURCE_ROOT; };
 		90C051B41134DCB200117E4B /* MessageLine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageLine.cpp; path = ../src/MessageLine.cpp; sourceTree = SOURCE_ROOT; };
 		90C051B51134DCB200117E4B /* MessageLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageLine.h; path = ../src/MessageLine.h; sourceTree = SOURCE_ROOT; };
+		90C76BBD114AD15800887B04 /* MessageUntil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageUntil.h; path = ../src/MessageUntil.h; sourceTree = SOURCE_ROOT; };
+		90C76BBE114AD15800887B04 /* MessageUntil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageUntil.cpp; path = ../src/MessageUntil.cpp; sourceTree = SOURCE_ROOT; };
 		90C94369114A868200B78515 /* MessageTrigger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageTrigger.cpp; path = ../src/MessageTrigger.cpp; sourceTree = SOURCE_ROOT; };
 		90C9436A114A868200B78515 /* MessageTrigger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageTrigger.h; path = ../src/MessageTrigger.h; sourceTree = SOURCE_ROOT; };
 		90C9444C114AAA3600B78515 /* MessageDbToRms.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageDbToRms.cpp; path = ../src/MessageDbToRms.cpp; sourceTree = SOURCE_ROOT; };
@@ -400,6 +403,8 @@
 				90266AE9112ED31D00E3F6F1 /* MessageTangent.h */,
 				90C94369114A868200B78515 /* MessageTrigger.cpp */,
 				90C9436A114A868200B78515 /* MessageTrigger.h */,
+				90C76BBE114AD15800887B04 /* MessageUntil.cpp */,
+				90C76BBD114AD15800887B04 /* MessageUntil.h */,
 				90398C981113564400E5A8B6 /* ObjectLetPair.h */,
 				90398C991113564400E5A8B6 /* OrderedMessageQueue.cpp */,
 				90398C9A1113564400E5A8B6 /* OrderedMessageQueue.h */,
@@ -543,6 +548,7 @@
 				90C94467114AAB4500B78515 /* MessageMaximum.cpp in Sources */,
 				90C94468114AAB4500B78515 /* MessageMinimum.cpp in Sources */,
 				90C9446F114AAB7800B78515 /* MessageRmsToDb.cpp in Sources */,
+				90C76BBF114AD15800887B04 /* MessageUntil.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

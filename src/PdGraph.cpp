@@ -69,6 +69,7 @@
 #include "MessageSymbol.h"
 #include "MessageTangent.h"
 #include "MessageTrigger.h"
+#include "MessageUntil.h"
 
 #include "DspAdc.h"
 #include "DspAdd.h"
@@ -357,6 +358,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
     } else if (strcmp(objectLabel, "trigger") == 0 ||
                strcmp(objectLabel, "t") == 0) {
       return new MessageTrigger(initMessage, graph);
+    } else if (strcmp(objectLabel, "until") == 0) {
+      return new MessageUntil(graph);
     } else if (strcmp(objectLabel, "+~") == 0) {
       return new DspAdd(initMessage, graph);
     } else if (strcmp(objectLabel, "*~") == 0) {

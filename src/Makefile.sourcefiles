@@ -61,6 +61,7 @@ LOCAL_SRC_FILES := \
 ./MessageSymbol.cpp \
 ./MessageTangent.cpp \
 ./MessageTrigger.cpp \
+./MessageUntil.cpp \
 ./OrderedMessageQueue.cpp \
 ./PdFileParser.cpp \
 ./PdGraph.cpp \
