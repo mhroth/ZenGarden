@@ -62,6 +62,7 @@
 #include "MessageSwitch.h"
 #include "MessageSymbol.h"
 #include "MessageTangent.h"
+#include "MessageTrigger.h"
 
 #include "DspAdc.h"
 #include "DspAdd.h"
@@ -335,6 +336,9 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageSymbol(initMessage, graph);
     } else if (strcmp(objectLabel, "tan") == 0) {
       return new MessageTangent(initMessage, graph);
+    } else if (strcmp(objectLabel, "trigger") == 0 ||
+               strcmp(objectLabel, "t") == 0) {
+      return new MessageTrigger(initMessage, graph);
     } else if (strcmp(objectLabel, "+~") == 0) {
       return new DspAdd(initMessage, graph);
     } else if (strcmp(objectLabel, "*~") == 0) {
