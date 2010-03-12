@@ -1,8 +1,8 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
- * 
+ *
  *  This file is part of ZenGarden.
  *
  *  ZenGarden is free software: you can redistribute it and/or modify
@@ -14,25 +14,30 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU Lesser General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with ZenGarden.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
-#ifndef _MESSAGE_RMS_TO_DB_H_
-#define _MESSAGE_RMS_TO_DB_H_
+#ifndef _MESSAGE_RMSTODB_H_
+#define _MESSAGE_RMSTODB_H_
 
-#include "MessageUnaryOperationObject.h"
 
-class MessageRmsToDb : public MessageUnaryOperationObject {
-  
+#include "math.h"
+#include "MessageObject.h"
+
+/** [rmstodb] */
+class MessageRmsToDb : public MessageObject {
+
   public:
-    MessageRmsToDb(char *initString);
+    MessageRmsToDb(PdGraph *graph);
     ~MessageRmsToDb();
-    
-  protected:
-    float performUnaryOperation(float input);
+
+    const char *getObjectLabel();
+
+  private:
+    void processMessage(int inletIndex, PdMessage *message);
 };
 
-#endif // _MESSAGE_RMS_TO_DB_H_
+#endif // _MESSAGE_RMSTODB_H_

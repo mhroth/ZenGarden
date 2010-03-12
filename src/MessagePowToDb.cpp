@@ -36,13 +36,10 @@ const char *MessagePowToDb::getObjectLabel() {
 }
 
 void MessagePowToDb::processMessage(int inletIndex, PdMessage *message) {
-  if (inletIndex == 0) {
-    MessageElement *messageElement = message->getElement(0);
-    if (messageElement->getType() == FLOAT) {
-      PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-      outgoingMessage->getElement(0)->setFloat(100.0f+20.0f*log10f(sqrtf(messageElement->getFloat())));
-      outgoingMessage->setTimestamp(message->getTimestamp());
-      sendMessage(0, outgoingMessage); // send a message from outlet 0
-    }
+  if (message->getElement(0)->getType() == FLOAT) {
+    PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+    outgoingMessage->getElement(0)->setFloat(100.0f+20.0f*log10f(sqrtf(message->getElement(0)->getFloat())));
+    outgoingMessage->setTimestamp(message->getTimestamp());
+    sendMessage(0, outgoingMessage); // send a message from outlet 0
   }
 }

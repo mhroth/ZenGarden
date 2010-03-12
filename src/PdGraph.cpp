@@ -33,9 +33,11 @@
 #include "MessageDelay.h"
 #include "MessageDivide.h"
 #include "MessageDbToPow.h"
+#include "MessageDbToRms.h"
 #include "MessageEqualsEquals.h"
 #include "MessageExp.h"
 #include "MessageFloat.h"
+#include "MessageFrequencyToMidi.h"
 #include "MessageGreaterThan.h"
 #include "MessageGreaterThanOrEqualTo.h"
 #include "MessageInlet.h"
@@ -44,8 +46,11 @@
 #include "MessageLessThanOrEqualTo.h"
 #include "MessageLoadbang.h"
 #include "MessageLog.h"
+#include "MessageMaximum.h"
 #include "MessageMessageBox.h"
 #include "MessageMetro.h"
+#include "MessageMidiToFrequency.h"
+#include "MessageMinimum.h"
 #include "MessageMultiply.h"
 #include "MessageNotEquals.h"
 #include "MessageOutlet.h"
@@ -55,6 +60,7 @@
 #include "MessagePrint.h"
 #include "MessageRandom.h"
 #include "MessageReceive.h"
+#include "MessageRmsToDb.h"
 #include "MessageSend.h"
 #include "MessageSine.h"
 #include "MessageSqrt.h"
@@ -223,7 +229,7 @@ PdGraph::PdGraph(PdFileParser *fileParser, char *directory, char *libraryDirecto
       printf("WARNING | Unrecognised hash type on line \"%s\".\n", line);
     }
   }
-      
+
   computeDspProcessOrder();
 }
 
@@ -269,6 +275,10 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessagePowToDb(graph);
     } else if (strcmp(objectLabel, "dbtopow") == 0) {
       return new MessageDbToPow(graph);
+    } else if (strcmp(objectLabel, "dbtorms") == 0) {
+      return new MessageDbToRms(graph);
+    } else if (strcmp(objectLabel, "rmstodb") == 0) {
+      return new MessageRmsToDb(graph);
     } else if (strcmp(objectLabel, "log") == 0) {
       return new MessageLog(initMessage, graph);
     } else if (strcmp(objectLabel, "sqrt") == 0) {
@@ -305,6 +315,10 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
     } else if (strcmp(objectLabel, "float") == 0 ||
                strcmp(objectLabel, "f") == 0) {
       return new MessageFloat(initMessage, graph);
+    } else if (strcmp(objectLabel, "ftom") == 0) {
+      return new MessageFrequencyToMidi(graph);
+    } else if (strcmp(objectLabel, "mtof") == 0) {
+      return new MessageMidiToFrequency(graph);
     } else if (StaticUtils::isNumeric(objectLabel)){
       return new MessageFloat(atof(objectLabel), graph);
     } else if (strcmp(objectLabel, "inlet") == 0) {
@@ -313,6 +327,10 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageInteger(initMessage, graph);
     } else if (strcmp(objectLabel, "loadbang") == 0) {
       return new MessageLoadbang(graph);
+    } else if (strcmp(objectLabel, "max") == 0) {
+      return new MessageMaximum(initMessage, graph);
+    } else if (strcmp(objectLabel, "min") == 0) {
+      return new MessageMinimum(initMessage, graph);
     } else if (strcmp(objectLabel, "metro") == 0) {
       return new MessageMetro(initMessage, graph);
     } else if (strcmp(objectLabel, "pipe") == 0) {

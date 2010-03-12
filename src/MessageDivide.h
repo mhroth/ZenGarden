@@ -42,4 +42,4 @@ class MessageDivide : public MessageObject {
     float constant;
 };
 
-#endif // _MESSAGE_ADD_H_
+#endif // _MESSAGE_DIVIDE_H_

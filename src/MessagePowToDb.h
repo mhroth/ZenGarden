@@ -23,7 +23,7 @@
 #ifndef _MESSAGE_POWTODB_H_
 #define _MESSAGE_POWTODB_H_
 
-#include <math.h>
+#include "math.h"
 #include "MessageObject.h"
 
 /** [powtodb] */

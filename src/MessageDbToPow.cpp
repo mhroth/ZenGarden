@@ -35,13 +35,10 @@ const char *MessageDbToPow::getObjectLabel() {
 }
 
 void MessageDbToPow::processMessage(int inletIndex, PdMessage *message) {
-  if (inletIndex == 0) {
-    MessageElement *messageElement = message->getElement(0);
-    if (messageElement->getType() == FLOAT) {
-      PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-      outgoingMessage->getElement(0)->setFloat(powf(0.00001f * powf(10.0f,(messageElement->getFloat())/20.0f),2.0f));
-      outgoingMessage->setTimestamp(message->getTimestamp());
-      sendMessage(0, outgoingMessage); // send a message from outlet 0
-    }
+  if (message->getElement(0)->getType() == FLOAT) {
+    PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+    outgoingMessage->getElement(0)->setFloat(powf(0.00001f * powf(10.0f,(message->getElement(0)->getFloat())/20.0f),2.0f));
+    outgoingMessage->setTimestamp(message->getTimestamp());
+    sendMessage(0, outgoingMessage); // send a message from outlet 0
   }
 }

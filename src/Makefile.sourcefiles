@@ -18,12 +18,14 @@ LOCAL_SRC_FILES := \
 ./MessageChange.cpp \
 ./MessageCosine.cpp \
 ./MessageDbToPow.cpp \
+./MessageDbToRms.cpp \
 ./MessageDelay.cpp \
 ./MessageDivide.cpp \
 ./MessageElement.cpp \
 ./MessageEqualsEquals.cpp \
 ./MessageExp.cpp \
 ./MessageFloat.cpp \
+./MessageFrequencyToMidi.cpp \
 ./MessageGreaterThan.cpp \
 ./MessageGreaterThanOrEqualTo.cpp \
 ./MessageInlet.cpp \
@@ -32,8 +34,11 @@ LOCAL_SRC_FILES := \
 ./MessageLessThanOrEqualTo.cpp \
 ./MessageLoadbang.cpp \
 ./MessageLog.cpp \
+./MessageMaximum.cpp \
 ./MessageMessageBox.cpp \
 ./MessageMetro.cpp \
+./MessageMidiToFrequency.cpp \
+./MessageMinimum.cpp \
 ./MessageMultiply.cpp \
 ./MessageNamedObject.cpp \
 ./MessageNotEquals.cpp \
@@ -47,6 +52,7 @@ LOCAL_SRC_FILES := \
 ./MessageQueue.cpp \
 ./MessageRandom.cpp \
 ./MessageReceive.cpp \
+./MessageRmsToDb.cpp \
 ./MessageSend.cpp \
 ./MessageSine.cpp \
 ./MessageSqrt.cpp \
