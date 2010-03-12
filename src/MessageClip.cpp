@@ -1,8 +1,8 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009, 2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
- * 
+ *
  *  This file is part of ZenGarden.
  *
  *  ZenGarden is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU Lesser General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with ZenGarden.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -22,64 +22,58 @@
 
 #include "MessageClip.h"
 
-MessageClip::MessageClip(char *initString) : MessageInputMessageOutputObject(3, 1, initString) {
-  lowerBound = 0.0f;
-  upperBound = 1.0f;
-}
-
-MessageClip::MessageClip(float lowerBound, char *initString) : 
-    MessageInputMessageOutputObject(3, 1, initString) {
-  this->lowerBound = lowerBound;
-  upperBound = 1.0f;
-}
-
-MessageClip::MessageClip(float lowerBound, float upperBound, char *initString) : 
-    MessageInputMessageOutputObject(3, 1, initString) {
-  this->lowerBound = lowerBound;
-  this->upperBound = upperBound;
-}
+MessageClip::MessageClip(PdMessage *initMessage, PdGraph *graph) : MessageObject(3, 1, graph) {
+   if (initMessage->getNumElements() == 1 && initMessage->getElement(0)->getType() == FLOAT) {
+     init(initMessage->getElement(0)->getFloat(), 0.0f);
+     } else if (initMessage->getNumElements() == 2 &&
+      initMessage->getElement(0)->getType() == FLOAT &&
+      initMessage->getElement(1)->getType() == FLOAT) {
+        init(initMessage->getElement(0)->getFloat(), initMessage->getElement(1)->getFloat());
+      }
+    else
+    init(0.0f, 0.0f);
+  }
 
 MessageClip::~MessageClip() {
   // nothing to do
 }
 
+void MessageClip::init(float lowerBound, float upperBound) {
+  this->lowerBound = lowerBound;
+  this->upperBound = upperBound;
+}
+
+const char *MessageClip::getObjectLabel() {
+  return "clip";
+}
+
 void MessageClip::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
-      MessageElement *messageElement0 = message->getElement(0);
-      MessageElement *messageElement1 = message->getElement(1);
-      MessageElement *messageElement2 = message->getElement(2);
-      if (messageElement0 != NULL && messageElement0->getType() == FLOAT) {
-        // distribute a list to the inputs
-        if (messageElement1 != NULL && messageElement1->getType() == FLOAT) {
-          lowerBound = messageElement1->getFloat();
-          if (messageElement2 != NULL && messageElement2->getType() == FLOAT) {
-            upperBound = messageElement2->getFloat();
-          }
-        }
-        float output = messageElement0->getFloat();
-        if (output < lowerBound) {
-          output = lowerBound;
-        } else if (output > upperBound) {
-          output = upperBound;
-        }
-        PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-        outgoingMessage->getElement(0)->setFloat(output);
-        outgoingMessage->setBlockIndex(message->getBlockIndex());
+      MessageElement *messageElement = message->getElement(0);
+      float output = messageElement->getFloat();
+      if (output < lowerBound) {
+        output = lowerBound;
+      } else if (output > upperBound) {
+        output = upperBound;
       }
+      PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+      outgoingMessage->getElement(0)->setFloat(output);
+      outgoingMessage->setTimestamp(message->getTimestamp());
+      sendMessage(0, outgoingMessage); // send a message from outlet 0
       break;
     }
     case 1: {
-      MessageElement *messageElement0 = message->getElement(0);
-      if (messageElement0 != NULL && messageElement0->getType() == FLOAT) {
-        lowerBound = messageElement0->getFloat();
+      MessageElement *messageElement = message->getElement(0);
+      if (messageElement != NULL && messageElement->getType() == FLOAT) {
+        lowerBound = messageElement->getFloat();
       }
       break;
     }
     case 2: {
-      MessageElement *messageElement0 = message->getElement(0);
-      if (messageElement0 != NULL && messageElement0->getType() == FLOAT) {
-        upperBound = messageElement0->getFloat();
+      MessageElement *messageElement = message->getElement(0);
+      if (messageElement != NULL && messageElement->getType() == FLOAT) {
+        upperBound = messageElement->getFloat();
       }
       break;
     }
@@ -87,10 +81,4 @@ void MessageClip::processMessage(int inletIndex, PdMessage *message) {
       break;
     }
   }
-}
-
-PdMessage *MessageClip::newCanonicalMessage() {
-  PdMessage *message = new PdMessage();
-  message->addElement(new MessageElement());
-  return message;
 }

@@ -30,6 +30,7 @@
 #include "MessageBang.h"
 #include "MessageCosine.h"
 #include "MessageChange.h"
+#include "MessageClip.h"
 #include "MessageDelay.h"
 #include "MessageDivide.h"
 #include "MessageDbToPow.h"
@@ -309,6 +310,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageChange(initMessage, graph);
     } else if (strcmp(objectLabel, "cos") == 0) {
       return new MessageCosine(initMessage, graph);
+    } else if (strcmp(objectLabel, "clip") == 0) {
+      return new MessageClip(initMessage, graph);
     } else if (strcmp(objectLabel, "delay") == 0) {
       return new MessageDelay(initMessage, graph);
     } else if (strcmp(objectLabel, "exp") == 0) {
@@ -584,7 +587,7 @@ void PdGraph::process(float *inputBuffers, float *outputBuffers) {
 }
 
 void PdGraph::processDspToIndex(float blockIndex) {
-  // the dsp loop of graphs is implemented in processDspToIndex() so that the DspObject's 
+  // the dsp loop of graphs is implemented in processDspToIndex() so that the DspObject's
   // processDsp() can sum all incoming audio signals
   if (switched) {
     // DSP processing elements are only executed if the graph is switched on
