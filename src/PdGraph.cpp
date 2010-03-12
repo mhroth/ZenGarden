@@ -68,6 +68,7 @@
 #include "MessageSwitch.h"
 #include "MessageSymbol.h"
 #include "MessageTangent.h"
+#include "MessageTrigger.h"
 
 #include "DspAdc.h"
 #include "DspAdd.h"
@@ -353,6 +354,9 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageSymbol(initMessage, graph);
     } else if (strcmp(objectLabel, "tan") == 0) {
       return new MessageTangent(initMessage, graph);
+    } else if (strcmp(objectLabel, "trigger") == 0 ||
+               strcmp(objectLabel, "t") == 0) {
+      return new MessageTrigger(initMessage, graph);
     } else if (strcmp(objectLabel, "+~") == 0) {
       return new DspAdd(initMessage, graph);
     } else if (strcmp(objectLabel, "*~") == 0) {
@@ -579,8 +583,9 @@ void PdGraph::process(float *inputBuffers, float *outputBuffers) {
   blockStartTimestamp = nextBlockStartTimestamp;
 }
 
-void PdGraph::processDsp() {
-  // TODO(mhroth): must fill input buffers with incoming audio (otherwise inlet~ doesn't work)
+void PdGraph::processDspToIndex(float blockIndex) {
+  // the dsp loop of graphs is implemented in processDspToIndex() so that the DspObject's 
+  // processDsp() can sum all incoming audio signals
   if (switched) {
     // DSP processing elements are only executed if the graph is switched on
     int numNodes = dspNodeList->size();

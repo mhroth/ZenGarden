@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -20,36 +20,38 @@
  *
  */
 
-#include <math.h>
 #include "MessageTrigger.h"
 
-MessageTrigger::MessageTrigger(List *messageElementList, char *initString) :
-    MessageInputMessageOutputObject(1, messageElementList->getNumElements(), initString) {
-  numCasts = messageElementList->getNumElements();
-  castArray = (MessageElementType *) malloc(
-      messageElementList->getNumElements() * sizeof(MessageElementType));
-      
-  for (int i = 0; i < messageElementList->getNumElements(); i++) {
-    MessageElement *messageElement = (MessageElement *) messageElementList->get(i);
-    if (messageElement->getType() == SYMBOL) {
-      if (strcmp(messageElement->getSymbol(), "float") == 0 ||
-          strcmp(messageElement->getSymbol(), "f") == 0) {
+MessageTrigger::MessageTrigger(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, initMessage->getNumElements(), graph) {
+  numCasts = initMessage->getNumElements();
+  castArray = (MessageElementType *) malloc(numCasts * sizeof(MessageElementType));
+  
+  for (int i = 0; i < initMessage->getNumElements(); i++) {
+    MessageElement *messageElement = initMessage->getElement(0);
+    switch (initMessage->getElement(i)->getType()) {
+      case FLOAT: {
         castArray[i] = FLOAT;
-      } else if (strcmp(messageElement->getSymbol(), "symbol") == 0 ||
-                 strcmp(messageElement->getSymbol(), "s") == 0) {
-        castArray[i] = SYMBOL;
-      } else if (strcmp(messageElement->getSymbol(), "bang") == 0 ||
-                 strcmp(messageElement->getSymbol(), "b") == 0) {
+        break;
+      }
+      case SYMBOL: {
+        if (strcmp(messageElement->getSymbol(), "anything") == 0 ||
+            strcmp(messageElement->getSymbol(), "a") == 0) {
+          castArray[i] = ANYTHING;
+        } else if (strcmp(messageElement->getSymbol(), "list") == 0 ||
+                   strcmp(messageElement->getSymbol(), "l") == 0) {
+          castArray[i] = LIST;
+        } else {
+          castArray[i] = SYMBOL;
+        }
+        break;
+      }
+      case BANG: {
         castArray[i] = BANG;
-      } else if (strcmp(messageElement->getSymbol(), "anything") == 0 ||
-                 strcmp(messageElement->getSymbol(), "a") == 0) {
-        castArray[i] = ANYTHING;
-      } else if (strcmp(messageElement->getSymbol(), "list") == 0 ||
-                 strcmp(messageElement->getSymbol(), "l") == 0) {
-        castArray[i] = LIST;
-      } else {
-        // error condition
-        castArray[i] = BANG;
+        break;
+      }
+      default: {
+        castArray[i] = BANG; // error
+        break;
       }
     }
   }
@@ -59,85 +61,92 @@ MessageTrigger::~MessageTrigger() {
   free(castArray);
 }
 
-/*
- * MessageTrigger makes use of the fact that the message block index is internally
- * represented as a float (though usually consumed as an integer).  Because trigger
- * sends messages right to left from the oulets, though all messages are nominally sent
- * at the same time, there is a need to differentiate between them and order them properly.
- * Thus, the blockIndex of the going messages are incremeneted slighly (as a float) though
- * not enough to make a difference as an int (i.e., conversion to an int still yields the
- * same result). However, because the block indicies are in fact different,
- * getNextMessageInTemporalOrder() can differentiate between them and deliver the messages
- * in the proper order.
- */
-void MessageTrigger::processMessage(int inletIndex, PdMessage *message) {
-  if (inletIndex == 0) {
-    float blockIndex = message->getBlockIndexAsFloat();
-    for (int i = numCasts-1; i >= 0; i--, blockIndex = nextafterf(blockIndex, INFINITY)) { // trigger sends messages right to left
-      switch (castArray[i]) {
-        case FLOAT: {
-          PdMessage *outgoingMessage = getNextOutgoingMessage(i);
-          outgoingMessage->setBlockIndexAsFloat(blockIndex);
-          MessageElement *messageElement = message->getElement(0);
-          if (messageElement != NULL && messageElement->getType() == FLOAT) {
-            outgoingMessage->getElement(0)->setFloat(messageElement->getFloat());
-          } else {
-            outgoingMessage->getElement(0)->setFloat(0.0f);
-          }
-          break;
-        }
-        case SYMBOL: {
-          PdMessage *outgoingMessage = getNextOutgoingMessage(i);
-          outgoingMessage->setBlockIndexAsFloat(blockIndex);
-          MessageElement *messageElement = message->getElement(0);
-          if (messageElement != NULL) {
-            switch (messageElement->getType()) {
-              case FLOAT: {
-                outgoingMessage->getElement(0)->setSymbol((char *) "float");
-                break;
-              }
-              case SYMBOL: {
-                outgoingMessage->getElement(0)->setSymbol(messageElement->getSymbol());
-                break;
-              }
-              case BANG: {
-                outgoingMessage->getElement(0)->setSymbol((char *) "symbol");
-                break;
-              }
-              default: {
-                break;
-              }
-            }
-          }
-          break;
-        }
-        case BANG: {
-          // everything gets converted into a bang
-          PdMessage *outgoingMessage = getNextOutgoingMessage(i);
-          outgoingMessage->setBlockIndexAsFloat(blockIndex);
-          outgoingMessage->getElement(0)->setBang();
-          break;
-        }
-        case ANYTHING: {
-          // cast the message to whatever it was before (i.e., no cast)
-          PdMessage *outgoingMessage = getNextOutgoingMessage(i);
-          outgoingMessage->clearAndCopyFrom(message);
-          outgoingMessage->setBlockIndexAsFloat(blockIndex);
-          break;
-        }
-        default: {
-          // TODO(mhroth): what to do in case of "list"?
-          //PdMessage *outgoingMessage = getNextOutgoingMessage(i);
-          //outgoingMessage->clearAndCopyFrom(message);
-          break;
-        }
-      }
-    }
-  }
+const char *MessageTrigger::getObjectLabel() {
+  return "trigger";
 }
 
-PdMessage *MessageTrigger::newCanonicalMessage() {
-  PdMessage *message = new PdMessage();
-  message->addElement(new MessageElement(0.0f));
-  return message;
+void MessageTrigger::processMessage(int inletIndex, PdMessage *message) {
+  for (int i = numMessageOutlets-1; i >= 0; i--) { // send messages from outlets right-to-left
+    PdMessage *outgoingMessage = getNextOutgoingMessage(i);
+    
+    // TODO(mhroth): There is currently no support for converting to a LIST type
+    switch (message->getElement(0)->getType()) { // converting from...
+      case FLOAT: {
+        switch (castArray[i]) { // converting to...
+          case ANYTHING:
+          case FLOAT: {
+            outgoingMessage->getElement(0)->setFloat(message->getElement(0)->getFloat());
+            break;
+          }
+          case SYMBOL: {
+            outgoingMessage->getElement(0)->setSymbol("float");
+            break;
+          }
+          case BANG: {
+            outgoingMessage->getElement(0)->setBang();
+            break;
+          } default: {
+            // send bang
+            outgoingMessage->getElement(0)->setBang();
+            break;
+          }
+        }
+        break;
+      }
+      case SYMBOL: {
+        switch (castArray[i]) {
+          case FLOAT: {
+            outgoingMessage->getElement(0)->setFloat(0.0f);
+            break;
+          }
+          case ANYTHING:
+          case SYMBOL: {
+            outgoingMessage->getElement(0)->setSymbol(message->getElement(0)->getSymbol());
+            break;
+          }
+          case BANG: {
+            outgoingMessage->getElement(0)->setBang();
+            break;
+          }
+          default: {
+            // send bang
+            outgoingMessage->getElement(0)->setBang();
+            break;
+          }
+        }
+        break;
+      }
+      case BANG: {
+        switch (castArray[i]) {
+          case FLOAT: {
+            outgoingMessage->getElement(0)->setFloat(0.0f);
+            break;
+          }
+          case SYMBOL: {
+            outgoingMessage->getElement(0)->setSymbol("bang");
+            break;
+          }
+          case ANYTHING:
+          case BANG: {
+            outgoingMessage->getElement(0)->setBang();
+            break;
+          }
+          default: {
+            // send bang, error
+            outgoingMessage->getElement(0)->setBang();
+            break;
+          }
+        }
+        break;
+      }
+      default: {
+        // produce a bang if the input type is unknown (error)
+        outgoingMessage->getElement(0)->setBang();
+        break;
+      }
+    }
+    
+    outgoingMessage->setTimestamp(message->getTimestamp());
+    sendMessage(i, outgoingMessage);
+  }
 }

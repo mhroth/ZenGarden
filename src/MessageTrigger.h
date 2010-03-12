@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,24 +23,27 @@
 #ifndef _MESSAGE_TRIGGER_H_
 #define _MESSAGE_TRIGGER_H_
 
-#include "MessageInputMessageOutputObject.h"
+#include "MessageObject.h"
 
-/**
- * Implements the trigger/t message object.
- * This object basically casts the input to each of its output types.
- */
-class MessageTrigger : public MessageInputMessageOutputObject {
+class PdGraph;
+
+/** [t], [trigger] */
+// This object casts the input to each of its output types.
+class MessageTrigger : public MessageObject {
   
   public:
-    MessageTrigger(List *messageElementList, char *initString);
+    MessageTrigger(PdMessage *initMessage, PdGraph *graph);
     ~MessageTrigger();
-    
-  protected:
-    inline void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage();
   
+    const char *getObjectLabel();
+
   private:
+    void processMessage(int inletIndex, PdMessage *message);
+  
+    /** The length of the <code>castArray</code>. */
     int numCasts;
+  
+    /** A list of the message types to cast the outlet of each outlet to. */
     MessageElementType *castArray;
 };
 
