@@ -145,6 +145,8 @@ soundbank.bin : $(AUDIOFILES)
 endif
 #---------------------------------------------------------------------------------------
 
-MAKE_SO=$(CC) -o $(1) $(CXXFLAGS) -shared $(2) $(3) $(SNDFILE_LIB) -lstdc++
+PLATFORM_TARGETS=libzengarden-static
+#MAKE_SO=$(CC) -o $(1) $(CXXFLAGS) -shared $(2) $(3) $(SNDFILE_LIB) -lstdc++
+MAKE_SO=
 JNI_EXTENSION=so
 SO_EXTENSION=so
