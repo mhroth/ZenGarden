@@ -20,10 +20,6 @@
  *
  */
 
-#include <math.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 #include "PdGraph.h"
 #include "PdMessage.h"
 #include "StaticUtils.h"
@@ -100,6 +96,45 @@ PdMessage::~PdMessage() {
 
 int PdMessage::getMessageId() {
   return messageId;
+}
+
+void PdMessage::setMessage(int numElements, ...) {
+  va_list ap;
+  va_start(ap, numElements);
+  
+  MessageElement *messageElement = NULL;
+  for (int i = 0; i < numElements; i++) {
+    messageElement = getElement(i);
+    if (messageElement == NULL) {
+      // add extra elements as necessary
+      messageElement = new MessageElement();
+      addElement(messageElement);
+    }
+    switch ((MessageElementType) va_arg(ap, int)) {
+      case FLOAT: {
+        messageElement->setFloat((float) va_arg(ap, double));
+        break;
+      }
+      case SYMBOL: {
+        messageElement->setSymbol((char *) va_arg(ap, char *));
+        break;
+      }
+      case BANG: {
+        messageElement->setBang();
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+  }
+  for (int i = numElements; i < getNumElements(); i++) {
+    // delete extra element as necessary
+    messageElement = (MessageElement *) elementList->remove(numElements);
+    delete messageElement;
+  }
+  
+  va_end(ap); // release the va_list
 }
 
 void PdMessage::addElement(MessageElement *messageElement) {

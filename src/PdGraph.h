@@ -65,7 +65,6 @@ class PdGraph : public DspObject {
     /**  */
     void process(float *inputBuffers, float *outputBuffers);
   
-    /**  */
     const char *getObjectLabel();
   
     ConnectionType getConnectionType(int outletIndex);
