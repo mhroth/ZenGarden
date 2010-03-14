@@ -31,8 +31,8 @@ else
 
 include Makefile.OS.$(OS)
 
-all: platform libzengarden libzengarden-static libjnizengarden examplegarden
-
+all: platform $(PLATFORM_TARGETS)
+ 
 platform: Makefile.OS.$(OS)
 	@echo "Building for the $(OS) platform"
 	@mkdir -p ../libs/$(OS)
@@ -53,10 +53,9 @@ libjnizengarden: ../libs/$(OS)/libjnizengarden.$(JNI_EXTENSION)
 libzengarden: ../libs/$(OS)/libzengarden.$(SO_EXTENSION)
 
 ../libs/$(OS)/libzengarden.$(SO_EXTENSION): $(OBJS)
-	echo $(OBJS)
 	$(call MAKE_SO, $@, , $(OBJS))
 
-examplegarden: ../ZenGarden.jar
+java-examplegarden: ../ZenGarden.jar
 
 ../ZenGarden.jar: me/rjdj/zengarden/*.java
 	cd me/rjdj/zengarden/ && javac *.java
