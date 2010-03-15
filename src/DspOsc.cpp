@@ -40,11 +40,12 @@ DspOsc::DspOsc(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, g
   index = 0.0f;
   refCount++;
   if (cos_table == NULL) {
-    cos_table = (float *) malloc((lrintf(truncf(sampleRate))+1) * sizeof(float));
-    for (int i = 0; i < sampleRate; i++) {
-      cos_table[i] = cosf(2.0f * M_PI * (float) i / sampleRate);
+    int sampleRateInt = (int) sampleRate;
+    cos_table = (float *) malloc((sampleRateInt + 1) * sizeof(float));
+    for (int i = 0; i < sampleRateInt; i++) {
+      cos_table[i] = cosf(2.0f * M_PI * ((float) i) / sampleRate);
     }
-    cos_table[(int) truncf(sampleRate)] = cos_table[0];
+    cos_table[sampleRateInt] = cos_table[0];
   }
 }
 
@@ -86,10 +87,10 @@ void DspOsc::processDspToIndex(float blockIndex) {
       break;
     }
     case DSP_MESSAGE: {
-      int blockIndexInt = getEndSampleIndex(blockIndex);
+      int endSampleIndex = getEndSampleIndex(blockIndex);
       float *inputBuffer = localDspBufferAtInlet[0];
       float *outputBuffer = localDspBufferAtOutlet[0];
-      for (int i = getStartSampleIndex(); i < blockIndexInt; index += inputBuffer[i++]) {
+      for (int i = getStartSampleIndex(); i <= endSampleIndex; index += inputBuffer[i++]) {
         if (index >= sampleRate) {
           index -= sampleRate;
         }
@@ -102,12 +103,12 @@ void DspOsc::processDspToIndex(float blockIndex) {
       break;
     }
     case MESSAGE_MESSAGE: {
-      int blockIndexInt = getEndSampleIndex(blockIndex);
+      int endSampleIndex = getEndSampleIndex(blockIndex);
       float *outputBuffer = localDspBufferAtOutlet[0];
-      for (int i = getStartSampleIndex(); i < blockIndexInt; i++, index += frequency) {
+      for (int i = getStartSampleIndex(); i <= endSampleIndex; i++, index += frequency) {
         if (index >= sampleRate) {
-          // TODO(mhroth): under adverse conditions, the frequency will be higher than the sample rate,
-          // and the index will overflow
+          // TODO(mhroth): if the frequency is higher than the sample rate, the index will point
+          // outside of the cos_table
           index -= sampleRate;
         }
         outputBuffer[i] = cos_table[(int) index];
