@@ -572,13 +572,13 @@ void PdGraph::process(float *inputBuffers, float *outputBuffers) {
   while ((destination = (MessageDestination *) messageCallbackQueue->get(0)) != NULL &&
       destination->message->getTimestamp() < nextBlockStartTimestamp) {
     messageCallbackQueue->remove(0); // remove the message from the queue
+    destination->message->unreserve(destination->object);
     if (destination->message->getTimestamp() >= blockStartTimestamp) {
       // only process the message if it falls in this block. This logic prevents external messages
       // from being injected into the system at a time that has already passed.
       // TODO(mhroth): unreserve() should probably come after sendScheduledMessage() in order
       // to prevent the message from being resused in the case the reserving object is retriggered
       // during the execution of sendScheduledMessage()
-      destination->message->unreserve(destination->object);
       destination->object->sendScheduledMessage(destination->index, destination->message);
     }
   }
