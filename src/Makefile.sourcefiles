@@ -54,6 +54,7 @@ LOCAL_SRC_FILES := \
 ./MessageReceive.cpp \
 ./MessageRmsToDb.cpp \
 ./MessageSend.cpp \
+./MessageSendController.cpp \
 ./MessageSine.cpp \
 ./MessageSqrt.cpp \
 ./MessageSubtract.cpp \

@@ -166,9 +166,6 @@ PdMessage *MessageObject::newCanonicalMessage(int outletIndex) {
 }
 
 bool MessageObject::isRootNode() {
-  if (strcmp(getObjectLabel(), "receive") == 0) {
-    return true;
-  }
   for (int i = 0; i < numMessageInlets; i++) {
     if (incomingMessageConnectionsListAtInlet[i]->size() > 0) {
       return false;
@@ -178,9 +175,6 @@ bool MessageObject::isRootNode() {
 }
 
 bool MessageObject::isLeafNode() {
-  if (strcmp(getObjectLabel(), "send") == 0) {
-    return true;
-  }
   for (int i = 0; i < numMessageOutlets; i++) {
     if (outgoingMessageConnectionsListAtOutlet[i]->size() > 0) {
       return false;

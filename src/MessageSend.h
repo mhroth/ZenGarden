@@ -23,16 +23,20 @@
 #ifndef _MESSAGE_SEND_H_
 #define _MESSAGE_SEND_H_
 
-#include "MessagePassthrough.h"
+#include "MessageObject.h"
 
 /** [send|s] */
-class MessageSend : public MessagePassthrough {
+class MessageSend : public MessageObject {
   
   public:
     MessageSend(PdMessage *initMessage, PdGraph *graph);
     ~MessageSend();
     
     const char *getObjectLabel();
+  
+  private:
+    void processMessage(int inletIndex, PdMessage *message);
+    char *name;
   
 };
 

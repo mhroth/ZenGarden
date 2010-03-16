@@ -21,15 +21,24 @@
  */
 
 #include "MessageSend.h"
+#include "PdGraph.h"
 
-MessageSend::MessageSend(PdMessage *initMessage, PdGraph *graph) : MessagePassthrough(initMessage, graph) {
-  // nothing to do
+MessageSend::MessageSend(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 0, graph) {
+  if (initMessage->getNumElements() > 0 && initMessage->getElement(0)->getType() == SYMBOL) {
+    name = StaticUtils::copyString(initMessage->getElement(0)->getSymbol());
+  } else {
+    name = NULL;
+  }
 }
 
 MessageSend::~MessageSend() {
-  // nothing to do
+  free(name);
 }
 
 const char *MessageSend::getObjectLabel() {
   return "send";
+}
+
+void MessageSend::processMessage(int inletIndex, PdMessage *message) {
+  graph->dispatchMessageToNamedReceivers(name, message);
 }

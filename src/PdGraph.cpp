@@ -71,6 +71,8 @@
 #include "MessageTrigger.h"
 #include "MessageUntil.h"
 
+#include "MessageSendController.h"
+
 #include "DspAdc.h"
 #include "DspAdd.h"
 #include "DspDac.h"
@@ -138,20 +140,18 @@ PdGraph::PdGraph(PdFileParser *fileParser, char *directory, char *libraryDirecto
     numBytesInOutputBuffers = numOutputChannels * blockSize * sizeof(float);
     globalDspInputBuffers = (float *) malloc(numBytesInInputBuffers);
     globalDspOutputBuffers = (float *) malloc(numBytesInOutputBuffers);
-    messageReceiveList = new List();
-    messageSendList = new List();
     dspReceiveList = new List();
     dspSendList = new List();
+    sendController = new MessageSendController(this);
   } else {
     messageCallbackQueue = NULL;
     numBytesInInputBuffers = 0;
     numBytesInOutputBuffers = 0;
     globalDspInputBuffers = NULL;
     globalDspOutputBuffers = NULL;
-    messageReceiveList = NULL;
-    messageSendList = NULL;
     dspReceiveList = NULL;
     dspSendList = NULL;
+    sendController = NULL;
   }
 
   char *line = NULL;
@@ -238,10 +238,9 @@ PdGraph::PdGraph(PdFileParser *fileParser, char *directory, char *libraryDirecto
 PdGraph::~PdGraph() {
   if (isRootGraph()) {
     delete messageCallbackQueue;
-    delete messageReceiveList;
-    delete messageSendList;
     delete dspReceiveList;
     delete dspSendList;
+    delete sendController;
     free(globalDspInputBuffers);
     free(globalDspOutputBuffers);
   }
@@ -389,8 +388,6 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
 }
 
 void PdGraph::addObject(MessageObject *node) {
-  // TODO(mhroth)
-
   // all nodes are added to the node list
   nodeList->add(node);
 
@@ -399,10 +396,8 @@ void PdGraph::addObject(MessageObject *node) {
   } else if (strcmp(node->getObjectLabel(), "outlet") == 0) {
     outletList->add(node);
     ((MessageOutlet *) node)->setOutletIndex(outletList->size()-1);
-  } else if (strcmp(node->getObjectLabel(), "send") == 0) {
-    registerMessageSend((MessageSend *) node);
   } else if (strcmp(node->getObjectLabel(), "receive") == 0) {
-    registerMessageReceive((MessageReceive *) node);
+    sendController->addReceiver((MessageReceive *) node);
   } else if (strcmp(node->getObjectLabel(), "inlet~") == 0) {
     inletList->add(node);
     ((DspInlet *) node)->setInletBuffer(localDspBufferAtInlet[inletList->size()-1]);
@@ -469,66 +464,24 @@ float *PdGraph::getGlobalDspBufferAtOutlet(int outletIndex) {
   }
 }
 
-MessageSend *PdGraph::getMessageSend(char *name) {
-  for (int i = 0; i < messageSendList->size(); i++) {
-    MessageSend *messageSend = (MessageSend *) messageSendList->get(i);
-    if (strcmp(messageSend->getName(), name) == 0) {
-      return messageSend;
-    }
-  }
-  return NULL;
-}
-
-void PdGraph::registerMessageReceive(MessageReceive *messageReceive) {
-  if (isRootGraph()) {
-    // keep track of the receive object
-    messageReceiveList->add(messageReceive);
-
-    // connect the potentially existing send to this receive object
-    MessageSend *messageSend = getMessageSend(messageReceive->getName());
-    if (messageSend != NULL) {
-      connect(messageSend, 0, messageReceive, 0);
-    }
-  } else {
-    parentGraph->registerMessageReceive(messageReceive);
-  }
-}
-
-void PdGraph::registerMessageSend(MessageSend *messageSend) {
-  if (isRootGraph()) {
-    // ensure that no two senders exist with the same name
-    if (getMessageSend(messageSend->getName()) != NULL) {
-      printErr("[send] object with duplicate name added to graph.");
-    } else {
-      // keep track of the send object
-      messageSendList->add(messageSend);
-
-      // add connections to all registered receivers with the same name
-      for (int i = 0; i < messageReceiveList->size(); i++) {
-        MessageReceive *messageReceive = (MessageReceive *) messageReceiveList->get(i);
-        if (strcmp(messageReceive->getName(), messageSend->getName()) == 0) {
-          // the two objects cannot already be connected as the send is guaranteed to be new
-          connect(messageSend, 0, messageReceive, 0);
-        }
-      }
-    }
-  } else {
-    parentGraph->registerMessageSend(messageSend);
-  }
-}
-
 void PdGraph::dispatchMessageToNamedReceivers(char *name, PdMessage *message) {
   if (isRootGraph()) {
-    // TODO(mhroth): This could be done MUCH more efficiently with a hashlist datastructure to
-    // store all receivers for a given name.
-    for (int i = 0; i < messageReceiveList->size(); i++) {
-      MessageReceive *messageReceive = (MessageReceive *) messageReceiveList->get(i);
-      if (strcmp(messageReceive->getName(), name) == 0) {
-        messageReceive->receiveMessage(0, message);
-      }
-    }
+    sendController->receiveMessage(name, message);
   } else {
-    dispatchMessageToNamedReceivers(name, message);
+    parentGraph->dispatchMessageToNamedReceivers(name, message);
+  }
+}
+
+PdMessage *PdGraph::scheduleExternalMessage(char *receiverName) {
+  if (isRootGraph()) {
+    PdMessage *message = getNextOutgoingMessage(0);
+    message->setTimestamp(blockStartTimestamp); // message is processed at start of current block
+    
+    graph->scheduleMessage(sendController, sendController->getNameIndex(receiverName), message);
+    
+    return message;
+  } else {
+    return parentGraph->scheduleExternalMessage(receiverName);
   }
 }
 

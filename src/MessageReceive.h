@@ -23,10 +23,10 @@
 #ifndef _MESSAGE_RECEIVE_H_
 #define _MESSAGE_RECEIVE_H_
 
-#include "MessagePassthrough.h"
+#include "MessageObject.h"
 
 /** [receive|r] */
-class MessageReceive : public MessagePassthrough {
+class MessageReceive : public MessageObject {
   
   public:
     MessageReceive(PdMessage *initMessage, PdGraph *graph);
@@ -34,6 +34,12 @@ class MessageReceive : public MessagePassthrough {
     
     const char *getObjectLabel();
   
+    char *getName();
+  
+  private:
+    void processMessage(int inletIndex, PdMessage *message);
+  
+    char *name;
 };
 
 #endif // _MESSAGE_RECEIVE_H_
