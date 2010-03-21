@@ -60,9 +60,18 @@ int MessageSendController::getNameIndex(char *receiverName) {
   return nameIndex;
 }
 
+void MessageSendController::receiveMessage(char *name, PdMessage *message) {
+  processMessage(getNameIndex(name), message);
+}
+
 void MessageSendController::processMessage(int inletIndex, PdMessage *message) {
-  if (inletIndex >= 0 && inletIndex < receiverLists->size()) { // if the inletIndex is valid
-    List *receiverList = (List *) receiverLists->get(inletIndex);
+  sendScheduledMessage(inletIndex, message);
+}
+
+// acts like a sendMessage()
+void MessageSendController::sendScheduledMessage(int outletIndex, PdMessage *message) {
+  if (outletIndex >= 0 && outletIndex < receiverLists->size()) { // if the inletIndex is valid
+    List *receiverList = (List *) receiverLists->get(outletIndex);
     int numReceivers = receiverList->size();
     MessageReceive *receiver = NULL;
     for (int i = 0; i < numReceivers; i++) {
@@ -70,10 +79,6 @@ void MessageSendController::processMessage(int inletIndex, PdMessage *message) {
       receiver->receiveMessage(0, message);
     }
   }
-}
-
-void MessageSendController::receiveMessage(char *name, PdMessage *message) {
-  processMessage(getNameIndex(name), message);
 }
 
 void MessageSendController::addReceiver(MessageReceive *receiver) {

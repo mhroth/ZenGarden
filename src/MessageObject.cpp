@@ -101,12 +101,6 @@ void MessageObject::sendMessage(int outletIndex, PdMessage *message) {
 
 void MessageObject::sendScheduledMessage(int outletIndex, PdMessage *message) {
   sendMessage(outletIndex, message);
-  
-  postSendMessageHook(outletIndex, message);
-}
-
-void MessageObject::postSendMessageHook(int outletIndex, PdMessage *message) {
-  // does nothing by default
 }
 
 void MessageObject::processMessage(int inletIndex, PdMessage *message) {

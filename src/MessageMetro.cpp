@@ -102,8 +102,9 @@ void MessageMetro::processMessage(int inletIndex, PdMessage *message) {
   }
 }
 
-void MessageMetro::postSendMessageHook(int outletIndex, PdMessage *message) {
-  scheduleMessage(message->getTimestamp());
+void MessageMetro::sendScheduledMessage(int outletIndex, PdMessage *message) {
+  MessageObject::sendMessage(outletIndex, message); // send the current message
+  scheduleMessage(message->getTimestamp()); // schedule the next message
 }
 
 void MessageMetro::scheduleMessage(double currentTime) {

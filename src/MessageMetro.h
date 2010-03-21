@@ -35,10 +35,11 @@ class MessageMetro : public MessageObject {
     MessageMetro(float intervalInMs, PdGraph *graph);
     ~MessageMetro();
   
+    void sendScheduledMessage(int outletIndex, PdMessage *message);
+  
     const char *getObjectLabel();
     
   private:
-    void postSendMessageHook(int outletIndex, PdMessage *message);
     void processMessage(int inletIndex, PdMessage *message);
   
     /** A helped function to schedule the next message, from the current time. */

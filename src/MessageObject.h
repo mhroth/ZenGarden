@@ -50,8 +50,12 @@ class MessageObject {
     /** Sends the given message to all connected objects at the given outlet index. */
     void sendMessage(int outletIndex, PdMessage *message);
   
-    /** Sends a scheduled message, and also calls the <code>postSendMessageHook()</code>. */
-    void sendScheduledMessage(int outletIndex, PdMessage *message);
+    /**
+     * Sends a scheduled message. By default only sends the message, but can be overridden to
+     * provide additional functionality. E.g., in <code>MessageMetro</code>, the next message
+     * is scheduled after the current one is sent.
+     */
+    virtual void sendScheduledMessage(int outletIndex, PdMessage *message);
     
     /** <code>MessageObject</code>s by default do not process any audio */
     // TODO(mhroth): can't we move this function to DspObject?
@@ -94,14 +98,6 @@ class MessageObject {
   protected:
     /** Returns a message that can be sent from the given outlet. */
     PdMessage *getNextOutgoingMessage(int outletIndex);
-  
-    /**
-     * This callback is executed after a message is sent. This hook is usually used when an action
-     * must be performed after a message is sent, such as when the message is in fact a previously
-     * scheduled message. For example, another message could be scheduled (e.g., in the case of 
-     * <code>MessageMetro</code>). By default this function does nothing?
-     */
-    virtual void postSendMessageHook(int outletIndex, PdMessage *message);
     
     /** Returns a new message for use at the given outlet. */
     virtual PdMessage *newCanonicalMessage(int outletIndex);
