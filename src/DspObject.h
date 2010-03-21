@@ -52,6 +52,7 @@ class DspObject : public MessageObject {
     
     virtual void receiveMessage(int inletIndex, PdMessage *message);
     
+    /** Process audio buffers in this block. */
     virtual void processDsp();
   
     /** Returns the connection type of the given outlet. */

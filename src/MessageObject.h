@@ -56,10 +56,6 @@ class MessageObject {
      * is scheduled after the current one is sent.
      */
     virtual void sendScheduledMessage(int outletIndex, PdMessage *message);
-    
-    /** <code>MessageObject</code>s by default do not process any audio */
-    // TODO(mhroth): can't we move this function to DspObject?
-    virtual void processDsp();
   
     /** Returns the connection type of the given outlet. */
     virtual ConnectionType getConnectionType(int outletIndex);

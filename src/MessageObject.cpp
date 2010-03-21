@@ -107,11 +107,6 @@ void MessageObject::processMessage(int inletIndex, PdMessage *message) {
   // By default there is nothing to process.
 }
 
-void MessageObject::processDsp() {
-  // By default no audio is processed.
-  // TODO(mhroth): consider making this a pure virtual function.
-}
-
 bool MessageObject::doesProcessAudio() {
   return false;
 }
