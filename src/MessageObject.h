@@ -47,15 +47,12 @@ class MessageObject {
     /** The message logic of an object. */
     virtual void processMessage(int inletIndex, PdMessage *message);
   
-    /** Sends the given message to all connected objects at the given outlet index. */
-    void sendMessage(int outletIndex, PdMessage *message);
-  
     /**
-     * Sends a scheduled message. By default only sends the message, but can be overridden to
-     * provide additional functionality. E.g., in <code>MessageMetro</code>, the next message
-     * is scheduled after the current one is sent.
+     * Sends the given message to all connected objects at the given outlet index.
+     * This function can be overridden in order to take some other action, such as additionally
+     * scheduling a new message as in the case of <code>MessageMetro</code>.
      */
-    virtual void sendScheduledMessage(int outletIndex, PdMessage *message);
+    virtual void sendMessage(int outletIndex, PdMessage *message);
   
     /** Returns the connection type of the given outlet. */
     virtual ConnectionType getConnectionType(int outletIndex);

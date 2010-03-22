@@ -532,7 +532,7 @@ void PdGraph::process(float *inputBuffers, float *outputBuffers) {
       // TODO(mhroth): unreserve() should probably come after sendScheduledMessage() in order
       // to prevent the message from being resused in the case the reserving object is retriggered
       // during the execution of sendScheduledMessage()
-      destination->object->sendScheduledMessage(destination->index, destination->message);
+      destination->object->sendMessage(destination->index, destination->message);
     }
   }
 

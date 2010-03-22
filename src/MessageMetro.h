@@ -35,9 +35,9 @@ class MessageMetro : public MessageObject {
     MessageMetro(float intervalInMs, PdGraph *graph);
     ~MessageMetro();
   
-    void sendScheduledMessage(int outletIndex, PdMessage *message);
-  
     const char *getObjectLabel();
+  
+    void sendMessage(int outletIndex, PdMessage *message);
     
   private:
     void processMessage(int inletIndex, PdMessage *message);

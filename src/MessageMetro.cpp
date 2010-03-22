@@ -61,10 +61,7 @@ void MessageMetro::processMessage(int inletIndex, PdMessage *message) {
             // send a bang right now
             PdMessage *outgoingMessage = getNextOutgoingMessage(0);
             outgoingMessage->setTimestamp(message->getTimestamp());
-            sendMessage(0, outgoingMessage);
-            
-            // schedule the next message
-            scheduleMessage(message->getTimestamp());
+            sendMessage(0, outgoingMessage); // sends the message and schedules the next one
           }
           break;
         }
@@ -81,10 +78,7 @@ void MessageMetro::processMessage(int inletIndex, PdMessage *message) {
           // send a bang right now
           PdMessage *outgoingMessage = getNextOutgoingMessage(0);
           outgoingMessage->setTimestamp(message->getTimestamp());
-          sendMessage(0, outgoingMessage);
-          
-          // schedule the next message
-          scheduleMessage(message->getTimestamp());
+          sendMessage(0, outgoingMessage); // sends the message and schedules the next one
           break;
         }
         default: {
@@ -102,9 +96,9 @@ void MessageMetro::processMessage(int inletIndex, PdMessage *message) {
   }
 }
 
-void MessageMetro::sendScheduledMessage(int outletIndex, PdMessage *message) {
+void MessageMetro::sendMessage(int outletIndex, PdMessage *message) {
   MessageObject::sendMessage(outletIndex, message); // send the current message
-  scheduleMessage(message->getTimestamp()); // schedule the next message
+  scheduleMessage(message->getTimestamp() + intervalInMs); // schedule the next one
 }
 
 void MessageMetro::scheduleMessage(double currentTime) {

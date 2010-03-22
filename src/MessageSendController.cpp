@@ -65,11 +65,10 @@ void MessageSendController::receiveMessage(char *name, PdMessage *message) {
 }
 
 void MessageSendController::processMessage(int inletIndex, PdMessage *message) {
-  sendScheduledMessage(inletIndex, message);
+  sendMessage(inletIndex, message);
 }
 
-// acts like a sendMessage()
-void MessageSendController::sendScheduledMessage(int outletIndex, PdMessage *message) {
+void MessageSendController::sendMessage(int outletIndex, PdMessage *message) {
   if (outletIndex >= 0 && outletIndex < receiverLists->size()) { // if the inletIndex is valid
     List *receiverList = (List *) receiverLists->get(outletIndex);
     int numReceivers = receiverList->size();

@@ -99,10 +99,6 @@ void MessageObject::sendMessage(int outletIndex, PdMessage *message) {
   }
 }
 
-void MessageObject::sendScheduledMessage(int outletIndex, PdMessage *message) {
-  sendMessage(outletIndex, message);
-}
-
 void MessageObject::processMessage(int inletIndex, PdMessage *message) {
   // By default there is nothing to process.
 }

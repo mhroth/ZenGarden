@@ -53,7 +53,7 @@ class MessageSendController : public MessageObject {
     /** Sends the message on to all receivers with the given name. */
     void receiveMessage(char *name, PdMessage *message);
   
-    void sendScheduledMessage(int outletIndex, PdMessage *message);
+    void sendMessage(int outletIndex, PdMessage *message);
   
     /**
      * Returns the index to which the given receiver name is referenced.
