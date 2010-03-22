@@ -52,6 +52,7 @@
 #include "MessageMetro.h"
 #include "MessageMidiToFrequency.h"
 #include "MessageMinimum.h"
+#include "MessageModulus.h"
 #include "MessageMultiply.h"
 #include "MessageNotEquals.h"
 #include "MessageOutlet.h"
@@ -61,6 +62,7 @@
 #include "MessagePrint.h"
 #include "MessageRandom.h"
 #include "MessageReceive.h"
+#include "MessageRemainder.h"
 #include "MessageRmsToDb.h"
 #include "MessageSend.h"
 #include "MessageSine.h"
@@ -271,6 +273,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageMultiply(initMessage, graph);
     } else if (strcmp(objectLabel, "/") == 0) {
       return new MessageDivide(initMessage, graph);
+    } else if (strcmp(objectLabel, "%") == 0) {
+      return new MessageRemainder(initMessage, graph);
     } else if (strcmp(objectLabel, "pow") == 0) {
       return new MessagePow(initMessage, graph);
     } else if (strcmp(objectLabel, "powtodb") == 0) {
@@ -337,6 +341,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageMinimum(initMessage, graph);
     } else if (strcmp(objectLabel, "metro") == 0) {
       return new MessageMetro(initMessage, graph);
+    } else if (strcmp(objectLabel, "mod") == 0) {
+      return new MessageModulus(initMessage, graph);
     } else if (strcmp(objectLabel, "pipe") == 0) {
       return new MessagePipe(initMessage, graph);
     } else if (strcmp(objectLabel, "print") == 0) {
@@ -479,9 +485,9 @@ PdMessage *PdGraph::scheduleExternalMessage(char *receiverName) {
   if (isRootGraph()) {
     PdMessage *message = getNextOutgoingMessage(0);
     message->setTimestamp(blockStartTimestamp); // message is processed at start of current block
-    
+
     graph->scheduleMessage(sendController, sendController->getNameIndex(receiverName), message);
-    
+
     return message;
   } else {
     return parentGraph->scheduleExternalMessage(receiverName);
