@@ -1,8 +1,8 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009, 2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
- * 
+ *
  *  This file is part of ZenGarden.
  *
  *  ZenGarden is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU Lesser General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with ZenGarden.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -23,21 +23,23 @@
 #ifndef _MESSAGE_CLIP_H_
 #define _MESSAGE_CLIP_H_
 
-#include "MessageInputMessageOutputObject.h"
+#include <math.h>
+#include "MessageObject.h"
 
-class MessageClip : public MessageInputMessageOutputObject {
-  
+/** [clip] [clip float] [clip float float] */
+class MessageClip : public MessageObject {
+
   public:
-    MessageClip(char *initString);
-    MessageClip(float lowerBound, char *initString);
-    MessageClip(float lowerBound, float upperBound, char *initString);
+    MessageClip(PdMessage *initMessage, PdGraph *graph);
+    MessageClip(PdGraph *graph);
     ~MessageClip();
-    
-  protected:
-    void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage();
-    
+
+    const char *getObjectLabel();
+
   private:
+    void init(float lowerBound, float upperBound);
+    void processMessage(int inletIndex, PdMessage *message);
+
     float lowerBound;
     float upperBound;
 };

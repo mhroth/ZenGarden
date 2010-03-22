@@ -16,6 +16,7 @@ LOCAL_SRC_FILES := \
 ./MessageArcTangent2.cpp \
 ./MessageBang.cpp \
 ./MessageChange.cpp \
+./MessageClip.cpp \
 ./MessageCosine.cpp \
 ./MessageDbToPow.cpp \
 ./MessageDbToRms.cpp \
@@ -39,6 +40,7 @@ LOCAL_SRC_FILES := \
 ./MessageMetro.cpp \
 ./MessageMidiToFrequency.cpp \
 ./MessageMinimum.cpp \
+./MessageModulus.cpp \
 ./MessageMultiply.cpp \
 ./MessageNamedObject.cpp \
 ./MessageNotEquals.cpp \
@@ -52,6 +54,7 @@ LOCAL_SRC_FILES := \
 ./MessageQueue.cpp \
 ./MessageRandom.cpp \
 ./MessageReceive.cpp \
+./MessageRemainder.cpp \
 ./MessageRmsToDb.cpp \
 ./MessageSend.cpp \
 ./MessageSendController.cpp \

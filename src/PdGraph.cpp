@@ -30,6 +30,7 @@
 #include "MessageBang.h"
 #include "MessageCosine.h"
 #include "MessageChange.h"
+#include "MessageClip.h"
 #include "MessageDelay.h"
 #include "MessageDivide.h"
 #include "MessageDbToPow.h"
@@ -51,6 +52,7 @@
 #include "MessageMetro.h"
 #include "MessageMidiToFrequency.h"
 #include "MessageMinimum.h"
+#include "MessageModulus.h"
 #include "MessageMultiply.h"
 #include "MessageNotEquals.h"
 #include "MessageOutlet.h"
@@ -60,6 +62,7 @@
 #include "MessagePrint.h"
 #include "MessageRandom.h"
 #include "MessageReceive.h"
+#include "MessageRemainder.h"
 #include "MessageRmsToDb.h"
 #include "MessageSend.h"
 #include "MessageSine.h"
@@ -270,6 +273,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageMultiply(initMessage, graph);
     } else if (strcmp(objectLabel, "/") == 0) {
       return new MessageDivide(initMessage, graph);
+    } else if (strcmp(objectLabel, "%") == 0) {
+      return new MessageRemainder(initMessage, graph);
     } else if (strcmp(objectLabel, "pow") == 0) {
       return new MessagePow(initMessage, graph);
     } else if (strcmp(objectLabel, "powtodb") == 0) {
@@ -309,6 +314,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageChange(initMessage, graph);
     } else if (strcmp(objectLabel, "cos") == 0) {
       return new MessageCosine(initMessage, graph);
+    } else if (strcmp(objectLabel, "clip") == 0) {
+      return new MessageClip(initMessage, graph);
     } else if (strcmp(objectLabel, "delay") == 0) {
       return new MessageDelay(initMessage, graph);
     } else if (strcmp(objectLabel, "exp") == 0) {
@@ -334,6 +341,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageMinimum(initMessage, graph);
     } else if (strcmp(objectLabel, "metro") == 0) {
       return new MessageMetro(initMessage, graph);
+    } else if (strcmp(objectLabel, "mod") == 0) {
+      return new MessageModulus(initMessage, graph);
     } else if (strcmp(objectLabel, "pipe") == 0) {
       return new MessagePipe(initMessage, graph);
     } else if (strcmp(objectLabel, "print") == 0) {
@@ -476,9 +485,9 @@ PdMessage *PdGraph::scheduleExternalMessage(char *receiverName) {
   if (isRootGraph()) {
     PdMessage *message = getNextOutgoingMessage(0);
     message->setTimestamp(blockStartTimestamp); // message is processed at start of current block
-    
+
     graph->scheduleMessage(sendController, sendController->getNameIndex(receiverName), message);
-    
+
     return message;
   } else {
     return parentGraph->scheduleExternalMessage(receiverName);
@@ -546,7 +555,7 @@ void PdGraph::process(float *inputBuffers, float *outputBuffers) {
 }
 
 void PdGraph::processDspToIndex(float blockIndex) {
-  // the dsp loop of graphs is implemented in processDspToIndex() so that the DspObject's 
+  // the dsp loop of graphs is implemented in processDspToIndex() so that the DspObject's
   // processDsp() can sum all incoming audio signals
   if (switched) {
     // DSP processing elements are only executed if the graph is switched on
