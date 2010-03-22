@@ -101,21 +101,10 @@ void MessageObject::sendMessage(int outletIndex, PdMessage *message) {
 
 void MessageObject::sendScheduledMessage(int outletIndex, PdMessage *message) {
   sendMessage(outletIndex, message);
-  
-  postSendMessageHook(outletIndex, message);
-}
-
-void MessageObject::postSendMessageHook(int outletIndex, PdMessage *message) {
-  // does nothing by default
 }
 
 void MessageObject::processMessage(int inletIndex, PdMessage *message) {
   // By default there is nothing to process.
-}
-
-void MessageObject::processDsp() {
-  // By default no audio is processed.
-  // TODO(mhroth): consider making this a pure virtual function.
 }
 
 bool MessageObject::doesProcessAudio() {
@@ -166,9 +155,6 @@ PdMessage *MessageObject::newCanonicalMessage(int outletIndex) {
 }
 
 bool MessageObject::isRootNode() {
-  if (strcmp(getObjectLabel(), "receive") == 0) {
-    return true;
-  }
   for (int i = 0; i < numMessageInlets; i++) {
     if (incomingMessageConnectionsListAtInlet[i]->size() > 0) {
       return false;
@@ -178,9 +164,6 @@ bool MessageObject::isRootNode() {
 }
 
 bool MessageObject::isLeafNode() {
-  if (strcmp(getObjectLabel(), "send") == 0) {
-    return true;
-  }
   for (int i = 0; i < numMessageOutlets; i++) {
     if (outgoingMessageConnectionsListAtOutlet[i]->size() > 0) {
       return false;

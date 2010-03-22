@@ -22,8 +22,12 @@
 
 #include "MessageReceive.h"
 
-MessageReceive::MessageReceive(PdMessage *initMessage, PdGraph *graph) : MessagePassthrough(initMessage, graph) {
-  // nothing to do
+MessageReceive::MessageReceive(PdMessage *initMessage, PdGraph *graph) : MessageObject(0, 1, graph) {
+  if (initMessage->getNumElements() > 0 && initMessage->getElement(0)->getType() == SYMBOL) {
+    name = StaticUtils::copyString(initMessage->getElement(0)->getSymbol());
+  } else {
+    name = NULL;
+  }
 }
 
 MessageReceive::~MessageReceive() {
@@ -32,4 +36,12 @@ MessageReceive::~MessageReceive() {
 
 const char *MessageReceive::getObjectLabel() {
   return "receive";
+}
+
+char *MessageReceive::getName() {
+  return name;
+}
+
+void MessageReceive::processMessage(int inletIndex, PdMessage *message) {
+  sendMessage(0, message);
 }

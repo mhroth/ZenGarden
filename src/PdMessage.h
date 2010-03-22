@@ -23,6 +23,7 @@
 #ifndef _PD_MESSAGE_H_
 #define _PD_MESSAGE_H_
 
+#include <stdarg.h>
 #include "LinkedList.h"
 #include "List.h"
 #include "MessageElement.h"
@@ -37,6 +38,15 @@ class PdMessage {
     PdMessage();
     PdMessage(char *initString, PdGraph *graph);
     ~PdMessage();
+  
+    /**
+     * Set the contents of the message. This function is especially useful when constructing messages
+     * using known amounts external data.
+     * @param numElements  The number of elements that this message has.
+     * @param varargs  The <code>MessageElementType</code> and value for each element.
+     * Example: setMessage(3, FLOAT, 0.0f, SYMBOL, "test", BANG);
+     */
+    void setMessage(int numElements, ...);
   
     MessageElement *getElement(int index);
   

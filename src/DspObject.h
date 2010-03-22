@@ -52,6 +52,7 @@ class DspObject : public MessageObject {
     
     virtual void receiveMessage(int inletIndex, PdMessage *message);
     
+    /** Process audio buffers in this block. */
     virtual void processDsp();
   
     /** Returns the connection type of the given outlet. */
@@ -79,7 +80,7 @@ class DspObject : public MessageObject {
   
     /** Returns the end sample index as an integer when computing output buffers in <code>processDspToIndex()</code>. */
     inline int getEndSampleIndex(float blockIndex) {
-      return (int) floorf(blockIndex);
+      return (int) ceilf(blockIndex);
     }
     
     /** The number of dsp inlets of this object. */

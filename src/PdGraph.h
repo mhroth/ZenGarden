@@ -33,6 +33,7 @@ class DspSend;
 class MessageObject;
 class MessageReceive;
 class MessageSend;
+class MessageSendController;
 
 class PdGraph : public DspObject {
   
@@ -65,7 +66,6 @@ class PdGraph : public DspObject {
     /**  */
     void process(float *inputBuffers, float *outputBuffers);
   
-    /**  */
     const char *getObjectLabel();
   
     ConnectionType getConnectionType(int outletIndex);
@@ -126,6 +126,13 @@ class PdGraph : public DspObject {
      * name message;
      */
     void dispatchMessageToNamedReceivers(char *name, PdMessage *message);
+  
+    /**
+     * Schedules a message to be sent to all receivers at the start of the next block.
+     * @returns The <code>PdMessage</code> which will be send. It is intended that the programmer
+     * will set the values of the message with a call to <code>setMessage()</code>.
+     */
+    PdMessage *scheduleExternalMessage(char *receiverName);
     
   private:
     PdGraph(PdFileParser *fileParser, char *directory, char *libraryDirectory, int blockSize, int numInputChannels, 
@@ -140,15 +147,6 @@ class PdGraph : public DspObject {
   
     /** Add an object to the graph, taking care of any special object registration. */
     void addObject(MessageObject *node);
-  
-    /** Returns the <code>MessageSend</code> object with the given name. */
-    MessageSend *getMessageSend(char *name);
-  
-    /** Globally register a [receive] object. Connect to registered [send] objects with the same name. */
-    void registerMessageReceive(MessageReceive *messageReceive);
-  
-    /** Globally register a [send] object. Connect to registered [receive] objects with the same name. */
-    void registerMessageSend(MessageSend *messageSend);
   
     /** Globally register a [receive~] object. Connect to registered [send~] objects with the same name. */
     void registerDspReceive(DspReceive *dspReceive);
@@ -192,17 +190,17 @@ class PdGraph : public DspObject {
     /** A list of all outlet (message or audio) nodes in this subgraph. */
     List *outletList;
   
-    /** A global list of all [send] objects. */
-    List *messageSendList;
-  
     /** A global list of all [send~] objects. */
     List *dspSendList;
   
-    /** A global listof all [receive] objects. */
-    List *messageReceiveList;
-  
     /** A global list of all [receive~] objects. */
     List *dspReceiveList;
+  
+    /**
+     * The global <code>MessageSendController</code> which dispatches messages to named
+     * <code>MessageReceive</code>ers.
+     */
+    MessageSendController *sendController;
     
     /**
      * A list of all <code>DspObject</code>s in this graph, in the order in which they should be

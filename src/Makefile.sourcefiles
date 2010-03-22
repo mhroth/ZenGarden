@@ -55,6 +55,7 @@ LOCAL_SRC_FILES := \
 ./MessageReceive.cpp \
 ./MessageRmsToDb.cpp \
 ./MessageSend.cpp \
+./MessageSendController.cpp \
 ./MessageSine.cpp \
 ./MessageSqrt.cpp \
 ./MessageSubtract.cpp \
@@ -62,6 +63,7 @@ LOCAL_SRC_FILES := \
 ./MessageSymbol.cpp \
 ./MessageTangent.cpp \
 ./MessageTrigger.cpp \
+./MessageUntil.cpp \
 ./OrderedMessageQueue.cpp \
 ./PdFileParser.cpp \
 ./PdGraph.cpp \

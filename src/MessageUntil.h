@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -20,34 +20,26 @@
  *
  */
 
-#ifndef _MESSAGE_METRO_H_
-#define _MESSAGE_METRO_H_
+#ifndef _MESSAGE_UNTIL_H_
+#define _MESSAGE_UNTIL_H_
 
 #include "MessageObject.h"
 
 class PdGraph;
 
-/** [metro], [metro float] */
-class MessageMetro : public MessageObject {
+/** [until] */
+class MessageUntil : public MessageObject {
   
   public:
-    MessageMetro(PdMessage *iniMessage, PdGraph *graph);
-    MessageMetro(float intervalInMs, PdGraph *graph);
-    ~MessageMetro();
-  
-    void sendScheduledMessage(int outletIndex, PdMessage *message);
-  
+    MessageUntil(PdGraph *graph);
+    ~MessageUntil();
+    
     const char *getObjectLabel();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
-  
-    /** A helped function to schedule the next message, from the current time. */
-    void scheduleMessage(double currentTime);
-    void cancelMessage();
-  
-    PdMessage *pendingMessage;
-    double intervalInMs;
+    
+    unsigned int maxIterations;
 };
 
-#endif // _MESSAGE_METRO_H_
+#endif // _MESSAGE_UNTIL_H_
