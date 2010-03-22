@@ -40,7 +40,7 @@ MessageRemainder::~MessageRemainder() {
 }
 
 void MessageRemainder::init(float constant) {
-  this->constant = constant;
+  this->constant = (int) constant;
 }
 
 const char *MessageRemainder::getObjectLabel() {
@@ -53,17 +53,17 @@ void MessageRemainder::processMessage(int inletIndex, PdMessage *message) {
       MessageElement *messageElement = message->getElement(0);
       if (messageElement->getType() == FLOAT) {
         PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-        float remainder = (constant == 0.0f) ? 0.0f : (int) messageElement-> getFloat() % (int) constant;
+        float remainder = (constant == 0.0f) ? 0.0f : (float) ((int) messageElement-> getFloat() % constant);
         outgoingMessage->getElement(0)->setFloat(remainder);
         outgoingMessage->setTimestamp(message->getTimestamp());
-        sendMessage(0, outgoingMessage); // send a message from outlet 0
+        sendMessage(0, outgoingMessage);
       }
       break;
     }
     case 1: {
       MessageElement *messageElement = message->getElement(0);
       if (messageElement->getType() == FLOAT) {
-        constant = messageElement->getFloat();
+        constant = (int) messageElement->getFloat();
       }
       break;
     }

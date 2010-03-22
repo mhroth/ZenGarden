@@ -39,7 +39,7 @@ class MessageRemainder : public MessageObject {
     void init(float constant);
     void processMessage(int inletIndex, PdMessage *message);
 
-    float constant;
+    int constant;
 };
 
 #endif // _MESSAGE_REMAINDER_H_

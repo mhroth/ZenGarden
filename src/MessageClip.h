@@ -26,7 +26,7 @@
 #include <math.h>
 #include "MessageObject.h"
 
-/** [clip] [clip float] [clip float float] */
+/** [clip], [clip float], [clip float float] */
 class MessageClip : public MessageObject {
 
   public:

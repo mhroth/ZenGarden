@@ -56,6 +56,9 @@
 		908A37581125E07100558388 /* MessageDivide.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908A37541125E07100558388 /* MessageDivide.cpp */; };
 		908A37591125E07100558388 /* MessageSubtract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908A37561125E07100558388 /* MessageSubtract.cpp */; };
 		908C3478114FFD940092985C /* MessageSendController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908C3477114FFD940092985C /* MessageSendController.cpp */; };
+		908F65D211582ED5007FDD74 /* MessageClip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908F65D011582ED5007FDD74 /* MessageClip.cpp */; };
+		908F65DE11583013007FDD74 /* MessageRemainder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908F65DC11583013007FDD74 /* MessageRemainder.cpp */; };
+		908F65EA115831C9007FDD74 /* MessageModulus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908F65E8115831C9007FDD74 /* MessageModulus.cpp */; };
 		90AD9673112C043600F45418 /* DspNoise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90AD9671112C043600F45418 /* DspNoise.cpp */; };
 		90AD96D1112C394700F45418 /* MessageRandom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90AD96CF112C394700F45418 /* MessageRandom.cpp */; };
 		90B6924A114274F300501D0A /* MessageBang.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90B69248114274F300501D0A /* MessageBang.cpp */; };
@@ -197,6 +200,12 @@
 		908C3476114FFD940092985C /* MessageSendController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageSendController.h; path = ../src/MessageSendController.h; sourceTree = SOURCE_ROOT; };
 		908C3477114FFD940092985C /* MessageSendController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageSendController.cpp; path = ../src/MessageSendController.cpp; sourceTree = SOURCE_ROOT; };
 		908D56AA1139E74C001B0A72 /* MessageNamedDestination.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageNamedDestination.h; path = ../src/MessageNamedDestination.h; sourceTree = SOURCE_ROOT; };
+		908F65D011582ED5007FDD74 /* MessageClip.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageClip.cpp; path = ../src/MessageClip.cpp; sourceTree = SOURCE_ROOT; };
+		908F65D111582ED5007FDD74 /* MessageClip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageClip.h; path = ../src/MessageClip.h; sourceTree = SOURCE_ROOT; };
+		908F65DC11583013007FDD74 /* MessageRemainder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageRemainder.cpp; path = ../src/MessageRemainder.cpp; sourceTree = SOURCE_ROOT; };
+		908F65DD11583013007FDD74 /* MessageRemainder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageRemainder.h; path = ../src/MessageRemainder.h; sourceTree = SOURCE_ROOT; };
+		908F65E8115831C9007FDD74 /* MessageModulus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageModulus.cpp; path = ../src/MessageModulus.cpp; sourceTree = SOURCE_ROOT; };
+		908F65E9115831C9007FDD74 /* MessageModulus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageModulus.h; path = ../src/MessageModulus.h; sourceTree = SOURCE_ROOT; };
 		90AA54D511295EF900E8796B /* DspMessagePresedence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspMessagePresedence.h; path = ../src/DspMessagePresedence.h; sourceTree = SOURCE_ROOT; };
 		90AD965D112C020700F45418 /* MersenneTwister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MersenneTwister.h; path = ../src/MersenneTwister.h; sourceTree = SOURCE_ROOT; };
 		90AD9671112C043600F45418 /* DspNoise.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspNoise.cpp; path = ../src/DspNoise.cpp; sourceTree = SOURCE_ROOT; };
@@ -310,6 +319,8 @@
 				90B69249114274F300501D0A /* MessageBang.h */,
 				90C0514611347FC500117E4B /* MessageChange.cpp */,
 				90C0514711347FC500117E4B /* MessageChange.h */,
+				908F65D011582ED5007FDD74 /* MessageClip.cpp */,
+				908F65D111582ED5007FDD74 /* MessageClip.h */,
 				90266AE2112ED31D00E3F6F1 /* MessageCosine.cpp */,
 				90266AE3112ED31D00E3F6F1 /* MessageCosine.h */,
 				90B692651142877D00501D0A /* MessageDbToPow.cpp */,
@@ -361,6 +372,8 @@
 				90C94454114AAA9300B78515 /* MessageMidiToFrequency.h */,
 				90C94465114AAB4500B78515 /* MessageMinimum.cpp */,
 				90C94466114AAB4500B78515 /* MessageMinimum.h */,
+				908F65E8115831C9007FDD74 /* MessageModulus.cpp */,
+				908F65E9115831C9007FDD74 /* MessageModulus.h */,
 				908A37491125DFF800558388 /* MessageMultiply.cpp */,
 				908A374A1125DFF800558388 /* MessageMultiply.h */,
 				908D56AA1139E74C001B0A72 /* MessageNamedDestination.h */,
@@ -388,6 +401,8 @@
 				90AD96D0112C394700F45418 /* MessageRandom.h */,
 				90398C941113564400E5A8B6 /* MessageReceive.cpp */,
 				90398C951113564400E5A8B6 /* MessageReceive.h */,
+				908F65DC11583013007FDD74 /* MessageRemainder.cpp */,
+				908F65DD11583013007FDD74 /* MessageRemainder.h */,
 				90C9446D114AAB7800B78515 /* MessageRmsToDb.cpp */,
 				90C9446E114AAB7800B78515 /* MessageRmsToDb.h */,
 				90398C961113564400E5A8B6 /* MessageSend.cpp */,
@@ -555,6 +570,9 @@
 				90C9446F114AAB7800B78515 /* MessageRmsToDb.cpp in Sources */,
 				90C76BBF114AD15800887B04 /* MessageUntil.cpp in Sources */,
 				908C3478114FFD940092985C /* MessageSendController.cpp in Sources */,
+				908F65D211582ED5007FDD74 /* MessageClip.cpp in Sources */,
+				908F65DE11583013007FDD74 /* MessageRemainder.cpp in Sources */,
+				908F65EA115831C9007FDD74 /* MessageModulus.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
