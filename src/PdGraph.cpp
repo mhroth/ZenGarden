@@ -71,6 +71,7 @@
 #include "MessageSqrt.h"
 #include "MessageSubtract.h"
 #include "MessageSwitch.h"
+#include "MessageSwap.h"
 #include "MessageSymbol.h"
 #include "MessageTangent.h"
 #include "MessageTrigger.h"
@@ -365,6 +366,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageSine(initMessage, graph);
     } else if (strcmp(objectLabel, "spigot") == 0) {
       return new MessageSpigot(initMessage, graph);
+    } else if (strcmp(objectLabel, "swap") == 0) {
+      return new MessageSwap(initMessage, graph);
     } else if (strcmp(objectLabel, "symbol") == 0) {
       return new MessageSymbol(initMessage, graph);
     } else if (strcmp(objectLabel, "tan") == 0) {

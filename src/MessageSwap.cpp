@@ -1,8 +1,8 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009, 2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
- * 
+ *
  *  This file is part of ZenGarden.
  *
  *  ZenGarden is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU Lesser General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with ZenGarden.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -22,43 +22,61 @@
 
 #include "MessageSwap.h"
 
-MessageSwap::MessageSwap(char *initString) : MessageInputMessageOutputObject(2, 2, initString) {
-  left = 0.0f;
-  right = 0.0f;
+MessageSwap::MessageSwap(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 2, graph) {
+  if (initMessage->getNumElements() > 0 &&
+      initMessage->getElement(0)->getType() == FLOAT) {
+    init(0.0f, initMessage->getElement(0)->getFloat());
+  } else {
+    init(0.0f, 0.0f);
+  }
 }
 
-MessageSwap::MessageSwap(float constant, char *initString) : MessageInputMessageOutputObject(2, 2, initString) {
-  left = 0.0f;
-  right = constant;
+MessageSwap::MessageSwap(float left, float right, PdGraph *graph) : MessageObject(2, 2, graph) {
+  init(left,right);
 }
 
 MessageSwap::~MessageSwap() {
   // nothing to do
 }
 
+void MessageSwap::init(float left, float right) {
+  this->left = left;
+  this->right = right;
+}
+
+const char *MessageSwap::getObjectLabel() {
+  return "swap";
+}
+
 void MessageSwap::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
-      MessageElement *messageELement = message->getElement(0);
-      switch (messageELement->getType()) {
+      MessageElement *messageElement = message->getElement(0);
+      switch (messageElement->getType()) {
         case FLOAT: {
-          MessageElement *messageELement1 = message->getElement(1);
-          if (messageELement1 != NULL && messageELement1->getType() == FLOAT) {
-            left = messageELement1->getFloat();
-          }
-          right = messageELement->getFloat();
-          
-          // allow fallthrough
+          left = messageElement->getFloat();
+
+          PdMessage *outgoingMessageRight = getNextOutgoingMessage(0);
+          outgoingMessageRight->getElement(0)->setFloat(left);
+          outgoingMessageRight->setTimestamp(message->getTimestamp());
+          sendMessage(1, outgoingMessageRight); // send a message from outlet 1
+
+          PdMessage *outgoingMessageLeft = getNextOutgoingMessage(1);
+          outgoingMessageLeft->getElement(0)->setFloat(right);
+          outgoingMessageLeft->setTimestamp(message->getTimestamp());
+          sendMessage(0, outgoingMessageLeft); // send a message from outlet 0
+          break;
         }
         case BANG: {
-          // "Output order is right to left as in [trigger]"
-          PdMessage *outgoingMessageLeft = getNextOutgoingMessage(0);
-          outgoingMessageLeft->getElement(0)->setFloat(right);
-          outgoingMessageLeft->setBlockIndexAsFloat(nextafterf(message->getBlockIndexAsFloat(), INFINITY));
-          
-          PdMessage *outgoingMessageRight = getNextOutgoingMessage(1);
+          PdMessage *outgoingMessageRight = getNextOutgoingMessage(0);
           outgoingMessageRight->getElement(0)->setFloat(left);
-          outgoingMessageRight->setBlockIndexAsFloat(message->getBlockIndexAsFloat());
+          outgoingMessageRight->setTimestamp(message->getTimestamp());
+          sendMessage(0, outgoingMessageRight); // send a message from outlet 1
+
+          PdMessage *outgoingMessageLeft = getNextOutgoingMessage(1);
+          outgoingMessageLeft->getElement(0)->setFloat(right);
+          outgoingMessageLeft->setTimestamp(message->getTimestamp());
+          sendMessage(1, outgoingMessageLeft); // send a message from outlet 0
           break;
         }
         default: {
@@ -68,9 +86,9 @@ void MessageSwap::processMessage(int inletIndex, PdMessage *message) {
       break;
     }
     case 1: {
-      MessageElement *messageELement = message->getElement(0);
-      if (messageELement->getType() == FLOAT) {
-        left = messageELement->getFloat();
+      MessageElement *messageElement = message->getElement(0);
+      if (messageElement->getType() == FLOAT) {
+        right = messageElement->getFloat();
       }
       break;
     }
@@ -78,10 +96,4 @@ void MessageSwap::processMessage(int inletIndex, PdMessage *message) {
       break;
     }
   }
-}
-
-PdMessage *MessageSwap::newCanonicalMessage() {
-  PdMessage *message = new PdMessage();
-  message->addElement(new MessageElement(0.0f));
-  return message;
 }

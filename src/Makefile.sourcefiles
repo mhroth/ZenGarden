@@ -64,6 +64,7 @@ LOCAL_SRC_FILES := \
 ./MessageSqrt.cpp \
 ./MessageSubtract.cpp \
 ./MessageSwitch.cpp \
+./MessageSwap.cpp \
 ./MessageSymbol.cpp \
 ./MessageTangent.cpp \
 ./MessageTrigger.cpp \
