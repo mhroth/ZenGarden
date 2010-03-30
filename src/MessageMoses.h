@@ -1,8 +1,8 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009, 2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
- * 
+ *
  *  This file is part of ZenGarden.
  *
  *  ZenGarden is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU Lesser General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with ZenGarden.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -23,24 +23,23 @@
 #ifndef _MESSAGE_MOSES_H_
 #define _MESSAGE_MOSES_H_
 
-#include "MessageInputMessageOutputObject.h"
+#include "MessageObject.h"
 
-/**
- * moses
- */
-class MessageMoses : public MessageInputMessageOutputObject {
-  
+/** [moses], [moses float] */
+class MessageMoses : public MessageObject {
+
   public:
-    MessageMoses(char *initString);
-    MessageMoses(float threshold, char *initString);
+    MessageMoses(PdMessage *initMessage, PdGraph *graph);
+    MessageMoses(float constant, PdGraph *graph);
     ~MessageMoses();
-    
-  protected:
-    void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage();
-    
+
+    const char *getObjectLabel();
+
   private:
-    float threshold;
+    void init(float constant);
+    void processMessage(int inletIndex, PdMessage *message);
+
+    float constant;
 };
 
 #endif // _MESSAGE_MOSES_H_

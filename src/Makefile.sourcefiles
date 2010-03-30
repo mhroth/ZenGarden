@@ -41,6 +41,7 @@ LOCAL_SRC_FILES := \
 ./MessageMidiToFrequency.cpp \
 ./MessageMinimum.cpp \
 ./MessageModulus.cpp \
+./MessageMoses.cpp \
 ./MessageMultiply.cpp \
 ./MessageNamedObject.cpp \
 ./MessageNotEquals.cpp \
@@ -59,6 +60,7 @@ LOCAL_SRC_FILES := \
 ./MessageSend.cpp \
 ./MessageSendController.cpp \
 ./MessageSine.cpp \
+./MessageSpigot.cpp \
 ./MessageSqrt.cpp \
 ./MessageSubtract.cpp \
 ./MessageSwitch.cpp \

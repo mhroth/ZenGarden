@@ -1,8 +1,8 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009, 2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
- * 
+ *
  *  This file is part of ZenGarden.
  *
  *  ZenGarden is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU Lesser General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with ZenGarden.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -23,24 +23,23 @@
 #ifndef _MESSAGE_SPIGOT_H_
 #define _MESSAGE_SPIGOT_H_
 
-#include "MessageInputMessageOutputObject.h"
+#include "MessageObject.h"
 
-/**
- * spigot
- */
-class MessageSpigot : public MessageInputMessageOutputObject {
-  
+/** [spigot], [spigot float] */
+class MessageSpigot : public MessageObject {
+
   public:
-    MessageSpigot(char *initString);
-    MessageSpigot(float initialValue, char *initString);
+    MessageSpigot(PdMessage *initMessage, PdGraph *graph);
+    MessageSpigot(float constant, PdGraph *graph);
     ~MessageSpigot();
-    
-  protected:
-    inline void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage();
-  
+
+    const char *getObjectLabel();
+
   private:
-    float right;
+    void init(float constant);
+    void processMessage(int inletIndex, PdMessage *message);
+
+    float constant;
 };
 
 #endif // _MESSAGE_SPIGOT_H_
