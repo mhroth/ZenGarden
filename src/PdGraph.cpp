@@ -53,6 +53,7 @@
 #include "MessageMidiToFrequency.h"
 #include "MessageMinimum.h"
 #include "MessageModulus.h"
+#include "MessageMoses.h"
 #include "MessageMultiply.h"
 #include "MessageNotEquals.h"
 #include "MessageOutlet.h"
@@ -66,6 +67,7 @@
 #include "MessageRmsToDb.h"
 #include "MessageSend.h"
 #include "MessageSine.h"
+#include "MessageSpigot.h"
 #include "MessageSqrt.h"
 #include "MessageSubtract.h"
 #include "MessageSwitch.h"
@@ -346,6 +348,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageMinimum(initMessage, graph);
     } else if (strcmp(objectLabel, "metro") == 0) {
       return new MessageMetro(initMessage, graph);
+    } else if (strcmp(objectLabel, "moses") == 0) {
+      return new MessageMoses(initMessage, graph);
     } else if (strcmp(objectLabel, "mod") == 0) {
       return new MessageModulus(initMessage, graph);
     } else if (strcmp(objectLabel, "pipe") == 0) {
@@ -364,6 +368,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageSend(initMessage, graph);
     } else if (strcmp(objectLabel, "sin") == 0) {
       return new MessageSine(initMessage, graph);
+    } else if (strcmp(objectLabel, "spigot") == 0) {
+      return new MessageSpigot(initMessage, graph);
     } else if (strcmp(objectLabel, "symbol") == 0) {
       return new MessageSymbol(initMessage, graph);
     } else if (strcmp(objectLabel, "tan") == 0) {
