@@ -28,6 +28,7 @@
 #include "OrderedMessageQueue.h"
 #include "PdFileParser.h"
 
+class DspDelayWrite;
 class DspReceive;
 class DspSend;
 class MessageObject;
@@ -133,6 +134,9 @@ class PdGraph : public DspObject {
      * will set the values of the message with a call to <code>setMessage()</code>.
      */
     PdMessage *scheduleExternalMessage(char *receiverName);
+  
+    /** Returns the named global <code>DspDelayWrite</code> object. */
+    DspDelayWrite *getDelayline(char *name);
     
   private:
     PdGraph(PdFileParser *fileParser, char *directory, char *libraryDirectory, int blockSize, int numInputChannels, 
@@ -151,8 +155,11 @@ class PdGraph : public DspObject {
     /** Globally register a [receive~] object. Connect to registered [send~] objects with the same name. */
     void registerDspReceive(DspReceive *dspReceive);
     
-    /** Globally register a [send] object. Connect to registered [receive~] objects with the same name. */
+    /** Globally register a [send~] object. Connect to registered [receive~] objects with the same name. */
     void registerDspSend(DspSend *dspSend);
+  
+    /** Globally register a [delwrite~] object. */
+    void registerDelayline(DspDelayWrite *delayline);
   
     /** The unique id for this subgraph. Defines "$0". */
     int graphId;
@@ -195,6 +202,9 @@ class PdGraph : public DspObject {
   
     /** A global list of all [receive~] objects. */
     List *dspReceiveList;
+  
+    /** A global list of all [delwite~] objects. */
+    List *delaylineList;
   
     /**
      * The global <code>MessageSendController</code> which dispatches messages to named

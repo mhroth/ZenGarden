@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,18 +23,28 @@
 #ifndef _DSP_DELAY_WRITE_H_
 #define _DSP_DELAY_WRITE_H_
 
-#include "RemoteBufferObject.h"
+#include "DspObject.h"
+#include "NamedBuffer.h"
 
-class DspDelayWrite : public RemoteBufferObject {
+class DspDelayWrite : public DspObject {
   
   public:
-    DspDelayWrite(float delayInMs, char *tag, int blockSize, int sampleRate, char *initString);
+    DspDelayWrite(PdMessage *initMessage, PdGraph *graph);
     ~DspDelayWrite();
   
-    void processDspToIndex(int newBlockIndex);
+    const char *getObjectLabel();
+  
+    char *getName();
+  
+    float *getBuffer(int *headIndex, int *bufferLength);
   
   private:
-    float sampleRate;
+    void processDspToIndex(float newBlockIndex);
+  
+    char *name;
+    float *buffer;
+    int bufferLength;
+    int headIndex;
 };
 
 #endif // _DSP_DELAY_WRITE_H_

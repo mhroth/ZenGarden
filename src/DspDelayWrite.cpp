@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -20,28 +20,45 @@
  *
  */
 
-#include <string.h>
 #include "DspDelayWrite.h"
-#include "StaticUtils.h"
+#include "PdGraph.h"
 
-DspDelayWrite::DspDelayWrite(float delayInMs, char *tag, int blockSize, int sampleRate, char *initString) : RemoteBufferObject(tag, blockSize, initString) {
-  this->sampleRate = (float) sampleRate;  
-  bufferLength = (int) StaticUtils::millisecondsToSamples(delayInMs, this->sampleRate);
+DspDelayWrite::DspDelayWrite(PdMessage *message, PdGraph *graph) : DspObject(0, 1, 0, 0, graph) {
+  bufferLength = (int) StaticUtils::millisecondsToSamples(message->getElement(1)->getFloat(), 
+      graph->getSampleRate());
+  int blockSize = graph->getBlockSize();
   if (bufferLength % blockSize != 0) { // bufferLength is forced to be a multiple of the blockSize
     bufferLength = ((bufferLength/blockSize)+1) * blockSize;
   }
-  free(buffer); // free the previously allocated buffer by the RemoteBufferObject constructor
-  buffer = (float *) calloc(bufferLength, sizeof(float)); // make sure that buffer starts with all zeros
   headIndex = 0;
+  buffer = (float *) calloc(bufferLength, sizeof(float));
+  name = StaticUtils::copyString(message->getElement(0)->getSymbol());
 }
 
 DspDelayWrite::~DspDelayWrite() {
-  // nothing to do
+  free(name);
+  free(buffer);
 }
 
-void DspDelayWrite::processDspToIndex(int newBlockIndex) {
+const char *DspDelayWrite::getObjectLabel() {
+  return "delwrite~";
+}
+
+char *DspDelayWrite::getName() {
+  return name;
+}
+
+float *DspDelayWrite::getBuffer(int *headIndex, int *bufferLength) {
+  *headIndex = this->headIndex;
+  *bufferLength = this->bufferLength;
+  return buffer;
+}
+
+// because DspDelayWrite receives no messages, blocks are always computed in full
+void DspDelayWrite::processDspToIndex(float newBlockIndex) {
   memcpy(buffer + headIndex, localDspBufferAtInlet[0], numBytesInBlock);
-  headIndex += blockSize;
+  // the repeated call to getBlockSize() could be optimised
+  headIndex += graph->getBlockSize();
   if (headIndex >= bufferLength) {
     headIndex = 0;
   }

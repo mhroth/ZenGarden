@@ -44,6 +44,8 @@
 		90398CBA1113564400E5A8B6 /* PdGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C9B1113564400E5A8B6 /* PdGraph.cpp */; };
 		90398CBB1113564400E5A8B6 /* PdMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C9D1113564400E5A8B6 /* PdMessage.cpp */; };
 		90398CBC1113564400E5A8B6 /* StaticUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398CA11113564400E5A8B6 /* StaticUtils.cpp */; };
+		903E935F11623F37006CC60F /* DspDelayWrite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 903E935D11623F37006CC60F /* DspDelayWrite.cpp */; };
+		903E938C11624631006CC60F /* DspDelayRead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 903E938A11624631006CC60F /* DspDelayRead.cpp */; };
 		908687A41138467800C87D5C /* PdFileParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908687A31138467800C87D5C /* PdFileParser.cpp */; };
 		908A373E1125DF6D00558388 /* MessageEqualsEquals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908A37321125DF6D00558388 /* MessageEqualsEquals.cpp */; };
 		908A373F1125DF6D00558388 /* MessageGreaterThan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908A37341125DF6D00558388 /* MessageGreaterThan.cpp */; };
@@ -175,6 +177,10 @@
 		90398C9E1113564400E5A8B6 /* PdMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PdMessage.h; path = ../src/PdMessage.h; sourceTree = SOURCE_ROOT; };
 		90398CA11113564400E5A8B6 /* StaticUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StaticUtils.cpp; path = ../src/StaticUtils.cpp; sourceTree = SOURCE_ROOT; };
 		90398CA21113564400E5A8B6 /* StaticUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StaticUtils.h; path = ../src/StaticUtils.h; sourceTree = SOURCE_ROOT; };
+		903E935D11623F37006CC60F /* DspDelayWrite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspDelayWrite.cpp; path = ../src/DspDelayWrite.cpp; sourceTree = SOURCE_ROOT; };
+		903E935E11623F37006CC60F /* DspDelayWrite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspDelayWrite.h; path = ../src/DspDelayWrite.h; sourceTree = SOURCE_ROOT; };
+		903E938A11624631006CC60F /* DspDelayRead.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspDelayRead.cpp; path = ../src/DspDelayRead.cpp; sourceTree = SOURCE_ROOT; };
+		903E938B11624631006CC60F /* DspDelayRead.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspDelayRead.h; path = ../src/DspDelayRead.h; sourceTree = SOURCE_ROOT; };
 		908687A21138467800C87D5C /* PdFileParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PdFileParser.h; path = ../src/PdFileParser.h; sourceTree = SOURCE_ROOT; };
 		908687A31138467800C87D5C /* PdFileParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PdFileParser.cpp; path = ../src/PdFileParser.cpp; sourceTree = SOURCE_ROOT; };
 		908A37321125DF6D00558388 /* MessageEqualsEquals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageEqualsEquals.cpp; path = ../src/MessageEqualsEquals.cpp; sourceTree = SOURCE_ROOT; };
@@ -288,6 +294,8 @@
 				90398C6B1113564400E5A8B6 /* DspAdc.h */,
 				90398C6E1113564400E5A8B6 /* DspDac.cpp */,
 				90398C6F1113564400E5A8B6 /* DspDac.h */,
+				903E935D11623F37006CC60F /* DspDelayWrite.cpp */,
+				903E935E11623F37006CC60F /* DspDelayWrite.h */,
 				90D373B61146B48E001EC01E /* DspInlet.cpp */,
 				90D373B51146B48E001EC01E /* DspInlet.h */,
 				90AA54D511295EF900E8796B /* DspMessagePresedence.h */,
@@ -301,6 +309,8 @@
 				90275B41112880D900FFAEC7 /* DspOsc.h */,
 				90D373BD1146BD3A001EC01E /* DspOutlet.cpp */,
 				90D373BC1146BD3A001EC01E /* DspOutlet.h */,
+				903E938A11624631006CC60F /* DspDelayRead.cpp */,
+				903E938B11624631006CC60F /* DspDelayRead.h */,
 				90398C721113564400E5A8B6 /* LinkedList.cpp */,
 				90398C731113564400E5A8B6 /* LinkedList.h */,
 				90398C741113564400E5A8B6 /* List.cpp */,
@@ -573,6 +583,8 @@
 				908F65D211582ED5007FDD74 /* MessageClip.cpp in Sources */,
 				908F65DE11583013007FDD74 /* MessageRemainder.cpp in Sources */,
 				908F65EA115831C9007FDD74 /* MessageModulus.cpp in Sources */,
+				903E935F11623F37006CC60F /* DspDelayWrite.cpp in Sources */,
+				903E938C11624631006CC60F /* DspDelayRead.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -589,10 +601,7 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"_GLIBCXX_DEBUG=1",
-					"_GLIBCXX_DEBUG_PEDANTIC=1",
-				);
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GENERATE_PROFILING_CODE = NO;
 				INSTALL_PATH = /usr/local/bin;
 				PRODUCT_NAME = pdm10;

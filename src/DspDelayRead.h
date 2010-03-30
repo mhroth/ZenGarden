@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,23 +23,26 @@
 #ifndef _DSP_DELAY_READ_H_
 #define _DSP_DELAY_READ_H_
 
-#include "RemoteBufferReceiverObject.h"
+#include "DspObject.h"
 
-/**
- * delread~
- */
-class DspDelayRead : public RemoteBufferReceiverObject {
+class DspDelayWrite;
+
+/** [delread~ symbol float]*/
+class DspDelayRead : public DspObject {
   
   public:
-    DspDelayRead(float delayInMs, char *tag, int blockSize, int sampleRate, char *initString);
+    DspDelayRead(PdMessage *initString, PdGraph *graph);
     ~DspDelayRead();
   
-    void processMessage(int inletIndex, PdMessage *message);
-    void processDspToIndex(int newBlockIndex);
-    
+    const char *getObjectLabel();
+  
   private:
-    float sampleRate;
-    int delayInSamples;
+    void processMessage(int inletIndex, PdMessage *message);
+    void processDspToIndex(float newBlockIndex);
+  
+    DspDelayWrite *delayline; // the delayline to read from
+    char *name; // the name of the delwrite~ that this object should read from
+    float delayInSamples;
 };
 
 #endif // _DSP_DELAY_READ_H_

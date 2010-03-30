@@ -37,7 +37,7 @@ char *StaticUtils::copyString(char *str) {
   if (str == NULL) {
     return NULL;
   } else {
-    char *newStr = (char *) malloc((strlen(str)+1) * sizeof(str));
+    char *newStr = (char *) malloc((strlen(str)+1) * sizeof(char));
     strcpy(newStr, str);
     return newStr;
   }

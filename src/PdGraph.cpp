@@ -79,6 +79,8 @@
 #include "DspAdc.h"
 #include "DspAdd.h"
 #include "DspDac.h"
+#include "DspDelayRead.h"
+#include "DspDelayWrite.h"
 #include "DspInlet.h"
 #include "DspMultiply.h"
 #include "DspNoise.h"
@@ -145,6 +147,7 @@ PdGraph::PdGraph(PdFileParser *fileParser, char *directory, char *libraryDirecto
     globalDspOutputBuffers = (float *) malloc(numBytesInOutputBuffers);
     dspReceiveList = new List();
     dspSendList = new List();
+    delaylineList = new List();
     sendController = new MessageSendController(this);
   } else {
     messageCallbackQueue = NULL;
@@ -154,6 +157,7 @@ PdGraph::PdGraph(PdFileParser *fileParser, char *directory, char *libraryDirecto
     globalDspOutputBuffers = NULL;
     dspReceiveList = NULL;
     dspSendList = NULL;
+    delaylineList = NULL;
     sendController = NULL;
   }
 
@@ -244,6 +248,7 @@ PdGraph::~PdGraph() {
     delete dspReceiveList;
     delete dspSendList;
     delete sendController;
+    delete delaylineList;
     free(globalDspInputBuffers);
     free(globalDspOutputBuffers);
   }
@@ -376,6 +381,10 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new DspAdc(graph);
     } else if (strcmp(objectLabel, "dac~") == 0) {
       return new DspDac(graph);
+    } else if (strcmp(objectLabel, "delread~") == 0) {
+      return new DspDelayRead(initMessage, graph);
+    } else if (strcmp(objectLabel, "delwrite~") == 0) {
+      return new DspDelayWrite(initMessage, graph);
     } else if (strcmp(objectLabel, "inlet~") == 0) {
       return new DspInlet(this);
     } else if (strcmp(objectLabel, "noise~") == 0) {
@@ -407,6 +416,8 @@ void PdGraph::addObject(MessageObject *node) {
     ((MessageOutlet *) node)->setOutletIndex(outletList->size()-1);
   } else if (strcmp(node->getObjectLabel(), "receive") == 0) {
     sendController->addReceiver((MessageReceive *) node);
+  } else if (strcmp(node->getObjectLabel(), "delwrite~") == 0) {
+    registerDelayline((DspDelayWrite *) node);
   } else if (strcmp(node->getObjectLabel(), "inlet~") == 0) {
     inletList->add(node);
     ((DspInlet *) node)->setInletBuffer(localDspBufferAtInlet[inletList->size()-1]);
@@ -508,6 +519,38 @@ void PdGraph::registerDspSend(DspSend *dspSend) {
     dspSendList->add(dspSend);
   } else {
     parentGraph->registerDspSend(dspSend);
+  }
+}
+
+void PdGraph::registerDelayline(DspDelayWrite *delayline) {
+  if (isRootGraph()) {
+    // duplication detection
+    for (int i = 0; i < delaylineList->size(); i++) {
+      DspDelayWrite *delWrite = (DspDelayWrite *) delaylineList->get(i);
+      if (strcmp(delWrite->getName(), delayline->getName()) == 0) {
+        printErr("delwrite~ with duplicate name registered.");
+        return;
+      }
+    }
+    delaylineList->add(delayline);
+  } else {
+    parentGraph->registerDelayline(delayline);
+  }
+}
+
+DspDelayWrite *PdGraph::getDelayline(char *name) {
+  if (isRootGraph()) {
+    int size = delaylineList->size();
+    DspDelayWrite *delayline = NULL;
+    for (int i = 0; i < size; i++) {
+      delayline = (DspDelayWrite *) delaylineList->get(i);
+      if (strcmp(delayline->getName(), name) == 0) {
+        return delayline;
+      }
+    }
+    return NULL;
+  } else {
+    parentGraph->getDelayline(name);
   }
 }
 

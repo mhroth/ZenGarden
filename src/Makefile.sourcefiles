@@ -2,6 +2,8 @@ LOCAL_SRC_FILES := \
 ./DspAdd.cpp \
 ./DspAdc.cpp \
 ./DspDac.cpp \
+./DspDelayRead.cpp \
+./DspDelayWrite.cpp \
 ./DspInlet.cpp \
 ./DspMultiply.cpp \
 ./DspNoise.cpp \
