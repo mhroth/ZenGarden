@@ -144,6 +144,10 @@ float *DspObject::getDspBufferAtOutlet(int outletIndex) {
   return localDspBufferAtOutlet[outletIndex];
 }
 
+bool DspObject::shouldDistributeMessageToInlets() {
+  return false;
+}
+
 void DspObject::receiveMessage(int inletIndex, PdMessage *message) {
   // Queue the message to be processed during the DSP round only if the graph is switched on.
   // Otherwise messages would begin to pile up.

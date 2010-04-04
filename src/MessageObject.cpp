@@ -86,8 +86,49 @@ ConnectionType MessageObject::getConnectionType(int outletIndex) {
   return MESSAGE;
 }
 
+bool MessageObject::shouldDistributeMessageToInlets() {
+  return false;
+}
+
 void MessageObject::receiveMessage(int inletIndex, PdMessage *message) {
-  processMessage(inletIndex, message);
+  if (shouldDistributeMessageToInlets() && 
+      inletIndex == 0 &&
+      numMessageInlets > 1 && 
+      message->getNumElements() == numMessageInlets) {
+    // if the message should be distributed across the inlets
+    
+    // NOTE(mhroth): The distributed message is created new and then deleted at the end of the
+    // function. Though the object is reused, this process could process could probably be done
+    // in a more efficient way. Perhaps a special distribution message could be kept on hand
+    // such that the message must not be created and destroyed each time.
+    PdMessage *distributedMessage = new PdMessage();
+    distributedMessage->addElement(new MessageElement());
+    distributedMessage->setTimestamp(message->getTimestamp());
+    for (int i = numMessageInlets-1; i >= 0; i--) { // send to right-most inlet first
+      switch (message->getElement(i)->getType()) {
+        case FLOAT: {
+          distributedMessage->getElement(0)->setFloat(message->getElement(i)->getFloat());
+          break;
+        }
+        case SYMBOL: {
+          distributedMessage->getElement(0)->setSymbol(message->getElement(i)->getSymbol());
+          break;
+        }
+        case BANG: {
+          distributedMessage->getElement(0)->setBang();
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+      processMessage(i, distributedMessage);
+    }
+    delete distributedMessage;
+  } else {
+    // otherwise just send the message through normally
+    processMessage(inletIndex, message);
+  }
 }
 
 void MessageObject::sendMessage(int outletIndex, PdMessage *message) {

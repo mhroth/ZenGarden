@@ -69,6 +69,15 @@ class MessageObject {
     /** Returns <code>true</code> if this object processes audio, <code>false</code> otherwise. */
     virtual bool doesProcessAudio();
   
+    /**
+     * Returns <code>true</code> if this object should distribute the elements of the incoming
+     * message across the inlets. A message is otherwise only distributed if the message arrives
+     * on the left-most inlet and has exactly as many elements as there object inlets.
+     * NOTE(mhroth): This function currently only returns false until I figure out which objects
+     * distribute messages and which don't.
+     */
+    virtual bool shouldDistributeMessageToInlets();
+  
    /**
     * Returns <code>true</code> if this object is a root in the Pd tree. <code>false</code> otherwise.
     * This function is used only while computing the process order of objects. For this reason it also
