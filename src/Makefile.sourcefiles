@@ -6,6 +6,7 @@ LOCAL_SRC_FILES := \
 ./DspDelayWrite.cpp \
 ./DspInlet.cpp \
 ./DspLine.cpp \
+./DspLowpassFilter.cpp \
 ./DspMultiply.cpp \
 ./DspNoise.cpp \
 ./DspObject.cpp \
