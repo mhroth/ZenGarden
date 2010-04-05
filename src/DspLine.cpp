@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -21,13 +21,12 @@
  */
 
 #include "DspLine.h"
-#include "StaticUtils.h"
+#include "PdGraph.h"
 
-DspLine::DspLine(int blockSize, int sampleRate, char *initString) : MessageInputDspOutputObject(2, 1, blockSize, initString) {
-  this->sampleRate = (float) sampleRate;
+DspLine::DspLine(PdGraph *graph) : DspObject(2, 0, 0, 1, graph) {
   target = 0.0f;
   slope = 0.0f;
-  numSamplesToTarget = 0;
+  numSamplesToTarget = 0.0f;
   lastOutputSample = 0.0f;
 }
 
@@ -35,7 +34,11 @@ DspLine::~DspLine() {
   // nothing to do
 }
 
-inline void DspLine::processMessage(int inletIndex, PdMessage *message) {
+const char *DspLine::getObjectLabel() {
+  return "line~";
+}
+
+void DspLine::processMessage(int inletIndex, PdMessage *message) {
   if (inletIndex == 0) { // not sure what the right inlet is for
     switch (message->getNumElements()) {
       case 0: {
@@ -45,12 +48,11 @@ inline void DspLine::processMessage(int inletIndex, PdMessage *message) {
         // jump to value
         MessageElement *messageElement = message->getElement(0);
         if (messageElement->getType() == FLOAT) {
-          processDspToIndex(message->getBlockIndex());
-          blockIndexOfLastMessage = message->getBlockIndex();
+          processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
           target = messageElement->getFloat();
           lastOutputSample = target;
           slope = 0.0f;
-          numSamplesToTarget = 0;
+          numSamplesToTarget = 0.0f;
         }
         break;
       }
@@ -58,16 +60,13 @@ inline void DspLine::processMessage(int inletIndex, PdMessage *message) {
         // new ramp
         MessageElement *messageElement0 = message->getElement(0);
         MessageElement *messageElement1 = message->getElement(1);
-        if (messageElement0 != NULL && messageElement0->getType() == FLOAT && 
-            messageElement1 != NULL && messageElement1->getType() == FLOAT) {
-          processDspToIndex(message->getBlockIndex());
-          blockIndexOfLastMessage = message->getBlockIndex();
+        if (messageElement0->getType() == FLOAT && messageElement1->getType() == FLOAT) {
+          processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
           target = messageElement0->getFloat();
           float timeToTargetMs = messageElement1->getFloat(); // no negative time to targets!
-          float fractionalSamplesToTarget = StaticUtils::millisecondsToSamples(
-              (timeToTargetMs < 1.0f) ? 1.0f : timeToTargetMs, sampleRate);
-          slope = (target - lastOutputSample) / fractionalSamplesToTarget;
-          numSamplesToTarget = (int) fractionalSamplesToTarget;
+          numSamplesToTarget = StaticUtils::millisecondsToSamples(
+              (timeToTargetMs < 1.0f) ? 1.0f : timeToTargetMs, graph->getSampleRate());
+          slope = (target - lastOutputSample) / numSamplesToTarget;
         }
         break;
       }
@@ -75,41 +74,46 @@ inline void DspLine::processMessage(int inletIndex, PdMessage *message) {
   }
 }
 
-inline void DspLine::processDspToIndex(int newBlockIndex) {
+void DspLine::processDspToIndex(float blockIndex) {
   float *outputBuffer = localDspBufferAtOutlet[0];
-  if (numSamplesToTarget <= 0) { // if we have already reached the target
+  if (numSamplesToTarget <= 0.0f) { // if we have already reached the target
     // TODO(mhroth): can this be replaced with memset() or something similar?
     // can this be made faster?
-    for (int i = blockIndexOfLastMessage; i < newBlockIndex; i++) {
+    int blockIndexInt = getEndSampleIndex(blockIndex);
+    for (int i = getStartSampleIndex(); i < blockIndexInt; i++) {
       outputBuffer[i] = target; // stay at the target
     }
     lastOutputSample = target;
   } else {
-    int processLength = newBlockIndex - blockIndexOfLastMessage; // the number of samples to be processed
+    // the number of samples to be processed this iteration
+    float processLength = blockIndex - blockIndexOfLastMessage;
     if (processLength > 0) {
-      // if there is anything to process at all
+      // if there is anything to process at all (several messages may be received at once)
       if (numSamplesToTarget < processLength) {
         // if we will process more samples than we have remaining to the target
         // i.e., if we will arrive at the target while processing
-        int targetIndex = blockIndexOfLastMessage + numSamplesToTarget;
-        outputBuffer[blockIndexOfLastMessage] = lastOutputSample + slope;
-        for (int i = blockIndexOfLastMessage + 1; i < targetIndex; i++) {
+        int targetIndexInt = getEndSampleIndex(blockIndexOfLastMessage + numSamplesToTarget);
+        outputBuffer[getStartSampleIndex()] = lastOutputSample + slope;
+        for (int i = getStartSampleIndex()+1; i < targetIndexInt; i++) {
           outputBuffer[i] = outputBuffer[i-1] + slope;
         }
-        for (int i = targetIndex; i < newBlockIndex; i++) {
+        int blockIndexInt = getEndSampleIndex(blockIndex);
+        for (int i = targetIndexInt; i < blockIndexInt; i++) {
           outputBuffer[i] = target;
         }
         lastOutputSample = target;
         numSamplesToTarget = 0;
       } else {
         // if the target is far off
-        outputBuffer[blockIndexOfLastMessage] = lastOutputSample + slope;
-        for (int i = blockIndexOfLastMessage+1; i < newBlockIndex; i++) {
+        outputBuffer[getStartSampleIndex()] = lastOutputSample + slope;
+        int blockIndexInt = getEndSampleIndex(blockIndex);
+        for (int i = getStartSampleIndex()+1; i < blockIndexInt; i++) {
           outputBuffer[i] = outputBuffer[i-1] + slope;
         }
-        lastOutputSample = outputBuffer[newBlockIndex-1];
+        lastOutputSample = outputBuffer[blockIndexInt-1];
         numSamplesToTarget -= processLength;
       }
     }
   }
+  blockIndexOfLastMessage = blockIndex;
 }

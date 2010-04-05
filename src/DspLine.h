@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,26 +23,24 @@
 #ifndef _DSP_LINE_H_
 #define _DSP_LINE_H_
 
-#include "MessageInputDspOutputObject.h"
+#include "DspObject.h"
 
-/**
- * line~
- */
-class DspLine : public MessageInputDspOutputObject {
+/** [line~] */
+class DspLine : public DspObject {
   
   public:
-    DspLine(int blockSize, int sampleRate, char *initString);
+    DspLine(PdGraph *graph);
     ~DspLine();
-    
-  protected:
-    inline void processMessage(int inletIndex, PdMessage *message);
-    inline void processDspToIndex(int newBlockIndex);
+  
+    const char *getObjectLabel();
     
   private:
-    float sampleRate;
+    void processMessage(int inletIndex, PdMessage *message);
+    void processDspToIndex(float newBlockIndex);
+  
     float target;
     float slope;
-    int numSamplesToTarget;
+    float numSamplesToTarget;
     float lastOutputSample;
 };
 
