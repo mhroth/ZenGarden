@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -72,9 +72,11 @@ class MessageObject {
     /**
      * Returns <code>true</code> if this object should distribute the elements of the incoming
      * message across the inlets. A message is otherwise only distributed if the message arrives
-     * on the left-most inlet and has exactly as many elements as there object inlets.
-     * NOTE(mhroth): This function currently only returns false until I figure out which objects
-     * distribute messages and which don't.
+     * on the left-most inlet, has more than one inlet, and has exactly as many elements as there
+     * object inlets. This function returns <code>true</code> by default and should be overridden
+     * to return <code>false</code> if this behaviour is not desired (e.g., as in the case of the
+     * <code>line</code> object). This behaviour is set to <code>false</code> for all
+     * <code>DspObject</code> objects.
      */
     virtual bool shouldDistributeMessageToInlets();
   
@@ -113,6 +115,9 @@ class MessageObject {
   
     /** A flag indicating that this object has already been considered when ordering the process tree. */
     bool isOrdered;
+  
+    /** A <code>PdMessage</code> used only to distribute an incoming message across inlets, when necessary. */
+    PdMessage *distributedMessage;
 };
 
 #endif // _MESSAGE_OBJECT_H_

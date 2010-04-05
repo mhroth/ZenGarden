@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -52,6 +52,7 @@ class DspObject : public MessageObject {
     
     virtual void receiveMessage(int inletIndex, PdMessage *message);
   
+    /* Override MessageObject::shouldDistributeMessageToInlets() */
     bool shouldDistributeMessageToInlets();
     
     /** Process audio buffers in this block. */

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -29,6 +29,9 @@ MessageObject::MessageObject(int numMessageInlets, int numMessageOutlets, PdGrap
   this->graph = graph;
   this->isOrdered = false;
   
+  distributedMessage = new PdMessage();
+  distributedMessage->addElement(new MessageElement());
+  
   // initialise incoming connections list
   incomingMessageConnectionsListAtInlet = (List **) malloc(numMessageInlets * sizeof(List *));
   for (int i = 0; i < numMessageInlets; i++) {
@@ -49,6 +52,8 @@ MessageObject::MessageObject(int numMessageInlets, int numMessageOutlets, PdGrap
 }
 
 MessageObject::~MessageObject() {
+  delete distributedMessage;
+  
   // delete incoming connections list
   for (int i = 0; i < numMessageInlets; i++) {
     List *list = incomingMessageConnectionsListAtInlet[i];
@@ -87,7 +92,7 @@ ConnectionType MessageObject::getConnectionType(int outletIndex) {
 }
 
 bool MessageObject::shouldDistributeMessageToInlets() {
-  return false;
+  return true;
 }
 
 void MessageObject::receiveMessage(int inletIndex, PdMessage *message) {
@@ -96,22 +101,17 @@ void MessageObject::receiveMessage(int inletIndex, PdMessage *message) {
       numMessageInlets > 1 && 
       message->getNumElements() == numMessageInlets) {
     // if the message should be distributed across the inlets
-    
-    // NOTE(mhroth): The distributed message is created new and then deleted at the end of the
-    // function. Though the object is reused, this process could process could probably be done
-    // in a more efficient way. Perhaps a special distribution message could be kept on hand
-    // such that the message must not be created and destroyed each time.
-    PdMessage *distributedMessage = new PdMessage();
-    distributedMessage->addElement(new MessageElement());
     distributedMessage->setTimestamp(message->getTimestamp());
+    MessageElement *messageElement;
     for (int i = numMessageInlets-1; i >= 0; i--) { // send to right-most inlet first
-      switch (message->getElement(i)->getType()) {
+      messageElement = message->getElement(i);
+      switch (messageElement->getType()) {
         case FLOAT: {
-          distributedMessage->getElement(0)->setFloat(message->getElement(i)->getFloat());
+          distributedMessage->getElement(0)->setFloat(messageElement->getFloat());
           break;
         }
         case SYMBOL: {
-          distributedMessage->getElement(0)->setSymbol(message->getElement(i)->getSymbol());
+          distributedMessage->getElement(0)->setSymbol(messageElement->getSymbol());
           break;
         }
         case BANG: {
@@ -124,7 +124,6 @@ void MessageObject::receiveMessage(int inletIndex, PdMessage *message) {
       }
       processMessage(i, distributedMessage);
     }
-    delete distributedMessage;
   } else {
     // otherwise just send the message through normally
     processMessage(inletIndex, message);
