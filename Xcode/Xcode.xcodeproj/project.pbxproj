@@ -10,6 +10,7 @@
 		8DD76F6A0486A84900D96B5E /* pdm10.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6859E8B029090EE04C91782 /* pdm10.1 */; };
 		900FD5D2116A523F00603221 /* DspLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 900FD5D0116A523F00603221 /* DspLine.cpp */; };
 		900FD624116A68D700603221 /* DspLowpassFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 900FD622116A68D700603221 /* DspLowpassFilter.cpp */; };
+		900FD649116A834800603221 /* DspEnvelope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 900FD647116A834800603221 /* DspEnvelope.cpp */; };
 		90266AEA112ED31D00E3F6F1 /* MessageArcTangent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90266ADE112ED31D00E3F6F1 /* MessageArcTangent.cpp */; };
 		90266AEB112ED31D00E3F6F1 /* MessageArcTangent2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90266AE0112ED31D00E3F6F1 /* MessageArcTangent2.cpp */; };
 		90266AEC112ED31D00E3F6F1 /* MessageCosine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90266AE2112ED31D00E3F6F1 /* MessageCosine.cpp */; };
@@ -110,6 +111,8 @@
 		900FD5D1116A523F00603221 /* DspLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspLine.h; path = ../src/DspLine.h; sourceTree = SOURCE_ROOT; };
 		900FD622116A68D700603221 /* DspLowpassFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspLowpassFilter.cpp; path = ../src/DspLowpassFilter.cpp; sourceTree = SOURCE_ROOT; };
 		900FD623116A68D700603221 /* DspLowpassFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspLowpassFilter.h; path = ../src/DspLowpassFilter.h; sourceTree = SOURCE_ROOT; };
+		900FD647116A834800603221 /* DspEnvelope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspEnvelope.cpp; path = ../src/DspEnvelope.cpp; sourceTree = SOURCE_ROOT; };
+		900FD648116A834800603221 /* DspEnvelope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspEnvelope.h; path = ../src/DspEnvelope.h; sourceTree = SOURCE_ROOT; };
 		90266ADE112ED31D00E3F6F1 /* MessageArcTangent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageArcTangent.cpp; path = ../src/MessageArcTangent.cpp; sourceTree = SOURCE_ROOT; };
 		90266ADF112ED31D00E3F6F1 /* MessageArcTangent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageArcTangent.h; path = ../src/MessageArcTangent.h; sourceTree = SOURCE_ROOT; };
 		90266AE0112ED31D00E3F6F1 /* MessageArcTangent2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageArcTangent2.cpp; path = ../src/MessageArcTangent2.cpp; sourceTree = SOURCE_ROOT; };
@@ -309,8 +312,12 @@
 				90398C6B1113564400E5A8B6 /* DspAdc.h */,
 				90398C6E1113564400E5A8B6 /* DspDac.cpp */,
 				90398C6F1113564400E5A8B6 /* DspDac.h */,
+				903E938A11624631006CC60F /* DspDelayRead.cpp */,
+				903E938B11624631006CC60F /* DspDelayRead.h */,
 				903E935D11623F37006CC60F /* DspDelayWrite.cpp */,
 				903E935E11623F37006CC60F /* DspDelayWrite.h */,
+				900FD647116A834800603221 /* DspEnvelope.cpp */,
+				900FD648116A834800603221 /* DspEnvelope.h */,
 				90D373B61146B48E001EC01E /* DspInlet.cpp */,
 				90D373B51146B48E001EC01E /* DspInlet.h */,
 				900FD5D0116A523F00603221 /* DspLine.cpp */,
@@ -328,8 +335,6 @@
 				90275B41112880D900FFAEC7 /* DspOsc.h */,
 				90D373BD1146BD3A001EC01E /* DspOutlet.cpp */,
 				90D373BC1146BD3A001EC01E /* DspOutlet.h */,
-				903E938A11624631006CC60F /* DspDelayRead.cpp */,
-				903E938B11624631006CC60F /* DspDelayRead.h */,
 				90398C721113564400E5A8B6 /* LinkedList.cpp */,
 				90398C731113564400E5A8B6 /* LinkedList.h */,
 				90398C741113564400E5A8B6 /* List.cpp */,
@@ -615,6 +620,7 @@
 				90D2714B11625DC4000E9E5F /* MessageSwap.cpp in Sources */,
 				900FD5D2116A523F00603221 /* DspLine.cpp in Sources */,
 				900FD624116A68D700603221 /* DspLowpassFilter.cpp in Sources */,
+				900FD649116A834800603221 /* DspEnvelope.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

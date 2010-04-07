@@ -108,11 +108,17 @@ class PdGraph : public DspObject {
     /** Returns the global sample rate. */
     float getSampleRate();
   
+    /** Returns the global dsp buffer at the given inlet. Exclusively used by <code>DspAdc</code>. */
     float *getGlobalDspBufferAtInlet(int inletIndex);
+  
+    /** Returns the global dsp buffer at the given outlet. Exclusively used by <code>DspDac</code>. */
     float *getGlobalDspBufferAtOutlet(int outletIndex);
   
     /** Returns the timestamp of the beginning of the current block. */
     double getBlockStartTimestamp();
+  
+    /** Returns the duration in milliseconds of one block. */
+    double getBlockDuration();
   
     int getNumInputChannels();
     int getNumOutputChannels();

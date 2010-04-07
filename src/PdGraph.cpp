@@ -84,6 +84,7 @@
 #include "DspDac.h"
 #include "DspDelayRead.h"
 #include "DspDelayWrite.h"
+#include "DspEnvelope.h"
 #include "DspInlet.h"
 #include "DspLine.h"
 #include "DspLowpassFilter.h"
@@ -396,6 +397,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new DspDelayRead(initMessage, graph);
     } else if (strcmp(objectLabel, "delwrite~") == 0) {
       return new DspDelayWrite(initMessage, graph);
+    } else if (strcmp(objectLabel, "env~") == 0) {
+      return new DspEnvelope(initMessage, graph);
     } else if (strcmp(objectLabel, "inlet~") == 0) {
       return new DspInlet(graph);
     } else if (strcmp(objectLabel, "line~") == 0) {
@@ -463,6 +466,10 @@ void PdGraph::connect(int fromObjectIndex, int outletIndex, int toObjectIndex, i
 
 double PdGraph::getBlockStartTimestamp() {
   return blockStartTimestamp;
+}
+
+double PdGraph::getBlockDuration() {
+  return blockDurationMs;
 }
 
 void PdGraph::scheduleMessage(MessageObject *messageObject, int outletIndex, PdMessage *message) {

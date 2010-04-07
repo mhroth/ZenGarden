@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -20,42 +20,36 @@
  *
  */
 
-#ifndef _MESSAGE_ENV_H_
-#define _MESSAGE_ENV_H_
+#ifndef _DSP_ENVELOPE_H_
+#define _DSP_ENVELOPE_H_
 
-#include "DspInputMessageOutputObject.h"
+#include "DspObject.h"
 
-/**
- * Implements the env~ dsp object.
- */
-class MessageEnv : public DspInputMessageOutputObject {
+/** [env~], [env~ float], [env~ float float] */
+class DspEnvelope : public DspObject {
   
   public:
-    MessageEnv(int blockSize, char *initString);
-    MessageEnv(int windowSize, int blockSize, char *initString);
-    /**
+    /*
      * @param windowSize  The window size in samples of the analysis. Defaults to 1024.
      * @param windowInterval  The window interval in samples of the analysis.
      * The interval must be a multiple of the block size. If not, then it is reset to
      * the nearest multiple. Defaults to windowSize/2, according to the mentioned constraints.
      */
-    MessageEnv(int windowSize, int windowInterval, int blockSize, char *initString);
-    ~MessageEnv();
-    
-  protected:
-    inline void processDspToIndex(int newBlockIndex);
-    PdMessage *newCanonicalMessage();
+    DspEnvelope(PdMessage *initMessage, PdGraph *graph);
+    ~DspEnvelope();
+  
+    const char *getObjectLabel();
+
+    ConnectionType getConnectionType(int outletIndex);
     
   private:
-    /**
-     * Initialise the analysis buffers.
-     */
+    void processDspToIndex(float newBlockIndex);
+  
+    /** Initialise the analysis buffers. */
     void initBuffers();
     void setWindowInterval(int newInterval);
   
-    /**
-     * By default, the analysis window size is 1024 samples.
-     */
+    /** By default, the analysis window size is 1024 samples. */
     const static int DEFAULT_WINDOW_SIZE = 1024;
   
     int windowSize;
@@ -68,4 +62,4 @@ class MessageEnv : public DspInputMessageOutputObject {
     float *hanningCoefficients;
 };
 
-#endif // _MESSAGE_ENV_H_
+#endif // _DSP_ENVELOPE_H_
