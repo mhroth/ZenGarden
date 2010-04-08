@@ -113,7 +113,6 @@ void DspEnvelope::processDspToIndex(float newBlockIndex) {
     PdMessage *outgoingMessage = getNextOutgoingMessage(0);
     // this message will be sent out at the beginning of the next block
     outgoingMessage->setTimestamp(graph->getBlockStartTimestamp() + graph->getBlockDuration());
-    printf("message being sent at: %f\n", outgoingMessage->getTimestamp());
     outgoingMessage->getElement(0)->setFloat((rms < 0.0f) ? 0.0f : rms);
     graph->scheduleMessage(this, 0, outgoingMessage);
   }

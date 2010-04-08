@@ -748,11 +748,18 @@ void PdGraph::printErr(char *msg) {
   }
 }
 
-void PdGraph::printErr(const char *msg) {
+void PdGraph::printErr(const char *msg, ...) {
+  int maxStringLength = 1024;
+  char stringBuffer[maxStringLength];
+  va_list ap;
+  va_start(ap, msg);
+  vsnprintf(stringBuffer, maxStringLength-1, msg, ap);
+  va_end(ap);
+  
   if (isRootGraph()) {
-    printErrFunction((char *) msg);
+    printErrFunction(stringBuffer);
   } else {
-    parentGraph->printErr(msg);
+    parentGraph->printErr(stringBuffer);
   }
 }
 
@@ -772,11 +779,18 @@ void PdGraph::printStd(char *msg) {
   }
 }
 
-void PdGraph::printStd(const char *msg) {
+void PdGraph::printStd(const char *msg, ...) {
+  int maxStringLength = 1024;
+  char stringBuffer[maxStringLength];
+  va_list ap;
+  va_start(ap, msg);
+  vsnprintf(stringBuffer, maxStringLength-1, msg, ap);
+  va_end(ap);
+  
   if (isRootGraph()) {
-    printStdFunction((char *) msg);
+    printStdFunction(stringBuffer);
   } else {
-    parentGraph->printStd(msg);
+    parentGraph->printStd(stringBuffer);
   }
 }
 

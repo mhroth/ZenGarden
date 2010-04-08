@@ -96,11 +96,11 @@ class PdGraph : public DspObject {
     
     /** Prints the given message to error output. */
     void printErr(char *msg);
-    void printErr(const char *msg);
+    void printErr(const char *msg, ...);
     
     /** Prints the given message to standard output. */
     void printStd(char *msg);
-    void printStd(const char *msg);
+    void printStd(const char *msg, ...);
     
     /** Get an argument that was passed to the graph. */
     MessageElement *getArgument(int argIndex);

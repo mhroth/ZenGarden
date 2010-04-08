@@ -47,23 +47,10 @@ const char *MessagePrint::getObjectLabel() {
 }
 
 void MessagePrint::processMessage(int inletIndex, PdMessage *message) {
-  if (inletIndex == 0) {
-    char *full = NULL;
-    char *out = message->toString();
-    
-    if (name != NULL) {
-      int len = strlen(out) + strlen(this->name) + 5;
-      full = (char *)malloc(len);
-      snprintf(full, len, "%s: %s\n", name, out);
-    } else {
-      int len = strlen(out) + 2;
-      full = (char *)malloc(len);
-      snprintf(full, len, "%s\n", out);
-    }
-    
-    graph->printStd(full);
-    
-    free(full);
-    free(out);
+  char *out = message->toString();
+  if (name != NULL) {
+    graph->printStd("%s: %s\n", name, out);
+  } else {
+    graph->printStd("%s\n", out);
   }
 }
