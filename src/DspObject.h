@@ -53,7 +53,7 @@ class DspObject : public MessageObject {
     virtual void receiveMessage(int inletIndex, PdMessage *message);
   
     /* Override MessageObject::shouldDistributeMessageToInlets() */
-    bool shouldDistributeMessageToInlets();
+    virtual bool shouldDistributeMessageToInlets();
     
     /** Process audio buffers in this block. */
     virtual void processDsp();
