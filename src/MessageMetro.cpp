@@ -97,13 +97,12 @@ void MessageMetro::processMessage(int inletIndex, PdMessage *message) {
 }
 
 void MessageMetro::sendMessage(int outletIndex, PdMessage *message) {
-  MessageObject::sendMessage(outletIndex, message); // send the current message
-  scheduleMessage(message->getTimestamp() + intervalInMs); // schedule the next one
-}
-
-void MessageMetro::scheduleMessage(double currentTime) {
+  // send the current message
+  MessageObject::sendMessage(outletIndex, message);
+  
+  // schedule the next one
   pendingMessage = getNextOutgoingMessage(0);
-  pendingMessage->setTimestamp(currentTime + intervalInMs);
+  pendingMessage->setTimestamp(message->getTimestamp() + intervalInMs);
   graph->scheduleMessage(this, 0, pendingMessage);
 }
 

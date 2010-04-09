@@ -87,8 +87,8 @@ const char *MessageMessageBox::getObjectLabel() {
 void MessageMessageBox::processMessage(int inletIndex, PdMessage *message) {
   for (int i = 0; i < localMessageList->size(); i++) {
     PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-    outgoingMessage->setTimestamp(message->getTimestamp());
     outgoingMessage->clearAndCopyFrom((PdMessage *) localMessageList->get(i), 0);
+    outgoingMessage->setTimestamp(message->getTimestamp());
     for (int j = 0; j < outgoingMessage->getNumElements(); j++) {
       MessageElement *messageElement = outgoingMessage->getElement(j);
       if (messageElement->getType() == SYMBOL && 

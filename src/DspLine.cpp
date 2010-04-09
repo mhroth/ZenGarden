@@ -50,7 +50,6 @@ void DspLine::processMessage(int inletIndex, PdMessage *message) {
         if (messageElement->getType() == FLOAT) {
           processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
           target = messageElement->getFloat();
-          lastOutputSample = target;
           slope = 0.0f;
           numSamplesToTarget = 0.0f;
         }

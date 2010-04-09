@@ -42,8 +42,7 @@ class MessageMetro : public MessageObject {
   private:
     void processMessage(int inletIndex, PdMessage *message);
   
-    /** A helped function to schedule the next message, from the current time. */
-    void scheduleMessage(double currentTime);
+    /** Cancels the current <code>pendingMessage</code>. */
     void cancelMessage();
   
     PdMessage *pendingMessage;
