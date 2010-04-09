@@ -172,6 +172,11 @@
 		90D2714B11625DC4000E9E5F /* MessageSwap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90D2714911625DC4000E9E5F /* MessageSwap.cpp */; };
 		90D373B71146B48E001EC01E /* DspInlet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90D373B61146B48E001EC01E /* DspInlet.cpp */; };
 		90D373BE1146BD3A001EC01E /* DspOutlet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90D373BD1146BD3A001EC01E /* DspOutlet.cpp */; };
+		90FC0C7D116F74D10044AFAC /* DspDivide.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FC0C7B116F74D10044AFAC /* DspDivide.cpp */; };
+		90FC0C82116F74F10044AFAC /* DspSubtract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FC0C80116F74F10044AFAC /* DspSubtract.cpp */; };
+		90FC0C83116F74F10044AFAC /* DspSubtract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FC0C80116F74F10044AFAC /* DspSubtract.cpp */; };
+		90FC0C84116F74F10044AFAC /* DspSubtract.h in Headers */ = {isa = PBXBuildFile; fileRef = 90FC0C81116F74F10044AFAC /* DspSubtract.h */; };
+		90FC0C85116F75070044AFAC /* DspSubtract.h in Sources */ = {isa = PBXBuildFile; fileRef = 90FC0C81116F74F10044AFAC /* DspSubtract.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -361,6 +366,10 @@
 		90D373B61146B48E001EC01E /* DspInlet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspInlet.cpp; path = ../src/DspInlet.cpp; sourceTree = SOURCE_ROOT; };
 		90D373BC1146BD3A001EC01E /* DspOutlet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspOutlet.h; path = ../src/DspOutlet.h; sourceTree = SOURCE_ROOT; };
 		90D373BD1146BD3A001EC01E /* DspOutlet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspOutlet.cpp; path = ../src/DspOutlet.cpp; sourceTree = SOURCE_ROOT; };
+		90FC0C7B116F74D10044AFAC /* DspDivide.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspDivide.cpp; path = ../src/DspDivide.cpp; sourceTree = SOURCE_ROOT; };
+		90FC0C7C116F74D10044AFAC /* DspDivide.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspDivide.h; path = ../src/DspDivide.h; sourceTree = SOURCE_ROOT; };
+		90FC0C80116F74F10044AFAC /* DspSubtract.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspSubtract.cpp; path = ../src/DspSubtract.cpp; sourceTree = SOURCE_ROOT; };
+		90FC0C81116F74F10044AFAC /* DspSubtract.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspSubtract.h; path = ../src/DspSubtract.h; sourceTree = SOURCE_ROOT; };
 		C6859E8B029090EE04C91782 /* pdm10.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = pdm10.1; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -406,6 +415,8 @@
 				903E938B11624631006CC60F /* DspDelayRead.h */,
 				903E935D11623F37006CC60F /* DspDelayWrite.cpp */,
 				903E935E11623F37006CC60F /* DspDelayWrite.h */,
+				90FC0C7B116F74D10044AFAC /* DspDivide.cpp */,
+				90FC0C7C116F74D10044AFAC /* DspDivide.h */,
 				900FD647116A834800603221 /* DspEnvelope.cpp */,
 				900FD648116A834800603221 /* DspEnvelope.h */,
 				90D373B61146B48E001EC01E /* DspInlet.cpp */,
@@ -425,6 +436,8 @@
 				90275B41112880D900FFAEC7 /* DspOsc.h */,
 				90D373BD1146BD3A001EC01E /* DspOutlet.cpp */,
 				90D373BC1146BD3A001EC01E /* DspOutlet.h */,
+				90FC0C80116F74F10044AFAC /* DspSubtract.cpp */,
+				90FC0C81116F74F10044AFAC /* DspSubtract.h */,
 				90398C721113564400E5A8B6 /* LinkedList.cpp */,
 				90398C731113564400E5A8B6 /* LinkedList.h */,
 				90398C741113564400E5A8B6 /* List.cpp */,
@@ -594,6 +607,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				90FC0C84116F74F10044AFAC /* DspSubtract.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -740,6 +754,8 @@
 				900FD5D2116A523F00603221 /* DspLine.cpp in Sources */,
 				900FD624116A68D700603221 /* DspLowpassFilter.cpp in Sources */,
 				900FD649116A834800603221 /* DspEnvelope.cpp in Sources */,
+				90FC0C7D116F74D10044AFAC /* DspDivide.cpp in Sources */,
+				90FC0C82116F74F10044AFAC /* DspSubtract.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -747,6 +763,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				90FC0C83116F74F10044AFAC /* DspSubtract.cpp in Sources */,
+				90FC0C85116F75070044AFAC /* DspSubtract.h in Sources */,
 				90AA637E116F502200477770 /* DspAdc.cpp in Sources */,
 				90AA637F116F502200477770 /* DspAdd.cpp in Sources */,
 				90AA6380116F502200477770 /* DspDac.cpp in Sources */,
