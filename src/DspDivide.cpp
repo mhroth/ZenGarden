@@ -1,8 +1,8 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
- * 
+ *
  *  This file is part of ZenGarden.
  *
  *  ZenGarden is free software: you can redistribute it and/or modify
@@ -14,60 +14,82 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU Lesser General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with ZenGarden.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
 #include "DspDivide.h"
+#include "PdGraph.h"
 
-DspDivide::DspDivide(int blockSize, char *initString) :
-DspMessageInputDspOutputObject(2, 1, blockSize, initString) {
-  constant = 0.0f;
+DspDivide::DspDivide(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
+  if (initMessage->getNumElements() > 0 &&
+      initMessage->getElement(0)->getType() == FLOAT) {
+    init(initMessage->getElement(0)->getFloat());
+  } else {
+    init(0.0f);
+  }
 }
 
-DspDivide::DspDivide(float constant, int blockSize, char *initString) :
-DspMessageInputDspOutputObject(2, 1, blockSize, initString) {
-  this->constant = constant;
+DspDivide::DspDivide(float constant, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
+  init(constant);
 }
 
 DspDivide::~DspDivide() {
   // nothing to do
 }
 
+void DspDivide::init(float constant) {
+  this->constant = constant;
+}
+
+const char *DspDivide::getObjectLabel() {
+  return "/~";
+}
+
 void DspDivide::processMessage(int inletIndex, PdMessage *message) {
-  if (inletIndex == 1) {
-    MessageElement *messageElement = message->getElement(0);
-    if (messageElement->getType() == FLOAT) {
-      processDspToIndex(message->getBlockIndex());
-      constant = messageElement->getFloat();
+  switch (inletIndex) {
+    case 1: {
+      MessageElement *messageElement = message->getElement(0);
+      if (messageElement->getType() == FLOAT) {
+        processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
+        constant = messageElement->getFloat();
+      }
+      break;
+    }
+    default: {
+      break;
     }
   }
 }
 
-void DspDivide::processDspToIndex(int newBlockIndex) {
-  switch (signalPresedence) {
+void DspDivide::processDspToIndex(float blockIndex) {
+  switch (signalPrecedence) {
     case DSP_DSP: {
+      int blockIndexInt = getEndSampleIndex(blockIndex);
       float *inputBuffer0 = localDspBufferAtInlet[0];
       float *inputBuffer1 = localDspBufferAtInlet[1];
       float *outputBuffer = localDspBufferAtOutlet[0];
-      for (int i = blockIndexOfLastMessage; i < newBlockIndex; i++) {
+      for (int i = getStartSampleIndex(); i < blockIndexInt; i++) {
         outputBuffer[i] = inputBuffer0[i] / inputBuffer1[i];
       }
-      blockIndexOfLastMessage = newBlockIndex;
       break;
     }
     case DSP_MESSAGE: {
+      int blockIndexInt = getEndSampleIndex(blockIndex);
       float *inputBuffer = localDspBufferAtInlet[0];
       float *outputBuffer = localDspBufferAtOutlet[0];
-      for (int i = blockIndexOfLastMessage; i < newBlockIndex; i++) {
+      for (int i = getStartSampleIndex(); i < blockIndexInt; i++) {
         outputBuffer[i] = inputBuffer[i] / constant;
       }
-      blockIndexOfLastMessage = newBlockIndex;
+      break;
     }
+    case MESSAGE_DSP:
+    case MESSAGE_MESSAGE:
     default: {
-      break; // MESSAGE_DSP and MESSAGE_MESSAGE should never happen.
+      break; // nothing to do
     }
   }
+  blockIndexOfLastMessage = blockIndex; // update the block index of the last message
 }

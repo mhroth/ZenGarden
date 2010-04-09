@@ -81,9 +81,11 @@
 
 #include "DspAdc.h"
 #include "DspAdd.h"
+#include "DspSubtract.h"
 #include "DspDac.h"
 #include "DspDelayRead.h"
 #include "DspDelayWrite.h"
+#include "DspDivide.h"
 #include "DspEnvelope.h"
 #include "DspInlet.h"
 #include "DspLine.h"
@@ -387,8 +389,12 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageUntil(graph);
     } else if (strcmp(objectLabel, "+~") == 0) {
       return new DspAdd(initMessage, graph);
+    } else if (strcmp(objectLabel, "-~") == 0) {
+      return new DspSubtract(initMessage, graph);
     } else if (strcmp(objectLabel, "*~") == 0) {
       return new DspMultiply(initMessage, graph);
+    } else if (strcmp(objectLabel, "/~") == 0) {
+      return new DspDivide(initMessage, graph);
     } else if (strcmp(objectLabel, "adc~") == 0) {
       return new DspAdc(graph);
     } else if (strcmp(objectLabel, "dac~") == 0) {
@@ -755,7 +761,7 @@ void PdGraph::printErr(const char *msg, ...) {
   va_start(ap, msg);
   vsnprintf(stringBuffer, maxStringLength-1, msg, ap);
   va_end(ap);
-  
+
   if (isRootGraph()) {
     printErrFunction(stringBuffer);
   } else {
@@ -786,7 +792,7 @@ void PdGraph::printStd(const char *msg, ...) {
   va_start(ap, msg);
   vsnprintf(stringBuffer, maxStringLength-1, msg, ap);
   va_end(ap);
-  
+
   if (isRootGraph()) {
     printStdFunction(stringBuffer);
   } else {
