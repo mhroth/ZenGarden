@@ -24,7 +24,6 @@
 #define _DSP_DELAY_WRITE_H_
 
 #include "DspObject.h"
-#include "NamedBuffer.h"
 
 class DspDelayWrite : public DspObject {
   
