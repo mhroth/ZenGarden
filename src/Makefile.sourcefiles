@@ -54,6 +54,7 @@ LOCAL_SRC_FILES := \
 ./MessageNotEquals.cpp \
 ./MessageObject.cpp \
 ./MessageOutlet.cpp \
+./MessagePack.cpp \
 ./MessagePipe.cpp \
 ./MessagePow.cpp \
 ./MessagePowToDb.cpp \

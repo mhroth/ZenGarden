@@ -57,6 +57,7 @@
 #include "MessageMultiply.h"
 #include "MessageNotEquals.h"
 #include "MessageOutlet.h"
+#include "MessagePack.h"
 #include "MessagePipe.h"
 #include "MessagePow.h"
 #include "MessagePowToDb.h"
@@ -359,6 +360,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageMoses(initMessage, graph);
     } else if (strcmp(objectLabel, "mod") == 0) {
       return new MessageModulus(initMessage, graph);
+    } else if (strcmp(objectLabel, "pack") == 0) {
+      return new MessagePack(initMessage, graph);
     } else if (strcmp(objectLabel, "pipe") == 0) {
       return new MessagePipe(initMessage, graph);
     } else if (strcmp(objectLabel, "print") == 0) {
