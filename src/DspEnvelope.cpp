@@ -39,6 +39,23 @@ DspEnvelope::DspEnvelope(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 
     windowSize = DEFAULT_WINDOW_SIZE;
     windowInterval = windowSize / 2;
   }
+  
+  // NOTE(mhroth): I haven't thought very much if this fix could be better done. The issue is that
+  // if the blocksize is large (e.g., larger than the windowInterval), then env~ will never send
+  // a message. With more logic, a block size larger than the window size could be accomodated. But
+  // I am too lazy to consider this option at the moment. Thus, currently the window size and interval
+  // must be at least as large as the block size.
+  if (windowSize < graph->getBlockSize()) {
+    graph->printErr("env~ window size must be at least as large as the block size. %i reset to %i.\n",
+                    windowSize, graph->getBlockSize());
+    windowSize = graph->getBlockSize();
+  }
+  if (windowInterval < graph->getBlockSize()) {
+    graph->printErr("env~ window interval must be at least as large as the block size. %i reset to %i.\n",
+                    windowInterval, graph->getBlockSize());
+    windowInterval = graph->getBlockSize();
+  }
+  
   initBuffers();
 }
 
@@ -111,8 +128,9 @@ void DspEnvelope::processDspToIndex(float newBlockIndex) {
     rms = 10.0f * log10f(rms) + 100.0f;
 
     PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-    // this message will be sent out at the beginning of the next block
-    outgoingMessage->setTimestamp(graph->getBlockStartTimestamp() + graph->getBlockDuration());
+    // graph will schedule this at the beginning of the next block because the timestamp will be
+    // behind the block start timestamp
+    outgoingMessage->setTimestamp(0.0);
     outgoingMessage->getElement(0)->setFloat((rms < 0.0f) ? 0.0f : rms);
     graph->scheduleMessage(this, 0, outgoingMessage);
   }
