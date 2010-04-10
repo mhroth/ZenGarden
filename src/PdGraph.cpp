@@ -526,7 +526,7 @@ void PdGraph::dispatchMessageToNamedReceivers(char *name, PdMessage *message) {
 PdMessage *PdGraph::scheduleExternalMessage(char *receiverName) {
   if (isRootGraph()) {
     PdMessage *message = getNextOutgoingMessage(0);
-    message->setTimestamp(blockStartTimestamp); // message is processed at start of current block
+    message->setTimestamp(0.0); // message is processed at start of the next block
 
     graph->scheduleMessage(sendController, sendController->getNameIndex(receiverName), message);
 
@@ -609,14 +609,17 @@ void PdGraph::process(float *inputBuffers, float *outputBuffers) {
       destination->message->getTimestamp() < nextBlockStartTimestamp) {
     messageCallbackQueue->remove(0); // remove the message from the queue
     destination->message->unreserve(destination->object);
-    if (destination->message->getTimestamp() >= blockStartTimestamp) {
-      // only process the message if it falls in this block. This logic prevents external messages
-      // from being injected into the system at a time that has already passed.
-      // TODO(mhroth): unreserve() should probably come after sendScheduledMessage() in order
-      // to prevent the message from being resused in the case the reserving object is retriggered
-      // during the execution of sendScheduledMessage()
-      destination->object->sendMessage(destination->index, destination->message);
+    if (destination->message->getTimestamp() < blockStartTimestamp) {
+      // messages injected into the system with a timestamp behind the current block are automatically
+      // rescheduled for the beginning of the current block. This is done in order to normalise
+      // the treament of messages, but also to avoid difficulties in cases when messages are scheduled
+      // in subgraphs with different block sizes.
+      destination->message->setTimestamp(blockStartTimestamp);
     }
+    // TODO(mhroth): unreserve() should probably come after sendScheduledMessage() in order
+    // to prevent the message from being resused in the case the reserving object is retriggered
+    // during the execution of sendScheduledMessage()
+    destination->object->sendMessage(destination->index, destination->message);
   }
 
   // execute all audio objects in this graph
