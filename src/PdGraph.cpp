@@ -75,6 +75,7 @@
 #include "MessageSwap.h"
 #include "MessageSymbol.h"
 #include "MessageTangent.h"
+#include "MessageText.h"
 #include "MessageTrigger.h"
 #include "MessageUntil.h"
 
@@ -234,13 +235,16 @@ PdGraph::PdGraph(PdFileParser *fileParser, char *directory, char *libraryDirecto
       } else if (strcmp(objectType, "restore") == 0) {
         break; // finished reading a subpatch. Return the graph.
       } else if (strcmp(objectType, "text") == 0) {
-        // TODO(mhroth)
-        //char *objectInitString = strtok(NULL, ";");
-        //nodeList->add(new TextObject(objectInitString));
+        strtok(NULL, " "); // read the first canvas coordinate
+        strtok(NULL, " "); // read the second canvas coordinate
+        char *comment = strtok(NULL, ";"); // get the comment
+        MessageText *messageText = new MessageText(comment, graph);
+        addObject(messageText);
       } else if (strcmp(objectType, "declare") == 0) {
         // set environment for loading patch
         // TODO(mhroth): this doesn't do anything for us at the moment,
         // but the case must be handled. Nothing to do.
+        printErr("Received unimplemented \"#X declare\" object.\n");
       } else {
         printf("WARNING | Unrecognised #X object type on line \"%s\".\n", line);
       }

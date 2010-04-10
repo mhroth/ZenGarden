@@ -169,6 +169,9 @@
 		90C94468114AAB4500B78515 /* MessageMinimum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90C94465114AAB4500B78515 /* MessageMinimum.cpp */; };
 		90C9446F114AAB7800B78515 /* MessageRmsToDb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90C9446D114AAB7800B78515 /* MessageRmsToDb.cpp */; };
 		90CA1EF311451A4E00DE0D8A /* MessageSymbol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90CA1EF111451A4E00DE0D8A /* MessageSymbol.cpp */; };
+		90CC80BF11711375009D1539 /* MessageText.h in Headers */ = {isa = PBXBuildFile; fileRef = 90CC80BD11711375009D1539 /* MessageText.h */; };
+		90CC80C011711375009D1539 /* MessageText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90CC80BE11711375009D1539 /* MessageText.cpp */; };
+		90CC80C111711375009D1539 /* MessageText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90CC80BE11711375009D1539 /* MessageText.cpp */; };
 		90D2713711625CFF000E9E5F /* MessageMoses.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90D2713511625CFF000E9E5F /* MessageMoses.cpp */; };
 		90D2713E11625D2C000E9E5F /* MessageSpigot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90D2713C11625D2C000E9E5F /* MessageSpigot.cpp */; };
 		90D2714B11625DC4000E9E5F /* MessageSwap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90D2714911625DC4000E9E5F /* MessageSwap.cpp */; };
@@ -356,6 +359,8 @@
 		90C9446E114AAB7800B78515 /* MessageRmsToDb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageRmsToDb.h; path = ../src/MessageRmsToDb.h; sourceTree = SOURCE_ROOT; };
 		90CA1EF111451A4E00DE0D8A /* MessageSymbol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageSymbol.cpp; path = ../src/MessageSymbol.cpp; sourceTree = SOURCE_ROOT; };
 		90CA1EF211451A4E00DE0D8A /* MessageSymbol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageSymbol.h; path = ../src/MessageSymbol.h; sourceTree = SOURCE_ROOT; };
+		90CC80BD11711375009D1539 /* MessageText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageText.h; path = ../src/MessageText.h; sourceTree = SOURCE_ROOT; };
+		90CC80BE11711375009D1539 /* MessageText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageText.cpp; path = ../src/MessageText.cpp; sourceTree = SOURCE_ROOT; };
 		90D2713511625CFF000E9E5F /* MessageMoses.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageMoses.cpp; path = ../src/MessageMoses.cpp; sourceTree = SOURCE_ROOT; };
 		90D2713611625CFF000E9E5F /* MessageMoses.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageMoses.h; path = ../src/MessageMoses.h; sourceTree = SOURCE_ROOT; };
 		90D2713C11625D2C000E9E5F /* MessageSpigot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageSpigot.cpp; path = ../src/MessageSpigot.cpp; sourceTree = SOURCE_ROOT; };
@@ -564,6 +569,8 @@
 				90CA1EF211451A4E00DE0D8A /* MessageSymbol.h */,
 				90266AE8112ED31D00E3F6F1 /* MessageTangent.cpp */,
 				90266AE9112ED31D00E3F6F1 /* MessageTangent.h */,
+				90CC80BE11711375009D1539 /* MessageText.cpp */,
+				90CC80BD11711375009D1539 /* MessageText.h */,
 				90C94369114A868200B78515 /* MessageTrigger.cpp */,
 				90C9436A114A868200B78515 /* MessageTrigger.h */,
 				90C76BBE114AD15800887B04 /* MessageUntil.cpp */,
@@ -609,6 +616,7 @@
 			files = (
 				909A93F71170B3FF00E52B96 /* DspVariableDelay.h in Headers */,
 				909A95A11170E97D00E52B96 /* MessagePack.h in Headers */,
+				90CC80BF11711375009D1539 /* MessageText.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -757,6 +765,7 @@
 				90FC0C82116F74F10044AFAC /* DspSubtract.cpp in Sources */,
 				909A93F51170B3FF00E52B96 /* DspVariableDelay.cpp in Sources */,
 				909A959F1170E97D00E52B96 /* MessagePack.cpp in Sources */,
+				90CC80C111711375009D1539 /* MessageText.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -847,6 +856,7 @@
 				90AA637D116F501B00477770 /* DspEnvelope.cpp in Sources */,
 				909A93F61170B3FF00E52B96 /* DspVariableDelay.cpp in Sources */,
 				909A95A01170E97D00E52B96 /* MessagePack.cpp in Sources */,
+				90CC80C011711375009D1539 /* MessageText.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

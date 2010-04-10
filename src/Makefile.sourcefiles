@@ -74,6 +74,7 @@ LOCAL_SRC_FILES := \
 ./MessageSwap.cpp \
 ./MessageSymbol.cpp \
 ./MessageTangent.cpp \
+./MessageText.cpp \
 ./MessageTrigger.cpp \
 ./MessageUntil.cpp \
 ./OrderedMessageQueue.cpp \
