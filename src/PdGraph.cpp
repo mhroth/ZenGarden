@@ -425,7 +425,7 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
   }
 
   // ERROR!
-  printErr("Object not recognised.\n");
+  printErr("Object \"%s\" not recognised.\n", objectLabel);
   return NULL;
 }
 
