@@ -15,6 +15,7 @@ LOCAL_SRC_FILES := \
 ./DspOsc.cpp \
 ./DspOutlet.cpp \
 ./DspSubtract.cpp \
+./DspVariableDelay.cpp \
 ./LinkedList.cpp \
 ./List.cpp \
 ./MessageAbsoluteValue.cpp \

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,19 +23,26 @@
 #ifndef _DSP_VARIABLE_DELAY_H_
 #define _DSP_VARIABLE_DELAY_H_
 
-#include "RemoteBufferReceiverObject.h"
+#include "DspObject.h"
 
-class DspVariableDelay : public RemoteBufferReceiverObject {
+class DspDelayWrite;
+
+class DspVariableDelay : public DspObject {
   
   public:
-    DspVariableDelay(char *tag, int blockSize, int sampleRate, char *initString);
+    DspVariableDelay(PdMessage *initMessage, PdGraph *graph);
     ~DspVariableDelay();
-    
-    void processMessage(int inletIndex, PdMessage *message);
-    void processDspToIndex(int newBlockIndex);
+  
+    const char *getObjectLabel();
     
   private:
-    float sampleRate;
+    // vd~ does not process any messages and thus does not implement processMessage()
+    void processDspToIndex(float newBlockIndex);
+  
+    /** The name of the delay line that this object reads from. */
+    char *name;
+  
+    DspDelayWrite *delayline;
 };
 
 #endif // _DSP_VARIABLE_DELAY_H_

@@ -94,6 +94,7 @@
 #include "DspNoise.h"
 #include "DspOsc.h"
 #include "DspOutlet.h"
+#include "DspVariableDelay.h"
 
 /** A C-defined function implementing the default print behaviour. */
 void defaultPrintFunction(char *msg) {
@@ -419,13 +420,15 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new DspOutlet(graph);
     } else if (strcmp(objectLabel, "switch~") == 0) {
       return new MessageSwitch(initMessage, graph);
+    } else if (strcmp(objectLabel, "vd~") == 0) {
+      return new DspVariableDelay(initMessage, graph);
     }
   } else if (strcmp(objectType, "msg") == 0) {
     // TODO(mhroth)
   }
 
   // ERROR!
-  printErr("Object \"%s\" not recognised.\n", objectLabel);
+  printErr("Object \"%s\" is not recognised. It has probably not been implemented yet.\n", objectLabel);
   return NULL;
 }
 

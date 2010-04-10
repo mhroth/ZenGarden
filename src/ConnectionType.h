@@ -25,8 +25,8 @@
 
 /** An enumeration of the types of information that a connection provides. */
 enum ConnectionType {
-  DSP,
-  MESSAGE
+  DSP,    // describes an audio connnection
+  MESSAGE // describes a message connection
 };
 
 #endif // _CONNECTION_TYPE_H_
