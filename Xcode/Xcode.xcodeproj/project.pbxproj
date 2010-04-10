@@ -35,10 +35,8 @@
 		90398CAD1113564400E5A8B6 /* MessageFloat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C7F1113564400E5A8B6 /* MessageFloat.cpp */; };
 		90398CAE1113564400E5A8B6 /* MessageInlet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C811113564400E5A8B6 /* MessageInlet.cpp */; };
 		90398CAF1113564400E5A8B6 /* MessageLoadbang.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C841113564400E5A8B6 /* MessageLoadbang.cpp */; };
-		90398CB01113564400E5A8B6 /* MessageNamedObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C861113564400E5A8B6 /* MessageNamedObject.cpp */; };
 		90398CB11113564400E5A8B6 /* MessageObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C881113564400E5A8B6 /* MessageObject.cpp */; };
 		90398CB21113564400E5A8B6 /* MessageOutlet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C8A1113564400E5A8B6 /* MessageOutlet.cpp */; };
-		90398CB31113564400E5A8B6 /* MessagePassthrough.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C8C1113564400E5A8B6 /* MessagePassthrough.cpp */; };
 		90398CB41113564400E5A8B6 /* MessagePipe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C8E1113564400E5A8B6 /* MessagePipe.cpp */; };
 		90398CB51113564400E5A8B6 /* MessagePrint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C901113564400E5A8B6 /* MessagePrint.cpp */; };
 		90398CB61113564400E5A8B6 /* MessageQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C921113564400E5A8B6 /* MessageQueue.cpp */; };
@@ -81,10 +79,8 @@
 		90AA6388116F502200477770 /* MessageFloat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C7F1113564400E5A8B6 /* MessageFloat.cpp */; };
 		90AA6389116F502200477770 /* MessageInlet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C811113564400E5A8B6 /* MessageInlet.cpp */; };
 		90AA638A116F502200477770 /* MessageLoadbang.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C841113564400E5A8B6 /* MessageLoadbang.cpp */; };
-		90AA638B116F502200477770 /* MessageNamedObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C861113564400E5A8B6 /* MessageNamedObject.cpp */; };
 		90AA638C116F502200477770 /* MessageObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C881113564400E5A8B6 /* MessageObject.cpp */; };
 		90AA638D116F502200477770 /* MessageOutlet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C8A1113564400E5A8B6 /* MessageOutlet.cpp */; };
-		90AA638E116F502200477770 /* MessagePassthrough.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C8C1113564400E5A8B6 /* MessagePassthrough.cpp */; };
 		90AA638F116F502200477770 /* MessagePipe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C8E1113564400E5A8B6 /* MessagePipe.cpp */; };
 		90AA6390116F502200477770 /* MessagePrint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C901113564400E5A8B6 /* MessagePrint.cpp */; };
 		90AA6391116F502200477770 /* MessageQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C921113564400E5A8B6 /* MessageQueue.cpp */; };
@@ -250,14 +246,10 @@
 		90398C831113564400E5A8B6 /* MessageLetPair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageLetPair.h; path = ../src/MessageLetPair.h; sourceTree = SOURCE_ROOT; };
 		90398C841113564400E5A8B6 /* MessageLoadbang.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageLoadbang.cpp; path = ../src/MessageLoadbang.cpp; sourceTree = SOURCE_ROOT; };
 		90398C851113564400E5A8B6 /* MessageLoadbang.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageLoadbang.h; path = ../src/MessageLoadbang.h; sourceTree = SOURCE_ROOT; };
-		90398C861113564400E5A8B6 /* MessageNamedObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageNamedObject.cpp; path = ../src/MessageNamedObject.cpp; sourceTree = SOURCE_ROOT; };
-		90398C871113564400E5A8B6 /* MessageNamedObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageNamedObject.h; path = ../src/MessageNamedObject.h; sourceTree = SOURCE_ROOT; };
 		90398C881113564400E5A8B6 /* MessageObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageObject.cpp; path = ../src/MessageObject.cpp; sourceTree = SOURCE_ROOT; };
 		90398C891113564400E5A8B6 /* MessageObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageObject.h; path = ../src/MessageObject.h; sourceTree = SOURCE_ROOT; };
 		90398C8A1113564400E5A8B6 /* MessageOutlet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageOutlet.cpp; path = ../src/MessageOutlet.cpp; sourceTree = SOURCE_ROOT; };
 		90398C8B1113564400E5A8B6 /* MessageOutlet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageOutlet.h; path = ../src/MessageOutlet.h; sourceTree = SOURCE_ROOT; };
-		90398C8C1113564400E5A8B6 /* MessagePassthrough.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessagePassthrough.cpp; path = ../src/MessagePassthrough.cpp; sourceTree = SOURCE_ROOT; };
-		90398C8D1113564400E5A8B6 /* MessagePassthrough.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessagePassthrough.h; path = ../src/MessagePassthrough.h; sourceTree = SOURCE_ROOT; };
 		90398C8E1113564400E5A8B6 /* MessagePipe.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessagePipe.cpp; path = ../src/MessagePipe.cpp; sourceTree = SOURCE_ROOT; };
 		90398C8F1113564400E5A8B6 /* MessagePipe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessagePipe.h; path = ../src/MessagePipe.h; sourceTree = SOURCE_ROOT; };
 		90398C901113564400E5A8B6 /* MessagePrint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessagePrint.cpp; path = ../src/MessagePrint.cpp; sourceTree = SOURCE_ROOT; };
@@ -521,16 +513,12 @@
 				908A37491125DFF800558388 /* MessageMultiply.cpp */,
 				908A374A1125DFF800558388 /* MessageMultiply.h */,
 				908D56AA1139E74C001B0A72 /* MessageNamedDestination.h */,
-				90398C861113564400E5A8B6 /* MessageNamedObject.cpp */,
-				90398C871113564400E5A8B6 /* MessageNamedObject.h */,
 				908A373C1125DF6D00558388 /* MessageNotEquals.cpp */,
 				908A373D1125DF6D00558388 /* MessageNotEquals.h */,
 				90398C881113564400E5A8B6 /* MessageObject.cpp */,
 				90398C891113564400E5A8B6 /* MessageObject.h */,
 				90398C8A1113564400E5A8B6 /* MessageOutlet.cpp */,
 				90398C8B1113564400E5A8B6 /* MessageOutlet.h */,
-				90398C8C1113564400E5A8B6 /* MessagePassthrough.cpp */,
-				90398C8D1113564400E5A8B6 /* MessagePassthrough.h */,
 				90398C8E1113564400E5A8B6 /* MessagePipe.cpp */,
 				90398C8F1113564400E5A8B6 /* MessagePipe.h */,
 				90C0514A11347FC500117E4B /* MessagePow.cpp */,
@@ -690,10 +678,8 @@
 				90398CAD1113564400E5A8B6 /* MessageFloat.cpp in Sources */,
 				90398CAE1113564400E5A8B6 /* MessageInlet.cpp in Sources */,
 				90398CAF1113564400E5A8B6 /* MessageLoadbang.cpp in Sources */,
-				90398CB01113564400E5A8B6 /* MessageNamedObject.cpp in Sources */,
 				90398CB11113564400E5A8B6 /* MessageObject.cpp in Sources */,
 				90398CB21113564400E5A8B6 /* MessageOutlet.cpp in Sources */,
-				90398CB31113564400E5A8B6 /* MessagePassthrough.cpp in Sources */,
 				90398CB41113564400E5A8B6 /* MessagePipe.cpp in Sources */,
 				90398CB51113564400E5A8B6 /* MessagePrint.cpp in Sources */,
 				90398CB61113564400E5A8B6 /* MessageQueue.cpp in Sources */,
@@ -783,10 +769,8 @@
 				90AA6388116F502200477770 /* MessageFloat.cpp in Sources */,
 				90AA6389116F502200477770 /* MessageInlet.cpp in Sources */,
 				90AA638A116F502200477770 /* MessageLoadbang.cpp in Sources */,
-				90AA638B116F502200477770 /* MessageNamedObject.cpp in Sources */,
 				90AA638C116F502200477770 /* MessageObject.cpp in Sources */,
 				90AA638D116F502200477770 /* MessageOutlet.cpp in Sources */,
-				90AA638E116F502200477770 /* MessagePassthrough.cpp in Sources */,
 				90AA638F116F502200477770 /* MessagePipe.cpp in Sources */,
 				90AA6390116F502200477770 /* MessagePrint.cpp in Sources */,
 				90AA6391116F502200477770 /* MessageQueue.cpp in Sources */,
