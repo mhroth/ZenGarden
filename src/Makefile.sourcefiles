@@ -51,11 +51,9 @@ LOCAL_SRC_FILES := \
 ./MessageModulus.cpp \
 ./MessageMoses.cpp \
 ./MessageMultiply.cpp \
-./MessageNamedObject.cpp \
 ./MessageNotEquals.cpp \
 ./MessageObject.cpp \
 ./MessageOutlet.cpp \
-./MessagePassthrough.cpp \
 ./MessagePipe.cpp \
 ./MessagePow.cpp \
 ./MessagePowToDb.cpp \
