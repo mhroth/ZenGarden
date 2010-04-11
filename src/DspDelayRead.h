@@ -40,9 +40,9 @@ class DspDelayRead : public DspObject {
     void processMessage(int inletIndex, PdMessage *message);
     void processDspToIndex(float newBlockIndex);
   
-    DspDelayWrite *delayline; // the delayline to read from
     char *name; // the name of the delwrite~ that this object should read from
     float delayInSamples;
+    int delayInSamplesInt;
 };
 
 #endif // _DSP_DELAY_READ_H_

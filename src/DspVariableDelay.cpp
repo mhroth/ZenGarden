@@ -28,9 +28,9 @@ DspVariableDelay::DspVariableDelay(PdMessage *initMessage, PdGraph *graph) : Dsp
   if (initMessage->getNumElements() > 0 && initMessage->getElement(0)->getType() == SYMBOL) {
     name = StaticUtils::copyString(initMessage->getElement(0)->getSymbol());
   } else {
+    graph->printErr("vd~ requires the name of a delayline. None given.");
     name = NULL;
   }
-  delayline = NULL;
 }
 
 DspVariableDelay::~DspVariableDelay() {
@@ -46,13 +46,8 @@ void DspVariableDelay::processDspToIndex(float newBlockIndex) {
   static int bufferLength;
   static float *inputBuffer = localDspBufferAtInlet[0];
   static float *outputBuffer = localDspBufferAtOutlet[0];
+  static DspDelayWrite *delayline = graph->getDelayline(name);
 
-  if (delayline == NULL) {
-    delayline = graph->getDelayline(name);
-    if (delayline == NULL) {
-      return;
-    }
-  }
   float *buffer = delayline->getBuffer(&headIndex, &bufferLength);
   
   int blockIndexInt = getEndSampleIndex(newBlockIndex);

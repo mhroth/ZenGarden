@@ -23,16 +23,26 @@
 #include "DspDelayWrite.h"
 #include "PdGraph.h"
 
-DspDelayWrite::DspDelayWrite(PdMessage *message, PdGraph *graph) : DspObject(0, 1, 0, 0, graph) {
-  bufferLength = (int) StaticUtils::millisecondsToSamples(message->getElement(1)->getFloat(), 
-      graph->getSampleRate());
-  int blockSize = graph->getBlockSize();
-  if (bufferLength % blockSize != 0) { // bufferLength is forced to be a multiple of the blockSize
-    bufferLength = ((bufferLength/blockSize)+1) * blockSize;
+DspDelayWrite::DspDelayWrite(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0, 0, graph) {
+  if (initMessage->getNumElements() == 2 && 
+      initMessage->getElement(0)->getType() == SYMBOL &&
+      initMessage->getElement(1)->getType() == FLOAT) {
+    bufferLength = (int) StaticUtils::millisecondsToSamples(initMessage->getElement(1)->getFloat(), 
+        graph->getSampleRate());
+    int blockSize = graph->getBlockSize();
+    if (bufferLength % blockSize != 0) { // bufferLength is forced to be a multiple of the blockSize
+      bufferLength = ((bufferLength/blockSize)+1) * blockSize;
+    }
+    headIndex = 0;
+    buffer = (float *) calloc(bufferLength, sizeof(float));
+    name = StaticUtils::copyString(initMessage->getElement(0)->getSymbol());
+  } else {
+    graph->printErr("delwrite~ must be initialised as [delwrite~ name delay].");
+    headIndex = 0;
+    bufferLength = 0;
+    buffer = NULL;
+    name = NULL;
   }
-  headIndex = 0;
-  buffer = (float *) calloc(bufferLength, sizeof(float));
-  name = StaticUtils::copyString(message->getElement(0)->getSymbol());
 }
 
 DspDelayWrite::~DspDelayWrite() {
@@ -54,11 +64,11 @@ float *DspDelayWrite::getBuffer(int *headIndex, int *bufferLength) {
   return buffer;
 }
 
-// because DspDelayWrite receives no messages, blocks are always computed in full
 void DspDelayWrite::processDspToIndex(float newBlockIndex) {
-  memcpy(buffer + headIndex, localDspBufferAtInlet[0], numBytesInBlock);
-  // the repeated call to getBlockSize() could be optimised
-  headIndex += graph->getBlockSize();
+  // because DspDelayWrite receives no messages, blocks are always computed in full
+  static float *inputBuffer = localDspBufferAtInlet[0];
+  memcpy(buffer + headIndex, inputBuffer, numBytesInBlock);
+  headIndex += blockSizeInt;
   if (headIndex >= bufferLength) {
     headIndex = 0;
   }

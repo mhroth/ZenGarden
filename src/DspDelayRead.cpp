@@ -25,10 +25,18 @@
 #include "PdGraph.h"
 
 DspDelayRead::DspDelayRead(PdMessage *initMessage, PdGraph *graph) : DspObject(1, 0, 0, 1, graph) {
-  name = StaticUtils::copyString(initMessage->getElement(0)->getSymbol());
-  delayInSamples = StaticUtils::millisecondsToSamples(initMessage->getElement(1)->getFloat(), 
-      graph->getSampleRate());
-  delayline = NULL;
+  if (initMessage->getNumElements() == 2 &&
+      initMessage->getElement(0)->getType() == SYMBOL &&
+      initMessage->getElement(1)->getType() == FLOAT) {
+    name = StaticUtils::copyString(initMessage->getElement(0)->getSymbol());
+    delayInSamples = StaticUtils::millisecondsToSamples(initMessage->getElement(1)->getFloat(), 
+        graph->getSampleRate());
+    delayInSamplesInt = (int) delayInSamples;
+  } else {
+    graph->printErr("delread~ must be initialised in the format [delread~ name delay].");
+    name = NULL;
+    delayInSamples = 0.0f;
+  }
 }
 
 DspDelayRead::~DspDelayRead() {
@@ -40,48 +48,38 @@ const char *DspDelayRead::getObjectLabel() {
 }
 
 void DspDelayRead::processMessage(int inletIndex, PdMessage *message) {
-  switch (message->getElement(0)->getType()) {
-    case FLOAT: {
-      // update the delay time
-      processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
-      delayInSamples = StaticUtils::millisecondsToSamples(message->getElement(0)->getFloat(), graph->getSampleRate());
-      break;
-    }
-    case SYMBOL: {
-      // reset the delayline to read from
-      free(name);
-      name = StaticUtils::copyString(message->getElement(0)->getSymbol());
-      delayline = graph->getDelayline(name);
-      break;
-    }
-    default: {
-      break;
-    }
+  if (message->getElement(0)->getType() == FLOAT) {
+    // update the delay time
+    processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
+    delayInSamples = StaticUtils::millisecondsToSamples(message->getElement(0)->getFloat(), graph->getSampleRate());
+    delayInSamplesInt = (int) delayInSamples;
   }
 }
 
 void DspDelayRead::processDspToIndex(float newBlockIndex) {
-  // TODO(mhroth): it would be nice to remove this if() check
-  if (delayline == NULL) {
-    // update the delayline 
-    delayline = graph->getDelayline(name);
-    if (delayline == NULL) {
-      return;
-    }
-  }
+  // get a reference to delayline the first time that this function is run
+  static DspDelayWrite *delayline = graph->getDelayline(name);
+  static float *outputBuffer = localDspBufferAtOutlet[0];
   
-  int processLength = (int) (newBlockIndex - blockIndexOfLastMessage);
-  if (processLength > 0) {
-    int headIndex;
-    int bufferLength;
-    float *buffer = delayline->getBuffer(&headIndex, &bufferLength);
-    int delayIndex = (float) headIndex - delayInSamples - ((float) graph->getBlockSize() - blockIndexOfLastMessage);
-    if (delayIndex < 0.0f) {
-      delayIndex += (float) bufferLength;
-      // WARNING: this code does not account for the requested buffer length exceeding
-      // the buffer's limits
+  int headIndex;
+  int bufferLength;
+  float *buffer = delayline->getBuffer(&headIndex, &bufferLength);
+  if (blockIndexOfLastMessage == 0.0f && newBlockIndex == blockSizeFloat) {
+    // this handles the most common case. Messages are rarely sent to delread~.
+    int delayIndex = headIndex - blockSizeInt - delayInSamplesInt;
+    if (delayIndex < 0) {
+      delayIndex += bufferLength;
     }
-    memcpy(localDspBufferAtOutlet[0] + DspObject::getStartSampleIndex(), buffer + (int) delayIndex, processLength * sizeof(float));
+    memcpy(outputBuffer, buffer + delayIndex, numBytesInBlock);
+  } else {
+    //float delayIndex = (float) headIndex - delayInSamples - ((float) graph->getBlockSize() - blockIndexOfLastMessage);
+    int delayIndex = (headIndex-graph->getBlockSize()) - (int) (delayInSamples+blockIndexOfLastMessage);
+    if (delayIndex < 0) {
+      delayIndex += bufferLength;
+    }
+    memcpy(outputBuffer + getStartSampleIndex(), 
+           buffer + delayIndex, 
+           (int) (newBlockIndex - blockIndexOfLastMessage) * sizeof(float));
   }
   blockIndexOfLastMessage = newBlockIndex;
 }
