@@ -43,6 +43,7 @@ class DspDelayRead : public DspObject {
     char *name; // the name of the delwrite~ that this object should read from
     float delayInSamples;
     int delayInSamplesInt;
+    float *originalOutputBuffer;
 };
 
 #endif // _DSP_DELAY_READ_H_
