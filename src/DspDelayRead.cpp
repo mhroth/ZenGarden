@@ -79,20 +79,37 @@ void DspDelayRead::processDspToIndex(float newBlockIndex) {
   float *buffer = delayline->getBuffer(&headIndex, &bufferLength);
   if (blockIndexOfLastMessage == 0.0f && newBlockIndex == blockSizeFloat) {
     // this handles the most common case. Messages are rarely sent to delread~.
-    int delayIndex = headIndex - delayInSamplesInt;
+    int delayIndex = headIndex - blockSizeInt - delayInSamplesInt;
     if (delayIndex < 0) {
       delayIndex += bufferLength;
     }
-    localDspBufferAtOutlet[0] = buffer + delayIndex;
+    if (delayIndex > bufferLength - blockSizeInt) {
+      int samplesInBuffer = bufferLength - delayIndex; // samples remaining in the buffer that belong in this block
+      memcpy(originalOutputBuffer, buffer + delayIndex, samplesInBuffer * sizeof(float));
+      memcpy(originalOutputBuffer + samplesInBuffer, buffer, (blockSizeInt - samplesInBuffer) * sizeof(float));
+      localDspBufferAtOutlet[0] = originalOutputBuffer;
+    } else {
+      localDspBufferAtOutlet[0] = buffer + delayIndex;
+    }
   } else {
     //float delayIndex = (float) headIndex - delayInSamples - ((float) graph->getBlockSize() - blockIndexOfLastMessage);
-    int delayIndex = headIndex - (int) (delayInSamples+blockIndexOfLastMessage);
+    int delayIndex = (headIndex-blockSizeInt) - (int) (delayInSamples+blockIndexOfLastMessage);
     if (delayIndex < 0) {
       delayIndex += bufferLength;
     }
-    memcpy(originalOutputBuffer + getStartSampleIndex(), 
-           buffer + delayIndex, 
-           (int) (newBlockIndex - blockIndexOfLastMessage) * sizeof(float));
+    /*
+     * TODO(mhroth): finish this logic
+    if (delayIndex > bufferLength - blockSizeInt) {
+      int samplesInBuffer = bufferLength - delayIndex;
+      memcpy(originalOutputBuffer, buffer + delayIndex, samplesInBuffer * sizeof(float));
+      memcpy(originalOutputBuffer + samplesInBuffer, buffer, (blockSizeInt - samplesInBuffer) * sizeof(float));
+      localDspBufferAtOutlet[0] = originalOutputBuffer;
+    } else {
+      memcpy(originalOutputBuffer + getStartSampleIndex(), 
+             buffer + delayIndex, 
+             (int) (newBlockIndex - blockIndexOfLastMessage) * sizeof(float));
+    }
+    */
     localDspBufferAtOutlet[0] = originalOutputBuffer;
   }
   blockIndexOfLastMessage = newBlockIndex;

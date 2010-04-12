@@ -27,10 +27,12 @@ DspDelayWrite::DspDelayWrite(PdMessage *initMessage, PdGraph *graph) : DspObject
   if (initMessage->getNumElements() == 2 && 
       initMessage->getElement(0)->getType() == SYMBOL &&
       initMessage->getElement(1)->getType() == FLOAT) {
-    bufferLength = (int) StaticUtils::millisecondsToSamples(initMessage->getElement(1)->getFloat(), 
-        graph->getSampleRate());
-    if (bufferLength % blockSizeInt != 0) { // bufferLength is forced to be a multiple of the blockSize
-      bufferLength = ((bufferLength/blockSizeInt)+1) * blockSizeInt;
+    bufferLength = (int) ceilf(StaticUtils::millisecondsToSamples(initMessage->getElement(1)->getFloat(), 
+        graph->getSampleRate())); 
+    if (bufferLength % blockSizeInt != 0) {
+      bufferLength = ((bufferLength/blockSizeInt)+2) * blockSizeInt;
+    } else {
+      bufferLength += blockSizeInt;
     }
     headIndex = 0;
     buffer = (float *) calloc(bufferLength, sizeof(float));
