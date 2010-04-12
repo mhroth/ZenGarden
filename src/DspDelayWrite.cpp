@@ -29,25 +29,30 @@ DspDelayWrite::DspDelayWrite(PdMessage *initMessage, PdGraph *graph) : DspObject
       initMessage->getElement(1)->getType() == FLOAT) {
     bufferLength = (int) StaticUtils::millisecondsToSamples(initMessage->getElement(1)->getFloat(), 
         graph->getSampleRate());
-    int blockSize = graph->getBlockSize();
-    if (bufferLength % blockSize != 0) { // bufferLength is forced to be a multiple of the blockSize
-      bufferLength = ((bufferLength/blockSize)+1) * blockSize;
+    if (bufferLength % blockSizeInt != 0) { // bufferLength is forced to be a multiple of the blockSize
+      bufferLength = ((bufferLength/blockSizeInt)+1) * blockSizeInt;
     }
     headIndex = 0;
     buffer = (float *) calloc(bufferLength, sizeof(float));
     name = StaticUtils::copyString(initMessage->getElement(0)->getSymbol());
   } else {
-    graph->printErr("delwrite~ must be initialised as [delwrite~ name delay].");
+    graph->printErr("ERROR: delwrite~ must be initialised as [delwrite~ name delay].");
     headIndex = 0;
     bufferLength = 0;
     buffer = NULL;
     name = NULL;
   }
+  
+  // localDspBufferAtInlet[0] points directly at the buffer, eliminating the need for a memcpy
+  // from it to the buffer. Thus, the original localDspBufferAtInlet[0] can be free()ed.
+  free(localDspBufferAtInlet[0]);
+  localDspBufferAtInlet[0] = buffer;
 }
 
 DspDelayWrite::~DspDelayWrite() {
   free(name);
   free(buffer);
+  localDspBufferAtInlet[0] = NULL; // reset local input buffer so that it is properly released (or not)
 }
 
 const char *DspDelayWrite::getObjectLabel() {
@@ -65,11 +70,9 @@ float *DspDelayWrite::getBuffer(int *headIndex, int *bufferLength) {
 }
 
 void DspDelayWrite::processDspToIndex(float newBlockIndex) {
-  // because DspDelayWrite receives no messages, blocks are always computed in full
-  static float *inputBuffer = localDspBufferAtInlet[0];
-  memcpy(buffer + headIndex, inputBuffer, numBytesInBlock);
   headIndex += blockSizeInt;
   if (headIndex >= bufferLength) {
     headIndex = 0;
   }
+  localDspBufferAtInlet[0] = buffer + headIndex; // set pointer for next iteration
 }
