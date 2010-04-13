@@ -41,15 +41,20 @@ const char *DspDac::getObjectLabel() {
   return "dac~";
 }
 
-void DspDac::processDspToIndex(float blockIndex) {
-  // add the input to the dac~ to the global output
-  static float *inputBuffer = NULL;
-  static float *outputBuffer = NULL;
-  for (int i = 0; i < numDspInlets; i++) { // == numOutputChannels
-    inputBuffer = localDspBufferAtInlet[i];
-    outputBuffer = localDspBufferAtOutlet[i];
-    for (int j = 0; j < blockSizeInt; j++) {
-      outputBuffer[j] += inputBuffer[j];
+// TODO(mhroth): What is the best way to configure the buffers in this object? In inlet buffers
+// are no longer used...
+void DspDac::processDsp() {
+  for (int i = 0; i < numDspInlets; i++) {
+    List *incomingDspConnectionsList = incomingDspConnectionsListAtInlet[i];
+    int numConnections = incomingDspConnectionsList->size();
+    float *localOutputBuffer = localDspBufferAtOutlet[i];
+    
+    for (int j = 0; j < numConnections; j++) {
+      ObjectLetPair *objectLetPair = (ObjectLetPair *) incomingDspConnectionsList->get(j);
+      float *remoteOutputBuffer = ((DspObject *) objectLetPair->object)->getDspBufferAtOutlet(objectLetPair->index);
+      for (int k = 0; k < blockSizeInt; k++) {
+        localOutputBuffer[k] += remoteOutputBuffer[k];
+      }
     }
   }
 }

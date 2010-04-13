@@ -33,8 +33,8 @@ class DspDac : public DspObject {
   
     const char *getObjectLabel();
   
-  private:
-    void processDspToIndex(float blockIndex);
+    // override DspObject::processDsp in order to optimise performance
+    void processDsp();
 };
 
 #endif // _DSP_DAC_H_
