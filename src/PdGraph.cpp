@@ -276,6 +276,7 @@ PdGraph::~PdGraph() {
     MessageObject *messageObject = (MessageObject *) nodeList->get(i);
     delete messageObject;
   }
+  delete nodeList;
 }
 
 const char *PdGraph::getObjectLabel() {
