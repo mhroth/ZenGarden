@@ -58,13 +58,13 @@ void DspObject::init(int numDspInlets, int numDspOutlets, int blockSize) {
   // initialise the local input audio buffers
   localDspBufferAtInlet = (float **) malloc(numDspInlets * sizeof(float *));
   for (int i = 0; i < numDspInlets; i++) {
-    localDspBufferAtInlet[i] = (float *) malloc(blockSizeInt * sizeof(float));
+    localDspBufferAtInlet[i] = (float *) calloc(blockSizeInt, sizeof(float));
   }
   
   // initialise the local output audio buffers
   localDspBufferAtOutlet = (float **) malloc(numDspOutlets * sizeof(float *));
   for (int i = 0; i < numDspOutlets; i++) {
-    localDspBufferAtOutlet[i] = (float *) malloc(blockSizeInt * sizeof(float));
+    localDspBufferAtOutlet[i] = (float *) calloc(blockSizeInt, sizeof(float));
   }
 }
 
