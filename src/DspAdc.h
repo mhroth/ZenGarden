@@ -32,10 +32,6 @@ class DspAdc : public DspObject {
     ~DspAdc();
   
     const char *getObjectLabel();
-    
-  private:  
-    /** A temporary holder for the "true" <code>localDspBufferAtOutlet</code>. */
-    float **localDspBufferAtOutletX;
 };
 
 #endif // _DSP_ADC_H_

@@ -24,26 +24,25 @@
 #include "PdGraph.h"
 
 DspAdc::DspAdc(PdGraph *graph) : DspObject(0, 0, 0, graph->getNumInputChannels(), graph) {
-  localDspBufferAtOutletX = localDspBufferAtOutlet;
-  
   /*
    * Such that all ADCs can refer to the same input buffers, and to avoid lots of 
    * <code>memcpy</code>ing to separate input buffers, all ADCs refer to the same input buffers.
-   * This is accomplished by storing the original <code>DspObject</code>'s <code>localDspBufferAtOutlet</code>
-   * in a temporary variable, <code>localDspBufferAtOutletX</code>. The <code>localDspBufferAtOutlet</code>
-   * pointer is then replaced with a new one which further points to the global ADC buffers.
-   * In this way, <code>DspObject</code>s can continue to refer to <code>localDspBufferAtOutlet</code>
+   * This is accomplished by freeing the normally allocated output buffers, and replacing the
+   * pointers to them with pointers to the global input buffers. In this way,
+   * <code>DspObject</code>s can continue to refer to <code>localDspBufferAtOutlet</code>
    * and still get access to the global audio input buffers.
    */
-  localDspBufferAtOutlet = (float **) malloc(numDspOutlets * sizeof(float *));
   for (int i = 0; i < numDspOutlets; i++) {
+    free(localDspBufferAtOutlet[i]);
     localDspBufferAtOutlet[i] = graph->getGlobalDspBufferAtInlet(i);
   }
 }
 
 DspAdc::~DspAdc() {
-  free(localDspBufferAtOutlet);
-  localDspBufferAtOutlet = localDspBufferAtOutletX;
+  for (int i = 0; i < numDspOutlets; i++) {
+    // null the global input buffer pointers such that they are not freed by the object deconstructor
+    localDspBufferAtOutlet[i] = NULL;
+  }
 }
 
 const char *DspAdc::getObjectLabel() {
