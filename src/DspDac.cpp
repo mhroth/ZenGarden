@@ -24,36 +24,34 @@
 #include "PdGraph.h"
 
 DspDac::DspDac(PdGraph *graph) : DspObject(0, graph->getNumOutputChannels(), 0, 0, graph) {
-  // free localDspBufferAtOutlet which has been created by the DspObject constructor (with array size 0).
-  free(localDspBufferAtOutlet);
-  localDspBufferAtOutlet = (float **) malloc(numDspInlets * sizeof(float *)); // recreate the buffer with the correct size
   for (int i = 0; i < numDspInlets; i++) {
-    localDspBufferAtOutlet[i] = graph->getGlobalDspBufferAtOutlet(i);
+    // reuse/repurpose localDspBufferAtInlet to store pointers to the global output buffers
+    free(localDspBufferAtInlet[i]);
+    localDspBufferAtInlet[i] = graph->getGlobalDspBufferAtOutlet(i);
   }
 }
 
 DspDac::~DspDac() {
-  free(localDspBufferAtOutlet);
-  localDspBufferAtOutlet = NULL;
+  for (int i = 0; i < numDspInlets; i++) {
+    localDspBufferAtInlet[i] = NULL;
+  }
 }
 
 const char *DspDac::getObjectLabel() {
   return "dac~";
 }
 
-// TODO(mhroth): What is the best way to configure the buffers in this object? In inlet buffers
-// are no longer used...
 void DspDac::processDsp() {
   for (int i = 0; i < numDspInlets; i++) {
     List *incomingDspConnectionsList = incomingDspConnectionsListAtInlet[i];
     int numConnections = incomingDspConnectionsList->size();
-    float *localOutputBuffer = localDspBufferAtOutlet[i];
+    float *globalOutputBuffer = localDspBufferAtInlet[i];
     
     for (int j = 0; j < numConnections; j++) {
       ObjectLetPair *objectLetPair = (ObjectLetPair *) incomingDspConnectionsList->get(j);
       float *remoteOutputBuffer = ((DspObject *) objectLetPair->object)->getDspBufferAtOutlet(objectLetPair->index);
       for (int k = 0; k < blockSizeInt; k++) {
-        localOutputBuffer[k] += remoteOutputBuffer[k];
+        globalOutputBuffer[k] += remoteOutputBuffer[k];
       }
     }
   }
