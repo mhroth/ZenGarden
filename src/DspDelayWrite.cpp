@@ -34,6 +34,7 @@ DspDelayWrite::DspDelayWrite(PdMessage *initMessage, PdGraph *graph) : DspObject
     } else {
       bufferLength += blockSizeInt;
     }
+    bufferLength += 1; // buffer[bufferLength] == buffer[0], which makes calculation in vd~ easier
     headIndex = 0;
     buffer = (float *) calloc(bufferLength, sizeof(float));
     name = StaticUtils::copyString(initMessage->getElement(0)->getSymbol());
@@ -72,6 +73,9 @@ float *DspDelayWrite::getBuffer(int *headIndex, int *bufferLength) {
 }
 
 void DspDelayWrite::processDspToIndex(float newBlockIndex) {
+  if (headIndex == 0) {
+    buffer[bufferLength] = buffer[0];
+  }
   headIndex += blockSizeInt;
   if (headIndex >= bufferLength) {
     headIndex = 0;

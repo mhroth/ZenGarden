@@ -42,50 +42,50 @@ const char *DspVariableDelay::getObjectLabel() {
 }
 
 void DspVariableDelay::processDspToIndex(float newBlockIndex) {
-  static int headIndex;
-  static int bufferLength;
   static float *inputBuffer = localDspBufferAtInlet[0];
   static float *outputBuffer = localDspBufferAtOutlet[0];
   static DspDelayWrite *delayline = graph->getDelayline(name);
 
+  int headIndex;
+  int bufferLength;
   float *buffer = delayline->getBuffer(&headIndex, &bufferLength);
+  float bufferLengthFloat = (float) bufferLength;
   
   int blockIndexInt = getEndSampleIndex(newBlockIndex);
   for (int i = getStartSampleIndex(); i < blockIndexInt; i++) {
     float delayInSamples = StaticUtils::millisecondsToSamples(inputBuffer[i], graph->getSampleRate());
-    if (delayInSamples < 1.0f) {
-      delayInSamples = 1.0;
-    } else if (delayInSamples > (float) bufferLength) {
-      delayInSamples = (float) bufferLength;
+    if (delayInSamples < 0.0f) {
+      delayInSamples = 0.0f;
+    } else if (delayInSamples > bufferLengthFloat) {
+      delayInSamples = bufferLengthFloat;
     }
     
-    float targetSampleIndex = (float) (headIndex + i) - delayInSamples;
+    float targetSampleIndex = (float) (headIndex - blockSizeInt + i) - delayInSamples;
     if (targetSampleIndex < 0.0f) {
-      targetSampleIndex = targetSampleIndex + ((float) bufferLength);
+      targetSampleIndex = targetSampleIndex + bufferLengthFloat;
     }
     
-    float x0 = floorf(targetSampleIndex);
+    //float x0 = floorf(targetSampleIndex);
+    float x0;
+    // break targetSampleIndex into fractional and integral parts, float dx = targetSampleIndex - x0;
+    float dx = modff(targetSampleIndex, &x0);
     float x1 = ceilf(targetSampleIndex);
-    if (x0 == x1) {
-      outputBuffer[i] = buffer[lrintf(x0)];
-    } else {
-      
-      // 2-point linear interpolation (basic and fast)
-      float y0 = buffer[(int) x0];
-      float y1 = buffer[(int) x1];
-      float slope = (y1 - y0) / (x1 - x0);
-      float dx = targetSampleIndex - x0;
-      outputBuffer[i] = (slope * dx) + y0;
-      
-      /*
-       // 2-point sinc interpolation
-       float xx0 = M_PI * (targetSampleIndex - x0);
-       float xx1 = M_PI * (x1 - targetSampleIndex);
-       float interp0 = buffer[(int) x0] * DspDelayWrite::sineApprox(xx0) / xx0;
-       float interp1 = buffer[(int) x1] * DspDelayWrite::sineApprox(xx1) / xx1;
-       return interp0 + interp1;
-       */
-    }
+    
+    // 2-point linear interpolation (basic and fast)
+    float y0 = buffer[(int) x0];
+    float y1 = buffer[(int) x1];
+    float slope = (y1 - y0); // /(x1 - x0) == 1.0f!
+    //float dx = targetSampleIndex - x0;
+    outputBuffer[i] = (slope * dx) + y0;
+    
+    /*
+    // 2-point sinc interpolation
+    float xx0 = M_PI * (targetSampleIndex - x0);
+    float xx1 = M_PI * (x1 - targetSampleIndex);
+    float interp0 = buffer[(int) x0] * DspDelayWrite::sineApprox(xx0) / xx0;
+    float interp1 = buffer[(int) x1] * DspDelayWrite::sineApprox(xx1) / xx1;
+    return interp0 + interp1;
+    */
   }
   blockIndexOfLastMessage = newBlockIndex;
 }
