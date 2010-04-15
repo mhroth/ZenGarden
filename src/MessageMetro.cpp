@@ -57,8 +57,6 @@ void MessageMetro::processMessage(int inletIndex, PdMessage *message) {
             cancelMessage();
           } else { // should be == 1, but we allow any non-zero float to start the metro
             // start the metro
-            
-            // send a bang right now
             PdMessage *outgoingMessage = getNextOutgoingMessage(0);
             outgoingMessage->setTimestamp(message->getTimestamp());
             sendMessage(0, outgoingMessage); // sends the message and schedules the next one
@@ -74,8 +72,6 @@ void MessageMetro::processMessage(int inletIndex, PdMessage *message) {
         }
         case BANG: {
           // start the metro
-          
-          // send a bang right now
           PdMessage *outgoingMessage = getNextOutgoingMessage(0);
           outgoingMessage->setTimestamp(message->getTimestamp());
           sendMessage(0, outgoingMessage); // sends the message and schedules the next one
@@ -89,6 +85,7 @@ void MessageMetro::processMessage(int inletIndex, PdMessage *message) {
     }
     case 1: {
       if (messageElement->getType() == FLOAT) {
+        cancelMessage(); // cancel any currently pending messages
         intervalInMs = (double) messageElement->getFloat();
       }
       break;
@@ -97,13 +94,16 @@ void MessageMetro::processMessage(int inletIndex, PdMessage *message) {
 }
 
 void MessageMetro::sendMessage(int outletIndex, PdMessage *message) {
-  // send the current message
-  MessageObject::sendMessage(outletIndex, message);
-  
-  // schedule the next one
+  // schedule the next message
+  // this is scheduled before the current message is sent so that if the current message causes
+  // a cancellation of the pending message, then the pending message will already be in the system
+  // to cancel.
   pendingMessage = getNextOutgoingMessage(0);
   pendingMessage->setTimestamp(message->getTimestamp() + intervalInMs);
   graph->scheduleMessage(this, 0, pendingMessage);
+  
+  // send the current message
+  MessageObject::sendMessage(outletIndex, message);
 }
 
 void MessageMetro::cancelMessage() {
