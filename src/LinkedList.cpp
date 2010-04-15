@@ -193,13 +193,3 @@ void LinkedList::insertBefore(LinkedListNode *nodeA, LinkedListNode *nodeB) {
   }
   numElements++;
 }
-
-void LinkedList::resetIterator() {
-  iteratorNode = head;
-}
-
-void *LinkedList::getNext() {
-  void *data = iteratorNode->data;
-  iteratorNode = iteratorNode->next;
-  return data;
-}

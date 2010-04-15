@@ -52,15 +52,6 @@ class LinkedList {
     /** Returns the data at the given index. <code>NULL</code> if out-of-bounds. */
     void *get(int index);
 
-    /** Reset the node iterator to the head. */
-    void resetIterator();
-
-    /**
-     * Get the next node based on the iterator.
-     * If the list changes while iterating, you are well advised to reset the iterator.
-     */
-    void *getNext();
-
   protected:
     LinkedListNode *getEmptyNode();
 
@@ -83,8 +74,6 @@ class LinkedList {
     LinkedListNode *emptyHead;
     LinkedListNode *emptyTail;
     int numEmptyElements;
-
-    LinkedListNode *iteratorNode;
 };
 
 #endif // _LINKED_LIST_H_
