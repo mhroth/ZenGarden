@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -36,8 +36,8 @@ class OrderedMessageQueue : public LinkedList {
     /** Inserts the message into the ordered queue based on its scheduled time. */
     void insertMessage(MessageObject *messageObject, int outletIndex, PdMessage *message);
   
-    /** Removes the given message from the queue. */
-    PdMessage *cancelMessage(int messageId);
+    /** Removes the given message addressed to the given <code>MessageObject</code> from the queue. */
+    void removeMessage(MessageObject *messageObject, int outletIndex, PdMessage *message);
   
   protected:
     void *newDataHolder();

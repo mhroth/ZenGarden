@@ -500,8 +500,8 @@ void PdGraph::scheduleMessage(MessageObject *messageObject, int outletIndex, PdM
 
 void PdGraph::cancelMessage(MessageObject *messageObject, int outletIndex, PdMessage *message) {
   if (isRootGraph()) {
-    // TODO(mhroth): fill this in!
     message->unreserve(messageObject);
+    messageCallbackQueue->removeMessage(messageObject, outletIndex, message);
   } else {
     parentGraph->cancelMessage(messageObject, outletIndex, message);
   }
