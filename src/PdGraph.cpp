@@ -78,6 +78,7 @@
 #include "MessageText.h"
 #include "MessageTrigger.h"
 #include "MessageUntil.h"
+#include "MessageUnpack.h"
 
 #include "MessageSendController.h"
 
@@ -396,6 +397,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageTrigger(initMessage, graph);
     } else if (strcmp(objectLabel, "until") == 0) {
       return new MessageUntil(graph);
+    } else if (strcmp(objectLabel, "unpack") == 0) {
+      return new MessageUnpack(initMessage,graph);
     } else if (strcmp(objectLabel, "+~") == 0) {
       return new DspAdd(initMessage, graph);
     } else if (strcmp(objectLabel, "-~") == 0) {

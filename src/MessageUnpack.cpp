@@ -1,8 +1,8 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
- * 
+ *
  *  This file is part of ZenGarden.
  *
  *  ZenGarden is free software: you can redistribute it and/or modify
@@ -14,74 +14,61 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU Lesser General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with ZenGarden.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
 #include "MessageUnpack.h"
-#include "StaticUtils.h"
+#include "PdGraph.h"
 
-MessageUnpack::MessageUnpack(List *messageElementList, char *initString) : MessageInputMessageOutputObject(1, messageElementList->getNumElements(), initString) {
-  this->messageElementList = messageElementList;
-  for (int i = 0; i < messageElementList->getNumElements(); i++) {
-    MessageElement *messageElement = (MessageElement *) messageElementList->get(i);
-    if (messageElement->getType() == SYMBOL) {
-      if (StaticUtils::isNumeric(messageElement->getSymbol()) ||
-          strcmp(messageElement->getSymbol(), "float") == 0 ||
-          strcmp(messageElement->getSymbol(), "f") == 0) {
-        messageElement->setFloat(0.0f);
-      } else if (strcmp(messageElement->getSymbol(), "bang") == 0 ||
-                 strcmp(messageElement->getSymbol(), "b") == 0) {
-        messageElement->setBang();
-      }
-    }
-  }
+MessageUnpack::MessageUnpack(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, initMessage->getNumElements(), graph) {
+  templateMessage = new PdMessage();
+  templateMessage->clearAndCopyFrom(initMessage, 0);
 }
 
 MessageUnpack::~MessageUnpack() {
-  for (int i = 0; i < messageElementList->getNumElements(); i++) {
-    delete (MessageElement *) messageElementList->get(i);
-  }
-  delete messageElementList;
+  delete templateMessage;
 }
 
-inline void MessageUnpack::processMessage(int inletIndex, PdMessage *message) {
-  if (inletIndex == 0) {
-    int numCommonElements = (message->getNumElements() < messageElementList->getNumElements())
-        ? message->getNumElements()
-        : messageElementList->getNumElements();
-    for (int i = 0; i < numCommonElements; i++) {
-      MessageElement *messageElement = message->getElement(i);
-      MessageElement *packType = (MessageElement *) messageElementList->get(i);
-      if (packType->getType() == messageElement->getType()) {
-        PdMessage *outgoingMessage = getNextOutgoingMessage(i);
-        outgoingMessage->setBlockIndex(message->getBlockIndex());
-        switch (packType->getType()) {
+const char *MessageUnpack::getObjectLabel() {
+  return "unpack";
+}
+
+void MessageUnpack::processMessage(int inletIndex, PdMessage *message) {
+  int numElements;
+  if (templateMessage->getNumElements() <= message->getNumElements()) {
+    numElements = templateMessage->getNumElements();
+  } else {
+    numElements = message->getNumElements();
+  }
+    for (int i = numElements - 1; i >=0; i--) {
+      if (templateMessage->getElement(i)->getType() == message->getElement(i)->getType()) {
+        switch (templateMessage->getElement(i)->getType()) {
           case FLOAT: {
-            outgoingMessage->getElement(0)->setFloat(messageElement->getFloat());
+            PdMessage *outgoingMessage = getNextOutgoingMessage(i);
+            outgoingMessage->getElement(0)->setFloat(message->getElement(i)->getFloat());
+            outgoingMessage->setTimestamp(message->getTimestamp());
+            sendMessage(i, outgoingMessage);
             break;
           }
           case SYMBOL: {
-            outgoingMessage->getElement(0)->setSymbol(messageElement->getSymbol());
-            break;
-          }
-          case BANG: {
-            outgoingMessage->getElement(0)->setBang();
+            PdMessage *outgoingMessage = getNextOutgoingMessage(i);
+            outgoingMessage->getElement(0)->setSymbol(message->getElement(i)->getSymbol());
+            outgoingMessage->setTimestamp(message->getTimestamp());
+            sendMessage(i, outgoingMessage);
             break;
           }
           default: {
             break;
           }
         }
+      } else {
+          graph->printErr("pack: type mismatch: %s expected but got %s.\n",
+              StaticUtils::messageElementTypeToString(templateMessage->getElement(i)->getType()),
+              StaticUtils::messageElementTypeToString(message->getElement(i)->getType()));
       }
     }
-  }
 }
 
-PdMessage *MessageUnpack::newCanonicalMessage() {
-  PdMessage *message = new PdMessage();
-  message->addElement(new MessageElement());
-  return message;
-}
