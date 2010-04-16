@@ -25,6 +25,7 @@
 #include "StaticUtils.h"
 
 MessageElement::MessageElement() {
+  constant = 0.0f;
   symbol = NULL;
   setBang();
 }
@@ -35,6 +36,7 @@ MessageElement::MessageElement(float constant) {
 }
 
 MessageElement::MessageElement(char *newSymbol) {
+  constant = 0.0f;
   symbol = NULL;
   setSymbol(newSymbol);
 }
