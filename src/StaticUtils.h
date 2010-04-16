@@ -24,6 +24,7 @@
 #define _STATIC_UTILS_H_
 
 #include "List.h"
+#include "MessageElementType.h"
 
 class StaticUtils {
   
@@ -39,6 +40,9 @@ class StaticUtils {
     static int getArgumentIndex(char *str);
     static List *tokenizeString(char *str, const char *delim);
     static void destroyTokenizedStringList(List *tokenList);
+  
+    /** This is a helper function for printing error (or info) messages. */
+    static const char *messageElementTypeToString(MessageElementType type);
   
   private:
     StaticUtils(); // a private constructor. No instances of this object should be made.
