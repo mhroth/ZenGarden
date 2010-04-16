@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009, 2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -25,22 +25,15 @@
 MessageNotEquals::MessageNotEquals(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
   if (initMessage->getNumElements() > 0 &&
       initMessage->getElement(0)->getType() == FLOAT) {
-    init(initMessage->getElement(0)->getFloat());
+    constant = initMessage->getElement(0)->getFloat();
   } else {
-    init(0.0f);
+    constant = 0.0f;
   }
-}
-
-MessageNotEquals::MessageNotEquals(float constant, PdGraph *graph) : MessageObject(2, 1, graph) {
-  init(constant);
+  lastOutput = 0.0f;
 }
 
 MessageNotEquals::~MessageNotEquals() {
   // nothing to do
-}
-
-void MessageNotEquals::init(float constant) {
-  this->constant = constant;
 }
 
 const char *MessageNotEquals::getObjectLabel() {
@@ -51,11 +44,21 @@ void MessageNotEquals::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
       MessageElement *messageElement = message->getElement(0);
-      if (messageElement->getType() == FLOAT) {
-        PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-        outgoingMessage->getElement(0)->setFloat((messageElement->getFloat() != constant) ? 1.0f : 0.0f);
-        outgoingMessage->setTimestamp(message->getTimestamp());
-        sendMessage(0, outgoingMessage); // send a message from outlet 0
+      switch (messageElement->getType()) {
+        case FLOAT: {
+          lastOutput = (messageElement->getFloat() != constant) ? 1.0f : 0.0f;
+          // allow fallthrough
+        }
+        case BANG: {
+          PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+          outgoingMessage->getElement(0)->setFloat(lastOutput);
+          outgoingMessage->setTimestamp(message->getTimestamp());
+          sendMessage(0, outgoingMessage);
+          break;
+        }
+        default: {
+          break;
+        }
       }
       break;
     }
