@@ -65,8 +65,7 @@ void MessageMetro::processMessage(int inletIndex, PdMessage *message) {
         }
         case SYMBOL: {
           if (strcmp(messageElement->getSymbol(), "stop") == 0) {
-            // stop the metro
-            cancelMessage();
+            cancelMessage(); // stop the metro
           }
           break;
         }
@@ -94,6 +93,10 @@ void MessageMetro::processMessage(int inletIndex, PdMessage *message) {
 }
 
 void MessageMetro::sendMessage(int outletIndex, PdMessage *message) {
+  // reserve the outgoing message such that when the pending message is created, the outgoing
+  // is not immediately reused.
+  message->reserve(this);
+  
   // schedule the next message
   // this is scheduled before the current message is sent so that if the current message causes
   // a cancellation of the pending message, then the pending message will already be in the system
@@ -104,6 +107,7 @@ void MessageMetro::sendMessage(int outletIndex, PdMessage *message) {
   
   // send the current message
   MessageObject::sendMessage(outletIndex, message);
+  message->unreserve(this); // release the outgoing message so that it can be reused
 }
 
 void MessageMetro::cancelMessage() {
