@@ -48,6 +48,9 @@
 		90398CBC1113564400E5A8B6 /* StaticUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398CA11113564400E5A8B6 /* StaticUtils.cpp */; };
 		903E935F11623F37006CC60F /* DspDelayWrite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 903E935D11623F37006CC60F /* DspDelayWrite.cpp */; };
 		903E938C11624631006CC60F /* DspDelayRead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 903E938A11624631006CC60F /* DspDelayRead.cpp */; };
+		90565AAD117A26F50006E136 /* MessageUnpack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90565AAB117A26F50006E136 /* MessageUnpack.cpp */; };
+		90565AAE117A26F50006E136 /* MessageUnpack.h in Headers */ = {isa = PBXBuildFile; fileRef = 90565AAC117A26F50006E136 /* MessageUnpack.h */; };
+		90565AAF117A26F50006E136 /* MessageUnpack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90565AAB117A26F50006E136 /* MessageUnpack.cpp */; };
 		908687A41138467800C87D5C /* PdFileParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908687A31138467800C87D5C /* PdFileParser.cpp */; };
 		908A373E1125DF6D00558388 /* MessageEqualsEquals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908A37321125DF6D00558388 /* MessageEqualsEquals.cpp */; };
 		908A373F1125DF6D00558388 /* MessageGreaterThan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908A37341125DF6D00558388 /* MessageGreaterThan.cpp */; };
@@ -279,6 +282,8 @@
 		903E935E11623F37006CC60F /* DspDelayWrite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspDelayWrite.h; path = ../src/DspDelayWrite.h; sourceTree = SOURCE_ROOT; };
 		903E938A11624631006CC60F /* DspDelayRead.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspDelayRead.cpp; path = ../src/DspDelayRead.cpp; sourceTree = SOURCE_ROOT; };
 		903E938B11624631006CC60F /* DspDelayRead.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspDelayRead.h; path = ../src/DspDelayRead.h; sourceTree = SOURCE_ROOT; };
+		90565AAB117A26F50006E136 /* MessageUnpack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageUnpack.cpp; path = ../src/MessageUnpack.cpp; sourceTree = SOURCE_ROOT; };
+		90565AAC117A26F50006E136 /* MessageUnpack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageUnpack.h; path = ../src/MessageUnpack.h; sourceTree = SOURCE_ROOT; };
 		908687A21138467800C87D5C /* PdFileParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PdFileParser.h; path = ../src/PdFileParser.h; sourceTree = SOURCE_ROOT; };
 		908687A31138467800C87D5C /* PdFileParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PdFileParser.cpp; path = ../src/PdFileParser.cpp; sourceTree = SOURCE_ROOT; };
 		908A37321125DF6D00558388 /* MessageEqualsEquals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageEqualsEquals.cpp; path = ../src/MessageEqualsEquals.cpp; sourceTree = SOURCE_ROOT; };
@@ -573,6 +578,8 @@
 				90CC80BD11711375009D1539 /* MessageText.h */,
 				90C94369114A868200B78515 /* MessageTrigger.cpp */,
 				90C9436A114A868200B78515 /* MessageTrigger.h */,
+				90565AAB117A26F50006E136 /* MessageUnpack.cpp */,
+				90565AAC117A26F50006E136 /* MessageUnpack.h */,
 				90C76BBE114AD15800887B04 /* MessageUntil.cpp */,
 				90C76BBD114AD15800887B04 /* MessageUntil.h */,
 				90398C981113564400E5A8B6 /* ObjectLetPair.h */,
@@ -617,6 +624,7 @@
 				909A93F71170B3FF00E52B96 /* DspVariableDelay.h in Headers */,
 				909A95A11170E97D00E52B96 /* MessagePack.h in Headers */,
 				90CC80BF11711375009D1539 /* MessageText.h in Headers */,
+				90565AAE117A26F50006E136 /* MessageUnpack.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -766,6 +774,7 @@
 				909A93F51170B3FF00E52B96 /* DspVariableDelay.cpp in Sources */,
 				909A959F1170E97D00E52B96 /* MessagePack.cpp in Sources */,
 				90CC80C111711375009D1539 /* MessageText.cpp in Sources */,
+				90565AAF117A26F50006E136 /* MessageUnpack.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -857,6 +866,7 @@
 				909A93F61170B3FF00E52B96 /* DspVariableDelay.cpp in Sources */,
 				909A95A01170E97D00E52B96 /* MessagePack.cpp in Sources */,
 				90CC80C011711375009D1539 /* MessageText.cpp in Sources */,
+				90565AAD117A26F50006E136 /* MessageUnpack.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

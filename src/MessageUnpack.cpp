@@ -37,38 +37,36 @@ const char *MessageUnpack::getObjectLabel() {
 }
 
 void MessageUnpack::processMessage(int inletIndex, PdMessage *message) {
-  int numElements;
-  if (templateMessage->getNumElements() <= message->getNumElements()) {
+  int numElements = message->getNumElements();
+  if (templateMessage->getNumElements() < message->getNumElements()) {
     numElements = templateMessage->getNumElements();
-  } else {
-    numElements = message->getNumElements();
   }
-    for (int i = numElements - 1; i >=0; i--) {
-      if (templateMessage->getElement(i)->getType() == message->getElement(i)->getType()) {
-        switch (templateMessage->getElement(i)->getType()) {
-          case FLOAT: {
-            PdMessage *outgoingMessage = getNextOutgoingMessage(i);
-            outgoingMessage->getElement(0)->setFloat(message->getElement(i)->getFloat());
-            outgoingMessage->setTimestamp(message->getTimestamp());
-            sendMessage(i, outgoingMessage);
-            break;
-          }
-          case SYMBOL: {
-            PdMessage *outgoingMessage = getNextOutgoingMessage(i);
-            outgoingMessage->getElement(0)->setSymbol(message->getElement(i)->getSymbol());
-            outgoingMessage->setTimestamp(message->getTimestamp());
-            sendMessage(i, outgoingMessage);
-            break;
-          }
-          default: {
-            break;
-          }
+  for (int i = numElements-1; i >=0; i--) {
+    if (templateMessage->getElement(i)->getType() == message->getElement(i)->getType()) {
+      switch (templateMessage->getElement(i)->getType()) {
+        case FLOAT: {
+          PdMessage *outgoingMessage = getNextOutgoingMessage(i);
+          outgoingMessage->getElement(0)->setFloat(message->getElement(i)->getFloat());
+          outgoingMessage->setTimestamp(message->getTimestamp());
+          sendMessage(i, outgoingMessage);
+          break;
         }
-      } else {
-          graph->printErr("pack: type mismatch: %s expected but got %s.\n",
-              StaticUtils::messageElementTypeToString(templateMessage->getElement(i)->getType()),
-              StaticUtils::messageElementTypeToString(message->getElement(i)->getType()));
+        case SYMBOL: {
+          PdMessage *outgoingMessage = getNextOutgoingMessage(i);
+          outgoingMessage->getElement(0)->setSymbol(message->getElement(i)->getSymbol());
+          outgoingMessage->setTimestamp(message->getTimestamp());
+          sendMessage(i, outgoingMessage);
+          break;
+        }
+        default: {
+          break;
+        }
       }
+    } else {
+        graph->printErr("unpack: type mismatch: %s expected but got %s.\n",
+            StaticUtils::messageElementTypeToString(templateMessage->getElement(i)->getType()),
+            StaticUtils::messageElementTypeToString(message->getElement(i)->getType()));
     }
+  }
 }
 

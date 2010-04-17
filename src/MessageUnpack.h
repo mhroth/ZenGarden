@@ -36,7 +36,7 @@ class MessageUnpack : public MessageObject {
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *outgoingMessage;
+  
     PdMessage *templateMessage;
 };
 
