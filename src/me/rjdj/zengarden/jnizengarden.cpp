@@ -94,7 +94,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *ur_jvm, void *reserved) {
 
 JNIEXPORT jlong JNICALL Java_me_rjdj_zengarden_ZenGarden_loadPdPatch(
     JNIEnv *env, jobject jobj, jstring jdirectory, jstring jfilename, jstring jlibraryDirectory, 
-    jint blockSize, jint numInputChannels, jint numOutputChannels, jint sampleRate) {
+    jint blockSize, jint numInputChannels, jint numOutputChannels, jfloat sampleRate) {
 
   PdGraph *pdGraph = NULL;
   char *cdirectory = (char *) env->GetStringUTFChars(jdirectory, NULL);

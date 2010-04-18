@@ -56,7 +56,7 @@ public class ZenGarden {
    * <i>ideally</i> given. Use <code>getMessage()</code>.
    */
   public ZenGarden(File patchFile, File libDirectory, int blockSize, int numInputChannels, 
-      int numOutputChannels, int sampleRate) throws NativeLoadException {
+      int numOutputChannels, float sampleRate) throws NativeLoadException {
     if (!patchFile.isFile()) {
       throw new IllegalArgumentException("The file object must refer to a file: " + 
           patchFile.toString());
@@ -86,7 +86,7 @@ public class ZenGarden {
   
   private native long loadPdPatch(
       String directory, String filename, String libraryDirectory, int blockSize, 
-      int numInputChannels, int numOutputChannels, int sampleRate) throws NativeLoadException;
+      int numInputChannels, int numOutputChannels, float sampleRate) throws NativeLoadException;
   
   @Override
   protected void finalize() throws Throwable {
