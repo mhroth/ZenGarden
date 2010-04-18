@@ -32,10 +32,12 @@ DspDelayRead::DspDelayRead(PdMessage *initMessage, PdGraph *graph) : DspObject(1
     delayInSamples = StaticUtils::millisecondsToSamples(initMessage->getElement(1)->getFloat(), 
         graph->getSampleRate());
     delayInSamplesInt = (int) delayInSamples;
+    delayline = graph->getDelayline(name);
   } else {
     graph->printErr("delread~ must be initialised in the format [delread~ name delay].");
     name = NULL;
     delayInSamples = 0.0f;
+    delayline = NULL;
   }
   
   /*
@@ -61,6 +63,14 @@ const char *DspDelayRead::getObjectLabel() {
   return "delread~";
 }
 
+char *DspDelayRead::getName() {
+  return name;
+}
+
+void DspDelayRead::setDelayline(DspDelayWrite *delayline) {
+  this->delayline = delayline;
+}
+
 void DspDelayRead::processMessage(int inletIndex, PdMessage *message) {
   if (message->getElement(0)->getType() == FLOAT) {
     // update the delay time
@@ -71,8 +81,12 @@ void DspDelayRead::processMessage(int inletIndex, PdMessage *message) {
 }
 
 void DspDelayRead::processDspToIndex(float newBlockIndex) {
-  // get a reference to delayline the first time that this function is run
-  static DspDelayWrite *delayline = graph->getDelayline(name);
+  if (delayline == NULL) {
+    delayline = graph->getDelayline(name);
+    if (delayline == NULL) {
+      return;
+    }
+  }
   
   int headIndex;
   int bufferLength;

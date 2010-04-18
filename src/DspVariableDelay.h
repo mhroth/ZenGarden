@@ -41,6 +41,7 @@ class DspVariableDelay : public DspObject {
   
     /** The name of the delay line that this object reads from. */
     char *name;
+    DspDelayWrite *delayline;
 };
 
 #endif // _DSP_VARIABLE_DELAY_H_

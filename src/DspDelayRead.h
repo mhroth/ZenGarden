@@ -36,11 +36,15 @@ class DspDelayRead : public DspObject {
   
     const char *getObjectLabel();
   
+    char *getName();
+    void setDelayline(DspDelayWrite *delayline);
+  
   private:
     void processMessage(int inletIndex, PdMessage *message);
     void processDspToIndex(float newBlockIndex);
   
     char *name; // the name of the delwrite~ that this object should read from
+    DspDelayWrite *delayline;
     float delayInSamples;
     int delayInSamplesInt;
     float *originalOutputBuffer;
