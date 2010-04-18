@@ -399,6 +399,10 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageUntil(graph);
     } else if (strcmp(objectLabel, "unpack") == 0) {
       return new MessageUnpack(initMessage,graph);
+    } else if (strcmp(objectLabel, "vsl") == 0 ||
+               strcmp(objectLabel, "hsl") == 0) {
+      // gui sliders are represented as a float objects
+      return new MessageFloat(0.0f, graph);
     } else if (strcmp(objectLabel, "+~") == 0) {
       return new DspAdd(initMessage, graph);
     } else if (strcmp(objectLabel, "-~") == 0) {
