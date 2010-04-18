@@ -161,15 +161,10 @@ void DspObject::receiveMessage(int inletIndex, PdMessage *message) {
 
 void DspObject::processDsp() {
   // collect all incoming audio into local input buffers
-  static int numConnections = 0;
-  static List *incomingDspConnectionsList = NULL;
-  static ObjectLetPair *objectLetPair = NULL;
-  static float *remoteOutputBuffer = NULL;
-  static float *localInputBuffer = NULL;
   for (int i = 0; i < numDspInlets; i++) {
-    incomingDspConnectionsList = incomingDspConnectionsListAtInlet[i];
-    numConnections = incomingDspConnectionsList->size();
-    localInputBuffer = localDspBufferAtInlet[i];
+    List *incomingDspConnectionsList = incomingDspConnectionsListAtInlet[i];
+    int numConnections = incomingDspConnectionsList->size();
+    float *localInputBuffer = localDspBufferAtInlet[i];
     
     switch (numConnections) {
       case 0: {
@@ -177,15 +172,15 @@ void DspObject::processDsp() {
       }
       case 1: {
         // copy the single connection's output buffer to the input buffer
-        objectLetPair = (ObjectLetPair *) incomingDspConnectionsList->get(0);
-        remoteOutputBuffer = ((DspObject *) objectLetPair->object)->getDspBufferAtOutlet(objectLetPair->index);
+        ObjectLetPair *objectLetPair = (ObjectLetPair *) incomingDspConnectionsList->get(0);
+        float *remoteOutputBuffer = ((DspObject *) objectLetPair->object)->getDspBufferAtOutlet(objectLetPair->index);
         memcpy(localInputBuffer, remoteOutputBuffer, numBytesInBlock);
         break;
       }
       default: { // numConnections > 1
         // copy the single connection's output buffer to the input buffer
-        objectLetPair = (ObjectLetPair *) incomingDspConnectionsList->get(0);
-        remoteOutputBuffer = ((DspObject *) objectLetPair->object)->getDspBufferAtOutlet(objectLetPair->index);
+        ObjectLetPair *objectLetPair = (ObjectLetPair *) incomingDspConnectionsList->get(0);
+        float *remoteOutputBuffer = ((DspObject *) objectLetPair->object)->getDspBufferAtOutlet(objectLetPair->index);
         memcpy(localInputBuffer, remoteOutputBuffer, numBytesInBlock);
         
         // add the remaining output buffers to the input buffer
@@ -202,7 +197,7 @@ void DspObject::processDsp() {
   }
   
   // process all pending messages in this block
-  static MessageLetPair *messageLetPair = NULL;
+  MessageLetPair *messageLetPair = NULL;
   while ((messageLetPair = (MessageLetPair *) messageQueue->remove(0)) != NULL) {
     processMessage(messageLetPair->index, messageLetPair->message);
     messageLetPair->message->unreserve(this); // unreserve the message so that it can be reused by the issuing object
