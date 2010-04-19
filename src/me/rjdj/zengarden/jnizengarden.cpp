@@ -191,7 +191,15 @@ JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZenGarden_process(
   short *coutputBuffer = (short *) env->GetPrimitiveArrayCritical(joutputBuffer, NULL);
   for (int i = 0, j = 0; i < pdmnv->blockSize; i++) {
     for (int k = 0, z = i; k < pdmnv->numOutputChannels; k++, j++, z+=pdmnv->blockSize) {
-      coutputBuffer[j] = (short) lrintf(pdmnv->foutputBuffer[z] * 32767.0f);
+      // clip the output (like Pd does)
+      float f = pdmnv->foutputBuffer[z];
+      if (f > 1.0f) {
+        coutputBuffer[j] = 32767;
+      } else if (f < -1.0f) {
+        coutputBuffer[j] = -32768;
+      } else {
+        coutputBuffer[j] = (short) lrintf(f * 32767.0f);
+      }
       /*
        * WARNING: if pdmnv->foutputBuffer[z] == 1.0f, this method will result in -32768, not 32767
        * and cause a click in the output (i.e., there is overflow when converting to a short)
