@@ -46,7 +46,7 @@ public class ExampleGarden {
   private static final int BLOCK_SIZE = 2048;
   
   // 22050 Hz is chosen (somewhat arbitrarily) because this is the sample rate that RjDj runs at.
-  private static final int SAMPLE_RATE = 22050;
+  private static final int SAMPLE_RATE = 44100;
   private static final int NUM_INPUT_CHANNELS = 2;
   private static final int NUM_OUTPUT_CHANNELS = 2;
   
@@ -106,7 +106,7 @@ public class ExampleGarden {
       ZenGarden pdPatch = null;
       try {
         pdPatch = new ZenGarden(pdFile, pdFile.getParentFile(), BLOCK_SIZE, 
-            NUM_INPUT_CHANNELS, NUM_OUTPUT_CHANNELS, SAMPLE_RATE);
+            NUM_INPUT_CHANNELS, NUM_OUTPUT_CHANNELS, (float) SAMPLE_RATE);
       } catch (NativeLoadException nle) {
         nle.printStackTrace(System.err);
         System.exit(2);
