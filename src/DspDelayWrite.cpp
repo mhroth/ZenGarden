@@ -34,9 +34,9 @@ DspDelayWrite::DspDelayWrite(PdMessage *initMessage, PdGraph *graph) : DspObject
     } else {
       bufferLength += blockSizeInt;
     }
-    bufferLength += 1; // buffer[bufferLength] == buffer[0], which makes calculation in vd~ easier
     headIndex = 0;
-    buffer = (float *) calloc(bufferLength, sizeof(float));
+    // buffer[bufferLength] == buffer[0], which makes calculation in vd~ easier
+    buffer = (float *) calloc(bufferLength+1, sizeof(float));
     name = StaticUtils::copyString(initMessage->getElement(0)->getSymbol());
   } else {
     graph->printErr("ERROR: delwrite~ must be initialised as [delwrite~ name delay].");
