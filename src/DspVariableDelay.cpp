@@ -64,26 +64,17 @@ void DspVariableDelay::processDspToIndex(float newBlockIndex) {
     }
     
     //float x0 = floorf(targetSampleIndex);
-    float x0;
+    float x0f;
     // break targetSampleIndex into fractional and integral parts, float dx = targetSampleIndex - x0;
-    float dx = modff(targetSampleIndex, &x0);
-    float x1 = ceilf(targetSampleIndex);
+    float dx = modff(targetSampleIndex, &x0f);
     
     // 2-point linear interpolation (basic and fast)
-    float y0 = buffer[(int) x0];
-    float y1 = buffer[(int) x1];
+    int x0i = (int) x0f;
+    float y0 = buffer[x0i];
+    float y1 = buffer[x0i+1];
     float slope = (y1 - y0); // /(x1 - x0) == 1.0f!
     //float dx = targetSampleIndex - x0;
     outputBuffer[i] = (slope * dx) + y0;
-    
-    /*
-    // 2-point sinc interpolation
-    float xx0 = M_PI * (targetSampleIndex - x0);
-    float xx1 = M_PI * (x1 - targetSampleIndex);
-    float interp0 = buffer[(int) x0] * DspDelayWrite::sineApprox(xx0) / xx0;
-    float interp1 = buffer[(int) x1] * DspDelayWrite::sineApprox(xx1) / xx1;
-    return interp0 + interp1;
-    */
   }
   blockIndexOfLastMessage = newBlockIndex;
 }
