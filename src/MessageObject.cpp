@@ -132,12 +132,17 @@ void MessageObject::receiveMessage(int inletIndex, PdMessage *message) {
 }
 
 void MessageObject::sendMessage(int outletIndex, PdMessage *message) {
+  // this object reserves and unreserves the message in case this object is retriggered while
+  // this message is outstanding. It should not be reused in case the retrigger causes
+  // another message to be sent from this object.
+  message->reserve(this);
   List *outgoingMessageConnectionsList = outgoingMessageConnectionsListAtOutlet[outletIndex];
   int numConnectionsAtOutlet = outgoingMessageConnectionsList->size();
   for (int i = 0; i < numConnectionsAtOutlet; i++) {
     ObjectLetPair *objectLetPair = (ObjectLetPair *) outgoingMessageConnectionsList->get(i);
     objectLetPair->object->receiveMessage(objectLetPair->index, message);
   }
+  message->unreserve(this);
 }
 
 void MessageObject::processMessage(int inletIndex, PdMessage *message) {
