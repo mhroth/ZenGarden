@@ -111,7 +111,10 @@ class DspObject : public MessageObject {
     float **localDspBufferAtInlet;
     float **localDspBufferAtOutlet;
   
+    /** List of all dsp objects connecting to this object at each inlet. */
     List **incomingDspConnectionsListAtInlet;
+  
+    /** List of all dsp objects to which this object connects at each outlet. */
     List **outgoingDspConnectionsListAtOutlet;
   
   private:
