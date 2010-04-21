@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -20,32 +20,22 @@
  *
  */
 
-#ifndef _DSP_DELAY_READ_H_
-#define _DSP_DELAY_READ_H_
-
 #include "DelayReceiver.h"
 
-class DspDelayWrite;
+DelayReceiver::DelayReceiver(int numMessageInlets, int numDspInlets, int numMessageOutlets, int numDspOutlets, PdGraph *graph) : 
+    DspObject(numMessageInlets, numDspInlets, numMessageOutlets, numDspOutlets, graph) {
+  name = NULL;
+  delayline = NULL;
+}
 
-/**
- * [delread~ symbol float]
- * This object also implements the <code>DelayReceiver</code> interface.
- */
-class DspDelayRead : public DelayReceiver {
-  
-  public:
-    DspDelayRead(PdMessage *initString, PdGraph *graph);
-    ~DspDelayRead();
-  
-    const char *getObjectLabel();
-  
-  private:
-    void processMessage(int inletIndex, PdMessage *message);
-    void processDspToIndex(float newBlockIndex);
-  
-    float delayInSamples;
-    int delayInSamplesInt;
-    float *originalOutputBuffer;
-};
+DelayReceiver::~DelayReceiver() {
+  free(name);
+}
 
-#endif // _DSP_DELAY_READ_H_
+char *DelayReceiver::getName() {
+  return name;
+}
+
+void DelayReceiver::setDelayline(DspDelayWrite *delayline) {
+  this->delayline = delayline;
+}

@@ -1,4 +1,5 @@
 LOCAL_SRC_FILES := \
+./DelayReceiver.cpp \
 ./DspAdd.cpp \
 ./DspAdc.cpp \
 ./DspDac.cpp \

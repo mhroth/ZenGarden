@@ -24,7 +24,7 @@
 #include "DspDelayWrite.h"
 #include "PdGraph.h"
 
-DspDelayRead::DspDelayRead(PdMessage *initMessage, PdGraph *graph) : DspObject(1, 0, 0, 1, graph) {
+DspDelayRead::DspDelayRead(PdMessage *initMessage, PdGraph *graph) : DelayReceiver(1, 0, 0, 1, graph) {
   if (initMessage->getNumElements() == 2 &&
       initMessage->getElement(0)->getType() == SYMBOL &&
       initMessage->getElement(1)->getType() == FLOAT) {
@@ -32,12 +32,9 @@ DspDelayRead::DspDelayRead(PdMessage *initMessage, PdGraph *graph) : DspObject(1
     delayInSamples = StaticUtils::millisecondsToSamples(initMessage->getElement(1)->getFloat(), 
         graph->getSampleRate());
     delayInSamplesInt = (int) delayInSamples;
-    delayline = graph->getDelayline(name);
   } else {
     graph->printErr("delread~ must be initialised in the format [delread~ name delay].");
-    name = NULL;
     delayInSamples = 0.0f;
-    delayline = NULL;
   }
   
   /*
@@ -53,7 +50,6 @@ DspDelayRead::DspDelayRead(PdMessage *initMessage, PdGraph *graph) : DspObject(1
 
 DspDelayRead::~DspDelayRead() {
   free(name);
-  
   // The original value of localDspBufferAtOutlet[0] is restored such that the original output buffer
   // is properly freed.
   localDspBufferAtOutlet[0] = originalOutputBuffer;
@@ -61,14 +57,6 @@ DspDelayRead::~DspDelayRead() {
 
 const char *DspDelayRead::getObjectLabel() {
   return "delread~";
-}
-
-char *DspDelayRead::getName() {
-  return name;
-}
-
-void DspDelayRead::setDelayline(DspDelayWrite *delayline) {
-  this->delayline = delayline;
 }
 
 void DspDelayRead::processMessage(int inletIndex, PdMessage *message) {
@@ -81,13 +69,6 @@ void DspDelayRead::processMessage(int inletIndex, PdMessage *message) {
 }
 
 void DspDelayRead::processDspToIndex(float newBlockIndex) {
-  if (delayline == NULL) {
-    delayline = graph->getDelayline(name);
-    if (delayline == NULL) {
-      return;
-    }
-  }
-  
   int headIndex;
   int bufferLength;
   float *buffer = delayline->getBuffer(&headIndex, &bufferLength);

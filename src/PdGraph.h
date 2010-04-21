@@ -28,6 +28,7 @@
 #include "OrderedMessageQueue.h"
 #include "PdFileParser.h"
 
+class DelayReceiver;
 class DspDelayWrite;
 class DspReceive;
 class DspSend;
@@ -164,8 +165,17 @@ class PdGraph : public DspObject {
     /** Globally register a [send~] object. Connect to registered [receive~] objects with the same name. */
     void registerDspSend(DspSend *dspSend);
   
-    /** Globally register a [delwrite~] object. */
+    /**
+     * Globally register a [delwrite~] object. Registration is necessary such that they can
+     * be connected to [delread~] and [vd~] objects as are they are added to the graph.
+     */
     void registerDelayline(DspDelayWrite *delayline);
+  
+    /**
+     * Globally register a [delread~] or [vd~] object. Registration is necessary such that they can
+     * be connected to [delwrite~] objects are they are added to the graph.
+     */
+    void registerDelayReceiver(DelayReceiver *delayReceiver);
   
     /** The unique id for this subgraph. Defines "$0". */
     int graphId;
@@ -211,6 +221,9 @@ class PdGraph : public DspObject {
   
     /** A global list of all [delwite~] objects. */
     List *delaylineList;
+  
+    /** A global list of all [delread~] and [vd~] objects. */
+    List *delayReceiverList;
   
     /**
      * The global <code>MessageSendController</code> which dispatches messages to named

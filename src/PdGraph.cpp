@@ -160,6 +160,7 @@ PdGraph::PdGraph(PdFileParser *fileParser, char *directory, char *libraryDirecto
     dspReceiveList = new List();
     dspSendList = new List();
     delaylineList = new List();
+    delayReceiverList = new List();
     sendController = new MessageSendController(this);
   } else {
     messageCallbackQueue = NULL;
@@ -170,6 +171,7 @@ PdGraph::PdGraph(PdFileParser *fileParser, char *directory, char *libraryDirecto
     dspReceiveList = NULL;
     dspSendList = NULL;
     delaylineList = NULL;
+    delayReceiverList = NULL;
     sendController = NULL;
   }
 
@@ -245,12 +247,12 @@ PdGraph::PdGraph(PdFileParser *fileParser, char *directory, char *libraryDirecto
         // set environment for loading patch
         // TODO(mhroth): this doesn't do anything for us at the moment,
         // but the case must be handled. Nothing to do.
-        printErr("Received unimplemented \"#X declare\" object.\n");
+        printErr("Received unimplemented \"#X declare\" object: \"%s\"\n", line);
       } else {
-        printf("WARNING | Unrecognised #X object type on line \"%s\".\n", line);
+        printErr("Unrecognised #X object type on line: \"%s\"\n", line);
       }
     } else {
-      printf("WARNING | Unrecognised hash type on line \"%s\".\n", line);
+      printErr("Unrecognised hash type on line: \"%s\"\n", line);
     }
   }
 
@@ -264,6 +266,7 @@ PdGraph::~PdGraph() {
     delete dspSendList;
     delete sendController;
     delete delaylineList;
+    delete delayReceiverList;
     free(globalDspInputBuffers);
     free(globalDspOutputBuffers);
   }
@@ -458,6 +461,9 @@ void PdGraph::addObject(MessageObject *node) {
     ((MessageOutlet *) node)->setOutletIndex(outletList->size()-1);
   } else if (strcmp(node->getObjectLabel(), "receive") == 0) {
     sendController->addReceiver((MessageReceive *) node);
+  } else if (strcmp(node->getObjectLabel(), "delread~") == 0 ||
+             strcmp(node->getObjectLabel(), "vd~") == 0) {
+    registerDelayReceiver((DelayReceiver *) node);
   } else if (strcmp(node->getObjectLabel(), "delwrite~") == 0) {
     registerDelayline((DspDelayWrite *) node);
   } else if (strcmp(node->getObjectLabel(), "inlet~") == 0) {
@@ -570,26 +576,43 @@ void PdGraph::registerDspSend(DspSend *dspSend) {
 
 void PdGraph::registerDelayline(DspDelayWrite *delayline) {
   if (isRootGraph()) {
-    // duplication detection
-    for (int i = 0; i < delaylineList->size(); i++) {
-      DspDelayWrite *delWrite = (DspDelayWrite *) delaylineList->get(i);
-      if (strcmp(delWrite->getName(), delayline->getName()) == 0) {
-        printErr("delwrite~ with duplicate name registered.");
-        return;
+    // detect delwrite~ with duplicate name
+    if (getDelayline(delayline->getName()) != NULL) {
+      printErr("delwrite~ with duplicate name \"%s\" registered.", delayline->getName());
+      return;
+    }
+    
+    delaylineList->add(delayline);
+    
+    // connect this delayline to all same-named delay receivers
+    for (int i = 0; i < delayReceiverList->size(); i++) {
+      DelayReceiver *delayReceiver = (DelayReceiver *) delayReceiverList->get(i);
+      if (strcmp(delayReceiver->getName(), delayline->getName()) == 0) {
+        delayReceiver->setDelayline(delayline);
       }
     }
-    delaylineList->add(delayline);
   } else {
     parentGraph->registerDelayline(delayline);
   }
 }
 
+void PdGraph::registerDelayReceiver(DelayReceiver *delayReceiver) {
+  if (isRootGraph()) {
+    // NOTE(mhroth): no check for the same object being added twice
+    delayReceiverList->add(delayReceiver);
+    
+    // connect the delay receiver to the named delayline
+    DspDelayWrite *delayline = getDelayline(delayReceiver->getName());
+    delayReceiver->setDelayline(delayline);
+  } else {
+    parentGraph->registerDelayReceiver(delayReceiver);
+  }
+}
+
 DspDelayWrite *PdGraph::getDelayline(char *name) {
   if (isRootGraph()) {
-    int size = delaylineList->size();
-    DspDelayWrite *delayline = NULL;
-    for (int i = 0; i < size; i++) {
-      delayline = (DspDelayWrite *) delaylineList->get(i);
+    for (int i = 0; i < delaylineList->size(); i++) {
+      DspDelayWrite *delayline = (DspDelayWrite *) delaylineList->get(i);
       if (strcmp(delayline->getName(), name) == 0) {
         return delayline;
       }
@@ -666,8 +689,8 @@ void PdGraph::processDspToIndex(float blockIndex) {
 void PdGraph::computeDspProcessOrder() {
 
   /* clear/reset dspNodeList
-   * find all leaf nodes in nodeList. this includes PdGraphs as they are objects as well
-   * for each leaf node, generate an ordering for all of the nodes in the current graph
+   * Find all leaf nodes in nodeList. this includes PdGraphs as they are objects as well.
+   * For each leaf node, generate an ordering for all of the nodes in the current graph
    * the basic idea is to compute the full process order in each subgraph. The problem is that
    * some objects have connections that take you out of the graph, such as receive/~, catch~. And
    * some objects should be considered leaves, through they are not, such as send/~ and throw~.
@@ -677,7 +700,7 @@ void PdGraph::computeDspProcessOrder() {
    */
 
   // compute process order for local graph
-
+    
   // generate the leafnode list
   List *leafNodeList = new List();
   MessageObject *object = NULL;
@@ -703,7 +726,7 @@ void PdGraph::computeDspProcessOrder() {
 
   // add only those nodes which process audio to the final list
   dspNodeList->clear(); // reset the dsp node list
-  for (int i = processList->size()-1; i >= 0; i--) {
+  for (int i = 0; i < processList->size(); i++) {
     // reverse order of process list such that the dsp elements at the top of the graph are processed first
     object = (MessageObject *) processList->get(i);
     if (object->doesProcessAudio()) {
@@ -715,10 +738,10 @@ void PdGraph::computeDspProcessOrder() {
 
   if (dspNodeList->size() > 0) {
     // print dsp evaluation order for debugging, but only if there are any nodes to list
-    printf("--- ordered evaluation list ---\n");
+    printStd("--- ordered evaluation list ---\n");
     for (int i = 0; i < dspNodeList->size(); i++) {
       MessageObject *messageObject = (MessageObject *) dspNodeList->get(i);
-      printf("%s\n", messageObject->getObjectLabel());
+      printStd("%s\n", messageObject->getObjectLabel());
     }
   }
 }

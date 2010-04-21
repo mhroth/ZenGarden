@@ -23,11 +23,15 @@
 #ifndef _DSP_VARIABLE_DELAY_H_
 #define _DSP_VARIABLE_DELAY_H_
 
-#include "DspObject.h"
+#include "DelayReceiver.h"
 
 class DspDelayWrite;
 
-class DspVariableDelay : public DspObject {
+/**
+ * [vd~ symbol]
+ * This object implements the <code>DelayReceiver</code> interface.
+ */
+class DspVariableDelay : public DelayReceiver {
   
   public:
     DspVariableDelay(PdMessage *initMessage, PdGraph *graph);
@@ -38,10 +42,6 @@ class DspVariableDelay : public DspObject {
   private:
     // vd~ does not process any messages and thus does not implement processMessage()
     void processDspToIndex(float newBlockIndex);
-  
-    /** The name of the delay line that this object reads from. */
-    char *name;
-    DspDelayWrite *delayline;
 };
 
 #endif // _DSP_VARIABLE_DELAY_H_

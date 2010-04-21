@@ -24,10 +24,9 @@
 #include "DspVariableDelay.h"
 #include "PdGraph.h"
 
-DspVariableDelay::DspVariableDelay(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0, 1, graph) {
+DspVariableDelay::DspVariableDelay(PdMessage *initMessage, PdGraph *graph) : DelayReceiver(0, 1, 0, 1, graph) {
   if (initMessage->getNumElements() > 0 && initMessage->getElement(0)->getType() == SYMBOL) {
     name = StaticUtils::copyString(initMessage->getElement(0)->getSymbol());
-    delayline = graph->getDelayline(name);
   } else {
     graph->printErr("vd~ requires the name of a delayline. None given.");
     name = NULL;
@@ -35,7 +34,7 @@ DspVariableDelay::DspVariableDelay(PdMessage *initMessage, PdGraph *graph) : Dsp
 }
 
 DspVariableDelay::~DspVariableDelay() {
-  free(name);
+  // nothing to do
 }
 
 const char *DspVariableDelay::getObjectLabel() {
@@ -43,13 +42,6 @@ const char *DspVariableDelay::getObjectLabel() {
 }
 
 void DspVariableDelay::processDspToIndex(float newBlockIndex) {
-  if (delayline == NULL) {
-    delayline = graph->getDelayline(name);
-    if (delayline == NULL) {
-      return;
-    }
-  }
-
   int headIndex;
   int bufferLength;
   float *buffer = delayline->getBuffer(&headIndex, &bufferLength);
