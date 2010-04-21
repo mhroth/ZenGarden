@@ -44,7 +44,7 @@ class LinkedList {
 
     void *remove(int index);
 
-    virtual bool isDataEqualTo(void *dataA, void *dataB) { return (dataA == dataB) ? true : false; }
+    virtual bool isDataEqualTo(void *dataA, void *dataB) { return (dataA == dataB); }
 
     /** Returns the number of elements in the list. */
     int size();
