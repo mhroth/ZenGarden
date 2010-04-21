@@ -25,7 +25,7 @@
 
 #include "MessageObject.h"
 
-/** print */
+/** [print] */
 class MessagePrint : public MessageObject {
   
   public:
@@ -37,7 +37,6 @@ class MessagePrint : public MessageObject {
   private:
     void processMessage(int inletIndex, PdMessage *message);
   
-  private:
     char *name;
 };
 
