@@ -35,14 +35,10 @@ class DspCosine : public DspObject {
     const char *getObjectLabel();
 
   protected:
-    void processMessage(int inletIndex, PdMessage *message);
     void processDspToIndex(float blockIndex);
 
   private:
-    int sampleRate;
-    float frequency; // frequency and phase are stored as integers because they are used
-    int phase;     // in for-loops to traverse the lookup table
-    float index; // indexes the current place in the lookup table
+    float sampleRate;
     static float *cos_table; // the Cosine lookup table
     static int refCount; // a reference counter for Cosine table. Now we know when to free it.
 };

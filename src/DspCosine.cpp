@@ -22,24 +22,13 @@
 
 #include "DspCosine.h"
 #include "PdGraph.h"
-#include <math.h>
 
 // initialise the static class variables
 float *DspCosine::cos_table = NULL;
 int DspCosine::refCount = 0;
 
-
-DspCosine::DspCosine(PdMessage *initMessage, PdGraph *graph) : DspObject(1, 1, 0, 1, graph) {
-  if (initMessage->getNumElements() > 0 &&
-      initMessage->getElement(0)->getType() == FLOAT) {
-    frequency = initMessage->getElement(0)->getFloat();
-  } else {
-    frequency = 0.0f;
-  }
-
+DspCosine::DspCosine(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0, 1, graph) {
   this->sampleRate = graph->getSampleRate();
-  phase = 0.0f;
-  index = 0.0f;
   refCount++;
   if (cos_table == NULL) {
     int sampleRateInt = (int) sampleRate;
@@ -62,33 +51,13 @@ const char *DspCosine::getObjectLabel() {
   return "cos~";
 }
 
-void DspCosine::processMessage(int inletIndex, PdMessage *message) {
-  switch (inletIndex) {
-    case 0: { // update the frequency
-      MessageElement *messageElement = message->getElement(0);
-      if (messageElement->getType() == FLOAT) {
-        processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), sampleRate));
-        frequency = fabsf(messageElement->getFloat());
-      }
-      break;
-    }
-    case 1: { // update the phase
-      // TODO(mhroth)
-      break;
-    }
-    default: {
-      break;
-    }
-  }
-}
-
 void DspCosine::processDspToIndex(float blockIndex) {
   int endSampleIndex = getEndSampleIndex(blockIndex);
-    float *inputBuffer = localDspBufferAtInlet[0];
-    float *outputBuffer = localDspBufferAtOutlet[0];
-      for (int i = getStartSampleIndex(); i < endSampleIndex; i++) {
-        float index = fmodf(fabsf(inputBuffer[i]), 1.0f);
-        outputBuffer[i] = cos_table[(int) (index * sampleRate)];
-      }
-    blockIndexOfLastMessage = blockIndex;
+  float *inputBuffer = localDspBufferAtInlet[0];
+  float *outputBuffer = localDspBufferAtOutlet[0];
+  for (int i = getStartSampleIndex(); i < endSampleIndex; i++) {
+    float index = fmodf(fabsf(inputBuffer[i]), 1.0f);
+    outputBuffer[i] = cos_table[(int) (index * sampleRate)];
+  }
+  blockIndexOfLastMessage = blockIndex;
 }
