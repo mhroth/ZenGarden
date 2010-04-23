@@ -48,3 +48,7 @@ DspAdc::~DspAdc() {
 const char *DspAdc::getObjectLabel() {
   return "adc~";
 }
+
+void DspAdc::processDsp() {
+  // nothing to do as output buffers point directly at global input buffers
+}

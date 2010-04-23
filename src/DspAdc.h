@@ -32,6 +32,9 @@ class DspAdc : public DspObject {
     ~DspAdc();
   
     const char *getObjectLabel();
+  
+    // overrides <code>DspObject::processDsp()</code> and does nothing
+    void processDsp();
 };
 
 #endif // _DSP_ADC_H_
