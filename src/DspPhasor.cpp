@@ -44,7 +44,7 @@ DspPhasor::DspPhasor(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0
     phasor_table = (float *) malloc((sampleRateInt + 1) * sizeof(float));
     phasor_table[0] = 0.0f;
     for (int i = 1; i < sampleRateInt; i++) {
-      phasor_table[i] = phasor_table[i-1] + 1.0f / sampleRateInt;
+      phasor_table[i] = phasor_table[i-1] + 1.0f / sampleRate;
     }
     phasor_table[sampleRateInt] = phasor_table[0];
   }
@@ -66,7 +66,7 @@ void DspPhasor::processMessage(int inletIndex, PdMessage *message) {
     case 0: { // update the frequency
       MessageElement *messageElement = message->getElement(0);
       if (messageElement->getType() == FLOAT) {
-        processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), sampleRate));
+        processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
         frequency = fabsf(messageElement->getFloat());
       }
       break;

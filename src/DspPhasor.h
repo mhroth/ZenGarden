@@ -39,7 +39,7 @@ class DspPhasor : public DspObject {
     void processDspToIndex(float blockIndex);
 
   private:
-    int sampleRate;
+    float sampleRate;
     float frequency; // frequency and phase are stored as integers because they are used
     int phase;     // in for-loops to traverse the lookup table
     float index; // indexes the current place in the lookup table
