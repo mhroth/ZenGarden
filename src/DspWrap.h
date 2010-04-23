@@ -20,17 +20,17 @@
  *
  */
 
-#ifndef _DSP_PHASOR_H_
-#define _DSP_PHASOR_H_
+#ifndef _DSP_WRAP_H_
+#define _DSP_WRAP_H_
 
 #include "DspObject.h"
 
-/** [phasor~], [phasor~ float] */
-class DspPhasor : public DspObject {
+/** [wrap~] */
+class DspWrap : public DspObject {
 
   public:
-    DspPhasor(PdMessage *initMessage, PdGraph *graph); // and Phasorillator of default zero frequency
-    ~DspPhasor();
+    DspWrap(PdGraph *graph);
+    ~DspWrap();
 
     const char *getObjectLabel();
 
@@ -41,10 +41,6 @@ class DspPhasor : public DspObject {
   private:
     int sampleRate;
     float frequency; // frequency and phase are stored as integers because they are used
-    int phase;     // in for-loops to traverse the lookup table
-    float index; // indexes the current place in the lookup table
-    static float *phasor_table; // the phasor lookup table
-    static int refCount; // a reference counter for phasor table. Now we know when to free it.
 };
 
-#endif // _DSP_PHASOR_H_
+#endif // _DSP_WRAP_H_

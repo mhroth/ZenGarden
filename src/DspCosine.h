@@ -1,8 +1,8 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
- * 
+ *
  *  This file is part of ZenGarden.
  *
  *  ZenGarden is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU Lesser General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with ZenGarden.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -23,21 +23,28 @@
 #ifndef _DSP_COSINE_H_
 #define _DSP_COSINE_H_
 
-#include "DspInputDspOutputObject.h"
+#include "DspObject.h"
 
-/**
- * cos~
- */
-class DspCosine : public DspInputDspOutputObject {
-  
+/** [cos~] */
+class DspCosine : public DspObject {
+
   public:
-    DspCosine(int blockSize, char *initString);
+    DspCosine(PdMessage *initMessage, PdGraph *graph); // and Cosineillator of default zero frequency
     ~DspCosine();
-    
+
+    const char *getObjectLabel();
+
   protected:
-    void processDspToIndex(int newBlockIndex);
-  
-    static const float TWO_PI;
+    void processMessage(int inletIndex, PdMessage *message);
+    void processDspToIndex(float blockIndex);
+
+  private:
+    int sampleRate;
+    float frequency; // frequency and phase are stored as integers because they are used
+    int phase;     // in for-loops to traverse the lookup table
+    float index; // indexes the current place in the lookup table
+    static float *cos_table; // the Cosine lookup table
+    static int refCount; // a reference counter for Cosine table. Now we know when to free it.
 };
 
 #endif // _DSP_COSINE_H_

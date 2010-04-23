@@ -20,49 +20,23 @@
  *
  */
 
-#include "DspCosine.h"
+#include "DspWrap.h"
 #include "PdGraph.h"
 #include <math.h>
 
-// initialise the static class variables
-float *DspCosine::cos_table = NULL;
-int DspCosine::refCount = 0;
-
-
-DspCosine::DspCosine(PdMessage *initMessage, PdGraph *graph) : DspObject(1, 1, 0, 1, graph) {
-  if (initMessage->getNumElements() > 0 &&
-      initMessage->getElement(0)->getType() == FLOAT) {
-    frequency = initMessage->getElement(0)->getFloat();
-  } else {
-    frequency = 0.0f;
-  }
-
-  this->sampleRate = graph->getSampleRate();
-  phase = 0.0f;
-  index = 0.0f;
-  refCount++;
-  if (cos_table == NULL) {
-    int sampleRateInt = (int) sampleRate;
-    cos_table = (float *) malloc((sampleRateInt + 1) * sizeof(float));
-    for (int i = 0; i < sampleRateInt; i++) {
-      cos_table[i] = cosf(2.0f * M_PI * ((float) i) / sampleRate);
-    }
-    cos_table[sampleRateInt] = cos_table[0];
-  }
+DspWrap::DspWrap(PdGraph *graph) : DspObject(1, 1, 0, 1, graph) {
+  // nothing to do
 }
 
-DspCosine::~DspCosine() {
-  if (--refCount == 0) {
-    free(cos_table);
-    cos_table = NULL;
-  }
+DspWrap::~DspWrap() {
+  // nothing to do
 }
 
-const char *DspCosine::getObjectLabel() {
+const char *DspWrap::getObjectLabel() {
   return "cos~";
 }
 
-void DspCosine::processMessage(int inletIndex, PdMessage *message) {
+void DspWrap::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: { // update the frequency
       MessageElement *messageElement = message->getElement(0);
@@ -82,13 +56,16 @@ void DspCosine::processMessage(int inletIndex, PdMessage *message) {
   }
 }
 
-void DspCosine::processDspToIndex(float blockIndex) {
+void DspWrap::processDspToIndex(float blockIndex) {
   int endSampleIndex = getEndSampleIndex(blockIndex);
-    float *inputBuffer = localDspBufferAtInlet[0];
-    float *outputBuffer = localDspBufferAtOutlet[0];
-      for (int i = getStartSampleIndex(); i < endSampleIndex; i++) {
-        float index = fmodf(fabsf(inputBuffer[i]), 1.0f);
-        outputBuffer[i] = cos_table[(int) (index * sampleRate)];
+  float *inputBuffer = localDspBufferAtInlet[0];
+  float *outputBuffer = localDspBufferAtOutlet[0];
+    for (int i = getStartSampleIndex(); i < endSampleIndex; i++) {
+      if (inputBuffer[i] >= 0) {
+        outputBuffer[i] = fmodf(inputBuffer[i], 1.0f);
+      } else {
+        outputBuffer[i] = 1.0f - fmodf(fabsf(inputBuffer[i]), 1.0f);
+        }
       }
-    blockIndexOfLastMessage = blockIndex;
+  blockIndexOfLastMessage = blockIndex;
 }

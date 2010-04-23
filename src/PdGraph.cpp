@@ -85,6 +85,7 @@
 #include "DspAdc.h"
 #include "DspAdd.h"
 #include "DspSubtract.h"
+#include "DspCosine.h"
 #include "DspDac.h"
 #include "DspDelayRead.h"
 #include "DspDelayWrite.h"
@@ -97,7 +98,9 @@
 #include "DspNoise.h"
 #include "DspOsc.h"
 #include "DspOutlet.h"
+#include "DspPhasor.h"
 #include "DspVariableDelay.h"
+#include "DspWrap.h"
 
 /** A C-defined function implementing the default print behaviour. */
 void defaultPrintFunction(char *msg) {
@@ -416,6 +419,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new DspDivide(initMessage, graph);
     } else if (strcmp(objectLabel, "adc~") == 0) {
       return new DspAdc(graph);
+    } else if (strcmp(objectLabel, "cos~") == 0) {
+      return new DspCosine(initMessage,graph);
     } else if (strcmp(objectLabel, "dac~") == 0) {
       return new DspDac(graph);
     } else if (strcmp(objectLabel, "delread~") == 0) {
@@ -436,10 +441,14 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new DspOsc(initMessage, graph);
     } else if (strcmp(objectLabel, "outlet~") == 0) {
       return new DspOutlet(graph);
+    } else if (strcmp(objectLabel, "phasor~") == 0) {
+      return new DspPhasor(initMessage, graph);
     } else if (strcmp(objectLabel, "switch~") == 0) {
       return new MessageSwitch(initMessage, graph);
     } else if (strcmp(objectLabel, "vd~") == 0) {
       return new DspVariableDelay(initMessage, graph);
+    } else if (strcmp(objectLabel, "wrap~") == 0) {
+      return new DspWrap(graph);
     }
   } else if (strcmp(objectType, "msg") == 0) {
     // TODO(mhroth)
@@ -581,9 +590,9 @@ void PdGraph::registerDelayline(DspDelayWrite *delayline) {
       printErr("delwrite~ with duplicate name \"%s\" registered.", delayline->getName());
       return;
     }
-    
+
     delaylineList->add(delayline);
-    
+
     // connect this delayline to all same-named delay receivers
     for (int i = 0; i < delayReceiverList->size(); i++) {
       DelayReceiver *delayReceiver = (DelayReceiver *) delayReceiverList->get(i);
@@ -600,7 +609,7 @@ void PdGraph::registerDelayReceiver(DelayReceiver *delayReceiver) {
   if (isRootGraph()) {
     // NOTE(mhroth): no check for the same object being added twice
     delayReceiverList->add(delayReceiver);
-    
+
     // connect the delay receiver to the named delayline
     DspDelayWrite *delayline = getDelayline(delayReceiver->getName());
     delayReceiver->setDelayline(delayline);
@@ -700,7 +709,7 @@ void PdGraph::computeDspProcessOrder() {
    */
 
   // compute process order for local graph
-    
+
   // generate the leafnode list
   List *leafNodeList = new List();
   MessageObject *object = NULL;
