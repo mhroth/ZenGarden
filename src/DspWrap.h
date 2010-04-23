@@ -29,18 +29,13 @@
 class DspWrap : public DspObject {
 
   public:
-    DspWrap(PdGraph *graph);
+    DspWrap(PdMessage *initMessage, PdGraph *graph);
     ~DspWrap();
 
     const char *getObjectLabel();
 
   protected:
-    void processMessage(int inletIndex, PdMessage *message);
     void processDspToIndex(float blockIndex);
-
-  private:
-    int sampleRate;
-    float frequency; // frequency and phase are stored as integers because they are used
 };
 
 #endif // _DSP_WRAP_H_

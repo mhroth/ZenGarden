@@ -84,7 +84,6 @@
 
 #include "DspAdc.h"
 #include "DspAdd.h"
-#include "DspSubtract.h"
 #include "DspCosine.h"
 #include "DspDac.h"
 #include "DspDelayRead.h"
@@ -99,6 +98,7 @@
 #include "DspOsc.h"
 #include "DspOutlet.h"
 #include "DspPhasor.h"
+#include "DspSubtract.h"
 #include "DspVariableDelay.h"
 #include "DspWrap.h"
 
@@ -115,6 +115,7 @@ PdGraph *PdGraph::newInstance(char *directory, char *filename, char *libraryDire
                               PdGraph *parentGraph) {
   PdGraph *pdGraph = NULL;
 
+  // create file path based on directory and filename. Parse the file.
   char *filePath = StaticUtils::joinPaths(directory, filename);
   PdFileParser *fileParser = new PdFileParser(filePath);
   free(filePath);
@@ -448,7 +449,7 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
     } else if (strcmp(objectLabel, "vd~") == 0) {
       return new DspVariableDelay(initMessage, graph);
     } else if (strcmp(objectLabel, "wrap~") == 0) {
-      return new DspWrap(graph);
+      return new DspWrap(initMessage, graph);
     }
   } else if (strcmp(objectType, "msg") == 0) {
     // TODO(mhroth)
