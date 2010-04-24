@@ -120,6 +120,12 @@ class DspObject : public MessageObject {
   private:
     /** This function encapsulates the common code between the two constructors. */
     void init(int numDspInlets, int numDspOutlets, int blockSize);
+  
+    /**
+     * Prepares the input buffer at the given inlet index.
+     * This is a helper function for <code>processDsp()</code>.
+     */
+    inline void resolveInputBuffersAtInlet(int inletIndex);
 };
 
 #endif // _DSP_OBJECT_H_

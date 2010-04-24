@@ -150,7 +150,7 @@ bool DspObject::shouldDistributeMessageToInlets() {
 
 void DspObject::receiveMessage(int inletIndex, PdMessage *message) {
   // Queue the message to be processed during the DSP round only if the graph is switched on.
-  // Otherwise messages would begin to pile up.
+  // Otherwise messages would begin to pile up because the graph is not processed.
   if (graph->isSwitchedOn()) {
     // reserve the message so that it won't be reused by the issuing object.
     // The message is released once it is consumed in processDsp().
@@ -160,39 +160,23 @@ void DspObject::receiveMessage(int inletIndex, PdMessage *message) {
 }
 
 void DspObject::processDsp() {
-  // collect all incoming audio into local input buffers
-  for (int i = 0; i < numDspInlets; i++) {
-    List *incomingDspConnectionsList = incomingDspConnectionsListAtInlet[i];
-    int numConnections = incomingDspConnectionsList->size();
-    float *localInputBuffer = localDspBufferAtInlet[i];
-    
-    switch (numConnections) {
-      case 0: {
-        break; // nothing to do
+  switch (numDspInlets) {
+    default: {
+      for (int i = 2; i < numDspInlets; i++) {
+        resolveInputBuffersAtInlet(i);
       }
-      case 1: {
-        // copy the single connection's output buffer to the input buffer
-        ObjectLetPair *objectLetPair = (ObjectLetPair *) incomingDspConnectionsList->get(0);
-        float *remoteOutputBuffer = ((DspObject *) objectLetPair->object)->getDspBufferAtOutlet(objectLetPair->index);
-        memcpy(localInputBuffer, remoteOutputBuffer, numBytesInBlock);
-        break;
-      }
-      default: { // numConnections > 1
-        // copy the single connection's output buffer to the input buffer
-        ObjectLetPair *objectLetPair = (ObjectLetPair *) incomingDspConnectionsList->get(0);
-        float *remoteOutputBuffer = ((DspObject *) objectLetPair->object)->getDspBufferAtOutlet(objectLetPair->index);
-        memcpy(localInputBuffer, remoteOutputBuffer, numBytesInBlock);
-        
-        // add the remaining output buffers to the input buffer
-        for (int j = 1; j < numConnections; j++) {
-          objectLetPair = (ObjectLetPair *) incomingDspConnectionsList->get(j);
-          remoteOutputBuffer = ((DspObject *) objectLetPair->object)->getDspBufferAtOutlet(objectLetPair->index);
-          for (int k = 0; k < blockSizeInt; k++) {
-            localInputBuffer[k] += remoteOutputBuffer[k];
-          }
-        }
-        break;
-      }
+      // allow fallthrough
+    }
+    case 2: {
+      resolveInputBuffersAtInlet(1);
+      // allow fallthrough
+    }
+    case 1: {
+      resolveInputBuffersAtInlet(0);
+      // allow fallthrough
+    }
+    case 0: {
+      break; // nothing to do
     }
   }
   
@@ -206,6 +190,41 @@ void DspObject::processDsp() {
   // process remainder of block
   processDspToIndex(blockSizeFloat);
   blockIndexOfLastMessage = 0.0f; // reset the block index of the last received message
+}
+
+void DspObject::resolveInputBuffersAtInlet(int inletIndex) {
+  List *incomingDspConnectionsList = incomingDspConnectionsListAtInlet[inletIndex];
+  int numConnections = incomingDspConnectionsList->size();
+  float *localInputBuffer = localDspBufferAtInlet[inletIndex];
+  
+  switch (numConnections) {
+    case 0: {
+      break; // nothing to do
+    }
+    case 1: {
+      // copy the single connection's output buffer to the input buffer
+      ObjectLetPair *objectLetPair = (ObjectLetPair *) incomingDspConnectionsList->get(0);
+      float *remoteOutputBuffer = ((DspObject *) objectLetPair->object)->getDspBufferAtOutlet(objectLetPair->index);
+      memcpy(localInputBuffer, remoteOutputBuffer, numBytesInBlock);
+      break;
+    }
+    default: { // numConnections > 1
+      // copy the single connection's output buffer to the input buffer
+      ObjectLetPair *objectLetPair = (ObjectLetPair *) incomingDspConnectionsList->get(0);
+      float *remoteOutputBuffer = ((DspObject *) objectLetPair->object)->getDspBufferAtOutlet(objectLetPair->index);
+      memcpy(localInputBuffer, remoteOutputBuffer, numBytesInBlock);
+      
+      // add the remaining output buffers to the input buffer
+      for (int j = 1; j < numConnections; j++) {
+        objectLetPair = (ObjectLetPair *) incomingDspConnectionsList->get(j);
+        remoteOutputBuffer = ((DspObject *) objectLetPair->object)->getDspBufferAtOutlet(objectLetPair->index);
+        for (int k = 0; k < blockSizeInt; k++) {
+          localInputBuffer[k] += remoteOutputBuffer[k];
+        }
+      }
+      break;
+    }
+  }
 }
 
 void DspObject::processDspToIndex(float blockIndex) {
