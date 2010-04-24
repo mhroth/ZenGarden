@@ -63,12 +63,9 @@ void DspVariableDelay::processDspToIndex(float newBlockIndex) {
       targetSampleIndex = targetSampleIndex + bufferLengthFloat;
     }
     
-    //float x0 = floorf(targetSampleIndex);
-    float x0f;
-    // break targetSampleIndex into fractional and integral parts, float dx = targetSampleIndex - x0;
-    float dx = modff(targetSampleIndex, &x0f);
-    
     // 2-point linear interpolation (basic and fast)
+    float x0f = floorf(targetSampleIndex);
+    float dx = targetSampleIndex - x0f;
     int x0i = (int) x0f;
     float y0 = buffer[x0i];
     float y1 = buffer[x0i+1];
