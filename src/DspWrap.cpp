@@ -39,11 +39,8 @@ void DspWrap::processDspToIndex(float blockIndex) {
   float *inputBuffer = localDspBufferAtInlet[0];
   float *outputBuffer = localDspBufferAtOutlet[0];
   for (int i = getStartSampleIndex(); i < endSampleIndex; i++) {
-    if (inputBuffer[i] >= 0.0f) {
-      outputBuffer[i] = fmodf(inputBuffer[i], 1.0f);
-    } else {
-      outputBuffer[i] = 1.0f - fmodf(fabsf(inputBuffer[i]), 1.0f);
-    }
+    float f = inputBuffer[i];
+    outputBuffer[i] = f - floorf(f);
   }
   blockIndexOfLastMessage = blockIndex;
 }
