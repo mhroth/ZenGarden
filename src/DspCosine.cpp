@@ -56,8 +56,9 @@ void DspCosine::processDspToIndex(float blockIndex) {
   float *inputBuffer = localDspBufferAtInlet[0];
   float *outputBuffer = localDspBufferAtOutlet[0];
   for (int i = getStartSampleIndex(); i < endSampleIndex; i++) {
-    float index = fmodf(fabsf(inputBuffer[i]), 1.0f);
-    outputBuffer[i] = cos_table[(int) (index * sampleRate)];
+    float f = fabsf(inputBuffer[i]);
+    f -= floorf(f);
+    outputBuffer[i] = cos_table[(int) (f * sampleRate)];
   }
   blockIndexOfLastMessage = blockIndex;
 }
