@@ -67,7 +67,7 @@ void DspPhasor::processMessage(int inletIndex, PdMessage *message) {
       MessageElement *messageElement = message->getElement(0);
       if (messageElement->getType() == FLOAT) {
         processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
-        frequency = fabsf(messageElement->getFloat());
+        frequency = messageElement->getFloat();
       }
       break;
     }
@@ -92,7 +92,9 @@ void DspPhasor::processDspToIndex(float blockIndex) {
       float *inputBuffer = localDspBufferAtInlet[0];
       float *outputBuffer = localDspBufferAtOutlet[0];
       for (int i = getStartSampleIndex(); i < endSampleIndex; index += inputBuffer[i++]) {
-        if (index >= sampleRate) {
+        if (index < 0.0f) {
+          index += sampleRate; // account for negative frequencies
+        } else if (index >= sampleRate) {
           index -= sampleRate;
         }
         outputBuffer[i] = phasor_table[(int) index];
@@ -107,9 +109,9 @@ void DspPhasor::processDspToIndex(float blockIndex) {
       int endSampleIndex = getEndSampleIndex(blockIndex);
       float *outputBuffer = localDspBufferAtOutlet[0];
       for (int i = getStartSampleIndex(); i < endSampleIndex; i++, index += frequency) {
-        if (index >= sampleRate) {
-          // TODO(mhroth): if the frequency is higher than the sample rate, the index will point
-          // outside of the phasor_table
+        if (index < 0.0f) {
+          index += sampleRate; // account for negative frequencies
+        } else if (index >= sampleRate) {
           index -= sampleRate;
         }
         outputBuffer[i] = phasor_table[(int) index];
