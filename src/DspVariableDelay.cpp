@@ -49,8 +49,10 @@ void DspVariableDelay::processDspToIndex(float newBlockIndex) {
   float *inputBuffer = localDspBufferAtInlet[0];
   float *outputBuffer = localDspBufferAtOutlet[0];
   
-  int blockIndexInt = getEndSampleIndex(newBlockIndex);
-  for (int i = getStartSampleIndex(); i < blockIndexInt; i++) {
+  int endSampleIndex = getEndSampleIndex(newBlockIndex);
+  int startSampleIndex = getStartSampleIndex();
+  float targetIndexBase = (float) (headIndex - blockSizeInt + startSampleIndex);
+  for (int i = startSampleIndex; i < endSampleIndex; i++, targetIndexBase+=1.0f) {
     float delayInSamples = StaticUtils::millisecondsToSamples(inputBuffer[i], graph->getSampleRate());
     if (delayInSamples < 0.0f) {
       delayInSamples = 0.0f;
@@ -58,19 +60,17 @@ void DspVariableDelay::processDspToIndex(float newBlockIndex) {
       delayInSamples = bufferLengthFloat;
     }
     
-    float targetSampleIndex = (float) (headIndex - blockSizeInt + i) - delayInSamples;
+    float targetSampleIndex = targetIndexBase - delayInSamples;
     if (targetSampleIndex < 0.0f) {
-      targetSampleIndex = targetSampleIndex + bufferLengthFloat;
+      targetSampleIndex += bufferLengthFloat;
     }
     
     // 2-point linear interpolation (basic and fast)
-    float x0f = floorf(targetSampleIndex);
-    float dx = targetSampleIndex - x0f;
-    int x0i = (int) x0f;
-    float y0 = buffer[x0i];
-    float y1 = buffer[x0i+1];
+    int x0 = (int) targetSampleIndex;
+    float dx = targetSampleIndex - ((float) x0);
+    float y0 = buffer[x0];
+    float y1 = buffer[x0+1];
     float slope = (y1 - y0); // /(x1 - x0) == 1.0f!
-    //float dx = targetSampleIndex - x0;
     outputBuffer[i] = (slope * dx) + y0;
   }
   blockIndexOfLastMessage = newBlockIndex;
