@@ -52,6 +52,18 @@ MessageElementType MessageElement::getType() {
   return currentType;
 }
 
+bool MessageElement::isFloat() {
+  return (currentType == FLOAT);
+}
+
+bool MessageElement::isSymbol() {
+  return (currentType = SYMBOL);
+}
+
+bool MessageElement::isBang() {
+  return (currentType == BANG);
+}
+
 void MessageElement::setFloat(float newConstant) {
   constant = newConstant;
   currentType = FLOAT;

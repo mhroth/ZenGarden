@@ -39,6 +39,9 @@ class MessageElement {
     ~MessageElement();
     
     MessageElementType getType();
+    bool isFloat();
+    bool isSymbol();
+    bool isBang();
     
     void setFloat(float constant);
     float getFloat();
