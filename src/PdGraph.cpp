@@ -869,10 +869,6 @@ MessageElement *PdGraph::getArgument(int argIndex) {
   return graphArguments->getElement(argIndex);
 }
 
-float PdGraph::getSampleRate() {
-  return sampleRate;
-}
-
 int PdGraph::getNumInputChannels() {
   return numInputChannels;
 }
