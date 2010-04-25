@@ -140,10 +140,6 @@ void DspObject::addConnectionToObjectFromOutlet(MessageObject *messageObject, in
   }
 }
 
-float *DspObject::getDspBufferAtOutlet(int outletIndex) {
-  return localDspBufferAtOutlet[outletIndex];
-}
-
 bool DspObject::shouldDistributeMessageToInlets() {
   return false;
 }

@@ -60,8 +60,10 @@ class DspObject : public MessageObject {
   
     /** Returns the connection type of the given outlet. */
     virtual ConnectionType getConnectionType(int outletIndex);
-  
-    float *getDspBufferAtOutlet(int outletIndex);
+
+    inline float *getDspBufferAtOutlet(int outletIndex) { 
+      return localDspBufferAtOutlet[outletIndex];
+    }
   
     void addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex);
       
