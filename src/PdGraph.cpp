@@ -558,11 +558,11 @@ PdMessage *PdGraph::scheduleExternalMessage(char *receiverName) {
   if (isRootGraph()) {
     int receiverNameIndex = sendController->getNameIndex(receiverName);
     if (receiverNameIndex < 0) {
-      return NULL; // return no message is the receiver name is unknown
+      return NULL; // return no message if the receiver name is unknown
     } else {
       PdMessage *message = getNextOutgoingMessage(0);
       message->setTimestamp(0.0); // message is processed at start of the next block
-      graph->scheduleMessage(sendController, sendController->getNameIndex(receiverName), message);
+      graph->scheduleMessage(sendController, receiverNameIndex, message);
       return message;
     }
   } else {
@@ -638,6 +638,14 @@ DspDelayWrite *PdGraph::getDelayline(char *name) {
 
 void PdGraph::receiveMessage(int inletIndex, PdMessage *message) {
   processMessage(inletIndex, message);
+}
+
+void PdGraph::receiveSystemMessage(PdMessage *message) {
+  // TODO(mhroth): What are all of the possible system messages?
+  // probably need to register a callback to the outside world and let the user deal with it
+  char *messageString = message->toString();
+  printStd("SYSTEM: %s\n", messageString);
+  free(messageString);
 }
 
 void PdGraph::processMessage(int inletIndex, PdMessage *message) {

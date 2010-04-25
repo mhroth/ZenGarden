@@ -60,6 +60,9 @@ class PdGraph : public DspObject {
      */
     void receiveMessage(int inletIndex, PdMessage *message);
   
+    /** Receives and processes messages sent to the Pd system by sending to "pd". */
+    void receiveSystemMessage(PdMessage *message);
+  
     void processMessage(int inletIndex, PdMessage *message);
     
     /* This functions implements the sub-graph's audio loop. */

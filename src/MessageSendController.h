@@ -40,7 +40,7 @@
  *
  * Alternatively, a message can be sent to receivers using <code>receiveMessage()</code> with
  * name and message arguments (instead of inlet index and message). Messages sent using this
- * alternative will be sent right away.
+ * alternative will be sent right away (avoiding the message queue).
  */
 class MessageSendController : public MessageObject {
   
@@ -68,6 +68,8 @@ class MessageSendController : public MessageObject {
   
     List *nameList;
     List *receiverLists;
+  
+    static const int SYSTEM_NAME_INDEX = 0x7FFFFFFF;
 };
 
 #endif // _MESSAGE_SEND_CONTROLLER_H_

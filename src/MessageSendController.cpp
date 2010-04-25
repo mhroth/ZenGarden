@@ -21,9 +21,19 @@
  */
 
 #include "MessageSendController.h"
+#include "PdGraph.h"
 
-// it is ultimtaely intended for this class to be implemented using a hashtable to store the mapping
-// between receiver names and the list of receivers with that name  
+/*
+ * DISCUSSION(mhroth): Ideally it would be nice to add the root PdGraph as the designated
+ * receiver for the name "pd". This would fit very nicely into the existing infrastructure.
+ * The problem is that messages dispatched by the Controller are done so by calling
+ * receiveMessage() on the receiver. But PdGraph uses this method to forward messages to its
+ * message inlets. Thus, special cases are made for recognising "pd" and assigning it a given
+ * name index. No message receiver is listed in the receiver list for "pd". 
+ */
+
+// it might nice if this class were implemented using a hashtable with receiver name as the key
+// and Lists as the value.
 MessageSendController::MessageSendController(PdGraph *graph) : MessageObject(0, 0, graph) {
   nameList = new List();
   receiverLists = new List();
@@ -48,16 +58,17 @@ const char *MessageSendController::getObjectLabel() {
 }
 
 int MessageSendController::getNameIndex(char *receiverName) {
-  int nameIndex = -1;
   int numNames = nameList->size();
   for (int i = 0; i < numNames; i++) {
     char *name = (char *) nameList->get(i);
     if (strcmp(name, receiverName) == 0) {
-      nameIndex = i;
-      break;
+      return i;
     }
   }
-  return nameIndex;
+  if (strcmp("pd", receiverName) == 0) {
+    return SYSTEM_NAME_INDEX; // a special case for sending messages to the system
+  }
+  return -1;
 }
 
 void MessageSendController::receiveMessage(char *name, PdMessage *message) {
@@ -69,7 +80,9 @@ void MessageSendController::processMessage(int inletIndex, PdMessage *message) {
 }
 
 void MessageSendController::sendMessage(int outletIndex, PdMessage *message) {
-  if (outletIndex >= 0 && outletIndex < receiverLists->size()) { // if the inletIndex is valid
+  if (outletIndex == SYSTEM_NAME_INDEX) {
+    graph->receiveSystemMessage(message);
+  } else {
     List *receiverList = (List *) receiverLists->get(outletIndex);
     int numReceivers = receiverList->size();
     MessageReceive *receiver = NULL;
