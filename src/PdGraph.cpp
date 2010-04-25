@@ -556,12 +556,15 @@ void PdGraph::dispatchMessageToNamedReceivers(char *name, PdMessage *message) {
 
 PdMessage *PdGraph::scheduleExternalMessage(char *receiverName) {
   if (isRootGraph()) {
-    PdMessage *message = getNextOutgoingMessage(0);
-    message->setTimestamp(0.0); // message is processed at start of the next block
-
-    graph->scheduleMessage(sendController, sendController->getNameIndex(receiverName), message);
-
-    return message;
+    int receiverNameIndex = sendController->getNameIndex(receiverName);
+    if (receiverNameIndex < 0) {
+      return NULL; // return no message is the receiver name is unknown
+    } else {
+      PdMessage *message = getNextOutgoingMessage(0);
+      message->setTimestamp(0.0); // message is processed at start of the next block
+      graph->scheduleMessage(sendController, sendController->getNameIndex(receiverName), message);
+      return message;
+    }
   } else {
     return parentGraph->scheduleExternalMessage(receiverName);
   }
