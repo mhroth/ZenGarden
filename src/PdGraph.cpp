@@ -478,7 +478,8 @@ void PdGraph::addObject(MessageObject *node) {
     registerDelayline((DspDelayWrite *) node);
   } else if (strcmp(node->getObjectLabel(), "inlet~") == 0) {
     inletList->add(node);
-    ((DspInlet *) node)->setInletBuffer(localDspBufferAtInlet[inletList->size()-1]);
+    //((DspInlet *) node)->setInletBuffer(localDspBufferAtInlet + inletList->size() - 1);
+    ((DspInlet *) node)->setInletBuffer(&localDspBufferAtInlet[inletList->size()-1]);
     inletList->add(node);
   } else if (strcmp(node->getObjectLabel(), "outlet~") == 0) {
     outletList->add(node);

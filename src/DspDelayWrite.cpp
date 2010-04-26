@@ -45,17 +45,11 @@ DspDelayWrite::DspDelayWrite(PdMessage *initMessage, PdGraph *graph) : DspObject
     buffer = NULL;
     name = NULL;
   }
-  
-  // localDspBufferAtInlet[0] points directly at the buffer, eliminating the need for a memcpy
-  // from it to the buffer. Thus, the original localDspBufferAtInlet[0] can be free()ed.
-  free(localDspBufferAtInlet[0]);
-  localDspBufferAtInlet[0] = buffer;
 }
 
 DspDelayWrite::~DspDelayWrite() {
   free(name);
   free(buffer);
-  localDspBufferAtInlet[0] = NULL; // reset local input buffer so that it is properly released (or not)
 }
 
 const char *DspDelayWrite::getObjectLabel() {
@@ -73,6 +67,8 @@ float *DspDelayWrite::getBuffer(int *headIndex, int *bufferLength) {
 }
 
 void DspDelayWrite::processDspToIndex(float newBlockIndex) {
+  // copy inlet buffer to delay buffer
+  memcpy(buffer + headIndex, localDspBufferAtInlet[0], numBytesInBlock);
   if (headIndex == 0) {
     buffer[bufferLength] = buffer[0];
   }
@@ -80,5 +76,4 @@ void DspDelayWrite::processDspToIndex(float newBlockIndex) {
   if (headIndex >= bufferLength) {
     headIndex = 0;
   }
-  localDspBufferAtInlet[0] = buffer + headIndex; // set pointer for next iteration
 }

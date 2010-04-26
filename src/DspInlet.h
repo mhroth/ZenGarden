@@ -28,8 +28,7 @@
 class PdGraph;
 
 /** [inlet~] */
-/*
- * <code>DspInlet</code> uses much the same strategy of buffer replacement as <code>DspOutlet</code>.
+/* <code>DspInlet</code> uses much the same strategy of buffer replacement as <code>DspOutlet</code>.
  * In this case, the parent-graph's inlet buffer replaces this object's outlet buffer. Thus, when
  * the parent graph fills its inlet buffer, this object's outlet buffer is immediately filled
  * and no further computations must be done.
@@ -41,10 +40,17 @@ class DspInlet : public DspObject {
   
     const char *getObjectLabel();
   
-    /** Set the parent-graph's inlet buffer. The buffer will replace this object's output buffer. */
-    void setInletBuffer(float *graphInletBuffer);
+    /**
+     * Set the parent-graph's inlet buffer. A double pointer is used because the graph's inlet buffer
+     * may change due to the single-input buffer replacement optimisation in <code>DspObject</code>.
+     * The buffer will replace this object's output buffer.
+     */
+    void setInletBuffer(float **graphInletBuffer);
+  
+    void processDsp();
   
   private:
+    float **graphInletBuffer;
     float *tempLocalDspBuffer;
 };
 

@@ -25,14 +25,10 @@
 
 DspOutlet::DspOutlet(PdGraph *graph) : DspObject(0, 1, 0, 0, graph) {
   outletIndex = 0;
-  tempLocalDspBuffer = NULL;
 }
 
 DspOutlet::~DspOutlet() {
-  // reset the localDspBufferAtInlet to the proper buffer so that object deconstructors will free
-  // the correct pointers.
-  localDspBufferAtInlet[0] = tempLocalDspBuffer;
-  tempLocalDspBuffer = NULL;
+  // nothing to do
 }
 
 const char *DspOutlet::getObjectLabel() {
@@ -41,7 +37,10 @@ const char *DspOutlet::getObjectLabel() {
 
 void DspOutlet::setOutletIndex(int outletIndex) {
   this->outletIndex = outletIndex; // set the outlet index
-  tempLocalDspBuffer = localDspBufferAtInlet[0]; // temporarily store the input buffer
-  // reset the input buffer of this object to point at the indexed output buffer of the parent graph
-  localDspBufferAtInlet[0] = graph->getDspBufferAtOutlet(outletIndex);
+}
+
+void DspOutlet::processDspToIndex(float blockIndex) {
+  // copy the inlet buffer (which may change due to single-input optimisation in <code>DspObject</code>
+  // to the graph's output buffer
+  memcpy(graph->getDspBufferAtOutlet(outletIndex), localDspBufferAtInlet[0], numBytesInBlock);
 }

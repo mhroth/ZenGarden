@@ -110,7 +110,8 @@ class DspObject : public MessageObject {
   
     int numBytesInBlock;
   
-    float **localDspBufferAtInlet;
+    float **localDspBufferAtInlet; // points at the current local dsp buffer (which changes depending on how many incoming connections there are)
+    float **localDspBufferAtInletReserved; // always points to the local dsp buffer for inlet
     float **localDspBufferAtOutlet;
   
     /** List of all dsp objects connecting to this object at each inlet. */

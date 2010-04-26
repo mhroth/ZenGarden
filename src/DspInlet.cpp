@@ -23,6 +23,7 @@
 #include "DspInlet.h"
 
 DspInlet::DspInlet(PdGraph *graph) : DspObject(0, 0, 0, 1, graph) {
+  graphInletBuffer = NULL;
   tempLocalDspBuffer = NULL;
 }
 
@@ -34,7 +35,12 @@ const char *DspInlet::getObjectLabel() {
   return "inlet~";
 }
 
-void DspInlet::setInletBuffer(float *graphInletBuffer) {
+void DspInlet::setInletBuffer(float **graphInletBuffer) {
+  this->graphInletBuffer = graphInletBuffer;
   tempLocalDspBuffer = localDspBufferAtOutlet[0];
-  localDspBufferAtOutlet[0] = graphInletBuffer;
+}
+
+void DspInlet::processDsp() {
+  // update the outlet buffer with the graph's (possibly new) inlet buffer
+  localDspBufferAtOutlet[0] = *graphInletBuffer;
 }

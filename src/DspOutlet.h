@@ -51,10 +51,9 @@ class DspOutlet : public DspObject {
     void setOutletIndex(int outletIndex);
   
   private:
-    int outletIndex;
+    void processDspToIndex(float blockIndex);
   
-    /** A temporary holder for the "true" <code>localDspBufferAtInlet</code>. */
-    float *tempLocalDspBuffer;
+    int outletIndex;
 };
 
 #endif // _DSP_OUTLET_H_

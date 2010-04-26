@@ -57,8 +57,10 @@ void DspObject::init(int numDspInlets, int numDspOutlets, int blockSize) {
   
   // initialise the local input audio buffers
   localDspBufferAtInlet = (float **) malloc(numDspInlets * sizeof(float *));
+  localDspBufferAtInletReserved = (float **) malloc(numDspInlets * sizeof(float *));
   for (int i = 0; i < numDspInlets; i++) {
-    localDspBufferAtInlet[i] = (float *) calloc(blockSizeInt, sizeof(float));
+    localDspBufferAtInletReserved[i] = (float *) calloc(blockSizeInt, sizeof(float));
+    localDspBufferAtInlet[i] = localDspBufferAtInletReserved[i];
   }
   
   // initialise the local output audio buffers
@@ -93,9 +95,10 @@ DspObject::~DspObject() {
   
   // free the local input audio buffers
   for (int i = 0; i < numDspInlets; i++) {
-    free(localDspBufferAtInlet[i]);
+    free(localDspBufferAtInletReserved[i]);
   }
   free(localDspBufferAtInlet);
+  free(localDspBufferAtInletReserved);
   
   // free the local output audio buffers
   for (int i = 0; i < numDspOutlets; i++) {
@@ -191,20 +194,21 @@ void DspObject::processDsp() {
 void DspObject::resolveInputBuffersAtInlet(int inletIndex) {
   List *incomingDspConnectionsList = incomingDspConnectionsListAtInlet[inletIndex];
   int numConnections = incomingDspConnectionsList->size();
-  float *localInputBuffer = localDspBufferAtInlet[inletIndex];
   
   switch (numConnections) {
     case 0: {
       break; // nothing to do
     }
     case 1: {
-      // copy the single connection's output buffer to the input buffer
       ObjectLetPair *objectLetPair = (ObjectLetPair *) incomingDspConnectionsList->get(0);
-      float *remoteOutputBuffer = ((DspObject *) objectLetPair->object)->getDspBufferAtOutlet(objectLetPair->index);
-      memcpy(localInputBuffer, remoteOutputBuffer, numBytesInBlock);
+      DspObject *remoteObject = (DspObject *) objectLetPair->object;
+      localDspBufferAtInlet[inletIndex] = remoteObject->getDspBufferAtOutlet(objectLetPair->index);
       break;
     }
     default: { // numConnections > 1
+      localDspBufferAtInlet[inletIndex] = localDspBufferAtInletReserved[inletIndex];
+      float *localInputBuffer = localDspBufferAtInletReserved[inletIndex];
+      
       // copy the single connection's output buffer to the input buffer
       ObjectLetPair *objectLetPair = (ObjectLetPair *) incomingDspConnectionsList->get(0);
       float *remoteOutputBuffer = ((DspObject *) objectLetPair->object)->getDspBufferAtOutlet(objectLetPair->index);

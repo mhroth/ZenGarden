@@ -24,8 +24,7 @@
 #include "PdGraph.h"
 
 DspAdc::DspAdc(PdGraph *graph) : DspObject(0, 0, 0, graph->getNumInputChannels(), graph) {
-  /*
-   * Such that all ADCs can refer to the same input buffers, and to avoid lots of 
+  /* Such that all ADCs can refer to the same input buffers, and to avoid lots of 
    * <code>memcpy</code>ing to separate input buffers, all ADCs refer to the same input buffers.
    * This is accomplished by freeing the normally allocated output buffers, and replacing the
    * pointers to them with pointers to the global input buffers. In this way,
