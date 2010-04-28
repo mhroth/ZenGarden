@@ -110,7 +110,7 @@ class PdGraph : public DspObject {
     MessageElement *getArgument(int argIndex);
     
     /** Returns the global sample rate. */
-    inline float getSampleRate() { return sampleRate; }
+    float getSampleRate();
   
     /** Returns the global dsp buffer at the given inlet. Exclusively used by <code>DspAdc</code>. */
     float *getGlobalDspBufferAtInlet(int inletIndex);

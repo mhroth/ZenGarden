@@ -42,6 +42,8 @@ class DspVariableDelay : public DelayReceiver {
   private:
     // vd~ does not process any messages and thus does not implement processMessage()
     void processDspToIndex(float newBlockIndex);
+  
+    float sampleRate;
 };
 
 #endif // _DSP_VARIABLE_DELAY_H_

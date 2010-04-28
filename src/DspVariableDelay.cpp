@@ -27,6 +27,7 @@
 DspVariableDelay::DspVariableDelay(PdMessage *initMessage, PdGraph *graph) : DelayReceiver(0, 1, 0, 1, graph) {
   if (initMessage->getNumElements() > 0 && initMessage->getElement(0)->getType() == SYMBOL) {
     name = StaticUtils::copyString(initMessage->getElement(0)->getSymbol());
+    sampleRate = graph->getSampleRate();
   } else {
     graph->printErr("vd~ requires the name of a delayline. None given.");
     name = NULL;
@@ -53,7 +54,7 @@ void DspVariableDelay::processDspToIndex(float newBlockIndex) {
   int startSampleIndex = getStartSampleIndex();
   float targetIndexBase = (float) (headIndex - blockSizeInt + startSampleIndex);
   for (int i = startSampleIndex; i < endSampleIndex; i++, targetIndexBase+=1.0f) {
-    float delayInSamples = StaticUtils::millisecondsToSamples(inputBuffer[i], graph->getSampleRate());
+    float delayInSamples = StaticUtils::millisecondsToSamples(inputBuffer[i], sampleRate);
     if (delayInSamples < 0.0f) {
       delayInSamples = 0.0f;
     } else if (delayInSamples > bufferLengthFloat) {

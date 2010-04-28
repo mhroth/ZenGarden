@@ -505,6 +505,10 @@ void PdGraph::connect(int fromObjectIndex, int outletIndex, int toObjectIndex, i
   connect(fromObject, outletIndex, toObject, inletIndex);
 }
 
+float PdGraph::getSampleRate() {
+  return sampleRate;
+}
+
 double PdGraph::getBlockStartTimestamp() {
   return blockStartTimestamp;
 }
