@@ -30,7 +30,9 @@ ZGGraph *zg_new_graph(char *directory, char *filename, int blockSize,
 }
 
 void zg_delete_graph(PdGraph *graph) {
-  delete graph;
+  if (graph != NULL) {
+    delete graph;
+  }
 }
 
 void zg_process(PdGraph *graph, float *inputBuffers, float *outputBuffers) {
