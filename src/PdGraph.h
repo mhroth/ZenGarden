@@ -145,9 +145,6 @@ class PdGraph : public DspObject {
      */
     PdMessage *scheduleExternalMessage(char *receiverName);
   
-    /** Returns the named global <code>DspDelayWrite</code> object. */
-    DspDelayWrite *getDelayline(char *name);
-    
   private:
     PdGraph(PdFileParser *fileParser, char *directory, char *libraryDirectory, int blockSize, int numInputChannels, 
             int numOutputChannels, float sampleRate, PdGraph *parentGraph);
@@ -168,11 +165,17 @@ class PdGraph : public DspObject {
     /** Globally register a [send~] object. Connect to registered [receive~] objects with the same name. */
     void registerDspSend(DspSend *dspSend);
   
+    /** Returns the named global <code>DspSend</code> object. */
+    DspSend *getDspSend(char *name);
+  
     /**
      * Globally register a [delwrite~] object. Registration is necessary such that they can
      * be connected to [delread~] and [vd~] objects as are they are added to the graph.
      */
     void registerDelayline(DspDelayWrite *delayline);
+  
+    /** Returns the named global <code>DspDelayWrite</code> object. */
+    DspDelayWrite *getDelayline(char *name);
   
     /**
      * Globally register a [delread~] or [vd~] object. Registration is necessary such that they can

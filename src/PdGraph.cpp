@@ -98,6 +98,8 @@
 #include "DspOsc.h"
 #include "DspOutlet.h"
 #include "DspPhasor.h"
+#include "DspReceive.h"
+#include "DspSend.h"
 #include "DspSubtract.h"
 #include "DspVariableDelay.h"
 #include "DspWrap.h"
@@ -444,6 +446,12 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new DspOutlet(graph);
     } else if (strcmp(objectLabel, "phasor~") == 0) {
       return new DspPhasor(initMessage, graph);
+    } else if (strcmp(objectLabel, "receive~") == 0 ||
+               strcmp(objectLabel, "r~") == 0) {
+      return new DspReceive(initMessage, graph);
+    } else if (strcmp(objectLabel, "send~") == 0 ||
+               strcmp(objectLabel, "s~") == 0) {
+      return new DspSend(initMessage, graph);
     } else if (strcmp(objectLabel, "switch~") == 0) {
       return new MessageSwitch(initMessage, graph);
     } else if (strcmp(objectLabel, "vd~") == 0) {
@@ -484,14 +492,11 @@ void PdGraph::addObject(MessageObject *node) {
   } else if (strcmp(node->getObjectLabel(), "outlet~") == 0) {
     outletList->add(node);
     ((DspOutlet *) node)->setOutletIndex(outletList->size()-1);
+  } else if (strcmp(node->getObjectLabel(), "send~") == 0) {
+    registerDspSend((DspSend *) node);
+  } else if (strcmp(node->getObjectLabel(), "receive~") == 0) {
+    registerDspReceive((DspReceive *) node);
   }
-  /*
-   else if (strcmp(object->getObjectLabel(), "send~") == 0) {
-   registerDspSend((DspSendReceive *) object);
-   } else if (strcmp(object->getObjectLabel(), "receive~") == 0) {
-   registerDspReceive((DspSendReceive *) object);
-   }
-   */
 }
 
 void PdGraph::connect(MessageObject *fromObject, int outletIndex, MessageObject *toObject, int inletIndex) {
@@ -578,6 +583,12 @@ PdMessage *PdGraph::scheduleExternalMessage(char *receiverName) {
 void PdGraph::registerDspReceive(DspReceive *dspReceive) {
   if (isRootGraph()) {
     dspReceiveList->add(dspReceive);
+    
+    // connect receive~ to associated send~
+    DspSend *dspSend = getDspSend(dspReceive->getName());
+    if (dspSend != NULL) {
+      dspReceive->setBuffer(dspSend->getBuffer());
+    }
   } else {
     parentGraph->registerDspReceive(dspReceive);
   }
@@ -585,11 +596,34 @@ void PdGraph::registerDspReceive(DspReceive *dspReceive) {
 
 void PdGraph::registerDspSend(DspSend *dspSend) {
   if (isRootGraph()) {
-    // TODO(mhroth): add in duplicate detection
+    // detect send~ duplicates
+    DspSend *sendObject = getDspSend(dspSend->getName());
+    if (sendObject != NULL) {
+      printErr("Duplicate send~ object with name \"%s\" found.\n", dspSend->getName());
+      return;
+    }
     dspSendList->add(dspSend);
+    
+    // connect associated receive~s to send~.
+    for (int i = 0; i < dspReceiveList->size(); i++) {
+      DspReceive *dspReceive = (DspReceive *) dspReceiveList->get(i);
+      if (strcmp(dspReceive->getName(), dspSend->getName()) == 0) {
+        dspReceive->setBuffer(dspSend->getBuffer());
+      }
+    }
   } else {
     parentGraph->registerDspSend(dspSend);
   }
+}
+
+DspSend *PdGraph::getDspSend(char *name) {
+  for (int i = 0; i < dspSendList->size(); i++) {
+    DspSend *dspSend = (DspSend *) dspSendList->get(i);
+    if (strcmp(dspSend->getName(), name) == 0) {
+      return dspSend;
+    }
+  }
+  return NULL;
 }
 
 void PdGraph::registerDelayline(DspDelayWrite *delayline) {
