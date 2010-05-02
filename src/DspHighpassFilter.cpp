@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -20,26 +20,25 @@
  *
  */
 
-#include <math.h>
-#include <stdlib.h>
 #include "DspHighpassFilter.h"
+#include "PdGraph.h"
 
-DspHighpassFilter::DspHighpassFilter(int blockSize, int sampleRate, char *initString) :
-    DspMessageInputDspOutputObject(2, 1, blockSize, initString) {
-  this->sampleRate = (float) sampleRate;
-  calculateFilterCoefficients((float) (sampleRate/2)); // initialise the filter completely open
+DspHighpassFilter::DspHighpassFilter(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 1, 0, 1, graph) {
+  sampleRate = graph->getSampleRate();
   tap_0 = 0.0f;
-}
-
-DspHighpassFilter::DspHighpassFilter(float cutoffFrequency, int blockSize, int sampleRate, char *initString) : 
-    DspMessageInputDspOutputObject(2, 1, blockSize, initString) {
-  this->sampleRate = (float) sampleRate;
-  calculateFilterCoefficients(cutoffFrequency);
-  tap_0 = 0.0f;
+  if (initMessage->isFloat(0)) {
+    calculateFilterCoefficients(initMessage->getFloat(0));
+  } else {
+    calculateFilterCoefficients(sampleRate/2.0f); // initialise the filter completely open
+  }
 }
 
 DspHighpassFilter::~DspHighpassFilter() {
   // nothing to do
+}
+
+const char *DspHighpassFilter::getObjectLabel() {
+  return "hip~";
 }
 
 void DspHighpassFilter::calculateFilterCoefficients(float cutoffFrequency) {
@@ -51,13 +50,13 @@ void DspHighpassFilter::calculateFilterCoefficients(float cutoffFrequency) {
   }
 }
 
-inline void DspHighpassFilter::processMessage(int inletIndex, PdMessage *message) {
+void DspHighpassFilter::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
       MessageElement *messageElement = message->getElement(0);
       if (messageElement->getType() == SYMBOL) {
         if (strcmp(messageElement->getSymbol(), "clear") == 0) {
-          processDspToIndex(message->getBlockIndex());
+          processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), sampleRate));
           tap_0 = 0.0f;
         }
       }
@@ -66,7 +65,7 @@ inline void DspHighpassFilter::processMessage(int inletIndex, PdMessage *message
     case 1: {
       MessageElement *messageElement = message->getElement(0);
       if (messageElement->getType() == FLOAT) {
-        processDspToIndex(message->getBlockIndex());
+        processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), sampleRate));
         calculateFilterCoefficients(messageElement->getFloat());
       }
       break;
@@ -77,18 +76,15 @@ inline void DspHighpassFilter::processMessage(int inletIndex, PdMessage *message
   }
 }
 
-inline void DspHighpassFilter::processDspToIndex(int newBlockIndex) {
-  // DspHighpassFilter only supports signalPresedence == DSP_MESSAGE
-  if (signalPresedence == DSP_MESSAGE) {
-    float *inputBuffer = localDspBufferAtInlet[0]; 
-    float *outputBuffer = localDspBufferAtOutlet[0];
-    
-    float f;
-    for (int i = blockIndexOfLastMessage; i < newBlockIndex; i++) {
-      f = inputBuffer[i] + alpha * tap_0;
-      outputBuffer[i] = f - tap_0;
-      tap_0 = f;
-    }
+void DspHighpassFilter::processDspToIndex(float newBlockIndex) {
+  float *inputBuffer = localDspBufferAtInlet[0]; 
+  float *outputBuffer = localDspBufferAtOutlet[0];
+  
+  int endSampleIndex = getEndSampleIndex(newBlockIndex);
+  for (int i = getStartSampleIndex(); i < endSampleIndex; i++) {
+    float f = inputBuffer[i] + alpha * tap_0;
+    outputBuffer[i] = f - tap_0;
+    tap_0 = f;
   }
   blockIndexOfLastMessage = newBlockIndex;
 }

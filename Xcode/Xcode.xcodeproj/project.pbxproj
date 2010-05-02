@@ -87,6 +87,9 @@
 		909A959F1170E97D00E52B96 /* MessagePack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 909A959D1170E97D00E52B96 /* MessagePack.cpp */; };
 		909A95A01170E97D00E52B96 /* MessagePack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 909A959D1170E97D00E52B96 /* MessagePack.cpp */; };
 		909A95A11170E97D00E52B96 /* MessagePack.h in Headers */ = {isa = PBXBuildFile; fileRef = 909A959E1170E97D00E52B96 /* MessagePack.h */; };
+		90A050DD118E4377007D3FDE /* DspHighpassFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90A050DB118E4377007D3FDE /* DspHighpassFilter.cpp */; };
+		90A050DE118E4377007D3FDE /* DspHighpassFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 90A050DC118E4377007D3FDE /* DspHighpassFilter.h */; };
+		90A050DF118E4377007D3FDE /* DspHighpassFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90A050DB118E4377007D3FDE /* DspHighpassFilter.cpp */; };
 		90AA637D116F501B00477770 /* DspEnvelope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 900FD647116A834800603221 /* DspEnvelope.cpp */; };
 		90AA637E116F502200477770 /* DspAdc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C6A1113564400E5A8B6 /* DspAdc.cpp */; };
 		90AA637F116F502200477770 /* DspAdd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C6C1113564400E5A8B6 /* DspAdd.cpp */; };
@@ -356,6 +359,8 @@
 		909A93F41170B3FF00E52B96 /* DspVariableDelay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspVariableDelay.h; path = ../src/DspVariableDelay.h; sourceTree = SOURCE_ROOT; };
 		909A959D1170E97D00E52B96 /* MessagePack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessagePack.cpp; path = ../src/MessagePack.cpp; sourceTree = SOURCE_ROOT; };
 		909A959E1170E97D00E52B96 /* MessagePack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessagePack.h; path = ../src/MessagePack.h; sourceTree = SOURCE_ROOT; };
+		90A050DB118E4377007D3FDE /* DspHighpassFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspHighpassFilter.cpp; path = ../src/DspHighpassFilter.cpp; sourceTree = SOURCE_ROOT; };
+		90A050DC118E4377007D3FDE /* DspHighpassFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspHighpassFilter.h; path = ../src/DspHighpassFilter.h; sourceTree = SOURCE_ROOT; };
 		90AA54D511295EF900E8796B /* DspMessagePresedence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspMessagePresedence.h; path = ../src/DspMessagePresedence.h; sourceTree = SOURCE_ROOT; };
 		90AA6368116F4E7C00477770 /* libzengarden.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libzengarden.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		90AA92DD117FB129001CBE3F /* DelayReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DelayReceiver.cpp; path = ../src/DelayReceiver.cpp; sourceTree = SOURCE_ROOT; };
@@ -480,6 +485,8 @@
 				90FC0C7C116F74D10044AFAC /* DspDivide.h */,
 				900FD647116A834800603221 /* DspEnvelope.cpp */,
 				900FD648116A834800603221 /* DspEnvelope.h */,
+				90A050DB118E4377007D3FDE /* DspHighpassFilter.cpp */,
+				90A050DC118E4377007D3FDE /* DspHighpassFilter.h */,
 				90D373B61146B48E001EC01E /* DspInlet.cpp */,
 				90D373B51146B48E001EC01E /* DspInlet.h */,
 				900FD5D0116A523F00603221 /* DspLine.cpp */,
@@ -697,6 +704,7 @@
 				90355CF6118A3E6500017579 /* DspReceive.h in Headers */,
 				90792CCD118B118E00B428F6 /* DspThrow.h in Headers */,
 				9029F191118B3AEB00E08A54 /* DspCatch.h in Headers */,
+				90A050DE118E4377007D3FDE /* DspHighpassFilter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -856,6 +864,7 @@
 				90355CF8118A3E6500017579 /* DspReceive.cpp in Sources */,
 				90792CCC118B118E00B428F6 /* DspThrow.cpp in Sources */,
 				9029F193118B3AEB00E08A54 /* DspCatch.cpp in Sources */,
+				90A050DF118E4377007D3FDE /* DspHighpassFilter.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -957,6 +966,7 @@
 				90355CF7118A3E6500017579 /* DspReceive.cpp in Sources */,
 				90792CCE118B118E00B428F6 /* DspThrow.cpp in Sources */,
 				9029F192118B3AEB00E08A54 /* DspCatch.cpp in Sources */,
+				90A050DD118E4377007D3FDE /* DspHighpassFilter.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,24 +23,23 @@
 #ifndef _DSP_HIGH_PASS_FILTER_H_
 #define _DSP_HIGH_PASS_FILTER_H_
 
-#include "DspMessageInputDspOutputObject.h"
+#include "DspObject.h"
 
 /**
- * hip~
+ * [hip~], [hip~ float]
  * Specficially implement a one-tap IIR filter: y = x_0 - (alpha * x_0 + (1-alpha) * y_-1)
  */
-class DspHighpassFilter : public DspMessageInputDspOutputObject {
+class DspHighpassFilter : public DspObject {
   
   public:
-    DspHighpassFilter(int blockSize, int sampleRate, char *iniString);
-    DspHighpassFilter(float cutoffFrequency, int blockSize, int sampleRate, char *iniString);
+    DspHighpassFilter(PdMessage *initMessage, PdGraph *graph);
     ~DspHighpassFilter();
-    
-  protected:
-    inline void processMessage(int inletIndex, PdMessage *message);
-    inline void processDspToIndex(int newBlockIndex);
-    
+  
+    const char *getObjectLabel();
+  
   private:
+    void processMessage(int inletIndex, PdMessage *message);
+    void processDspToIndex(float newBlockIndex);
     void calculateFilterCoefficients(float cutoffFrequency);
     
     float sampleRate;

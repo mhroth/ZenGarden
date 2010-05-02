@@ -91,6 +91,7 @@
 #include "DspDelayWrite.h"
 #include "DspDivide.h"
 #include "DspEnvelope.h"
+#include "DspHighpassFilter.h"
 #include "DspInlet.h"
 #include "DspLine.h"
 #include "DspLowpassFilter.h"
@@ -440,6 +441,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new DspDelayWrite(initMessage, graph);
     } else if (strcmp(objectLabel, "env~") == 0) {
       return new DspEnvelope(initMessage, graph);
+    } else if (strcmp(objectLabel, "hip~") == 0) {
+      return new DspHighpassFilter(initMessage, graph);
     } else if (strcmp(objectLabel, "inlet~") == 0) {
       return new DspInlet(graph);
     } else if (strcmp(objectLabel, "line~") == 0) {
