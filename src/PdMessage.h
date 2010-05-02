@@ -83,6 +83,19 @@ class PdMessage {
   
     /** Returns the message id, a globally unique identifier for this message. */ 
     int getMessageId();
+  
+    /** Convenience function to determine if a particular message element is a float. */
+    bool isFloat(int index);
+    bool isSymbol(int index);
+    bool isBang(int index);
+    MessageElementType getType(int index);
+  
+    /**
+     * Convenience function to get the float value from a particular message element. The user
+     * is responsible for checking that the indexed <code>MessageElement</code> is truly a float.
+     */
+    float getFloat(int index);
+    char *getSymbol(int index);
 
   private:
     static int globalMessageId;

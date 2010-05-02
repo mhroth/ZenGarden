@@ -50,7 +50,7 @@ PdMessage::PdMessage(char *initString, PdGraph *graph) {
       } else if (strcmp(token, "bang") == 0 ||
                  strcmp(token, "b") == 0) {
         addElement(new MessageElement());
-      } else if (StaticUtils::isArgumentIndex(token) && graph != NULL) {
+      } else if (StaticUtils::isArgumentIndex(token) && graph != NULL && false) {
         // element refers to a graph argument
         /*
          * if no graph is given, then the argument is parsed as a SYMBOL. This functionality is
@@ -164,6 +164,54 @@ double PdMessage::getTimestamp() {
 
 bool PdMessage::isReserved() {
   return (reservedList->size() > 0);
+}
+
+bool PdMessage::isFloat(int index) {
+  if (index >= 0 && index < elementList->size()) {
+    return ((MessageElement *) elementList->get(index))->getType() == FLOAT;
+  } else {
+    return false;
+  }
+}
+
+bool PdMessage::isSymbol(int index) {
+  if (index >= 0 && index < elementList->size()) {
+    return ((MessageElement *) elementList->get(index))->getType() == SYMBOL;
+  } else {
+    return false;
+  }
+}
+
+bool PdMessage::isBang(int index) {
+  if (index >= 0 && index < elementList->size()) {
+    return ((MessageElement *) elementList->get(index))->getType() == BANG;
+  } else {
+    return false;
+  }
+}
+
+MessageElementType PdMessage::getType(int index) {
+  if (index >= 0 && index < elementList->size()) {
+    return ((MessageElement *) elementList->get(index))->getType();
+  } else {
+    return ANYTHING;
+  }
+}
+
+float PdMessage::getFloat(int index) {
+  if (index >= 0 && index < elementList->size()) {
+    return ((MessageElement *) elementList->get(index))->getFloat();
+  } else {
+    return 0.0f;
+  }
+}
+
+char *PdMessage::getSymbol(int index) {
+  if (index >= 0 && index < elementList->size()) {
+    return ((MessageElement *) elementList->get(index))->getSymbol();
+  } else {
+    return NULL;
+  }
 }
 
 void PdMessage::reserve(MessageObject *messageObject) {
