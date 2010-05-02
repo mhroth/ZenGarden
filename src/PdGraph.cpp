@@ -84,6 +84,7 @@
 
 #include "DspAdc.h"
 #include "DspAdd.h"
+#include "DspCatch.h"
 #include "DspCosine.h"
 #include "DspDac.h"
 #include "DspDelayRead.h"
@@ -101,6 +102,7 @@
 #include "DspReceive.h"
 #include "DspSend.h"
 #include "DspSubtract.h"
+#include "DspThrow.h"
 #include "DspVariableDelay.h"
 #include "DspWrap.h"
 
@@ -167,6 +169,8 @@ PdGraph::PdGraph(PdFileParser *fileParser, char *directory, char *libraryDirecto
     dspSendList = new List();
     delaylineList = new List();
     delayReceiverList = new List();
+    throwList = new List();
+    catchList = new List();
     sendController = new MessageSendController(this);
   } else {
     messageCallbackQueue = NULL;
@@ -178,6 +182,8 @@ PdGraph::PdGraph(PdFileParser *fileParser, char *directory, char *libraryDirecto
     dspSendList = NULL;
     delaylineList = NULL;
     delayReceiverList = NULL;
+    throwList = NULL;
+    catchList = NULL;
     sendController = NULL;
   }
 
@@ -422,6 +428,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new DspDivide(initMessage, graph);
     } else if (strcmp(objectLabel, "adc~") == 0) {
       return new DspAdc(graph);
+    } else if (strcmp(objectLabel, "catch~") == 0) {
+      return new DspCatch(initMessage, graph);
     } else if (strcmp(objectLabel, "cos~") == 0) {
       return new DspCosine(initMessage,graph);
     } else if (strcmp(objectLabel, "dac~") == 0) {
@@ -454,6 +462,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new DspSend(initMessage, graph);
     } else if (strcmp(objectLabel, "switch~") == 0) {
       return new MessageSwitch(initMessage, graph);
+    } else if (strcmp(objectLabel, "throw~") == 0) {
+      return new DspThrow(initMessage, graph);
     } else if (strcmp(objectLabel, "vd~") == 0) {
       return new DspVariableDelay(initMessage, graph);
     } else if (strcmp(objectLabel, "wrap~") == 0) {
@@ -479,6 +489,8 @@ void PdGraph::addObject(MessageObject *node) {
     ((MessageOutlet *) node)->setOutletIndex(outletList->size()-1);
   } else if (strcmp(node->getObjectLabel(), "receive") == 0) {
     sendController->addReceiver((MessageReceive *) node);
+  } else if (strcmp(node->getObjectLabel(), "catch~") == 0) {
+    registerDspCatch((DspCatch *) node);
   } else if (strcmp(node->getObjectLabel(), "delread~") == 0 ||
              strcmp(node->getObjectLabel(), "vd~") == 0) {
     registerDelayReceiver((DelayReceiver *) node);
@@ -496,6 +508,8 @@ void PdGraph::addObject(MessageObject *node) {
     registerDspSend((DspSend *) node);
   } else if (strcmp(node->getObjectLabel(), "receive~") == 0) {
     registerDspReceive((DspReceive *) node);
+  } else if (strcmp(node->getObjectLabel(), "throw~") == 0) {
+    registerDspThrow((DspThrow *) node);
   }
 }
 
@@ -673,6 +687,48 @@ DspDelayWrite *PdGraph::getDelayline(char *name) {
   } else {
     return parentGraph->getDelayline(name);
   }
+}
+
+void PdGraph::registerDspThrow(DspThrow *dspThrow) {
+  if (isRootGraph()) {
+    throwList->add(dspThrow);
+    
+    DspCatch *dspCatch = getDspCatch(dspThrow->getName());
+    if (dspCatch != NULL) {
+      dspCatch->addThrow(dspThrow);
+    }
+  } else {
+    parentGraph->registerDspThrow(dspThrow);
+  }
+}
+
+void PdGraph::registerDspCatch(DspCatch *dspCatch) {
+  if (isRootGraph()) {
+    DspCatch *catchObject = getDspCatch(dspCatch->getName());
+    if (catchObject != NULL) {
+      printErr("catch~ with duplicate name \"%s\" already exists.\n", dspCatch->getName());
+      return;
+    }
+    catchList->add(dspCatch);
+    
+    // connect catch~ to all associated throw~s
+    for (int i = 0; i < throwList->size(); i++) {
+      DspThrow *dspThrow = (DspThrow *) throwList->get(i);
+      dspCatch->addThrow(dspThrow);
+    }
+  } else {
+    parentGraph->registerDspCatch(dspCatch);
+  }
+}
+
+DspCatch *PdGraph::getDspCatch(char *name) {
+  for (int i = 0; i < catchList->size(); i++) {
+    DspCatch *dspCatch = (DspCatch *) catchList->get(i);
+    if (strcmp(dspCatch->getName(), name) == 0) {
+      return dspCatch;
+    }
+  }
+  return NULL;
 }
 
 void PdGraph::receiveMessage(int inletIndex, PdMessage *message) {

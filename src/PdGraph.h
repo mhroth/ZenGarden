@@ -29,9 +29,11 @@
 #include "PdFileParser.h"
 
 class DelayReceiver;
+class DspCatch;
 class DspDelayWrite;
 class DspReceive;
 class DspSend;
+class DspThrow;
 class MessageObject;
 class MessageReceive;
 class MessageSend;
@@ -168,6 +170,9 @@ class PdGraph : public DspObject {
     /** Returns the named global <code>DspSend</code> object. */
     DspSend *getDspSend(char *name);
   
+    /** Returns the named global <code>DspCatch</code> object. */
+    DspCatch *getDspCatch(char *name);
+  
     /**
      * Globally register a [delwrite~] object. Registration is necessary such that they can
      * be connected to [delread~] and [vd~] objects as are they are added to the graph.
@@ -182,6 +187,10 @@ class PdGraph : public DspObject {
      * be connected to [delwrite~] objects are they are added to the graph.
      */
     void registerDelayReceiver(DelayReceiver *delayReceiver);
+  
+    void registerDspThrow(DspThrow *dspThrow);
+  
+    void registerDspCatch(DspCatch *dspCatch);
   
     /** The unique id for this subgraph. Defines "$0". */
     int graphId;
@@ -230,6 +239,12 @@ class PdGraph : public DspObject {
   
     /** A global list of all [delread~] and [vd~] objects. */
     List *delayReceiverList;
+  
+    /** A global list of all [throw~] objects. */
+    List *throwList;
+  
+    /** A global list of all [catch~] objects. */
+    List *catchList;
   
     /**
      * The global <code>MessageSendController</code> which dispatches messages to named

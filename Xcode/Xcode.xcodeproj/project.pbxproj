@@ -20,6 +20,9 @@
 		90266AF9112ED3A000E3F6F1 /* MessageAbsoluteValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90266AF7112ED3A000E3F6F1 /* MessageAbsoluteValue.cpp */; };
 		90266B15112ED86E00E3F6F1 /* MessageMessageBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90266B13112ED86E00E3F6F1 /* MessageMessageBox.cpp */; };
 		90275B42112880D900FFAEC7 /* DspOsc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90275B40112880D900FFAEC7 /* DspOsc.cpp */; };
+		9029F191118B3AEB00E08A54 /* DspCatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 9029F18F118B3AEB00E08A54 /* DspCatch.h */; };
+		9029F192118B3AEB00E08A54 /* DspCatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9029F190118B3AEB00E08A54 /* DspCatch.cpp */; };
+		9029F193118B3AEB00E08A54 /* DspCatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9029F190118B3AEB00E08A54 /* DspCatch.cpp */; };
 		902C1DEC116FA65C00C244A9 /* DspDivide.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FC0C7B116F74D10044AFAC /* DspDivide.cpp */; };
 		90355CF6118A3E6500017579 /* DspReceive.h in Headers */ = {isa = PBXBuildFile; fileRef = 90355CF4118A3E6500017579 /* DspReceive.h */; };
 		90355CF7118A3E6500017579 /* DspReceive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90355CF5118A3E6500017579 /* DspReceive.cpp */; };
@@ -57,6 +60,9 @@
 		90565AAD117A26F50006E136 /* MessageUnpack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90565AAB117A26F50006E136 /* MessageUnpack.cpp */; };
 		90565AAE117A26F50006E136 /* MessageUnpack.h in Headers */ = {isa = PBXBuildFile; fileRef = 90565AAC117A26F50006E136 /* MessageUnpack.h */; };
 		90565AAF117A26F50006E136 /* MessageUnpack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90565AAB117A26F50006E136 /* MessageUnpack.cpp */; };
+		90792CCC118B118E00B428F6 /* DspThrow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90792CCB118B118E00B428F6 /* DspThrow.cpp */; };
+		90792CCD118B118E00B428F6 /* DspThrow.h in Headers */ = {isa = PBXBuildFile; fileRef = 90792CCA118B118E00B428F6 /* DspThrow.h */; };
+		90792CCE118B118E00B428F6 /* DspThrow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90792CCB118B118E00B428F6 /* DspThrow.cpp */; };
 		9079726F118654C90005E8DF /* ZenGarden.h in Headers */ = {isa = PBXBuildFile; fileRef = 9079726D118654C90005E8DF /* ZenGarden.h */; };
 		90797270118654C90005E8DF /* ZenGarden.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9079726E118654C90005E8DF /* ZenGarden.cpp */; };
 		90797271118654C90005E8DF /* ZenGarden.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9079726E118654C90005E8DF /* ZenGarden.cpp */; };
@@ -245,6 +251,8 @@
 		90266B14112ED86E00E3F6F1 /* MessageMessageBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageMessageBox.h; path = ../src/MessageMessageBox.h; sourceTree = SOURCE_ROOT; };
 		90275B40112880D900FFAEC7 /* DspOsc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspOsc.cpp; path = ../src/DspOsc.cpp; sourceTree = SOURCE_ROOT; };
 		90275B41112880D900FFAEC7 /* DspOsc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspOsc.h; path = ../src/DspOsc.h; sourceTree = SOURCE_ROOT; };
+		9029F18F118B3AEB00E08A54 /* DspCatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspCatch.h; path = ../src/DspCatch.h; sourceTree = SOURCE_ROOT; };
+		9029F190118B3AEB00E08A54 /* DspCatch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspCatch.cpp; path = ../src/DspCatch.cpp; sourceTree = SOURCE_ROOT; };
 		90355CF4118A3E6500017579 /* DspReceive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspReceive.h; path = ../src/DspReceive.h; sourceTree = SOURCE_ROOT; };
 		90355CF5118A3E6500017579 /* DspReceive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspReceive.cpp; path = ../src/DspReceive.cpp; sourceTree = SOURCE_ROOT; };
 		9038BC02113FFF8500ABE744 /* DspMultiply.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspMultiply.cpp; path = ../src/DspMultiply.cpp; sourceTree = SOURCE_ROOT; };
@@ -309,6 +317,8 @@
 		90445FB31188F0910076B724 /* DspSend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspSend.cpp; path = ../src/DspSend.cpp; sourceTree = SOURCE_ROOT; };
 		90565AAB117A26F50006E136 /* MessageUnpack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageUnpack.cpp; path = ../src/MessageUnpack.cpp; sourceTree = SOURCE_ROOT; };
 		90565AAC117A26F50006E136 /* MessageUnpack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageUnpack.h; path = ../src/MessageUnpack.h; sourceTree = SOURCE_ROOT; };
+		90792CCA118B118E00B428F6 /* DspThrow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspThrow.h; path = ../src/DspThrow.h; sourceTree = SOURCE_ROOT; };
+		90792CCB118B118E00B428F6 /* DspThrow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspThrow.cpp; path = ../src/DspThrow.cpp; sourceTree = SOURCE_ROOT; };
 		9079726D118654C90005E8DF /* ZenGarden.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZenGarden.h; path = ../src/ZenGarden.h; sourceTree = SOURCE_ROOT; };
 		9079726E118654C90005E8DF /* ZenGarden.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ZenGarden.cpp; path = ../src/ZenGarden.cpp; sourceTree = SOURCE_ROOT; };
 		908687A21138467800C87D5C /* PdFileParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PdFileParser.h; path = ../src/PdFileParser.h; sourceTree = SOURCE_ROOT; };
@@ -456,6 +466,8 @@
 				90398C6D1113564400E5A8B6 /* DspAdd.h */,
 				90398C6A1113564400E5A8B6 /* DspAdc.cpp */,
 				90398C6B1113564400E5A8B6 /* DspAdc.h */,
+				9029F190118B3AEB00E08A54 /* DspCatch.cpp */,
+				9029F18F118B3AEB00E08A54 /* DspCatch.h */,
 				90E9C5DF118211A0004D912D /* DspCosine.cpp */,
 				90E9C5E0118211A0004D912D /* DspCosine.h */,
 				90398C6E1113564400E5A8B6 /* DspDac.cpp */,
@@ -493,6 +505,8 @@
 				90445FB21188F0910076B724 /* DspSend.h */,
 				90FC0C80116F74F10044AFAC /* DspSubtract.cpp */,
 				90FC0C81116F74F10044AFAC /* DspSubtract.h */,
+				90792CCB118B118E00B428F6 /* DspThrow.cpp */,
+				90792CCA118B118E00B428F6 /* DspThrow.h */,
 				909A93F31170B3FF00E52B96 /* DspVariableDelay.cpp */,
 				909A93F41170B3FF00E52B96 /* DspVariableDelay.h */,
 				90E9C5E3118211A0004D912D /* DspWrap.cpp */,
@@ -681,6 +695,8 @@
 				9079726F118654C90005E8DF /* ZenGarden.h in Headers */,
 				90445FB41188F0910076B724 /* DspSend.h in Headers */,
 				90355CF6118A3E6500017579 /* DspReceive.h in Headers */,
+				90792CCD118B118E00B428F6 /* DspThrow.h in Headers */,
+				9029F191118B3AEB00E08A54 /* DspCatch.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -838,6 +854,8 @@
 				90797271118654C90005E8DF /* ZenGarden.cpp in Sources */,
 				90445FB61188F0910076B724 /* DspSend.cpp in Sources */,
 				90355CF8118A3E6500017579 /* DspReceive.cpp in Sources */,
+				90792CCC118B118E00B428F6 /* DspThrow.cpp in Sources */,
+				9029F193118B3AEB00E08A54 /* DspCatch.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -937,6 +955,8 @@
 				90797270118654C90005E8DF /* ZenGarden.cpp in Sources */,
 				90445FB51188F0910076B724 /* DspSend.cpp in Sources */,
 				90355CF7118A3E6500017579 /* DspReceive.cpp in Sources */,
+				90792CCE118B118E00B428F6 /* DspThrow.cpp in Sources */,
+				9029F192118B3AEB00E08A54 /* DspCatch.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

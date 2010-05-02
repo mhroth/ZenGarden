@@ -2,6 +2,7 @@ LOCAL_SRC_FILES := \
 ./DelayReceiver.cpp \
 ./DspAdd.cpp \
 ./DspAdc.cpp \
+./DspCatch.cpp \
 ./DspCosine.cpp \
 ./DspDac.cpp \
 ./DspDelayRead.cpp \
@@ -17,7 +18,10 @@ LOCAL_SRC_FILES := \
 ./DspOsc.cpp \
 ./DspOutlet.cpp \
 ./DspPhasor.cpp \
+./DspReceive.cpp \
+./DspSend.cpp \
 ./DspSubtract.cpp \
+./DspThrow.cpp \
 ./DspVariableDelay.cpp \
 ./DspWrap.cpp \
 ./LinkedList.cpp \
