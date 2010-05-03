@@ -66,6 +66,7 @@
 #include "MessageReceive.h"
 #include "MessageRemainder.h"
 #include "MessageRmsToDb.h"
+#include "MessageSelect.h"
 #include "MessageSend.h"
 #include "MessageSine.h"
 #include "MessageSpigot.h"
@@ -396,6 +397,9 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
     } else if (strcmp(objectLabel, "receive") == 0 ||
                strcmp(objectLabel, "r") == 0) {
       return new MessageReceive(initMessage, graph);
+    } else if (strcmp(objectLabel, "select") == 0 ||
+               strcmp(objectLabel, "sel") == 0) {
+      return new MessageSelect(initMessage, graph);
     } else if (strcmp(objectLabel, "send") == 0 ||
                strcmp(objectLabel, "s") == 0) {
       return new MessageSend(initMessage, graph);

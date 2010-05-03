@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,23 +23,21 @@
 #ifndef _MESSAGE_SELECT_H_
 #define _MESSAGE_SELECT_H_
 
-#include "MessageInputMessageOutputObject.h"
+#include "MessageObject.h"
 
-/**
- * select,sel
- */
-class MessageSelect : public MessageInputMessageOutputObject {
+/** [select], [sel] */
+class MessageSelect : public MessageObject {
   
   public:
-    MessageSelect(List *messageElementList, char *initString);
+    MessageSelect(PdMessage *initMessage, PdGraph *graph);
     ~MessageSelect();
-    
-  protected:
-    void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage();
+  
+    const char *getObjectLabel();
     
   private:
-    List *messageElementList;
+    void processMessage(int inletIndex, PdMessage *message);
+   
+    PdMessage *selectorMessage;
 };
 
 #endif // _MESSAGE_SELECT_H_

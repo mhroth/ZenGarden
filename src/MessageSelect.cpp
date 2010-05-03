@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -20,53 +20,51 @@
  *
  */
 
-#include <stdlib.h>
-#include "MessageElement.h"
 #include "MessageSelect.h"
+#include "PdGraph.h"
 
-MessageSelect::MessageSelect(List *messageElementList, char *initString) : 
-    MessageInputMessageOutputObject((messageElementList->getNumElements() == 0) ? 2 : 1, 
-                                    (messageElementList->getNumElements() == 0) ? 2 : messageElementList->getNumElements()+1, initString) {
-  this->messageElementList = messageElementList;
+MessageSelect::MessageSelect(PdMessage *initMessage, PdGraph *graph) : 
+    MessageObject((initMessage->getNumElements() < 2) ? 2 : 1, 
+                  (initMessage->getNumElements() < 2) ? 2 : initMessage->getNumElements()+1, graph) {
+  selectorMessage = new PdMessage();
+  selectorMessage->clearAndCopyFrom(initMessage, 0);
 }
 
 MessageSelect::~MessageSelect() {
-  messageOutletBuffers[messageElementList->getNumElements()]->clear();
-  
-  for (int i = 0; i < messageElementList->getNumElements(); i++) {
-    delete (MessageElement *) messageElementList->get(i);
-  }
-  delete messageElementList;
+  delete selectorMessage;
+}
+
+const char *MessageSelect::getObjectLabel() {
+  return "select";
 }
 
 void MessageSelect::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
       MessageElement *messageElement = message->getElement(0);
-      for (int i = 0; i < messageElementList->getNumElements(); i++) {
-        MessageElement *selector = (MessageElement *) messageElementList->get(i);
+      int numSelectors = selectorMessage->getNumElements();
+      for (int i = 0; i < numSelectors; i++) {
+        MessageElement *selector = selectorMessage->getElement(i);
         if (messageElement->equals(selector)) {
+          // send bang from matching outlet
           PdMessage *outgoingMessage = getNextOutgoingMessage(i);
-          outgoingMessage->setBlockIndex(message->getBlockIndex());
+          outgoingMessage->setTimestamp(message->getTimestamp());
+          sendMessage(i, outgoingMessage);
           return;
         }
       }
 
-      setNextOutgoingMessage(messageElementList->getNumElements(), message);
+      // message does not match any selector. Send it out to of the last outlet.
+      sendMessage(numSelectors, message);
       break;
     }
     case 1: {
       // TODO(mhroth): be able to set the selctor
+      graph->printErr("select currently does not support setting the selector via the right inlet.\n");
       break;
     }
     default: {
       break;
     }
   }
-}
-
-PdMessage *MessageSelect::newCanonicalMessage() {
-  PdMessage *message = new PdMessage();
-  message->addElement(new MessageElement());
-  return message;
 }
