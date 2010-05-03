@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,24 +23,21 @@
 #ifndef _MESSAGE_TOGGLE_H_
 #define _MESSAGE_TOGGLE_H_
 
-#include "MessageInputMessageOutputObject.h"
+#include "MessageObject.h"
 
-/**
- * toggle/tgl
- */
-class MessageToggle : public MessageInputMessageOutputObject {
+/** [toggle], [tgl] */
+class MessageToggle : public MessageObject {
   
   public:
-    MessageToggle(char *initString);
+    MessageToggle(PdMessage *initString, PdGraph *graph);
     ~MessageToggle();
-    
-  protected:
-    inline void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage();
+  
+    const char *getObjectLabel();
     
   private:
+    void processMessage(int inletIndex, PdMessage *message);
+  
     bool isOn;
-    float constant;
 };
 
 #endif // _MESSAGE_TOGGLE_H_

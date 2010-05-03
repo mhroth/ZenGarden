@@ -9,6 +9,7 @@ LOCAL_SRC_FILES := \
 ./DspDelayWrite.cpp \
 ./DspDivide.cpp \
 ./DspEnvelope.cpp \
+./DspHighpassFilter.cpp \
 ./DspInlet.cpp \
 ./DspLine.cpp \
 ./DspLowpassFilter.cpp \
@@ -83,6 +84,7 @@ LOCAL_SRC_FILES := \
 ./MessageSymbol.cpp \
 ./MessageTangent.cpp \
 ./MessageText.cpp \
+./MessageToggle.cpp \
 ./MessageTrigger.cpp \
 ./MessageUntil.cpp \
 ./MessageUnpack.cpp \

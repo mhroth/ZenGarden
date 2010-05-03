@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -22,7 +22,7 @@
 
 #include "MessageToggle.h"
 
-MessageToggle::MessageToggle(char *initString) : MessageInputMessageOutputObject(1, 1, initString) {
+MessageToggle::MessageToggle(PdMessage *initString, PdGraph *graph) : MessageObject(1, 1, graph) {
   isOn = false;
 }
 
@@ -30,50 +30,38 @@ MessageToggle::~MessageToggle() {
   // nothing to do
 }
 
-inline void MessageToggle::processMessage(int inletIndex, PdMessage *message) {
-  if (inletIndex == 0) {
-    MessageElement *messageElement = message->getElement(0);
-    switch (messageElement->getType()) {
-      case FLOAT: {
-        constant = messageElement->getFloat();
-        isOn = constant == 0.0f;
-        PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-        outgoingMessage->getElement(0)->setFloat(constant);
-        outgoingMessage->setBlockIndex(message->getBlockIndex());
-        break;
-      }
-      case BANG: {
-        isOn = !isOn;
-        if (isOn) {
-          PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-          outgoingMessage->getElement(0)->setFloat(constant);
-          outgoingMessage->setBlockIndex(message->getBlockIndex());
-        } else {
-          PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-          outgoingMessage->getElement(0)->setFloat(0.0f);
-          outgoingMessage->setBlockIndex(message->getBlockIndex());
-        }
-        break;
-      }
-      case SYMBOL: {
-        if (strcmp(messageElement->getSymbol(), "set") == 0) {
-          MessageElement *messageElement0 = message->getElement(1);
-          if (messageElement0 != NULL && messageElement0->getType() == FLOAT) {
-            constant = messageElement0->getFloat();
-            isOn = constant == 0.0f;
-          }
-        }
-      }
-      default: {
-        break;
-      }
-    }
-  }
+const char *MessageToggle::getObjectLabel() {
+  return "toggle";
 }
 
-PdMessage *MessageToggle::newCanonicalMessage() {
-  PdMessage *message = new PdMessage();
-  MessageElement *messageElement = new MessageElement(0.0f);
-  message->addElement(messageElement);
-  return message;
+void MessageToggle::processMessage(int inletIndex, PdMessage *message) {
+  MessageElement *messageElement = message->getElement(0);
+  switch (messageElement->getType()) {
+    case FLOAT: {
+      isOn = (messageElement->getFloat() != 0.0f);
+      PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+      outgoingMessage->setTimestamp(message->getTimestamp());
+      outgoingMessage->getElement(0)->setFloat(isOn ? 1.0f : 0.0f);
+      sendMessage(0, outgoingMessage);
+      break;
+    }
+    case BANG: {
+      isOn = !isOn;
+      PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+      outgoingMessage->setTimestamp(message->getTimestamp());
+      outgoingMessage->getElement(0)->setFloat(isOn ? 1.0f : 0.0f);
+      sendMessage(0, outgoingMessage);
+      break;
+    }
+    case SYMBOL: {
+      if (strcmp(messageElement->getSymbol(), "set") == 0) {
+        if (message->isFloat(1)) {
+          isOn = (message->getFloat(1) != 0.0f);
+        }
+      }
+    }
+    default: {
+      break;
+    }
+  }
 }

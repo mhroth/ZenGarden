@@ -60,6 +60,9 @@
 		90565AAD117A26F50006E136 /* MessageUnpack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90565AAB117A26F50006E136 /* MessageUnpack.cpp */; };
 		90565AAE117A26F50006E136 /* MessageUnpack.h in Headers */ = {isa = PBXBuildFile; fileRef = 90565AAC117A26F50006E136 /* MessageUnpack.h */; };
 		90565AAF117A26F50006E136 /* MessageUnpack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90565AAB117A26F50006E136 /* MessageUnpack.cpp */; };
+		9056A3EE118F2D7C00E4429E /* MessageToggle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9056A3EC118F2D7C00E4429E /* MessageToggle.cpp */; };
+		9056A3EF118F2D7C00E4429E /* MessageToggle.h in Headers */ = {isa = PBXBuildFile; fileRef = 9056A3ED118F2D7C00E4429E /* MessageToggle.h */; };
+		9056A3F0118F2D7C00E4429E /* MessageToggle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9056A3EC118F2D7C00E4429E /* MessageToggle.cpp */; };
 		90792CCC118B118E00B428F6 /* DspThrow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90792CCB118B118E00B428F6 /* DspThrow.cpp */; };
 		90792CCD118B118E00B428F6 /* DspThrow.h in Headers */ = {isa = PBXBuildFile; fileRef = 90792CCA118B118E00B428F6 /* DspThrow.h */; };
 		90792CCE118B118E00B428F6 /* DspThrow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90792CCB118B118E00B428F6 /* DspThrow.cpp */; };
@@ -320,6 +323,8 @@
 		90445FB31188F0910076B724 /* DspSend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspSend.cpp; path = ../src/DspSend.cpp; sourceTree = SOURCE_ROOT; };
 		90565AAB117A26F50006E136 /* MessageUnpack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageUnpack.cpp; path = ../src/MessageUnpack.cpp; sourceTree = SOURCE_ROOT; };
 		90565AAC117A26F50006E136 /* MessageUnpack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageUnpack.h; path = ../src/MessageUnpack.h; sourceTree = SOURCE_ROOT; };
+		9056A3EC118F2D7C00E4429E /* MessageToggle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageToggle.cpp; path = ../src/MessageToggle.cpp; sourceTree = SOURCE_ROOT; };
+		9056A3ED118F2D7C00E4429E /* MessageToggle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageToggle.h; path = ../src/MessageToggle.h; sourceTree = SOURCE_ROOT; };
 		90792CCA118B118E00B428F6 /* DspThrow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspThrow.h; path = ../src/DspThrow.h; sourceTree = SOURCE_ROOT; };
 		90792CCB118B118E00B428F6 /* DspThrow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspThrow.cpp; path = ../src/DspThrow.cpp; sourceTree = SOURCE_ROOT; };
 		9079726D118654C90005E8DF /* ZenGarden.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZenGarden.h; path = ../src/ZenGarden.h; sourceTree = SOURCE_ROOT; };
@@ -644,6 +649,8 @@
 				90266AE9112ED31D00E3F6F1 /* MessageTangent.h */,
 				90CC80BE11711375009D1539 /* MessageText.cpp */,
 				90CC80BD11711375009D1539 /* MessageText.h */,
+				9056A3EC118F2D7C00E4429E /* MessageToggle.cpp */,
+				9056A3ED118F2D7C00E4429E /* MessageToggle.h */,
 				90C94369114A868200B78515 /* MessageTrigger.cpp */,
 				90C9436A114A868200B78515 /* MessageTrigger.h */,
 				90565AAB117A26F50006E136 /* MessageUnpack.cpp */,
@@ -705,6 +712,7 @@
 				90792CCD118B118E00B428F6 /* DspThrow.h in Headers */,
 				9029F191118B3AEB00E08A54 /* DspCatch.h in Headers */,
 				90A050DE118E4377007D3FDE /* DspHighpassFilter.h in Headers */,
+				9056A3EF118F2D7C00E4429E /* MessageToggle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -865,6 +873,7 @@
 				90792CCC118B118E00B428F6 /* DspThrow.cpp in Sources */,
 				9029F193118B3AEB00E08A54 /* DspCatch.cpp in Sources */,
 				90A050DF118E4377007D3FDE /* DspHighpassFilter.cpp in Sources */,
+				9056A3F0118F2D7C00E4429E /* MessageToggle.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -967,6 +976,7 @@
 				90792CCE118B118E00B428F6 /* DspThrow.cpp in Sources */,
 				9029F192118B3AEB00E08A54 /* DspCatch.cpp in Sources */,
 				90A050DD118E4377007D3FDE /* DspHighpassFilter.cpp in Sources */,
+				9056A3EE118F2D7C00E4429E /* MessageToggle.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
