@@ -104,6 +104,7 @@
 #include "DspPhasor.h"
 #include "DspReceive.h"
 #include "DspSend.h"
+#include "DspSig.h"
 #include "DspSubtract.h"
 #include "DspThrow.h"
 #include "DspVariableDelay.h"
@@ -471,6 +472,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
     } else if (strcmp(objectLabel, "send~") == 0 ||
                strcmp(objectLabel, "s~") == 0) {
       return new DspSend(initMessage, graph);
+    } else if (strcmp(objectLabel, "sig~") == 0) {
+      return new DspSignal(initMessage, graph);
     } else if (strcmp(objectLabel, "switch~") == 0) {
       return new MessageSwitch(initMessage, graph);
     } else if (strcmp(objectLabel, "throw~") == 0) {
