@@ -76,6 +76,9 @@
 		908001351190101200A9870E /* DspSig.h in Headers */ = {isa = PBXBuildFile; fileRef = 908001331190101200A9870E /* DspSig.h */; };
 		908001361190101200A9870E /* DspSig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908001321190101200A9870E /* DspSig.cpp */; };
 		908687A41138467800C87D5C /* PdFileParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908687A31138467800C87D5C /* PdFileParser.cpp */; };
+		90890D68119230E40099FF3A /* DspSnapshot.h in Headers */ = {isa = PBXBuildFile; fileRef = 90890D66119230E40099FF3A /* DspSnapshot.h */; };
+		90890D69119230E40099FF3A /* DspSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90890D67119230E40099FF3A /* DspSnapshot.cpp */; };
+		90890D6A119230E40099FF3A /* DspSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90890D67119230E40099FF3A /* DspSnapshot.cpp */; };
 		908A373E1125DF6D00558388 /* MessageEqualsEquals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908A37321125DF6D00558388 /* MessageEqualsEquals.cpp */; };
 		908A373F1125DF6D00558388 /* MessageGreaterThan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908A37341125DF6D00558388 /* MessageGreaterThan.cpp */; };
 		908A37401125DF6D00558388 /* MessageGreaterThanOrEqualTo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908A37361125DF6D00558388 /* MessageGreaterThanOrEqualTo.cpp */; };
@@ -341,6 +344,8 @@
 		908001331190101200A9870E /* DspSig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspSig.h; path = ../src/DspSig.h; sourceTree = SOURCE_ROOT; };
 		908687A21138467800C87D5C /* PdFileParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PdFileParser.h; path = ../src/PdFileParser.h; sourceTree = SOURCE_ROOT; };
 		908687A31138467800C87D5C /* PdFileParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PdFileParser.cpp; path = ../src/PdFileParser.cpp; sourceTree = SOURCE_ROOT; };
+		90890D66119230E40099FF3A /* DspSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspSnapshot.h; path = ../src/DspSnapshot.h; sourceTree = SOURCE_ROOT; };
+		90890D67119230E40099FF3A /* DspSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspSnapshot.cpp; path = ../src/DspSnapshot.cpp; sourceTree = SOURCE_ROOT; };
 		908A37321125DF6D00558388 /* MessageEqualsEquals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageEqualsEquals.cpp; path = ../src/MessageEqualsEquals.cpp; sourceTree = SOURCE_ROOT; };
 		908A37331125DF6D00558388 /* MessageEqualsEquals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageEqualsEquals.h; path = ../src/MessageEqualsEquals.h; sourceTree = SOURCE_ROOT; };
 		908A37341125DF6D00558388 /* MessageGreaterThan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageGreaterThan.cpp; path = ../src/MessageGreaterThan.cpp; sourceTree = SOURCE_ROOT; };
@@ -527,6 +532,8 @@
 				90445FB21188F0910076B724 /* DspSend.h */,
 				908001321190101200A9870E /* DspSig.cpp */,
 				908001331190101200A9870E /* DspSig.h */,
+				90890D67119230E40099FF3A /* DspSnapshot.cpp */,
+				90890D66119230E40099FF3A /* DspSnapshot.h */,
 				90FC0C80116F74F10044AFAC /* DspSubtract.cpp */,
 				90FC0C81116F74F10044AFAC /* DspSubtract.h */,
 				90792CCB118B118E00B428F6 /* DspThrow.cpp */,
@@ -729,6 +736,7 @@
 				9056A3EF118F2D7C00E4429E /* MessageToggle.h in Headers */,
 				9056A417118F334200E4429E /* MessageSelect.h in Headers */,
 				908001351190101200A9870E /* DspSig.h in Headers */,
+				90890D68119230E40099FF3A /* DspSnapshot.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -892,6 +900,7 @@
 				9056A3F0118F2D7C00E4429E /* MessageToggle.cpp in Sources */,
 				9056A418118F334200E4429E /* MessageSelect.cpp in Sources */,
 				908001361190101200A9870E /* DspSig.cpp in Sources */,
+				90890D6A119230E40099FF3A /* DspSnapshot.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -997,6 +1006,7 @@
 				9056A3EE118F2D7C00E4429E /* MessageToggle.cpp in Sources */,
 				9056A416118F334200E4429E /* MessageSelect.cpp in Sources */,
 				908001341190101200A9870E /* DspSig.cpp in Sources */,
+				90890D69119230E40099FF3A /* DspSnapshot.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
