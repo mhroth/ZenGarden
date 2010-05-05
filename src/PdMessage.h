@@ -41,12 +41,10 @@ class PdMessage {
   
     /**
      * Set the contents of the message. This function is especially useful when constructing messages
-     * using known amounts external data.
-     * @param numElements  The number of elements that this message has.
-     * @param varargs  The <code>MessageElementType</code> and value for each element.
-     * Example: setMessage(3, FLOAT, 0.0f, SYMBOL, "test", BANG);
+     * using known amounts external data. This function is not meant to be used directly, but
+     * rather through the <code>zg_send_message()</code> function available from <code>ZenGarden.h</code>.
      */
-    void setMessage(int numElements, ...);
+    void setMessage(const char *messageFormat, va_list ap);
   
     MessageElement *getElement(int index);
   

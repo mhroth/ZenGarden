@@ -37,13 +37,23 @@ extern "C" {
   
   /** Create a new graph with the given parameters. */
   ZGGraph *zg_new_graph(char *directory, char *filename, int blockSize, 
-                        int numInputChannels, int numOutputChannels, float sampleRate);
+      int numInputChannels, int numOutputChannels, float sampleRate);
   
   /** Delete the given graph. */
   void zg_delete_graph(ZGGraph *graph);
   
   /** Process the given graph. */
   void zg_process(ZGGraph *graph, float *inputBuffers, float *outputBuffers);
+  
+  /**
+   * Send a message to the named receiver with the given format at the beginning of the next audio block.
+   * E.g., zg_send_message(graph, "#accelerate", "fff", 0.0f, 0.0f, 0.0f);
+   * sends a message containing three floats, each with value 0.0f, to all receivers named "#accelerate".
+   * Messages may also be formatted with "s" and "b" for symbols and bangs, respectively.
+   * E.g., zg_send_message(graph, "test", "s", "hello");
+   * E.g., zg_send_message(graph, "test", "b");
+   */
+  void zg_send_message(ZGGraph *graph, const char *receiveName, const char *messageFormat, ...);
   
 #ifdef __cplusplus
 }

@@ -38,3 +38,12 @@ void zg_delete_graph(PdGraph *graph) {
 void zg_process(PdGraph *graph, float *inputBuffers, float *outputBuffers) {
   graph->process(inputBuffers, outputBuffers);
 }
+
+void zg_send_message(PdGraph *graph, const char *receiverName, const char *messageFormat, ...) {
+  PdMessage *message = graph->scheduleExternalMessage((char *) receiverName);
+  
+  va_list ap;
+  va_start(ap, messageFormat);
+  message->setMessage(messageFormat, ap);
+  va_end(ap); // release the va_list
+}

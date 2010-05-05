@@ -20,6 +20,7 @@
  *
  */
 
+#include <stdio.h>
 #include "PdGraph.h"
 #include "PdMessage.h"
 #include "StaticUtils.h"
@@ -98,10 +99,8 @@ int PdMessage::getMessageId() {
   return messageId;
 }
 
-void PdMessage::setMessage(int numElements, ...) {
-  va_list ap;
-  va_start(ap, numElements);
-  
+void PdMessage::setMessage(const char *messageFormat, va_list ap) {
+  int numElements = strlen(messageFormat);
   MessageElement *messageElement = NULL;
   for (int i = 0; i < numElements; i++) {
     messageElement = getElement(i);
@@ -110,16 +109,16 @@ void PdMessage::setMessage(int numElements, ...) {
       messageElement = new MessageElement();
       addElement(messageElement);
     }
-    switch ((MessageElementType) va_arg(ap, int)) {
-      case FLOAT: {
+    switch (messageFormat[i]) {
+      case 'f': {
         messageElement->setFloat((float) va_arg(ap, double));
         break;
       }
-      case SYMBOL: {
+      case 's': {
         messageElement->setSymbol((char *) va_arg(ap, char *));
         break;
       }
-      case BANG: {
+      case 'b': {
         messageElement->setBang();
         break;
       }
@@ -129,12 +128,10 @@ void PdMessage::setMessage(int numElements, ...) {
     }
   }
   for (int i = numElements; i < getNumElements(); i++) {
-    // delete extra element as necessary
+    // delete extra elements as necessary
     messageElement = (MessageElement *) elementList->remove(numElements);
     delete messageElement;
   }
-  
-  va_end(ap); // release the va_list
 }
 
 void PdMessage::addElement(MessageElement *messageElement) {
