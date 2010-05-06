@@ -91,7 +91,9 @@ void DspOsc::processDspToIndex(float blockIndex) {
       float *inputBuffer = localDspBufferAtInlet[0];
       float *outputBuffer = localDspBufferAtOutlet[0];
       for (int i = getStartSampleIndex(); i < endSampleIndex; index += inputBuffer[i++]) {
-        if (index >= sampleRate) {
+        if (index < 0.0f) {
+          index += sampleRate;
+        } else if (index >= sampleRate) {
           index -= sampleRate;
         }
         outputBuffer[i] = cos_table[(int) index];
@@ -106,7 +108,10 @@ void DspOsc::processDspToIndex(float blockIndex) {
       int endSampleIndex = getEndSampleIndex(blockIndex);
       float *outputBuffer = localDspBufferAtOutlet[0];
       for (int i = getStartSampleIndex(); i < endSampleIndex; i++, index += frequency) {
-        if (index >= sampleRate) {
+        if (index < 0.0f) {
+          // allow negative frequencies (read the wavetable backwards)
+          index += sampleRate;
+        } if (index >= sampleRate) {
           // TODO(mhroth): if the frequency is higher than the sample rate, the index will point
           // outside of the cos_table
           index -= sampleRate;
