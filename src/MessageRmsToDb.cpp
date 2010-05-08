@@ -35,10 +35,10 @@ const char *MessageRmsToDb::getObjectLabel() {
 }
 
 void MessageRmsToDb::processMessage(int inletIndex, PdMessage *message) {
-  if (message->getElement(0)->getType() == FLOAT) {
+  if (message->isFloat(0)) {
     PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-    float f = message->getElement(0)->getFloat();
-    outgoingMessage->getElement(0)->setFloat((f < 0.0f) ? 0.0f : 20.0f * log10f(f * 100000.0f));
+    float f = message->getFloat(0);
+    outgoingMessage->getElement(0)->setFloat((f <= 0.0f) ? 0.0f : 20.0f * log10f(f * 100000.0f));
     outgoingMessage->setTimestamp(message->getTimestamp());
     sendMessage(0, outgoingMessage); // send a message from outlet 0
   }
