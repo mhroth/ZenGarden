@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,7 +23,7 @@
 #include <math.h>
 #include "MessageWrap.h"
 
-MessageWrap::MessageWrap(char *initString) : MessageUnaryOperationObject(initString) {
+MessageWrap::MessageWrap(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
   // nothing to do
 }
 
@@ -31,6 +31,16 @@ MessageWrap::~MessageWrap() {
   // nothing to do
 }
 
-float MessageWrap::performUnaryOperation(float input) {
-  return (input - floorf(input));
+const char *MessageWrap::getObjectLabel() {
+  return "wrap";
+}
+
+void MessageWrap::processMessage(int inletIndex, PdMessage *message) {
+  if (message->isFloat(0)) {
+    float value = message->getFloat(0);
+    PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+    outgoingMessage->setTimestamp(message->getTimestamp());
+    outgoingMessage->setFloat(0, value - floorf(value));
+    sendMessage(0, outgoingMessage);
+  }
 }

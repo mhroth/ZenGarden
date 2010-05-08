@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,16 +23,19 @@
 #ifndef _MESSAGE_WRAP_H_
 #define _MESSAGE_WRAP_H_
 
-#include "MessageUnaryOperationObject.h"
+#include "MessageObject.h"
 
-class MessageWrap : public MessageUnaryOperationObject {
+/** [wrap] */
+class MessageWrap : public MessageObject {
   
   public:
-    MessageWrap(char *initString);
+    MessageWrap(PdMessage *initMessage, PdGraph *graph);
     ~MessageWrap();
-    
-  protected:
-    float performUnaryOperation(float input);
+  
+    const char *getObjectLabel();
+  
+  private:
+    void processMessage(int inletIndex, PdMessage *message);
 };
 
 #endif // _MESSAGE_WRAP_H_

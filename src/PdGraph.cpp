@@ -84,6 +84,7 @@
 #include "MessageTrigger.h"
 #include "MessageUntil.h"
 #include "MessageUnpack.h"
+#include "MessageWrap.h"
 
 #include "MessageSendController.h"
 
@@ -453,6 +454,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
                strcmp(objectLabel, "hsl") == 0) {
       // gui sliders are represented as a float objects
       return new MessageFloat(0.0f, graph);
+    } else if (strcmp(objectLabel, "wrap") == 0) {
+      return new MessageWrap(initMessage, graph);
     } else if (strcmp(objectLabel, "+~") == 0) {
       return new DspAdd(initMessage, graph);
     } else if (strcmp(objectLabel, "-~") == 0) {
