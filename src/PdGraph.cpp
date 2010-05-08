@@ -66,6 +66,7 @@
 #include "MessageReceive.h"
 #include "MessageRemainder.h"
 #include "MessageRmsToDb.h"
+#include "MessageSamplerate.h"
 #include "MessageSelect.h"
 #include "MessageSend.h"
 #include "MessageSine.h"
@@ -470,6 +471,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
     } else if (strcmp(objectLabel, "receive~") == 0 ||
                strcmp(objectLabel, "r~") == 0) {
       return new DspReceive(initMessage, graph);
+    } else if (strcmp(objectLabel, "samplerate~") == 0) {
+      return new MessageSamplerate(initMessage, graph);
     } else if (strcmp(objectLabel, "send~") == 0 ||
                strcmp(objectLabel, "s~") == 0) {
       return new DspSend(initMessage, graph);
