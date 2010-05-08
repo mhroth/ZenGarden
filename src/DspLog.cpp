@@ -42,7 +42,7 @@ void DspLog::processMessage(int inletIndex, PdMessage *message) {
     if (message->isFloat(0)) {
       processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
       if (message->getFloat(0) <= 0.0f) {
-        graph->printErr("log~ base cannot be set to a non-positive number: %d", message->getFloat(0));
+        graph->printErr("log~ base cannot be set to a non-positive number: %d\n", message->getFloat(0));
       } else {
         log2_base = log2f(message->getFloat(0));
       }
@@ -90,10 +90,7 @@ void DspLog::processDspToIndex(float blockIndex) {
 
 // this implementation is reproduced from http://www.musicdsp.org/showone.php?id=91
 float DspLog::log2Approx(float x) {
-  if (x <= 0.0f) {
-    return 0.0f;
-  } else {
-    int y = (*(int *)&x);
-    return (((y & 0x7f800000)>>23)-0x7f)+(y & 0x007fffff)/(float)0x800000;
-  }
+  // input is assumed to be positive
+  int y = (*(int *)&x);
+  return (((y & 0x7f800000)>>23)-0x7f)+(y & 0x007fffff)/(float)0x800000;
 }
