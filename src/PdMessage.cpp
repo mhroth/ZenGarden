@@ -165,7 +165,7 @@ bool PdMessage::isReserved() {
 
 bool PdMessage::isFloat(int index) {
   if (index >= 0 && index < elementList->size()) {
-    return ((MessageElement *) elementList->get(index))->getType() == FLOAT;
+    return getElement(index)->getType() == FLOAT;
   } else {
     return false;
   }
@@ -173,7 +173,7 @@ bool PdMessage::isFloat(int index) {
 
 bool PdMessage::isSymbol(int index) {
   if (index >= 0 && index < elementList->size()) {
-    return ((MessageElement *) elementList->get(index))->getType() == SYMBOL;
+    return getElement(index)->getType() == SYMBOL;
   } else {
     return false;
   }
@@ -181,7 +181,7 @@ bool PdMessage::isSymbol(int index) {
 
 bool PdMessage::isBang(int index) {
   if (index >= 0 && index < elementList->size()) {
-    return ((MessageElement *) elementList->get(index))->getType() == BANG;
+    return getElement(index)->getType() == BANG;
   } else {
     return false;
   }
@@ -196,19 +196,19 @@ MessageElementType PdMessage::getType(int index) {
 }
 
 float PdMessage::getFloat(int index) {
-  if (index >= 0 && index < elementList->size()) {
-    return ((MessageElement *) elementList->get(index))->getFloat();
-  } else {
-    return 0.0f;
-  }
+  return getElement(index)->getFloat();
+}
+
+void PdMessage::setFloat(int index, float value) {
+  getElement(index)->setFloat(value);
 }
 
 char *PdMessage::getSymbol(int index) {
-  if (index >= 0 && index < elementList->size()) {
-    return ((MessageElement *) elementList->get(index))->getSymbol();
-  } else {
-    return NULL;
-  }
+  return getElement(index)->getSymbol();
+}
+
+void PdMessage::setSymbol(int index, char *symbol) {
+  getElement(index)->setSymbol(symbol);
 }
 
 void PdMessage::reserve(MessageObject *messageObject) {

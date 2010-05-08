@@ -91,9 +91,17 @@ class PdMessage {
     /**
      * Convenience function to get the float value from a particular message element. The user
      * is responsible for checking that the indexed <code>MessageElement</code> is truly a float.
+     * This function does not check for the existence of the message element.
      */
     float getFloat(int index);
     char *getSymbol(int index);
+  
+    /**
+     * Convenience function to set a message element to a float value. This function does not check
+     * for the existence of a message element.
+     */
+    void setFloat(int index, float value);
+    void setSymbol(int index, char *symbol);
 
   private:
     static int globalMessageId;
