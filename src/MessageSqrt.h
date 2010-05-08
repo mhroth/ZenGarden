@@ -31,7 +31,6 @@ class MessageSqrt : public MessageObject {
 
   public:
     MessageSqrt(PdMessage *initMessage, PdGraph *graph);
-    MessageSqrt(PdGraph *graph);
     ~MessageSqrt();
 
     const char *getObjectLabel();

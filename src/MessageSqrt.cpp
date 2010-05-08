@@ -26,11 +26,6 @@ MessageSqrt::MessageSqrt(PdMessage *initMessage, PdGraph *graph) : MessageObject
   // nothing to do
 }
 
-
-MessageSqrt::MessageSqrt(PdGraph *graph) : MessageObject(1, 1, graph) {
-  // nothing to do
-}
-
 MessageSqrt::~MessageSqrt() {
   // nothing to do
 }
@@ -40,13 +35,11 @@ const char *MessageSqrt::getObjectLabel() {
 }
 
 void MessageSqrt::processMessage(int inletIndex, PdMessage *message) {
-  if (inletIndex == 0) {
-    MessageElement *messageElement = message->getElement(0);
-    if (messageElement->getType() == FLOAT) {
-      PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-      outgoingMessage->getElement(0)->setFloat(sqrtf(messageElement->getFloat()));
-      outgoingMessage->setTimestamp(message->getTimestamp());
-      sendMessage(0, outgoingMessage); // send a message from outlet 0
-    }
+  if (message->isFloat(0)) {
+    PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+    outgoingMessage->setTimestamp(message->getTimestamp());
+    float value = message->getFloat(0);
+    outgoingMessage->setFloat(0, value < 0.0f ? -1000.0f : sqrtf(value));
+    sendMessage(0, outgoingMessage); // send a message from outlet 0
   }
 }
