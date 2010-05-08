@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -22,46 +22,38 @@
 
 #include "MessageTimer.h"
 
-MessageTimer::MessageTimer(int blockSize, int sampleRate, char *initString) : DspMessageInputMessageOutputObject(2, 1, blockSize, initString) {
-  this->sampleRate = (float) sampleRate;
-  elapsedSamples = 0.0f;
+MessageTimer::MessageTimer(PdMessage *initMessage, PdGraph *grap) : MessageObject(2, 1, graph) {
+  timestampStart = 0.0;
 }
 
 MessageTimer::~MessageTimer() {
   // nothing to do
 }
 
+const char *MessageTimer::getObjectLabel() {
+  return "timer";
+}
+
 void MessageTimer::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
-      MessageElement *messageElement = message->getElement(0);
-      if (messageElement->getType() == BANG) {
-        processDspToIndex(message->getBlockIndex());
-        elapsedSamples = 0.0f;
+      if (message->isBang(0)) {
+        timestampStart = message->getTimestamp();
       }
       break;
     }
     case 1: {
-      // return the elapsed number milliseconds
-      processDspToIndex(message->getBlockIndex());
-      PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-      outgoingMessage->getElement(0)->setFloat(1000.0f * elapsedSamples / sampleRate);
-      outgoingMessage->setBlockIndexAsFloat(message->getBlockIndexAsFloat());
+      if (message->isBang(0)) {
+        PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+        double currentTimestamp = message->getTimestamp();
+        outgoingMessage->setTimestamp(currentTimestamp);
+        outgoingMessage->getElement(0)->setFloat((float) (currentTimestamp - timestampStart));
+        sendMessage(0, outgoingMessage);
+      }
       break;
     }
     default: {
       break;
     }
   }
-}
-
-void MessageTimer::processDspToIndex(int newBlockIndex) {
-  elapsedSamples += (float) (newBlockIndex - blockIndexOfLastMessage);
-  blockIndexOfLastMessage = newBlockIndex;
-}
-
-PdMessage *MessageTimer::newCanonicalMessage() {
-  PdMessage *message = new PdMessage();
-  message->addElement(new MessageElement(0.0f));
-  return message;
 }

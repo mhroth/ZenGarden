@@ -77,8 +77,9 @@
 #include "MessageSwap.h"
 #include "MessageSymbol.h"
 #include "MessageTangent.h"
-#include "MessageToggle.h"
 #include "MessageText.h"
+#include "MessageTimer.h"
+#include "MessageToggle.h"
 #include "MessageTrigger.h"
 #include "MessageUntil.h"
 #include "MessageUnpack.h"
@@ -416,6 +417,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageSymbol(initMessage, graph);
     } else if (strcmp(objectLabel, "tan") == 0) {
       return new MessageTangent(initMessage, graph);
+    } else if (strcmp(objectLabel, "timer") == 0) {
+      return new MessageTimer(initMessage, graph);
     } else if (strcmp(objectLabel, "toggle") == 0 ||
                strcmp(objectLabel, "tgl") == 0) {
       return new MessageToggle(initMessage, graph);

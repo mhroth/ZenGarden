@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,25 +23,21 @@
 #ifndef _MESSAGE_TIMER_H_
 #define _MESSAGE_TIMER_H_
 
-#include "DspMessageInputMessageOutputObject.h"
+#include "MessageObject.h"
 
-/**
- * timer
- */
-class MessageTimer : public DspMessageInputMessageOutputObject {
+/** [timer] */
+class MessageTimer : public MessageObject {
   
   public:
-    MessageTimer(int blockSize, int sampleRate, char *initString);
+    MessageTimer(PdMessage *initMessage, PdGraph *graph);
     ~MessageTimer();
-    
-  protected:
-    void processMessage(int inletIndex, PdMessage *message);
-    void processDspToIndex(int newBlockIndex);
-    PdMessage *newCanonicalMessage();
-    
+  
+    const char *getObjectLabel();
+  
   private:
-    float sampleRate;
-    float elapsedSamples; // the number of (fractional) elapsed samples since the left bang
+    void processMessage(int inletIndex, PdMessage *message);
+  
+    double timestampStart;
 };
 
 #endif // _MESSAGE_TIMER_H_
