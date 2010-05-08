@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -20,43 +20,76 @@
  *
  */
 
+#include <math.h>
 #include "DspLog.h"
+#include "PdGraph.h"
 
-DspLog::DspLog(int blockSize, char *initString) : DspMessageInputDspOutputObject(2, 1, blockSize, initString) {
-  log2_base = M_LOG2E; // by default assume ln
-}
-
-DspLog::DspLog(float base, int blockSize, char *initString) : DspMessageInputDspOutputObject(2, 1, blockSize, initString) {
-  log2_base = logf(base) / M_LN2;
+DspLog::DspLog(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
+  // by default assume ln
+  log2_base = initMessage->isFloat(0) ? log2f(initMessage->getFloat(0)) : M_LOG2E;
 }
 
 DspLog::~DspLog() {
   // nothing to do
 }
 
+const char *DspLog::getObjectLabel() {
+  return "log~";
+}
+
 void DspLog::processMessage(int inletIndex, PdMessage *message) {
   if (inletIndex == 1) {
-    MessageElement *messageElement = message->getElement(0);
-    if (messageElement->getType() == FLOAT) {
-      processDspToIndex(message->getBlockIndex());
-      log2_base = logf(messageElement->getFloat()) / M_LN2;
+    if (message->isFloat(0)) {
+      processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
+      if (message->getFloat(0) <= 0.0f) {
+        graph->printErr("log~ base cannot be set to a non-positive number: %d", message->getFloat(0));
+      } else {
+        log2_base = log2f(message->getFloat(0));
+      }
     }
   }
 }
 
-void DspLog::processDspToIndex(int newBlockIndex) {
-  if (signalPresedence == DSP_MESSAGE) {
-    float *inputBuffer = localDspBufferAtInlet[0];
-    float *outputBuffer = localDspBufferAtOutlet[0];
-    for (int i = blockIndexOfLastMessage; i < newBlockIndex; i++) {
-      outputBuffer[i] = log2Approx(inputBuffer[i]) / log2_base;
+void DspLog::processDspToIndex(float blockIndex) {
+  switch (signalPrecedence) {
+    case DSP_DSP: {
+      int blockIndexInt = getEndSampleIndex(blockIndex);
+      float *inputBuffer0 = localDspBufferAtInlet[0];
+      float *inputBuffer1 = localDspBufferAtInlet[1];
+      float *outputBuffer = localDspBufferAtOutlet[0];
+      for (int i = getStartSampleIndex(); i < blockIndexInt; i++) {
+        if (inputBuffer0[i] <= 0.0f || inputBuffer1[i] <= 0.0f) {
+          outputBuffer[i] = -1000.0f; // Pd's "error" float value
+        } else {
+          outputBuffer[i] = log2Approx(inputBuffer0[i]) / log2Approx(inputBuffer1[i]);
+        }
+      }
+      break;
+    }
+    case DSP_MESSAGE: {
+      int blockIndexInt = getEndSampleIndex(blockIndex);
+      float *inputBuffer = localDspBufferAtInlet[0];
+      float *outputBuffer = localDspBufferAtOutlet[0];
+      for (int i = getStartSampleIndex(); i < blockIndexInt; i++) {
+        if (inputBuffer[i] <= 0.0f) {
+          outputBuffer[i] = -1000.0f;
+        } else {
+          outputBuffer[i] = log2Approx(inputBuffer[i]) / log2_base;
+        }
+      }
+      break;
+    }
+    case MESSAGE_DSP:
+    case MESSAGE_MESSAGE:
+    default: {
+      break; // nothing to do
     }
   }
-  blockIndexOfLastMessage = newBlockIndex;
+  blockIndexOfLastMessage = blockIndex;
 }
 
 // this implementation is reproduced from http://www.musicdsp.org/showone.php?id=91
-inline float DspLog::log2Approx(float x) {
+float DspLog::log2Approx(float x) {
   if (x <= 0.0f) {
     return 0.0f;
   } else {

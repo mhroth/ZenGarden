@@ -100,6 +100,7 @@
 #include "DspHighpassFilter.h"
 #include "DspInlet.h"
 #include "DspLine.h"
+#include "DspLog.h"
 #include "DspLowpassFilter.h"
 #include "DspMultiply.h"
 #include "DspNoise.h"
@@ -484,6 +485,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new DspInlet(graph);
     } else if (strcmp(objectLabel, "line~") == 0) {
       return new DspLine(graph);
+    } else if (strcmp(objectLabel, "log~") == 0) {
+      return new DspLog(initMessage, graph);
     } else if (strcmp(objectLabel, "lop~") == 0) {
       return new DspLowpassFilter(initMessage, graph);
     } else if (strcmp(objectLabel, "noise~") == 0) {

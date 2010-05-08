@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,23 +23,21 @@
 #ifndef _DSP_LOG_H_
 #define _DSP_LOG_H_
 
-#include "DspMessageInputDspOutputObject.h"
+#include "DspObject.h"
 
-/**
- * log~
- */
-class DspLog : public DspMessageInputDspOutputObject {
+/** [log~], [log~ float] */
+class DspLog : public DspObject {
     
   public:
-    DspLog(int blockSize, char *iniString);
-    DspLog(float base, int blockSize, char *iniString);
+    DspLog(PdMessage *initMessage, PdGraph *graph);
     ~DspLog();
-    
-  protected:
-    inline void processMessage(int inletIndex, PdMessage *message);
-    inline void processDspToIndex(int newBlockIndex);
+  
+    const char *getObjectLabel();
   
   private:
+    void processMessage(int inletIndex, PdMessage *message);
+    void processDspToIndex(float blockIndex);
+  
     inline float log2Approx(float x);
   
     float log2_base;
