@@ -23,12 +23,7 @@
 #include "MessageNotEquals.h"
 
 MessageNotEquals::MessageNotEquals(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
-  if (initMessage->getNumElements() > 0 &&
-      initMessage->getElement(0)->getType() == FLOAT) {
-    constant = initMessage->getElement(0)->getFloat();
-  } else {
-    constant = 0.0f;
-  }
+  constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
   lastOutput = 0.0f;
 }
 
@@ -43,15 +38,14 @@ const char *MessageNotEquals::getObjectLabel() {
 void MessageNotEquals::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
-      MessageElement *messageElement = message->getElement(0);
-      switch (messageElement->getType()) {
+      switch (message->getType(0)) {
         case FLOAT: {
-          lastOutput = (messageElement->getFloat() != constant) ? 1.0f : 0.0f;
+          lastOutput = (message->getFloat(0) != constant) ? 1.0f : 0.0f;
           // allow fallthrough
         }
         case BANG: {
           PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-          outgoingMessage->getElement(0)->setFloat(lastOutput);
+          outgoingMessage->setFloat(0, lastOutput);
           outgoingMessage->setTimestamp(message->getTimestamp());
           sendMessage(0, outgoingMessage);
           break;
@@ -63,9 +57,8 @@ void MessageNotEquals::processMessage(int inletIndex, PdMessage *message) {
       break;
     }
     case 1: {
-      MessageElement *messageElement = message->getElement(0);
-      if (messageElement->getType() == FLOAT) {
-        constant = messageElement->getFloat();
+      if (message->isFloat(0)) {
+        constant = message->getFloat(0);
       }
       break;
     }
