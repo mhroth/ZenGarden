@@ -23,7 +23,7 @@
 #include "DspSnapshot.h"
 #include "PdGraph.h"
 
-DspSnapshot::DspSnapshot(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 1, 0, graph) {
+DspSnapshot::DspSnapshot(PdMessage *initMessage, PdGraph *graph) : DspObject(1, 1, 1, 0, graph) {
   // nothing to do
 }
 
@@ -49,7 +49,7 @@ void DspSnapshot::processMessage(int inletIndex, PdMessage *message) {
       PdMessage *outgoingMessage = getNextOutgoingMessage(0);
       outgoingMessage->setTimestamp(message->getTimestamp());
       float blockIndex = message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate());
-      outgoingMessage->getElement(0)->setFloat(localDspBufferAtInlet[0][(int) blockIndex]);
+      outgoingMessage->setFloat(0, localDspBufferAtInlet[0][(int) blockIndex]);
       sendMessage(0, outgoingMessage);
       break;
     }
