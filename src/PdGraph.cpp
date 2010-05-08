@@ -45,6 +45,7 @@
 #include "MessageInteger.h"
 #include "MessageLessThan.h"
 #include "MessageLessThanOrEqualTo.h"
+#include "MessageListLength.h"
 #include "MessageLoadbang.h"
 #include "MessageLog.h"
 #include "MessageMaximum.h"
@@ -376,6 +377,25 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageInlet(graph);
     } else if (strcmp(objectLabel, "int") == 0) {
       return new MessageInteger(initMessage, graph);
+    } else if (strcmp(objectLabel, "list") == 0) {
+      if (initMessage->isSymbol(0)) {
+        char *qualifier = initMessage->getSymbol(0);
+        if (strcmp(qualifier, "append") == 0) {
+          // TODO(mhroth): return new ListAppend(initMessage, graph);
+        } else if (strcmp(qualifier, "prepend") == 0) {
+          // TODO(mhroth): return new ListPrepend(initMessage, graph);
+        } else if (strcmp(qualifier, "split") == 0) {
+          // TODO(mhroth): return new ListSplit(initMessage, graph);
+        } else if (strcmp(qualifier, "trim") == 0) {
+          // TODO(mhroth): return new ListTrim(initMessage, graph);
+        } else if (strcmp(qualifier, "length") == 0) {
+          return new MessageListLength(initMessage, graph);
+        } else {
+          // TODO(mhroth): return new ListAppend(initMessage, graph);
+        }
+      } else {
+        // TODO(mhroth): return new ListAppend(initMessage, graph);
+      }
     } else if (strcmp(objectLabel, "loadbang") == 0) {
       return new MessageLoadbang(graph);
     } else if (strcmp(objectLabel, "max") == 0) {

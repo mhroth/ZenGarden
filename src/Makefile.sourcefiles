@@ -52,6 +52,7 @@ LOCAL_SRC_FILES := \
 ./MessageInteger.cpp \
 ./MessageLessThan.cpp \
 ./MessageLessThanOrEqualTo.cpp \
+./MessageListLength.cpp \
 ./MessageLoadbang.cpp \
 ./MessageLog.cpp \
 ./MessageMaximum.cpp \
