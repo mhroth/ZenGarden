@@ -231,16 +231,14 @@ PdGraph::PdGraph(PdFileParser *fileParser, char *directory, char *libraryDirecto
             pdNode = PdGraph::newInstance(libraryDirectory, filename, libraryDirectory, blockSize, numInputChannels, numOutputChannels, sampleRate, this);
             if (pdNode == NULL) {
               free(filename);
-              printf("ERROR | Unknown object or abstraction \"%s\".\n", objectInitString);
+              printErr("ERROR | Unknown object or abstraction \"%s\".\n", objectInitString);
               return;
             }
           }
           free(filename);
-          addObject(pdNode);
-        } else {
-          // add the object to the local graph and make any necessary registrations
-          addObject(pdNode);
         }
+        // add the object to the local graph and make any necessary registrations
+        addObject(pdNode);
       } else if (strcmp(objectType, "msg") == 0) {
         strtok(NULL, " "); // read the first canvas coordinate
         strtok(NULL, " "); // read the second canvas coordinate
