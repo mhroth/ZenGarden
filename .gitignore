@@ -16,3 +16,4 @@ src/sndfile.h
 Mersenne-1.1.zip
 test/
 libs/
+*.jar
