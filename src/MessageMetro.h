@@ -31,8 +31,7 @@ class PdGraph;
 class MessageMetro : public MessageObject {
   
   public:
-    MessageMetro(PdMessage *iniMessage, PdGraph *graph);
-    MessageMetro(float intervalInMs, PdGraph *graph);
+    MessageMetro(PdMessage *initMessage, PdGraph *graph);
     ~MessageMetro();
   
     const char *getObjectLabel();
@@ -42,8 +41,11 @@ class MessageMetro : public MessageObject {
   private:
     void processMessage(int inletIndex, PdMessage *message);
   
-    /** Cancels the current <code>pendingMessage</code>. */
-    void cancelMessage();
+    /* Cancels the current <code>pendingMessage</code>. */
+    void stopMetro();
+  
+    /** @param  timestamp The time at which the metro should be started. */
+    void startMetro(double timestamp);
   
     PdMessage *pendingMessage;
     double intervalInMs;

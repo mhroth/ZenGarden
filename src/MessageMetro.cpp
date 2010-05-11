@@ -24,17 +24,8 @@
 #include "PdGraph.h"
 
 MessageMetro::MessageMetro(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
-  if (initMessage->getNumElements() > 0 &&
-      initMessage->getElement(0)->getType() == FLOAT) {
-    intervalInMs = (double) initMessage->getElement(0)->getFloat();
-  } else {
-    intervalInMs = 1000.0; // default to 1 second
-  }
-  pendingMessage = NULL;
-}
-
-MessageMetro::MessageMetro(float intervalInMs, PdGraph *graph) : MessageObject(2, 1, graph) {
-  this->intervalInMs = (double) intervalInMs;
+  // default to interval of one second
+  intervalInMs = initMessage->isFloat(0) ? (double) initMessage->getFloat(0) : 1000.0;
   pendingMessage = NULL;
 }
 
@@ -47,33 +38,25 @@ const char *MessageMetro::getObjectLabel() {
 }
 
 void MessageMetro::processMessage(int inletIndex, PdMessage *message) {
-  MessageElement *messageElement = message->getElement(0);
   switch (inletIndex) {
     case 0: {
-      switch (messageElement->getType()) {
+      switch (message->getType(0)) {
         case FLOAT: {
-          if (messageElement->getFloat() == 0.0f) {
-            // stop the metro
-            cancelMessage();
+          if (message->getFloat(0) == 0.0f) {
+            stopMetro();
           } else { // should be == 1, but we allow any non-zero float to start the metro
-            // start the metro
-            PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-            outgoingMessage->setTimestamp(message->getTimestamp());
-            sendMessage(0, outgoingMessage); // sends the message and schedules the next one
+            startMetro(message->getTimestamp());
           }
           break;
         }
         case SYMBOL: {
-          if (strcmp(messageElement->getSymbol(), "stop") == 0) {
-            cancelMessage(); // stop the metro
+          if (strcmp(message->getSymbol(0), "stop") == 0) {
+            stopMetro();
           }
           break;
         }
         case BANG: {
-          // start the metro
-          PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-          outgoingMessage->setTimestamp(message->getTimestamp());
-          sendMessage(0, outgoingMessage); // sends the message and schedules the next one
+          startMetro(message->getTimestamp());
           break;
         }
         default: {
@@ -83,34 +66,45 @@ void MessageMetro::processMessage(int inletIndex, PdMessage *message) {
       break;
     }
     case 1: {
-      if (messageElement->getType() == FLOAT) {
-        cancelMessage(); // cancel any currently pending messages
-        intervalInMs = (double) messageElement->getFloat();
+      if (message->isFloat(0)) {
+        intervalInMs = (double) message->getFloat(0);
       }
+      break;
+    }
+    default: {
       break;
     }
   }
 }
 
 void MessageMetro::sendMessage(int outletIndex, PdMessage *message) {
-  // reserve the outgoing message such that when the pending message is created, the outgoing
-  // is not immediately reused.
+  // reserve and unreserve this object such that this message is not used as the pending message
+  // this reserveration is done in addition to the automatic reservation that
+  // MessageObject::sendMessage() does.
   message->reserve(this);
   
-  // schedule the next message
-  // this is scheduled before the current message is sent so that if the current message causes
-  // a cancellation of the pending message, then the pending message will already be in the system
-  // to cancel.
+  // schedule the pending message before the current one is sent so that if a stop message
+  // arrives at this object while in this function, then the next message can be cancelled
   pendingMessage = getNextOutgoingMessage(0);
   pendingMessage->setTimestamp(message->getTimestamp() + intervalInMs);
   graph->scheduleMessage(this, 0, pendingMessage);
   
-  // send the current message
   MessageObject::sendMessage(outletIndex, message);
-  message->unreserve(this); // release the outgoing message so that it can be reused
+  message->unreserve(this);
 }
 
-void MessageMetro::cancelMessage() {
+void MessageMetro::startMetro(double timestamp) {
+  // Ensure that there is no pending message for this metro. If there is, then cancel it.
+  // This allows a metro to be banged multiple times and always restart the timing from the most
+  // recently received bang.
+  stopMetro();
+  
+  PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+  outgoingMessage->setTimestamp(timestamp);
+  sendMessage(0, outgoingMessage);
+}
+
+void MessageMetro::stopMetro() {
   if (pendingMessage != NULL) {
     graph->cancelMessage(this, 0, pendingMessage);
     pendingMessage = NULL;
