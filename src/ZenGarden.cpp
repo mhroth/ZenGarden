@@ -47,3 +47,18 @@ void zg_send_message(PdGraph *graph, const char *receiverName, const char *messa
   message->setMessage(messageFormat, ap);
   va_end(ap); // release the va_list
 }
+
+void zg_send_message_at_blockindex(ZGGraph *graph, const char *receiverName, double blockIndex, const char *messageFormat, ...) {
+  double timestamp = graph->getBlockStartTimestamp();
+  if (blockIndex >= 0.0 && blockIndex < (double) graph->getBlockSize()) {
+    timestamp += blockIndex / graph->getSampleRate();
+  }
+  
+  PdMessage *message = graph->scheduleExternalMessage((char *) receiverName);
+  message->setTimestamp(timestamp);
+  
+  va_list ap;
+  va_start(ap, messageFormat);
+  message->setMessage(messageFormat, ap);
+  va_end(ap);
+}

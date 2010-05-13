@@ -53,7 +53,22 @@ extern "C" {
    * E.g., zg_send_message(graph, "test", "s", "hello");
    * E.g., zg_send_message(graph, "test", "b");
    */
-  void zg_send_message(ZGGraph *graph, const char *receiveName, const char *messageFormat, ...);
+  void zg_send_message(ZGGraph *graph, const char *receiverName, const char *messageFormat, ...);
+  
+  /**
+   * Send a message to the named receiver with the given format at the given block index. If the
+   * block index is negative or greater than the block size (given when instantiating the graph)
+   * the the message will be sent at the very beginning of the next block. A fractional block index
+   * may be given, and the message will be evaluated between rendered samples. If the given block
+   * index falls outside of the block size (either positive or negative), then the message will be
+   * delivered at the beginning of the block.
+   * This function is equivalent to e.g., zg_send_message(graph, "#accelerate", 0.0, "fff", 0.0f, 0.0f, 0.0f)
+   * E.g., zg_send_message_at_blockindex(graph, "#accelerate", 56.3, "fff", 0.0f, 0.0f, 0.0f);
+   * sends a message containing three floats, each with value 0.0f, to all receivers named "#accelerate"
+   * between samples 56th and 57th samples (counting from zero) of the block.
+   */
+  void zg_send_message_at_blockindex(ZGGraph *graph, const char *receiverName, double blockIndex,
+      const char *messageFormat, ...);
   
 #ifdef __cplusplus
 }
