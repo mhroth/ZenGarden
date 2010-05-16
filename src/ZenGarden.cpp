@@ -24,9 +24,9 @@
 #include "ZenGarden.h"
 
 ZGGraph *zg_new_graph(char *directory, char *filename, int blockSize, 
-                      int numInputChannels, int numOutputChannels, float sampleRate) {
-  return PdGraph::newInstance(directory, filename, NULL, blockSize, 
-                              numInputChannels, numOutputChannels, sampleRate, NULL);
+    int numInputChannels, int numOutputChannels, float sampleRate) {
+  return PdGraph::newInstance(directory, filename, blockSize, numInputChannels, numOutputChannels,
+      sampleRate, NULL);
 }
 
 void zg_delete_graph(PdGraph *graph) {
@@ -50,7 +50,7 @@ void zg_send_message(PdGraph *graph, const char *receiverName, const char *messa
 
 void zg_send_message_at_blockindex(ZGGraph *graph, const char *receiverName, double blockIndex, const char *messageFormat, ...) {
   double timestamp = graph->getBlockStartTimestamp();
-  if (blockIndex >= 0.0 && blockIndex < (double) graph->getBlockSize()) {
+  if (blockIndex >= 0.0 && blockIndex <= (double) (graph->getBlockSize()-1)) {
     timestamp += blockIndex / graph->getSampleRate();
   }
   
