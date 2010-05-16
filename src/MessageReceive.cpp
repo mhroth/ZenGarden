@@ -23,11 +23,7 @@
 #include "MessageReceive.h"
 
 MessageReceive::MessageReceive(PdMessage *initMessage, PdGraph *graph) : MessageObject(0, 1, graph) {
-  if (initMessage->getNumElements() > 0 && initMessage->getElement(0)->getType() == SYMBOL) {
-    name = StaticUtils::copyString(initMessage->getElement(0)->getSymbol());
-  } else {
-    name = NULL;
-  }
+  name = initMessage->isSymbol(0) ? StaticUtils::copyString(initMessage->getSymbol(0)) : NULL;
 }
 
 MessageReceive::~MessageReceive() {
