@@ -93,18 +93,16 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *ur_jvm, void *reserved) {
 }
 
 JNIEXPORT jlong JNICALL Java_me_rjdj_zengarden_ZenGarden_loadPdPatch(
-    JNIEnv *env, jobject jobj, jstring jdirectory, jstring jfilename, jstring jlibraryDirectory, 
-    jint blockSize, jint numInputChannels, jint numOutputChannels, jfloat sampleRate) {
+    JNIEnv *env, jobject jobj, jstring jdirectory, jstring jfilename, jint blockSize,
+    jint numInputChannels, jint numOutputChannels, jfloat sampleRate) {
 
   PdGraph *pdGraph = NULL;
   char *cdirectory = (char *) env->GetStringUTFChars(jdirectory, NULL);
   char *cfilename = (char *) env->GetStringUTFChars(jfilename, NULL);
-  char *clibraryDirectory = (char *) env->GetStringUTFChars(jlibraryDirectory, NULL);
-  pdGraph = PdGraph::newInstance(cdirectory, cfilename, clibraryDirectory, blockSize, 
+  pdGraph = PdGraph::newInstance(cdirectory, cfilename, blockSize, 
       numInputChannels, numOutputChannels, sampleRate, NULL);
   env->ReleaseStringUTFChars(jdirectory, cdirectory);
   env->ReleaseStringUTFChars(jfilename, cfilename);
-  env->ReleaseStringUTFChars(jlibraryDirectory, clibraryDirectory);
   
   if (pdGraph == NULL) {
     env->ThrowNew(

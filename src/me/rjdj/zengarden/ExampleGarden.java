@@ -105,8 +105,8 @@ public class ExampleGarden {
       File pdFile = new File(args[0]);
       ZenGarden pdPatch = null;
       try {
-        pdPatch = new ZenGarden(pdFile, pdFile.getParentFile(), BLOCK_SIZE, 
-            NUM_INPUT_CHANNELS, NUM_OUTPUT_CHANNELS, (float) SAMPLE_RATE);
+        pdPatch = new ZenGarden(pdFile, BLOCK_SIZE, NUM_INPUT_CHANNELS, NUM_OUTPUT_CHANNELS,
+            (float) SAMPLE_RATE);
       } catch (NativeLoadException nle) {
         nle.printStackTrace(System.err);
         System.exit(2);

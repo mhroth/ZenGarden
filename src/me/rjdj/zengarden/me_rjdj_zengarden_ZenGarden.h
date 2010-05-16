@@ -10,10 +10,10 @@ extern "C" {
 /*
  * Class:     me_rjdj_zengarden_ZenGarden
  * Method:    loadPdPatch
- * Signature: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IIIF)J
+ * Signature: (Ljava/lang/String;Ljava/lang/String;IIIF)J
  */
 JNIEXPORT jlong JNICALL Java_me_rjdj_zengarden_ZenGarden_loadPdPatch
-  (JNIEnv *, jobject, jstring, jstring, jstring, jint, jint, jint, jfloat);
+  (JNIEnv *, jobject, jstring, jstring, jint, jint, jint, jfloat);
 
 /*
  * Class:     me_rjdj_zengarden_ZenGarden

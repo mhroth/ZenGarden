@@ -39,6 +39,9 @@
 		9029F192118B3AEB00E08A54 /* DspCatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9029F190118B3AEB00E08A54 /* DspCatch.cpp */; };
 		9029F193118B3AEB00E08A54 /* DspCatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9029F190118B3AEB00E08A54 /* DspCatch.cpp */; };
 		902C1DEC116FA65C00C244A9 /* DspDivide.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FC0C7B116F74D10044AFAC /* DspDivide.cpp */; };
+		90330AF1119CAB4D00DDA77C /* MessageDeclare.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90330AF0119CAB4D00DDA77C /* MessageDeclare.cpp */; };
+		90330AF2119CAB4D00DDA77C /* MessageDeclare.h in Headers */ = {isa = PBXBuildFile; fileRef = 90330AEF119CAB4D00DDA77C /* MessageDeclare.h */; };
+		90330AF3119CAB4D00DDA77C /* MessageDeclare.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90330AF0119CAB4D00DDA77C /* MessageDeclare.cpp */; };
 		90355CF6118A3E6500017579 /* DspReceive.h in Headers */ = {isa = PBXBuildFile; fileRef = 90355CF4118A3E6500017579 /* DspReceive.h */; };
 		90355CF7118A3E6500017579 /* DspReceive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90355CF5118A3E6500017579 /* DspReceive.cpp */; };
 		90355CF8118A3E6500017579 /* DspReceive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90355CF5118A3E6500017579 /* DspReceive.cpp */; };
@@ -293,6 +296,8 @@
 		90275B41112880D900FFAEC7 /* DspOsc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspOsc.h; path = ../src/DspOsc.h; sourceTree = SOURCE_ROOT; };
 		9029F18F118B3AEB00E08A54 /* DspCatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspCatch.h; path = ../src/DspCatch.h; sourceTree = SOURCE_ROOT; };
 		9029F190118B3AEB00E08A54 /* DspCatch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspCatch.cpp; path = ../src/DspCatch.cpp; sourceTree = SOURCE_ROOT; };
+		90330AEF119CAB4D00DDA77C /* MessageDeclare.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageDeclare.h; path = ../src/MessageDeclare.h; sourceTree = SOURCE_ROOT; };
+		90330AF0119CAB4D00DDA77C /* MessageDeclare.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageDeclare.cpp; path = ../src/MessageDeclare.cpp; sourceTree = SOURCE_ROOT; };
 		90355CF4118A3E6500017579 /* DspReceive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspReceive.h; path = ../src/DspReceive.h; sourceTree = SOURCE_ROOT; };
 		90355CF5118A3E6500017579 /* DspReceive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspReceive.cpp; path = ../src/DspReceive.cpp; sourceTree = SOURCE_ROOT; };
 		9038BC02113FFF8500ABE744 /* DspMultiply.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspMultiply.cpp; path = ../src/DspMultiply.cpp; sourceTree = SOURCE_ROOT; };
@@ -595,6 +600,8 @@
 				90B692661142877D00501D0A /* MessageDbToPow.h */,
 				90C9444C114AAA3600B78515 /* MessageDbToRms.cpp */,
 				90C9444D114AAA3600B78515 /* MessageDbToRms.h */,
+				90330AF0119CAB4D00DDA77C /* MessageDeclare.cpp */,
+				90330AEF119CAB4D00DDA77C /* MessageDeclare.h */,
 				90398C791113564400E5A8B6 /* MessageDelay.cpp */,
 				90398C7A1113564400E5A8B6 /* MessageDelay.h */,
 				908A37541125E07100558388 /* MessageDivide.cpp */,
@@ -777,6 +784,7 @@
 				902058361195DCDD0073DCB1 /* MessageListLength.h in Headers */,
 				9020588F1195FCA00073DCB1 /* MessageWrap.h in Headers */,
 				902058D3119600D20073DCB1 /* DspLog.h in Headers */,
+				90330AF2119CAB4D00DDA77C /* MessageDeclare.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -946,6 +954,7 @@
 				902058351195DCDD0073DCB1 /* MessageListLength.cpp in Sources */,
 				902058901195FCA00073DCB1 /* MessageWrap.cpp in Sources */,
 				902058D4119600D20073DCB1 /* DspLog.cpp in Sources */,
+				90330AF1119CAB4D00DDA77C /* MessageDeclare.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1057,6 +1066,7 @@
 				902058371195DCDD0073DCB1 /* MessageListLength.cpp in Sources */,
 				9020588E1195FCA00073DCB1 /* MessageWrap.cpp in Sources */,
 				902058D2119600D20073DCB1 /* DspLog.cpp in Sources */,
+				90330AF3119CAB4D00DDA77C /* MessageDeclare.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

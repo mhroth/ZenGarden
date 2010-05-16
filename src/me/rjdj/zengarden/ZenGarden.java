@@ -41,8 +41,6 @@ public class ZenGarden {
   /**
    * 
    * @param patchFile  The patch to load.
-   * @param libDirectory  The directory location of additional auxiliary patches (besides the local
-   * directory of the patch itself).
    * @param blockSize  The audio block size which Pd should use.
    * @param numInputChannels  The number of input channels provided by the device's audio system. 
    * This number must be 1 or 2. This is an arbitrary limit meant to cover most cases and simplify
@@ -55,15 +53,11 @@ public class ZenGarden {
    * @throws NativeLoadException  Thrown if the given scene cannot be loaded. An explanation is
    * <i>ideally</i> given. Use <code>getMessage()</code>.
    */
-  public ZenGarden(File patchFile, File libDirectory, int blockSize, int numInputChannels, 
-      int numOutputChannels, float sampleRate) throws NativeLoadException {
+  public ZenGarden(File patchFile, int blockSize, int numInputChannels, int numOutputChannels,
+      float sampleRate) throws NativeLoadException {
     if (!patchFile.isFile()) {
       throw new IllegalArgumentException("The file object must refer to a file: " + 
           patchFile.toString());
-    }
-    if (!libDirectory.isDirectory()) {
-      throw new IllegalArgumentException("The rjlibDirectory is not a directory: " + 
-          libDirectory.toString());
     }
     if (!(numInputChannels == 1 || numInputChannels == 2)) {
       throw new IllegalArgumentException("The number of input channels must be 1 or 2: " + 
@@ -76,8 +70,7 @@ public class ZenGarden {
     
     nativePtr = loadPdPatch(
         patchFile.getAbsoluteFile().getParent() + File.separator, patchFile.getName(), 
-        libDirectory.getAbsolutePath() + File.separator, blockSize, numInputChannels, 
-        numOutputChannels, sampleRate);
+        blockSize, numInputChannels, numOutputChannels, sampleRate);
   }
   
   static {
@@ -85,8 +78,8 @@ public class ZenGarden {
   }
   
   private native long loadPdPatch(
-      String directory, String filename, String libraryDirectory, int blockSize, 
-      int numInputChannels, int numOutputChannels, float sampleRate) throws NativeLoadException;
+      String directory, String filename, int blockSize, int numInputChannels,
+      int numOutputChannels, float sampleRate) throws NativeLoadException;
   
   @Override
   protected void finalize() throws Throwable {

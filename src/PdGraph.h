@@ -42,9 +42,8 @@ class MessageSendController;
 class PdGraph : public DspObject {
   
   public:
-    static PdGraph *newInstance(char *directory, char *filename, char *libraryDirectory,
-                                int blockSize, int numInputChannels, int numOutputChannels, 
-                                float sampleRate, PdGraph *parentGraph);
+    static PdGraph *newInstance(char *directory, char *filename, int blockSize,
+        int numInputChannels, int numOutputChannels, float sampleRate, PdGraph *parentGraph);
     ~PdGraph();
     
     /**
@@ -147,8 +146,11 @@ class PdGraph : public DspObject {
      */
     PdMessage *scheduleExternalMessage(char *receiverName);
   
+    /** Returns a list of directories which have neen delcared via a "declare" object. */
+    List *getDeclareList();
+  
   private:
-    PdGraph(PdFileParser *fileParser, char *directory, char *libraryDirectory, int blockSize, int numInputChannels, 
+    PdGraph(PdFileParser *fileParser, char *directory, int blockSize, int numInputChannels, 
             int numOutputChannels, float sampleRate, PdGraph *parentGraph);
   
     /** Connect the given <code>MessageObject</code>s from the given outlet to the given inlet. */
@@ -245,6 +247,9 @@ class PdGraph : public DspObject {
   
     /** A global list of all [catch~] objects. */
     List *catchList;
+  
+    /** A global list of all declared directories (-path and -stdpath) */
+    List *declareList;
   
     /**
      * The global <code>MessageSendController</code> which dispatches messages to named

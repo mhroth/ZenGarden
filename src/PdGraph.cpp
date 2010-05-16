@@ -31,6 +31,7 @@
 #include "MessageCosine.h"
 #include "MessageChange.h"
 #include "MessageClip.h"
+#include "MessageDeclare.h"
 #include "MessageDelay.h"
 #include "MessageDivide.h"
 #include "MessageDbToPow.h"
@@ -124,9 +125,8 @@ void defaultPrintFunction(char *msg) {
 // initialise the global graph counter
 int PdGraph::globalGraphId = 0;
 
-PdGraph *PdGraph::newInstance(char *directory, char *filename, char *libraryDirectory, int blockSize,
-                              int numInputChannels, int numOutputChannels, float sampleRate,
-                              PdGraph *parentGraph) {
+PdGraph *PdGraph::newInstance(char *directory, char *filename, int blockSize,
+    int numInputChannels, int numOutputChannels, float sampleRate, PdGraph *parentGraph) {
   PdGraph *pdGraph = NULL;
 
   // create file path based on directory and filename. Parse the file.
@@ -136,7 +136,7 @@ PdGraph *PdGraph::newInstance(char *directory, char *filename, char *libraryDire
 
   char *line = fileParser->nextMessage();
   if (line != NULL && strncmp(line, "#N canvas", strlen("#N canvas")) == 0) {
-    pdGraph = new PdGraph(fileParser, directory, libraryDirectory, blockSize, numInputChannels, numOutputChannels, sampleRate, parentGraph);
+    pdGraph = new PdGraph(fileParser, directory, blockSize, numInputChannels, numOutputChannels, sampleRate, parentGraph);
   } else {
     printf("WARNING | The first line of the pd file does not define a canvas:\n  \"%s\".\n", line);
   }
@@ -144,7 +144,7 @@ PdGraph *PdGraph::newInstance(char *directory, char *filename, char *libraryDire
   return pdGraph;
 }
 
-PdGraph::PdGraph(PdFileParser *fileParser, char *directory, char *libraryDirectory, int blockSize,
+PdGraph::PdGraph(PdFileParser *fileParser, char *directory, int blockSize,
     int numInputChannels, int numOutputChannels, float sampleRate, PdGraph *parentGraph) :
     DspObject(16, 16, 16, 16, blockSize, this) {
   this->numInputChannels = numInputChannels;
@@ -168,7 +168,7 @@ PdGraph::PdGraph(PdFileParser *fileParser, char *directory, char *libraryDirecto
   graphArguments = new PdMessage();
   graphArguments->addElement(new MessageElement((float) graphId)); // $0
 
-  if (parentGraph == NULL) {
+  if (isRootGraph()) {
     // if this is the top-level graph
     messageCallbackQueue = new OrderedMessageQueue();
     numBytesInInputBuffers = numInputChannels * blockSize * sizeof(float);
@@ -181,6 +181,7 @@ PdGraph::PdGraph(PdFileParser *fileParser, char *directory, char *libraryDirecto
     delayReceiverList = new List();
     throwList = new List();
     catchList = new List();
+    declareList = new List();
     sendController = new MessageSendController(this);
   } else {
     messageCallbackQueue = NULL;
@@ -194,6 +195,7 @@ PdGraph::PdGraph(PdFileParser *fileParser, char *directory, char *libraryDirecto
     delayReceiverList = NULL;
     throwList = NULL;
     catchList = NULL;
+    declareList = NULL;
     sendController = NULL;
   }
 
@@ -204,7 +206,7 @@ PdGraph::PdGraph(PdFileParser *fileParser, char *directory, char *libraryDirecto
       char *objectType = strtok(NULL, " ");
       if (strcmp(objectType, "canvas") == 0) {
         // a new subgraph is defined inline
-        PdGraph *graph = new PdGraph(fileParser, directory, libraryDirectory, blockSize, numInputChannels, numOutputChannels, sampleRate, this);
+        PdGraph *graph = new PdGraph(fileParser, directory, blockSize, numInputChannels, numOutputChannels, sampleRate, this);
         addObject(graph);
       } else {
         printf("WARNING | Unrecognised #N object type: \"%s\"", line);
@@ -223,17 +225,24 @@ PdGraph::PdGraph(PdFileParser *fileParser, char *directory, char *libraryDirecto
           // object could not be instantiated, probably because the object is unknown
           // look for the object definition in an abstraction
           // first look in the local directory (the same directory as the original file)...
-          char *filename = StaticUtils::joinPaths(objectInitString, ".pd");
-          pdNode = PdGraph::newInstance(directory, filename, libraryDirectory, blockSize, numInputChannels, numOutputChannels, sampleRate, this);
+          char *filename = StaticUtils::joinPaths(objectLabel, ".pd");
+          pdNode = PdGraph::newInstance(directory, filename, blockSize, numInputChannels, numOutputChannels, sampleRate, this);
           if (pdNode == NULL) {
-            // ...and if that fails, look in the library directory
-            // TODO(mhroth): director_ies_
-            pdNode = PdGraph::newInstance(libraryDirectory, filename, libraryDirectory, blockSize, numInputChannels, numOutputChannels, sampleRate, this);
+            // ...and if that fails, look in the declared directories
+            List *declareList = getDeclareList();
+            int i = 0;
+            while (pdNode == NULL && i < declareList->size()) {
+              char *librarySubpath = (char *) declareList->get(i++);
+              char *fullPath = StaticUtils::joinPaths(directory, librarySubpath); 
+              pdNode = PdGraph::newInstance(fullPath, filename, blockSize, numInputChannels, numOutputChannels, sampleRate, this);
+              free(fullPath);
+            }
             if (pdNode == NULL) {
               free(filename);
-              printErr("ERROR | Unknown object or abstraction \"%s\".\n", objectInitString);
+              printErr("Unknown object or abstraction \"%s\".\n", objectInitString);
               return;
             }
+            // else fallthrough, free the filename, and add the object
           }
           free(filename);
         }
@@ -265,9 +274,21 @@ PdGraph::PdGraph(PdFileParser *fileParser, char *directory, char *libraryDirecto
         addObject(messageText);
       } else if (strcmp(objectType, "declare") == 0) {
         // set environment for loading patch
-        // TODO(mhroth): this doesn't do anything for us at the moment,
-        // but the case must be handled. Nothing to do.
-        printErr("Received unimplemented \"#X declare\" object: \"%s\"\n", line);
+        char *objectInitString = strtok(NULL, ";"); // get the arguments to declare
+        PdMessage *initMessage = new PdMessage(objectInitString, this); // parse them
+        if (initMessage->isSymbol(0)) {
+          if (strcmp(initMessage->getSymbol(0), "-path") == 0 ||
+              strcmp(initMessage->getSymbol(0), "-stdpath") == 0) {
+            List *declareList = getDeclareList();
+            if (initMessage->isSymbol(1)) {
+              // add symbol to declare directories
+              declareList->add(StaticUtils::copyString(initMessage->getSymbol(1)));
+            }
+          } else {
+            printErr("declare \"%s\" flag is not supported.\n", initMessage->getSymbol(0));
+          }
+        }
+        delete initMessage;
       } else {
         printErr("Unrecognised #X object type on line: \"%s\"\n", line);
       }
@@ -289,6 +310,12 @@ PdGraph::~PdGraph() {
     delete delayReceiverList;
     free(globalDspInputBuffers);
     free(globalDspOutputBuffers);
+    
+    // delete all declare path string
+    for (int i = 0; i < declareList->size(); i++) {
+      free(declareList->get(i));
+    }
+    delete declareList;
   }
   delete dspNodeList;
   delete inletList;
@@ -360,6 +387,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageCosine(initMessage, graph);
     } else if (strcmp(objectLabel, "clip") == 0) {
       return new MessageClip(initMessage, graph);
+    } else if (strcmp(objectLabel, "declare") == 0) {
+      return new MessageDeclare(initMessage, graph);
     } else if (strcmp(objectLabel, "delay") == 0) {
       return new MessageDelay(initMessage, graph);
     } else if (strcmp(objectLabel, "exp") == 0) {
@@ -776,6 +805,14 @@ DspCatch *PdGraph::getDspCatch(char *name) {
     }
   }
   return NULL;
+}
+
+List *PdGraph::getDeclareList() {
+  if (isRootGraph()) {
+    return declareList;
+  } else {
+    return parentGraph->getDeclareList();
+  }
 }
 
 void PdGraph::receiveMessage(int inletIndex, PdMessage *message) {

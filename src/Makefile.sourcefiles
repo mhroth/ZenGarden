@@ -40,6 +40,7 @@ LOCAL_SRC_FILES := \
 ./MessageCosine.cpp \
 ./MessageDbToPow.cpp \
 ./MessageDbToRms.cpp \
+./MessageDeclare.cpp \
 ./MessageDelay.cpp \
 ./MessageDivide.cpp \
 ./MessageElement.cpp \
