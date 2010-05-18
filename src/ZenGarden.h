@@ -47,6 +47,7 @@ extern "C" {
   
   /**
    * Send a message to the named receiver with the given format at the beginning of the next audio block.
+   * If no receiver exists with the given name, then this funtion does nothing.
    * E.g., zg_send_message(graph, "#accelerate", "fff", 0.0f, 0.0f, 0.0f);
    * sends a message containing three floats, each with value 0.0f, to all receivers named "#accelerate".
    * Messages may also be formatted with "s" and "b" for symbols and bangs, respectively.
@@ -61,7 +62,8 @@ extern "C" {
    * the the message will be sent at the very beginning of the next block. A fractional block index
    * may be given, and the message will be evaluated between rendered samples. If the given block
    * index falls outside of the block size (either positive or negative), then the message will be
-   * delivered at the beginning of the block.
+   * delivered at the beginning of the block. If no receiver exists with the given name, then this
+   * funtion does nothing.
    * This function is equivalent to e.g., zg_send_message(graph, "#accelerate", 0.0, "fff", 0.0f, 0.0f, 0.0f)
    * E.g., zg_send_message_at_blockindex(graph, "#accelerate", 56.3, "fff", 0.0f, 0.0f, 0.0f);
    * sends a message containing three floats, each with value 0.0f, to all receivers named "#accelerate"
@@ -69,6 +71,14 @@ extern "C" {
    */
   void zg_send_message_at_blockindex(ZGGraph *graph, const char *receiverName, double blockIndex,
       const char *messageFormat, ...);
+  
+  /**
+   * Send a midi note message on the given channel to occur at the given block index. The
+   * <code>blockIndex</code> parameter behaves in the same way as in <code>zg_send_message_at_blockindex()</code>.
+   * All messages are sent to <code>notein</code> objects, i.e. omni. Channels are zero-index and only
+   * 16 are supported. A note off message is generally interpreted as having velocity zero.
+   */
+  void zg_send_midinote(PdGraph *graph, int channel, int noteNumber, int velocity, double blockIndex);
   
 #ifdef __cplusplus
 }

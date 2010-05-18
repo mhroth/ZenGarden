@@ -1,8 +1,8 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
- * 
+ *
  *  This file is part of ZenGarden.
  *
  *  ZenGarden is free software: you can redistribute it and/or modify
@@ -14,27 +14,34 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU Lesser General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with ZenGarden.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
-#include "MessageReceive.h"
+#ifndef _MESSAGE_NOTEIN_H_
+#define _MESSAGE_NOTEIN_H_
 
-MessageReceive::MessageReceive(PdMessage *initMessage, PdGraph *graph) :
-    RemoteMessageReceiver(0, 1, graph) {
-  name = initMessage->isSymbol(0) ? StaticUtils::copyString(initMessage->getSymbol(0)) : NULL;
-}
+#include "RemoteMessageReceiver.h"
 
-MessageReceive::~MessageReceive() {
-  free(name);
-}
+/** [notein], [notein float] */
+class MessageNotein : public RemoteMessageReceiver {
+  
+  public:
+    MessageNotein(PdMessage *initMessage, PdGraph *graph);
+    ~MessageNotein();
+    
+    const char *getObjectLabel();
+  
+    /** Returns the zero-indexed midi channel which this object outputs. -1 if omni. */
+    int getChannel();
+    
+  private:
+    void processMessage(int inletIndex, PdMessage *message);
+    bool isOmni();
 
-const char *MessageReceive::getObjectLabel() {
-  return "receive";
-}
+    int channel;
+};
 
-void MessageReceive::processMessage(int inletIndex, PdMessage *message) {
-  sendMessage(0, message);
-}
+#endif // _MESSAGE_NOTEIN_H_

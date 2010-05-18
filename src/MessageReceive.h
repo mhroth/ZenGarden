@@ -23,10 +23,10 @@
 #ifndef _MESSAGE_RECEIVE_H_
 #define _MESSAGE_RECEIVE_H_
 
-#include "MessageObject.h"
+#include "RemoteMessageReceiver.h"
 
 /** [receive|r] */
-class MessageReceive : public MessageObject {
+class MessageReceive : public RemoteMessageReceiver {
   
   public:
     MessageReceive(PdMessage *initMessage, PdGraph *graph);
@@ -34,12 +34,8 @@ class MessageReceive : public MessageObject {
     
     const char *getObjectLabel();
   
-    char *getName();
-  
   private:
     void processMessage(int inletIndex, PdMessage *message);
-  
-    char *name;
 };
 
 #endif // _MESSAGE_RECEIVE_H_

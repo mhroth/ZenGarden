@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -20,21 +20,17 @@
  *
  */
 
-#include "MessageReceive.h"
+#include "RemoteMessageReceiver.h"
 
-MessageReceive::MessageReceive(PdMessage *initMessage, PdGraph *graph) :
-    RemoteMessageReceiver(0, 1, graph) {
-  name = initMessage->isSymbol(0) ? StaticUtils::copyString(initMessage->getSymbol(0)) : NULL;
+RemoteMessageReceiver::RemoteMessageReceiver(int numMessageInlets, int numMessageOutlets, PdGraph *graph) :
+    MessageObject(numMessageInlets, numMessageOutlets, graph) {
+  name = NULL;
 }
 
-MessageReceive::~MessageReceive() {
-  free(name);
+RemoteMessageReceiver::~RemoteMessageReceiver() {
+  // nothing to do. Subclass is responsible for freeing name.
 }
 
-const char *MessageReceive::getObjectLabel() {
-  return "receive";
-}
-
-void MessageReceive::processMessage(int inletIndex, PdMessage *message) {
-  sendMessage(0, message);
+char *RemoteMessageReceiver::getName() {
+  return name;
 }

@@ -41,24 +41,59 @@ void zg_process(PdGraph *graph, float *inputBuffers, float *outputBuffers) {
 
 void zg_send_message(PdGraph *graph, const char *receiverName, const char *messageFormat, ...) {
   PdMessage *message = graph->scheduleExternalMessage((char *) receiverName);
-  
-  va_list ap;
-  va_start(ap, messageFormat);
-  message->setMessage(messageFormat, ap);
-  va_end(ap); // release the va_list
+  if (message != NULL) { // message is NULL if no receiver of the given name exists
+    va_list ap;
+    va_start(ap, messageFormat);
+    message->setMessage(messageFormat, ap);
+    va_end(ap); // release the va_list
+  }
 }
 
-void zg_send_message_at_blockindex(ZGGraph *graph, const char *receiverName, double blockIndex, const char *messageFormat, ...) {
-  double timestamp = graph->getBlockStartTimestamp();
-  if (blockIndex >= 0.0 && blockIndex <= (double) (graph->getBlockSize()-1)) {
-    timestamp += blockIndex / graph->getSampleRate();
+void zg_send_message_at_blockindex(ZGGraph *graph, const char *receiverName, double blockIndex,
+    const char *messageFormat, ...) {
+  PdMessage *message = graph->scheduleExternalMessage((char *) receiverName);
+  if (message != NULL) {
+    double timestamp = graph->getBlockStartTimestamp();
+    if (blockIndex >= 0.0 && blockIndex <= (double) (graph->getBlockSize()-1)) {
+      timestamp += blockIndex / graph->getSampleRate();
+    }
+    message->setTimestamp(timestamp);
+    
+    va_list ap;
+    va_start(ap, messageFormat);
+    message->setMessage(messageFormat, ap);
+    va_end(ap);
+  }
+}
+
+void zg_send_midinote(PdGraph *graph, int channel, int noteNumber, int velocity, double blockIndex) {
+  const char *receiverName;
+  switch (channel) {
+    case 0:  { receiverName = "zg_notein_0";  break; }
+    case 1:  { receiverName = "zg_notein_1";  break; }
+    case 2:  { receiverName = "zg_notein_2";  break; }
+    case 3:  { receiverName = "zg_notein_3";  break; }
+    case 4:  { receiverName = "zg_notein_4";  break; }
+    case 5:  { receiverName = "zg_notein_5";  break; }
+    case 6:  { receiverName = "zg_notein_6";  break; }
+    case 7:  { receiverName = "zg_notein_7";  break; }
+    case 8:  { receiverName = "zg_notein_8";  break; }
+    case 9:  { receiverName = "zg_notein_9";  break; }
+    case 10: { receiverName = "zg_notein_10"; break; }
+    case 11: { receiverName = "zg_notein_11"; break; }
+    case 12: { receiverName = "zg_notein_12"; break; }
+    case 13: { receiverName = "zg_notein_13"; break; }
+    case 14: { receiverName = "zg_notein_14"; break; }
+    case 15: { receiverName = "zg_notein_15"; break; }
+    default: {
+      return;
+    }
   }
   
-  PdMessage *message = graph->scheduleExternalMessage((char *) receiverName);
-  message->setTimestamp(timestamp);
+  zg_send_message_at_blockindex(graph, receiverName, blockIndex, "fff",
+      (float) noteNumber, (float) velocity, (float) channel);
   
-  va_list ap;
-  va_start(ap, messageFormat);
-  message->setMessage(messageFormat, ap);
-  va_end(ap);
+  // all message are also sent to the omni listener
+  zg_send_message_at_blockindex(graph, "zg_notein_omni", blockIndex, "fff",
+      (float) noteNumber, (float) velocity, (float) channel);
 }

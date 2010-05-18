@@ -75,6 +75,12 @@
 		90445FB41188F0910076B724 /* DspSend.h in Headers */ = {isa = PBXBuildFile; fileRef = 90445FB21188F0910076B724 /* DspSend.h */; };
 		90445FB51188F0910076B724 /* DspSend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90445FB31188F0910076B724 /* DspSend.cpp */; };
 		90445FB61188F0910076B724 /* DspSend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90445FB31188F0910076B724 /* DspSend.cpp */; };
+		90454F9211A2B2F300BD51F7 /* RemoteMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90454F9111A2B2F300BD51F7 /* RemoteMessageReceiver.cpp */; };
+		90454F9311A2B2F300BD51F7 /* RemoteMessageReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 90454F9011A2B2F300BD51F7 /* RemoteMessageReceiver.h */; };
+		90454F9411A2B2F300BD51F7 /* RemoteMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90454F9111A2B2F300BD51F7 /* RemoteMessageReceiver.cpp */; };
+		9045501711A2B8E100BD51F7 /* MessageNotein.h in Headers */ = {isa = PBXBuildFile; fileRef = 9045501511A2B8E100BD51F7 /* MessageNotein.h */; };
+		9045501811A2B8E100BD51F7 /* MessageNotein.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9045501611A2B8E100BD51F7 /* MessageNotein.cpp */; };
+		9045501911A2B8E100BD51F7 /* MessageNotein.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9045501611A2B8E100BD51F7 /* MessageNotein.cpp */; };
 		90565AAD117A26F50006E136 /* MessageUnpack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90565AAB117A26F50006E136 /* MessageUnpack.cpp */; };
 		90565AAE117A26F50006E136 /* MessageUnpack.h in Headers */ = {isa = PBXBuildFile; fileRef = 90565AAC117A26F50006E136 /* MessageUnpack.h */; };
 		90565AAF117A26F50006E136 /* MessageUnpack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90565AAB117A26F50006E136 /* MessageUnpack.cpp */; };
@@ -360,6 +366,10 @@
 		903E938B11624631006CC60F /* DspDelayRead.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspDelayRead.h; path = ../src/DspDelayRead.h; sourceTree = SOURCE_ROOT; };
 		90445FB21188F0910076B724 /* DspSend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspSend.h; path = ../src/DspSend.h; sourceTree = SOURCE_ROOT; };
 		90445FB31188F0910076B724 /* DspSend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspSend.cpp; path = ../src/DspSend.cpp; sourceTree = SOURCE_ROOT; };
+		90454F9011A2B2F300BD51F7 /* RemoteMessageReceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteMessageReceiver.h; path = ../src/RemoteMessageReceiver.h; sourceTree = SOURCE_ROOT; };
+		90454F9111A2B2F300BD51F7 /* RemoteMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteMessageReceiver.cpp; path = ../src/RemoteMessageReceiver.cpp; sourceTree = SOURCE_ROOT; };
+		9045501511A2B8E100BD51F7 /* MessageNotein.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageNotein.h; path = ../src/MessageNotein.h; sourceTree = SOURCE_ROOT; };
+		9045501611A2B8E100BD51F7 /* MessageNotein.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageNotein.cpp; path = ../src/MessageNotein.cpp; sourceTree = SOURCE_ROOT; };
 		90565AAB117A26F50006E136 /* MessageUnpack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageUnpack.cpp; path = ../src/MessageUnpack.cpp; sourceTree = SOURCE_ROOT; };
 		90565AAC117A26F50006E136 /* MessageUnpack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageUnpack.h; path = ../src/MessageUnpack.h; sourceTree = SOURCE_ROOT; };
 		9056A3EC118F2D7C00E4429E /* MessageToggle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageToggle.cpp; path = ../src/MessageToggle.cpp; sourceTree = SOURCE_ROOT; };
@@ -658,6 +668,8 @@
 				908D56AA1139E74C001B0A72 /* MessageNamedDestination.h */,
 				908A373C1125DF6D00558388 /* MessageNotEquals.cpp */,
 				908A373D1125DF6D00558388 /* MessageNotEquals.h */,
+				9045501611A2B8E100BD51F7 /* MessageNotein.cpp */,
+				9045501511A2B8E100BD51F7 /* MessageNotein.h */,
 				90398C881113564400E5A8B6 /* MessageObject.cpp */,
 				90398C891113564400E5A8B6 /* MessageObject.h */,
 				90398C8A1113564400E5A8B6 /* MessageOutlet.cpp */,
@@ -729,6 +741,8 @@
 				908687A21138467800C87D5C /* PdFileParser.h */,
 				90398C9D1113564400E5A8B6 /* PdMessage.cpp */,
 				90398C9E1113564400E5A8B6 /* PdMessage.h */,
+				90454F9111A2B2F300BD51F7 /* RemoteMessageReceiver.cpp */,
+				90454F9011A2B2F300BD51F7 /* RemoteMessageReceiver.h */,
 				90398CA11113564400E5A8B6 /* StaticUtils.cpp */,
 				90398CA21113564400E5A8B6 /* StaticUtils.h */,
 				9079726D118654C90005E8DF /* ZenGarden.h */,
@@ -785,6 +799,8 @@
 				9020588F1195FCA00073DCB1 /* MessageWrap.h in Headers */,
 				902058D3119600D20073DCB1 /* DspLog.h in Headers */,
 				90330AF2119CAB4D00DDA77C /* MessageDeclare.h in Headers */,
+				90454F9311A2B2F300BD51F7 /* RemoteMessageReceiver.h in Headers */,
+				9045501711A2B8E100BD51F7 /* MessageNotein.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -955,6 +971,8 @@
 				902058901195FCA00073DCB1 /* MessageWrap.cpp in Sources */,
 				902058D4119600D20073DCB1 /* DspLog.cpp in Sources */,
 				90330AF1119CAB4D00DDA77C /* MessageDeclare.cpp in Sources */,
+				90454F9211A2B2F300BD51F7 /* RemoteMessageReceiver.cpp in Sources */,
+				9045501911A2B8E100BD51F7 /* MessageNotein.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1067,6 +1085,8 @@
 				9020588E1195FCA00073DCB1 /* MessageWrap.cpp in Sources */,
 				902058D2119600D20073DCB1 /* DspLog.cpp in Sources */,
 				90330AF3119CAB4D00DDA77C /* MessageDeclare.cpp in Sources */,
+				90454F9411A2B2F300BD51F7 /* RemoteMessageReceiver.cpp in Sources */,
+				9045501811A2B8E100BD51F7 /* MessageNotein.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

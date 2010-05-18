@@ -66,6 +66,7 @@ LOCAL_SRC_FILES := \
 ./MessageMoses.cpp \
 ./MessageMultiply.cpp \
 ./MessageNotEquals.cpp \
+./MessageNotein.cpp \
 ./MessageObject.cpp \
 ./MessageOutlet.cpp \
 ./MessagePack.cpp \
@@ -101,5 +102,6 @@ LOCAL_SRC_FILES := \
 ./PdFileParser.cpp \
 ./PdGraph.cpp \
 ./PdMessage.cpp \
+./RemoteMessageReceiver.cpp \
 ./StaticUtils.cpp \
 ./ZenGarden.cpp

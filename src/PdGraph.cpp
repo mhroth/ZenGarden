@@ -58,6 +58,7 @@
 #include "MessageMoses.h"
 #include "MessageMultiply.h"
 #include "MessageNotEquals.h"
+#include "MessageNotein.h"
 #include "MessageOutlet.h"
 #include "MessagePack.h"
 #include "MessagePipe.h"
@@ -437,6 +438,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageMoses(initMessage, graph);
     } else if (strcmp(objectLabel, "mod") == 0) {
       return new MessageModulus(initMessage, graph);
+    } else if (strcmp(objectLabel, "notein") == 0) {
+      return new MessageNotein(initMessage, graph);
     } else if (strcmp(objectLabel, "pack") == 0) {
       return new MessagePack(initMessage, graph);
     } else if (strcmp(objectLabel, "pipe") == 0) {
@@ -563,8 +566,9 @@ void PdGraph::addObject(MessageObject *node) {
   } else if (strcmp(node->getObjectLabel(), "outlet") == 0) {
     outletList->add(node);
     ((MessageOutlet *) node)->setOutletIndex(outletList->size()-1);
-  } else if (strcmp(node->getObjectLabel(), "receive") == 0) {
-    sendController->addReceiver((MessageReceive *) node);
+  } else if (strcmp(node->getObjectLabel(), "receive") == 0 ||
+             strcmp(node->getObjectLabel(), "notein") == 0) {
+    sendController->addReceiver((RemoteMessageReceiver *) node);
   } else if (strcmp(node->getObjectLabel(), "catch~") == 0) {
     registerDspCatch((DspCatch *) node);
   } else if (strcmp(node->getObjectLabel(), "delread~") == 0 ||

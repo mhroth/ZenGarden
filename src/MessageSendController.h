@@ -24,7 +24,7 @@
 #define _MESSAGE_SEND_CONTROLLER_H_
 
 #include "MessageObject.h"
-#include "MessageReceive.h"
+#include "RemoteMessageReceiver.h"
 
 /**
  * Because of features such as external message injection and implicit message sending from message
@@ -61,7 +61,7 @@ class MessageSendController : public MessageObject {
      */
     int getNameIndex(char *name);
   
-    void addReceiver(MessageReceive *receiver);
+    void addReceiver(RemoteMessageReceiver *receiver);
   
   private:
     void processMessage(int inletIndex, PdMessage *message);
@@ -69,6 +69,7 @@ class MessageSendController : public MessageObject {
     List *nameList;
     List *receiverLists;
   
+    // a special index for referencing the system "pd" receiver
     static const int SYSTEM_NAME_INDEX = 0x7FFFFFFF;
 };
 

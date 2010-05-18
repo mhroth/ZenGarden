@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -20,21 +20,26 @@
  *
  */
 
-#include "MessageReceive.h"
+#ifndef _REMOTE_MESSAGE_RECEIVER_H_
+#define _REMOTE_MESSAGE_RECEIVER_H_
 
-MessageReceive::MessageReceive(PdMessage *initMessage, PdGraph *graph) :
-    RemoteMessageReceiver(0, 1, graph) {
-  name = initMessage->isSymbol(0) ? StaticUtils::copyString(initMessage->getSymbol(0)) : NULL;
-}
+#include "MessageObject.h"
 
-MessageReceive::~MessageReceive() {
-  free(name);
-}
+/**
+ * This is a superclass of all <code>MessageObject</code>s which receive messages
+ * remotely. This includes objects such as <code>MessageReceive</code> and <code>MessageNotein</code>.
+ */
+class RemoteMessageReceiver : public MessageObject {
+  
+  public:
+    RemoteMessageReceiver(int numMessageInlets, int numMessageOutlets, PdGraph *graph);
+    virtual ~RemoteMessageReceiver();
+  
+    char *getName();
+  
+  protected:
+    // This class provides the name variable, but subclasses are responsible for managing it.
+    char *name;
+};
 
-const char *MessageReceive::getObjectLabel() {
-  return "receive";
-}
-
-void MessageReceive::processMessage(int inletIndex, PdMessage *message) {
-  sendMessage(0, message);
-}
+#endif // _REMOTE_MESSAGE_RECEIVER_H_

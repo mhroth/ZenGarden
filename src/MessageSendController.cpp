@@ -85,15 +85,15 @@ void MessageSendController::sendMessage(int outletIndex, PdMessage *message) {
   } else {
     List *receiverList = (List *) receiverLists->get(outletIndex);
     int numReceivers = receiverList->size();
-    MessageReceive *receiver = NULL;
+    RemoteMessageReceiver *receiver = NULL;
     for (int i = 0; i < numReceivers; i++) {
-      receiver = (MessageReceive *) receiverList->get(i);
+      receiver = (RemoteMessageReceiver *) receiverList->get(i);
       receiver->receiveMessage(0, message);
     }
   }
 }
 
-void MessageSendController::addReceiver(MessageReceive *receiver) {
+void MessageSendController::addReceiver(RemoteMessageReceiver *receiver) {
   int nameIndex = getNameIndex(receiver->getName());
   if (nameIndex == -1) {
     nameList->add(StaticUtils::copyString(receiver->getName()));
