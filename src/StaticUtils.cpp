@@ -142,23 +142,18 @@ const char *StaticUtils::messageElementTypeToString(MessageElementType type) {
   switch (type) {
     case FLOAT: {
       return "FLOAT";
-      break;
     }
     case SYMBOL: {
       return "SYMBOL";
-      break;
     }
     case BANG: {
       return "BANG";
-      break;
     }
     case ANYTHING: {
       return "ANYTHING";
-      break;
     }
     default: {
       return "UNKNOWN TYPE";
-      break;
     }
   }
 }
