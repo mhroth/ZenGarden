@@ -23,24 +23,15 @@
 #include "MessageFloat.h"
 
 MessageFloat::MessageFloat(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
-  if (initMessage->getNumElements() > 0 &&
-      initMessage->getElement(0)->getType() == FLOAT) {
-    init(initMessage->getElement(0)->getFloat());
-  } else {
-    init(0.0f);
-  }
+  constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
 }
 
 MessageFloat::MessageFloat(float constant, PdGraph *graph) : MessageObject(2, 1, graph) {
-  init(constant);
+  this->constant = constant;
 }
 
 MessageFloat::~MessageFloat() {
   // nothing to do
-}
-
-void MessageFloat::init(float constant) {
-  this->constant = constant;
 }
 
 const char *MessageFloat::getObjectLabel() {
@@ -50,10 +41,9 @@ const char *MessageFloat::getObjectLabel() {
 void MessageFloat::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
-      MessageElement *messageElement = message->getElement(0);
-      switch (messageElement->getType()) {
+      switch (message->getType(0)) {
         case FLOAT: {
-          constant = messageElement->getFloat();
+          constant = message->getFloat(0);
           // allow fallthrough
         }
         case BANG: {
@@ -70,9 +60,8 @@ void MessageFloat::processMessage(int inletIndex, PdMessage *message) {
       break;
     }
     case 1: {
-      MessageElement *messageElement = message->getElement(0);
-      if (messageElement->getType() == FLOAT) {
-        constant = messageElement->getFloat();
+      if (message->isFloat(0)) {
+        constant = message->getFloat(0);
       }
       break;
     }

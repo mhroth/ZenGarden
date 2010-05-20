@@ -36,7 +36,6 @@ class MessageFloat : public MessageObject {
     const char *getObjectLabel();
     
   private:
-    void init(float constant);
     void processMessage(int inletIndex, PdMessage *message);
     
     float constant;
