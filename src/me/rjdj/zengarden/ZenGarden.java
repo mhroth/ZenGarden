@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -113,7 +113,7 @@ public class ZenGarden {
     process(inputBuffer, outputBuffer, nativePtr);
   }
   
-  private native void process(short[] inputBuffer, short[] outputBuffer, long naitvePointer);
+  private native void process(short[] inputBuffer, short[] outputBuffer, long nativePointer);
   
   /**
    * This method allows the native component to be manually unloaded.
