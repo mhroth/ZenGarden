@@ -239,7 +239,6 @@ void PdMessage::clearAndCopyFrom(PdMessage *message, int startIndex) {
 char *PdMessage::toString() {
   // http://stackoverflow.com/questions/295013/using-sprintf-without-a-manually-allocated-buffer
   int listlen = elementList->size();
-  //char *bits[listlen]; // each atom stored as a string
   int lengths[listlen]; // how long is the string of each atom
   char *finalString; // the final buffer we will pass back after concatenating all strings - user should free it
   int size = 0; // the total length of our final buffer
@@ -250,10 +249,9 @@ char *PdMessage::toString() {
   // chrism: apparently this might fail under MSVC because of snprintf(NULL) - do we care?
   for (int i = 0; i < listlen; i++) {
     lengths[i] = 0;
-    MessageElement *el = (MessageElement *) elementList->get(i);
-    switch (el->getType()) {
+    switch (getType(i)) {
       case FLOAT: {
-        lengths[i] = snprintf(NULL, 0, "%g", el->getFloat());
+        lengths[i] = snprintf(NULL, 0, "%g", getFloat(i));
         break;
       }
       case BANG: {
@@ -261,7 +259,7 @@ char *PdMessage::toString() {
         break;
       }
       case SYMBOL: {
-        lengths[i] = snprintf(NULL, 0, "%s", el->getSymbol());
+        lengths[i] = snprintf(NULL, 0, "%s", getSymbol(i));
         break;
       }
       default: {
@@ -275,16 +273,15 @@ char *PdMessage::toString() {
   // now we do the piecewise concatenation into our final string
   finalString = (char *)malloc(size);
   for (int i = 0; i < listlen; i++) {
-    MessageElement *el = (MessageElement *)elementList->get(i);
     // first element doesn't have a space before it
     if (i > 0) {
       strncat(finalString, " ", 1);
       pos += 1;
     }
     // put a string representation of each atom into the final string
-    switch (el->getType()) {
+    switch (getType(i)) {
       case FLOAT: {
-        snprintf(&finalString[pos], lengths[i] + 1, "%g", el->getFloat());
+        snprintf(&finalString[pos], lengths[i] + 1, "%g", getFloat(i));
         break;
       }
       case BANG: {
@@ -292,7 +289,7 @@ char *PdMessage::toString() {
         break;
       }
       case SYMBOL: {
-        snprintf(&finalString[pos], lengths[i] + 1, "%s", el->getSymbol());
+        snprintf(&finalString[pos], lengths[i] + 1, "%s", getSymbol(i));
         break;
       }
       default: {
