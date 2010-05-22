@@ -38,6 +38,7 @@
 		9029F191118B3AEB00E08A54 /* DspCatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 9029F18F118B3AEB00E08A54 /* DspCatch.h */; };
 		9029F192118B3AEB00E08A54 /* DspCatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9029F190118B3AEB00E08A54 /* DspCatch.cpp */; };
 		9029F193118B3AEB00E08A54 /* DspCatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9029F190118B3AEB00E08A54 /* DspCatch.cpp */; };
+		902A5E0611A84A7300C208C3 /* ZGCallbackFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 902A5E0511A84A7300C208C3 /* ZGCallbackFunction.h */; };
 		902C1DEC116FA65C00C244A9 /* DspDivide.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FC0C7B116F74D10044AFAC /* DspDivide.cpp */; };
 		90330AF1119CAB4D00DDA77C /* MessageDeclare.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90330AF0119CAB4D00DDA77C /* MessageDeclare.cpp */; };
 		90330AF2119CAB4D00DDA77C /* MessageDeclare.h in Headers */ = {isa = PBXBuildFile; fileRef = 90330AEF119CAB4D00DDA77C /* MessageDeclare.h */; };
@@ -302,6 +303,7 @@
 		90275B41112880D900FFAEC7 /* DspOsc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspOsc.h; path = ../src/DspOsc.h; sourceTree = SOURCE_ROOT; };
 		9029F18F118B3AEB00E08A54 /* DspCatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspCatch.h; path = ../src/DspCatch.h; sourceTree = SOURCE_ROOT; };
 		9029F190118B3AEB00E08A54 /* DspCatch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspCatch.cpp; path = ../src/DspCatch.cpp; sourceTree = SOURCE_ROOT; };
+		902A5E0511A84A7300C208C3 /* ZGCallbackFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZGCallbackFunction.h; path = ../src/ZGCallbackFunction.h; sourceTree = SOURCE_ROOT; };
 		90330AEF119CAB4D00DDA77C /* MessageDeclare.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageDeclare.h; path = ../src/MessageDeclare.h; sourceTree = SOURCE_ROOT; };
 		90330AF0119CAB4D00DDA77C /* MessageDeclare.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageDeclare.cpp; path = ../src/MessageDeclare.cpp; sourceTree = SOURCE_ROOT; };
 		90355CF4118A3E6500017579 /* DspReceive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspReceive.h; path = ../src/DspReceive.h; sourceTree = SOURCE_ROOT; };
@@ -747,6 +749,7 @@
 				90398CA21113564400E5A8B6 /* StaticUtils.h */,
 				9079726D118654C90005E8DF /* ZenGarden.h */,
 				9079726E118654C90005E8DF /* ZenGarden.cpp */,
+				902A5E0511A84A7300C208C3 /* ZGCallbackFunction.h */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -801,6 +804,7 @@
 				90330AF2119CAB4D00DDA77C /* MessageDeclare.h in Headers */,
 				90454F9311A2B2F300BD51F7 /* RemoteMessageReceiver.h in Headers */,
 				9045501711A2B8E100BD51F7 /* MessageNotein.h in Headers */,
+				902A5E0611A84A7300C208C3 /* ZGCallbackFunction.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

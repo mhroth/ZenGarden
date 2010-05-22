@@ -21,15 +21,17 @@
  */
 
 #include <math.h>
+#include <stdlib.h>
 #include <string.h>
 #include "me_rjdj_zengarden_ZenGarden.h"
-#include "PdGraph.h"
+#include "ZenGarden.h"
 
 #define JNI_VERSION JNI_VERSION_1_4
 
 JavaVM *jvm = NULL; // global variable
 
 typedef struct {
+  jobject zgObject;
   PdGraph *pdGraph;
   float *finputBuffer;
   float *foutputBuffer;
@@ -41,32 +43,30 @@ typedef struct {
 } PureDataMobileNativeVars;
 
 extern "C" {
-  void java_print_std(char *message) {
-    // (mhroth): this could be optimised very much, but we'll leave it for now
+  void java_callback(ZGCallbackFunction function, void *userData, void *ptr) {
     JNIEnv *env = NULL;
     jint result = jvm->GetEnv((void **)&env, JNI_VERSION);
     if (result == JNI_OK && env != NULL) {
-      // call System.out.print()
-      env->CallObjectMethod(
-          env->GetStaticObjectField(
-              env->FindClass("java/lang/System"),
-              env->GetStaticFieldID(env->FindClass("java/lang/System"), "out", "Ljava/io/PrintStream;")),
-          env->GetMethodID(env->FindClass("java/io/PrintStream"), "print", "(Ljava/lang/String;)V"),
-          env->NewStringUTF(message));
-    }
-  }
-  
-  void java_print_err(char *message) {
-    JNIEnv *env = NULL;
-    jint result = jvm->GetEnv((void **)&env, JNI_VERSION);
-    if (result == JNI_OK && env != NULL) {
-      // call System.err.print()
-      env->CallObjectMethod(
-          env->GetStaticObjectField(
-              env->FindClass("java/lang/System"),
-              env->GetStaticFieldID(env->FindClass("java/lang/System"), "err", "Ljava/io/PrintStream;")),
-          env->GetMethodID(env->FindClass("java/io/PrintStream"), "print", "(Ljava/lang/String;)V"),
-          env->NewStringUTF(message));
+      jobject zgObject = (jobject) userData;
+      switch (function) {
+        case ZG_PRINT_STD: {
+          env->CallVoidMethod(zgObject,
+              env->GetMethodID(env->FindClass("me/rjdj/zengarden/ZenGarden"), "onPrintStd",
+                  "(Ljava/lang/String;)V"),
+              env->NewStringUTF((char *) ptr));
+          break;
+        }
+        case ZG_PRINT_ERR: {
+          env->CallVoidMethod(zgObject,
+              env->GetMethodID(env->FindClass("me/rjdj/zengarden/ZenGarden"), "onPrintErr",
+                  "(Ljava/lang/String;)V"),
+              env->NewStringUTF((char *) ptr));
+          break;
+        }
+        default: {
+          break;
+        }
+      }
     }
   }
 }
@@ -99,8 +99,8 @@ JNIEXPORT jlong JNICALL Java_me_rjdj_zengarden_ZenGarden_loadPdPatch(
   PdGraph *pdGraph = NULL;
   char *cdirectory = (char *) env->GetStringUTFChars(jdirectory, NULL);
   char *cfilename = (char *) env->GetStringUTFChars(jfilename, NULL);
-  pdGraph = PdGraph::newInstance(cdirectory, cfilename, blockSize, 
-      numInputChannels, numOutputChannels, sampleRate, NULL);
+  pdGraph = zg_new_graph(cdirectory, cfilename, blockSize, numInputChannels, numOutputChannels,
+      sampleRate);
   env->ReleaseStringUTFChars(jdirectory, cdirectory);
   env->ReleaseStringUTFChars(jfilename, cfilename);
   
@@ -110,9 +110,6 @@ JNIEXPORT jlong JNICALL Java_me_rjdj_zengarden_ZenGarden_loadPdPatch(
         "PdGraph is NULL. Is the filename correct? Does the file exist? Are all of the referenced objects implemented?");
     return (jlong) 0;
   }
-  
-  pdGraph->setPrintStd(java_print_std);
-  pdGraph->setPrintErr(java_print_err);
   
   // initialise the PureDataMobile native variables
   PureDataMobileNativeVars *pdmnv = (PureDataMobileNativeVars *) malloc(sizeof(PureDataMobileNativeVars));
@@ -124,6 +121,10 @@ JNIEXPORT jlong JNICALL Java_me_rjdj_zengarden_ZenGarden_loadPdPatch(
   pdmnv->numOutputChannels = numOutputChannels;
   pdmnv->shortToFloatLookupTable = (float *) malloc(32768 * sizeof(float));
   pdmnv->numBytesInBlock = blockSize * sizeof(float);
+  
+  // register the callback
+  pdmnv->zgObject = env->NewGlobalRef(jobj);
+  zg_register_callback(pdGraph, java_callback, pdmnv->zgObject);
   
   // define the input (microphone) waveshaper
   // linear
@@ -140,10 +141,11 @@ JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZenGarden_unloadPdPatch(
   if (nativePtr != 0) { // sanity check
     // free all of the pure data mobile native variables
     PureDataMobileNativeVars *pdmnv = (PureDataMobileNativeVars *) nativePtr;
+    env->DeleteGlobalRef(pdmnv->zgObject);
     free(pdmnv->finputBuffer);
     free(pdmnv->foutputBuffer);
     free(pdmnv->shortToFloatLookupTable);
-    delete pdmnv->pdGraph;
+    zg_delete_graph(pdmnv->pdGraph);
     free(pdmnv);
   }
 }
@@ -182,7 +184,7 @@ JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZenGarden_process(
   }
   env->ReleasePrimitiveArrayCritical(jinputBuffer, cinputBuffer, JNI_ABORT); // no need to copy back changes. release native buffer.
   
-  pdmnv->pdGraph->process(pdmnv->finputBuffer, pdmnv->foutputBuffer);
+  zg_process(pdmnv->pdGraph, pdmnv->finputBuffer, pdmnv->foutputBuffer);
   
   // read back from the floating point output buffers
   // regarding use of lrintf, see http://www.mega-nerd.com/FPcast/

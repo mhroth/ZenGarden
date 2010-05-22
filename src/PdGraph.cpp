@@ -118,11 +118,6 @@
 #include "DspVariableDelay.h"
 #include "DspWrap.h"
 
-/** A C-defined function implementing the default print behaviour. */
-void defaultPrintFunction(char *msg) {
-  printf("%s", msg);
-}
-
 // initialise the global graph counter
 int PdGraph::globalGraphId = 0;
 
@@ -161,9 +156,9 @@ PdGraph::PdGraph(PdFileParser *fileParser, char *directory, int blockSize,
   dspNodeList = new List();
   inletList = new List();
   outletList = new List();
-
-  setPrintErr(defaultPrintFunction);
-  setPrintStd(defaultPrintFunction);
+      
+  callbackFunction = NULL;
+  callbackUserData = NULL;
 
   graphId = globalGraphId++;
   graphArguments = new PdMessage();
@@ -986,17 +981,16 @@ bool PdGraph::isRootGraph() {
   return (parentGraph == NULL);
 }
 
-void PdGraph::setPrintErr(void (*printFunction)(char *)) {
-  if (isRootGraph()) {
-    printErrFunction = printFunction;
-  } else {
-    parentGraph->setPrintErr(printFunction);
-  }
+void PdGraph::registerCallback(void (*function)(ZGCallbackFunction, void *, void *), void *userData) {
+  callbackFunction = function;
+  callbackUserData = userData;
 }
 
 void PdGraph::printErr(char *msg) {
   if (isRootGraph()) {
-    printErrFunction(msg);
+    if (callbackFunction != NULL) {
+      callbackFunction(ZG_PRINT_ERR, callbackUserData, msg);
+    }
   } else {
     parentGraph->printErr(msg);
   }
@@ -1009,25 +1003,15 @@ void PdGraph::printErr(const char *msg, ...) {
   va_start(ap, msg);
   vsnprintf(stringBuffer, maxStringLength-1, msg, ap);
   va_end(ap);
-
-  if (isRootGraph()) {
-    printErrFunction(stringBuffer);
-  } else {
-    parentGraph->printErr(stringBuffer);
-  }
-}
-
-void PdGraph::setPrintStd(void (*printFunction)(char *)) {
-  if (isRootGraph()) {
-    printStdFunction = printFunction;
-  } else {
-    parentGraph->setPrintStd(printFunction);
-  }
+  
+  printErr(stringBuffer);
 }
 
 void PdGraph::printStd(char *msg) {
   if (isRootGraph()) {
-    printStdFunction(msg);
+    if (callbackFunction != NULL) {
+      callbackFunction(ZG_PRINT_STD, callbackUserData, msg);
+    }
   } else {
     parentGraph->printStd(msg);
   }
@@ -1041,11 +1025,7 @@ void PdGraph::printStd(const char *msg, ...) {
   vsnprintf(stringBuffer, maxStringLength-1, msg, ap);
   va_end(ap);
 
-  if (isRootGraph()) {
-    printStdFunction(stringBuffer);
-  } else {
-    parentGraph->printStd(stringBuffer);
-  }
+  printStd(stringBuffer);
 }
 
 MessageElement *PdGraph::getArgument(int argIndex) {

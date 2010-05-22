@@ -23,6 +23,8 @@
 package me.rjdj.zengarden;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <code>ZenGarden</code> provides a Java interface to <code>libZenGarden</code>. It allows a Pd
@@ -37,6 +39,7 @@ import java.io.File;
 public class ZenGarden {
   
   private long nativePtr;
+  private List<ZenGardenListener> listenerList;
 
   /**
    * 
@@ -71,6 +74,8 @@ public class ZenGarden {
     nativePtr = loadPdPatch(
         patchFile.getAbsoluteFile().getParent() + File.separator, patchFile.getName(), 
         blockSize, numInputChannels, numOutputChannels, sampleRate);
+    
+    listenerList = new ArrayList<ZenGardenListener>();
   }
   
   static {
@@ -116,6 +121,36 @@ public class ZenGarden {
   private native void process(short[] inputBuffer, short[] outputBuffer, long nativePointer);
   
   /**
+   * Send a message to the named receiver with the given format at the beginning of the next audio
+   * block. If no receiver exists with the given name, then this funtion does nothing.
+   * E.g., sendMessage(graph, "#accelerate", "fff", 0.0f, 0.0f, 0.0f);
+   * sends a message containing three floats, each with value 0.0f, to all receivers named
+   * "#accelerate". When sending floats, pass either a <code>Float</code> object or denote a
+   * <code>float</code> by appending an 'f' to the end of the number, as in the example.
+   * Messages may also be formatted with "s" and "b" for symbols and bangs, respectively.
+   * E.g., sendMessage("receiverName", "s", "hello");
+   * E.g., sendMessage("receiverName", "b");
+   */
+  public void sendMessage(String receiverName, String messageFormat, Object... arguments) {
+    sendMessage(0.0, messageFormat, arguments, nativePtr);
+  }
+  
+  public void sendMessage(String receiverName, double blockIndex, String messageFormat,
+      Object... arguments) {
+    sendMessage(blockIndex, messageFormat, arguments, nativePtr);
+  }
+  
+  private native void sendMessage(double blockIndex, String messageFormat, Object[] arguments,
+      long nativePointer);
+  
+  public void sendMidinote(int channel, int noteNumber, int velocity, double blockIndex) {
+    sendMidinote(channel, noteNumber, velocity, blockIndex, nativePtr);
+  }
+  
+  private native void sendMidinote(int channel, int noteNumber, int velocity, double blockIndex,
+      long nativePointer);
+  
+  /**
    * This method allows the native component to be manually unloaded.
    * This allows memory to be better managed.
    */
@@ -131,5 +166,36 @@ public class ZenGarden {
   }
 
   private native void unloadPdPatch(long nativePointer);
-
+  
+  /**
+   * Add a <code>ZenGardenListener</code> to this graph.
+   * @param listener
+   */
+  public void addListener(ZenGardenListener listener) {
+    if (!listenerList.contains(listener)) {
+      listenerList.add(listener);
+    }
+  }
+  
+  /**
+   * Remove a <code>ZenGardenListener</code> from this graph.
+   * @param listener
+   */
+  public void removeListener(ZenGardenListener listener) {
+    listenerList.remove(listener);
+  }
+  
+  @SuppressWarnings("unused")
+  private void onPrintStd(String message) {
+    for (ZenGardenListener listener : listenerList) {
+      listener.onPrintStd(message);
+    }
+  }
+  
+  @SuppressWarnings("unused")
+  private void onPrintErr(String message) {
+    for (ZenGardenListener listener : listenerList) {
+      listener.onPrintErr(message);
+    }
+  }
 }

@@ -104,9 +104,11 @@ public class ExampleGarden {
       // load the Pd patch
       File pdFile = new File(args[0]);
       ZenGarden pdPatch = null;
+      ZenGardenAdapter zgAdapter = new ZenGardenAdapter();
       try {
         pdPatch = new ZenGarden(pdFile, BLOCK_SIZE, NUM_INPUT_CHANNELS, NUM_OUTPUT_CHANNELS,
             (float) SAMPLE_RATE);
+        pdPatch.addListener(zgAdapter);
       } catch (NativeLoadException nle) {
         nle.printStackTrace(System.err);
         System.exit(2);

@@ -23,6 +23,8 @@
 #ifndef _ZENGARDEN_H_
 #define _ZENGARDEN_H_
 
+#include "ZGCallbackFunction.h"
+
 /**
  * This header file defines the C interface to ZenGarden to the outside world. Include this header
  * along with the <code>libzengarden</code> library in your project in order to integrate it.
@@ -79,6 +81,8 @@ extern "C" {
    * 16 are supported. A note off message is generally interpreted as having velocity zero.
    */
   void zg_send_midinote(PdGraph *graph, int channel, int noteNumber, int velocity, double blockIndex);
+  
+  void zg_register_callback(PdGraph *graph, void (*callbackFunction)(ZGCallbackFunction, void *, void *), void *userData);
   
 #ifdef __cplusplus
 }

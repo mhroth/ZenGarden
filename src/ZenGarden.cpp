@@ -97,3 +97,7 @@ void zg_send_midinote(PdGraph *graph, int channel, int noteNumber, int velocity,
   zg_send_message_at_blockindex(graph, "zg_notein_omni", blockIndex, "fff",
       (float) noteNumber, (float) velocity, (float) channel);
 }
+
+void zg_register_callback(PdGraph *graph, void (*callbackFunction)(ZGCallbackFunction, void *, void *), void *userData) {
+  graph->registerCallback(callbackFunction, userData);
+}

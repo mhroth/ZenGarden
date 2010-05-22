@@ -27,6 +27,7 @@
 #include "DspObject.h"
 #include "OrderedMessageQueue.h"
 #include "PdFileParser.h"
+#include "ZGCallbackFunction.h"
 
 class DelayReceiver;
 class DspCatch;
@@ -45,6 +46,12 @@ class PdGraph : public DspObject {
     static PdGraph *newInstance(char *directory, char *filename, int blockSize,
         int numInputChannels, int numOutputChannels, float sampleRate, PdGraph *parentGraph);
     ~PdGraph();
+  
+    /**
+     * Register the callback function which will be used to programmetically communicate with
+     * the outside world.
+     */
+    void registerCallback(void (*function)(ZGCallbackFunction, void *, void *), void *userData);
     
     /**
      * Schedules a <code>PdMessage</code> to be sent by the <code>MessageObject</code> from the
@@ -92,12 +99,6 @@ class PdGraph : public DspObject {
     
     /** Returns <code>true</code> of this graph has no parents, code>false</code> otherwise. */
     bool isRootGraph();
-    
-    /** Sets the error print function for this graph. */
-    void setPrintErr(void (*printFunction)(char *));
-    
-    /** Sets the standard print function for this graph. */
-    void setPrintStd(void (*printFunction)(char *));
     
     /** Prints the given message to error output. */
     void printErr(char *msg);
@@ -271,12 +272,12 @@ class PdGraph : public DspObject {
   
     /** The duration of one block in milliseconds. */
     double blockDurationMs;
-    
-    /** The local pointer to the error print function */
-    void (*printErrFunction)(char *);
-    
-    /** The local pointer to the standard print function */
-    void (*printStdFunction)(char *);
+  
+    /** The registered callback function for sending data outside of the graph. */
+    void (*callbackFunction)(ZGCallbackFunction, void *, void *);
+  
+    /** User-provided data associated with the callback function. */
+    void *callbackUserData;
   
     int numBytesInInputBuffers;
     int numBytesInOutputBuffers;
