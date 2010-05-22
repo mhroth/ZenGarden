@@ -51,15 +51,15 @@ extern "C" {
       switch (function) {
         case ZG_PRINT_STD: {
           env->CallVoidMethod(zgObject,
-              env->GetMethodID(env->FindClass("me/rjdj/zengarden/ZenGarden"), "onPrintStd",
-                  "(Ljava/lang/String;)V"),
+              env->GetMethodID(env->GetObjectClass(zgObject),
+                  "onPrintStd", "(Ljava/lang/String;)V"),
               env->NewStringUTF((char *) ptr));
           break;
         }
         case ZG_PRINT_ERR: {
           env->CallVoidMethod(zgObject,
-              env->GetMethodID(env->FindClass("me/rjdj/zengarden/ZenGarden"), "onPrintErr",
-                  "(Ljava/lang/String;)V"),
+              env->GetMethodID(env->GetObjectClass(zgObject),
+                  "onPrintErr", "(Ljava/lang/String;)V"),
               env->NewStringUTF((char *) ptr));
           break;
         }
