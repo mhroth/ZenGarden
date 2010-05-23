@@ -30,16 +30,15 @@ class MessageEqualsEquals : public MessageObject {
 
   public:
     MessageEqualsEquals(PdMessage *initMessage, PdGraph *graph);
-    MessageEqualsEquals(float constant, PdGraph *graph);
     ~MessageEqualsEquals();
 
     const char *getObjectLabel();
 
   private:
-    void init(float constant);
     void processMessage(int inletIndex, PdMessage *message);
 
     float constant;
+    float lastOutput;
 };
 
 #endif // _MESSAGE_EQUALSEQUALS_H_
