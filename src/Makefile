@@ -55,10 +55,11 @@ libzengarden: ../libs/$(OS)/libzengarden.$(SO_EXTENSION)
 ../libs/$(OS)/libzengarden.$(SO_EXTENSION): $(OBJS)
 	$(call MAKE_SO, $@, , $(OBJS))
 
-java-examplegarden: ../ZenGarden.jar
+java-jar: ../ZenGarden.jar
 
 ../ZenGarden.jar: me/rjdj/zengarden/*.java
-	cd me/rjdj/zengarden/ && javac *.java
+	javac -classpath ../junit-4.8.2.jar ./me/rjdj/zengarden/*.java ../test/me/rjdj/zengarden/*.java
 	jar cfm ../ZenGarden.jar me/rjdj/zengarden/manifest me/rjdj/zengarden/*.class
+	cd ../test && jar uf ../ZenGarden.jar me/rjdj/zengarden/*.class
 
 endif

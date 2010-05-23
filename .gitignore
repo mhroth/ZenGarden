@@ -3,7 +3,6 @@
 libs/Darwin-i386/*.dSYM
 .DS_Store
 bin
-ZenGarden.jardesc
 .project
 .classpath
 Xcode/build
@@ -16,4 +15,4 @@ src/sndfile.h
 Mersenne-1.1.zip
 demo/
 libs/
-*.jar
+ZenGarden.jar

@@ -22,9 +22,10 @@
 
 package me.rjdj.zengarden;
 
-import org.junit.After;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,8 +33,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-
-import me.rjdj.zengarden.ZenGarden;
 
 /**
  * This class is an test suite for all implemented objects.
@@ -61,6 +60,7 @@ public class PdObjectTest implements ZenGardenListener {
 
   @After
   public void tearDown() throws Exception {
+    // nothing to do
   }
   
   @Test

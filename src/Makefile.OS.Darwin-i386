@@ -1,4 +1,4 @@
-PLATFORM_TARGETS=libzengarden libzengarden-static libjnizengarden java-examplegarden
+PLATFORM_TARGETS=libzengarden libzengarden-static libjnizengarden java-jar
 MAKE_SO=$(CC) -o $(1) $(CXXFLAGS) -dynamiclib \
 	-I`javaconfig Headers` \
 	$(2) $(3) $(SNDFILE_LIB) -lstdc++ 
