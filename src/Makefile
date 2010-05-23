@@ -38,7 +38,7 @@ platform: Makefile.OS.$(OS)
 	@mkdir -p ../libs/$(OS)
 
 clean:
-	rm -rf $(LOCAL_MODULE).so *.d *.o me/rjdj/zengarden/*.class ../ZenGarden.jar ../libs/$(OS)/*
+	rm -rf $(LOCAL_MODULE).so *.d *.o me/rjdj/zengarden/*.class ../test/me/rjdj/zengarden/*.class ../ZenGarden.jar ../libs/$(OS)/*
 
 libzengarden-static: ../libs/$(OS)/libzengarden.a
 
