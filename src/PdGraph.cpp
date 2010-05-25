@@ -400,7 +400,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new MessageFloat(atof(objectLabel), graph);
     } else if (strcmp(objectLabel, "inlet") == 0) {
       return new MessageInlet(graph);
-    } else if (strcmp(objectLabel, "int") == 0) {
+    } else if (strcmp(objectLabel, "int") == 0 ||
+               strcmp(objectLabel, "i") == 0) {
       return new MessageInteger(initMessage, graph);
     } else if (strcmp(objectLabel, "list") == 0) {
       if (initMessage->isSymbol(0)) {
