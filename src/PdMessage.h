@@ -40,6 +40,12 @@ class PdMessage {
     ~PdMessage();
   
     /**
+     * Resolve arguments in a string with a given arugment list. The resolved string must be freed
+     * by the caller. NOTE(mhroth): The use of this function is still under development.
+     */
+    char *resolve(char *initString, PdMessage *arguments);
+  
+    /**
      * Set the contents of the message. This function is especially useful when constructing messages
      * using known amounts external data. This function is not meant to be used directly, but
      * rather through the <code>zg_send_message()</code> function available from <code>ZenGarden.h</code>.

@@ -40,7 +40,12 @@ PdMessage::PdMessage(char *initString, PdGraph *graph) {
   timestamp = 0.0;
   reservedList = new LinkedList();
   
-  char *token = strtok(initString, " ;");
+  if (initString == NULL) {
+    return;
+  }
+  
+  char *resolvedString = resolve(initString, graph->getArguments());
+  char *token = strtok(resolvedString, " ;");
   if (token != NULL) {
     do {
       if (StaticUtils::isNumeric(token)) {
@@ -51,37 +56,13 @@ PdMessage::PdMessage(char *initString, PdGraph *graph) {
       } else if (strcmp(token, "bang") == 0 ||
                  strcmp(token, "b") == 0) {
         addElement(new MessageElement());
-      } else if (StaticUtils::isArgumentIndex(token) && graph != NULL && false) {
-        // element refers to a graph argument
-        /*
-         * if no graph is given, then the argument is parsed as a SYMBOL. This functionality is
-         * mainly used in <code>MessageMessageBox</code> which does not take its arguments from
-         * the surrounding graph, namely from incoming messages.
-         */
-        MessageElement *argumentElement = graph->getArgument(StaticUtils::getArgumentIndex(token));
-        switch (argumentElement->getType()) {
-          case FLOAT: {
-            addElement(new MessageElement(argumentElement->getFloat()));
-            break;
-          }
-          case BANG: {
-            addElement(new MessageElement());
-            break;
-          }
-          case SYMBOL: {
-            addElement(new MessageElement(argumentElement->getSymbol()));
-            break;
-          }
-          default: {
-            break;
-          }
-        }
       } else {
         // element is symbolic
         addElement(new MessageElement(token));
       }
     } while ((token = strtok(NULL, " ;")) != NULL);
   }
+  free(resolvedString);
 }
 
 PdMessage::~PdMessage() {
@@ -93,6 +74,55 @@ PdMessage::~PdMessage() {
   
   // delete the reserved list
   delete reservedList;
+}
+
+char *PdMessage::resolve(char *initString, PdMessage *arguments) {
+  char *buffer = (char *) malloc(1024 * sizeof(char));
+  int bufferPos = 0;
+  int initPos = 0;
+  char *argPos = NULL;
+  int numCharsWritten = 0;
+  
+  while ((argPos = strstr(initString + initPos, "\\$")) != NULL) {
+    memcpy(buffer + bufferPos, initString + initPos, argPos - initString - initPos);
+    initPos += 3;
+    int argumentIndex = -1;
+    switch (argPos[2]) {
+      case '0': { argumentIndex = 0; break; }
+      case '1': { argumentIndex = 1; break; }
+      case '2': { argumentIndex = 2; break; }
+      case '3': { argumentIndex = 3; break; }
+      case '4': { argumentIndex = 4; break; }
+      case '5': { argumentIndex = 5; break; }
+      case '6': { argumentIndex = 6; break; }
+      case '7': { argumentIndex = 7; break; }
+      case '8': { argumentIndex = 8; break; }
+      case '9': { argumentIndex = 9; break; }
+      default: { break; }
+    }
+    switch (arguments->getType(argumentIndex)) {
+      case FLOAT: {
+        numCharsWritten = sprintf(buffer + bufferPos, "%g", arguments->getFloat(argumentIndex));
+        bufferPos += numCharsWritten;
+        break;
+      }
+      case SYMBOL: {
+        numCharsWritten = sprintf(buffer + bufferPos, "%s", arguments->getSymbol(argumentIndex));
+        bufferPos += numCharsWritten;
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+  }
+  
+  // no more arguments remaining. copy the remainder of the string
+  int numCharsRemaining = strlen(initString) - initPos;
+  memcpy(buffer + bufferPos, initString + initPos, numCharsRemaining);
+  bufferPos += numCharsRemaining;
+  buffer[bufferPos] = '\0';
+  return buffer;
 }
 
 int PdMessage::getMessageId() {

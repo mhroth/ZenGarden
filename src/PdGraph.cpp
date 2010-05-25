@@ -205,7 +205,7 @@ PdGraph::PdGraph(PdFileParser *fileParser, char *directory, int blockSize,
         PdGraph *graph = new PdGraph(fileParser, directory, blockSize, numInputChannels, numOutputChannels, sampleRate, this);
         addObject(graph);
       } else {
-        printf("WARNING | Unrecognised #N object type: \"%s\"", line);
+        printErr("Unrecognised #N object type: \"%s\".\n", line);
       }
     } else if (strcmp(hashType, "#X") == 0) {
       char *objectType = strtok(NULL, " ");
@@ -1028,8 +1028,8 @@ void PdGraph::printStd(const char *msg, ...) {
   printStd(stringBuffer);
 }
 
-MessageElement *PdGraph::getArgument(int argIndex) {
-  return graphArguments->getElement(argIndex);
+PdMessage *PdGraph::getArguments() {
+  return graphArguments;
 }
 
 int PdGraph::getNumInputChannels() {

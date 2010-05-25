@@ -108,8 +108,8 @@ class PdGraph : public DspObject {
     void printStd(char *msg);
     void printStd(const char *msg, ...);
     
-    /** Get an argument that was passed to the graph. */
-    MessageElement *getArgument(int argIndex);
+    /** Get the argument list in the form of a <code>PdMessage</code> from the graph. */
+    PdMessage *getArguments();
     
     /** Returns the global sample rate. */
     float getSampleRate();
