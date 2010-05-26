@@ -105,8 +105,7 @@ JNIEXPORT jlong JNICALL Java_me_rjdj_zengarden_ZenGarden_loadPdPatch(
   env->ReleaseStringUTFChars(jfilename, cfilename);
   
   if (pdGraph == NULL) {
-    env->ThrowNew(
-        env->FindClass("me/rjdj/zengarden/NativeLoadException"),
+    env->ThrowNew(env->FindClass("me/rjdj/zengarden/NativeLoadException"),
         "PdGraph is NULL. Is the filename correct? Does the file exist? Are all of the referenced objects implemented?");
     return (jlong) 0;
   }
@@ -114,8 +113,8 @@ JNIEXPORT jlong JNICALL Java_me_rjdj_zengarden_ZenGarden_loadPdPatch(
   // initialise the PureDataMobile native variables
   PureDataMobileNativeVars *pdmnv = (PureDataMobileNativeVars *) malloc(sizeof(PureDataMobileNativeVars));
   pdmnv->pdGraph = pdGraph;
-  pdmnv->finputBuffer = (float *) malloc(blockSize * 2 * sizeof(float));
-  pdmnv->foutputBuffer = (float *) malloc(blockSize * 2 * sizeof(float));
+  pdmnv->finputBuffer = (float *) malloc(blockSize * numInputChannels * sizeof(float));
+  pdmnv->foutputBuffer = (float *) malloc(blockSize * numOutputChannels * sizeof(float));
   pdmnv->blockSize = blockSize;
   pdmnv->numInputChannels = numInputChannels;
   pdmnv->numOutputChannels = numOutputChannels;
