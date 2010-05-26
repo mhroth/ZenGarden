@@ -100,19 +100,21 @@ char *PdMessage::resolve(char *initString, PdMessage *arguments) {
       case '9': { argumentIndex = 9; break; }
       default: { break; }
     }
-    switch (arguments->getType(argumentIndex)) {
-      case FLOAT: {
-        numCharsWritten = sprintf(buffer + bufferPos, "%g", arguments->getFloat(argumentIndex));
-        bufferPos += numCharsWritten;
-        break;
-      }
-      case SYMBOL: {
-        numCharsWritten = sprintf(buffer + bufferPos, "%s", arguments->getSymbol(argumentIndex));
-        bufferPos += numCharsWritten;
-        break;
-      }
-      default: {
-        break;
+    if (argumentIndex >= 0 && argumentIndex < arguments->getNumElements()) {
+      switch (arguments->getType(argumentIndex)) {
+        case FLOAT: {
+          numCharsWritten = sprintf(buffer + bufferPos, "%g", arguments->getFloat(argumentIndex));
+          bufferPos += numCharsWritten;
+          break;
+        }
+        case SYMBOL: {
+          numCharsWritten = sprintf(buffer + bufferPos, "%s", arguments->getSymbol(argumentIndex));
+          bufferPos += numCharsWritten;
+          break;
+        }
+        default: {
+          break;
+        }
       }
     }
   }
@@ -250,6 +252,15 @@ void PdMessage::unreserve(MessageObject *messageObject) {
   reservedList->remove(messageObject);
 }
 
+PdMessage *PdMessage::copy() {
+  PdMessage *messageCopy = new PdMessage();
+  for (int i = 0; i < elementList->size(); i++) {
+    MessageElement *messageElement = (MessageElement *) elementList->get(i);
+    messageCopy->addElement(messageElement->copy());
+  }
+  return messageCopy;
+}
+/*
 void PdMessage::clear() {
   for (int i = 0; i < elementList->size(); i++) {
     delete (MessageElement *) elementList->get(i);
@@ -265,7 +276,7 @@ void PdMessage::clearAndCopyFrom(PdMessage *message, int startIndex) {
   }
   timestamp = message->getTimestamp();
 }
-
+*/
 char *PdMessage::toString() {
   // http://stackoverflow.com/questions/295013/using-sprintf-without-a-manually-allocated-buffer
   int listlen = elementList->size();

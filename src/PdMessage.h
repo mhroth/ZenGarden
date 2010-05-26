@@ -71,13 +71,15 @@ class PdMessage {
     void reserve(MessageObject *messageObject);
     void unreserve(MessageObject *messageObject);
   
-    void clear();
+    //void clear();
   
     /**
      * Replaces the contents of <code>this</code> message with that of the given one, starting
      * with the <code>MessageElement<code> at <code>startIndex</code>.
      */
-    void clearAndCopyFrom(PdMessage *message, int startIndex);
+    //void clearAndCopyFrom(PdMessage *message, int startIndex);
+  
+    PdMessage *copy();
     
     /**
      * Create a string representation of the message. Suitable for use by the print object.
