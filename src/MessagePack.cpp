@@ -24,8 +24,7 @@
 #include "PdGraph.h"
 
 MessagePack::MessagePack(PdMessage *initMessage, PdGraph *graph) : MessageObject(initMessage->getNumElements(), 1, graph) {
-  templateMessage = new PdMessage();
-  templateMessage->clearAndCopyFrom(initMessage, 0);
+  templateMessage = initMessage->copy();
   outgoingMessage = getNextOutgoingMessage(0);
 }
 
@@ -38,14 +37,14 @@ const char *MessagePack::getObjectLabel() {
 }
 
 void MessagePack::processMessage(int inletIndex, PdMessage *message) {
-  if (outgoingMessage->getElement(inletIndex)->getType() == message->getElement(0)->getType()) {
-    switch (message->getElement(0)->getType()) {
+  if (outgoingMessage->getType(inletIndex) == message->getType(0)) {
+    switch (message->getType(0)) {
       case FLOAT: {
-        outgoingMessage->getElement(inletIndex)->setFloat(message->getElement(0)->getFloat());
+        outgoingMessage->setFloat(inletIndex, message->getFloat(0));
         break;
       }
       case SYMBOL: {
-        outgoingMessage->getElement(inletIndex)->setSymbol(message->getElement(0)->getSymbol());
+        outgoingMessage->setSymbol(inletIndex, message->getSymbol(0));
         break;
       }
       default: {
@@ -53,10 +52,11 @@ void MessagePack::processMessage(int inletIndex, PdMessage *message) {
       }
     }
   } else {
-      graph->printErr("pack: type mismatch: %s expected but got %s at inlet %i.\n",
-          StaticUtils::messageElementTypeToString(outgoingMessage->getElement(inletIndex)->getType()),
-          StaticUtils::messageElementTypeToString(message->getElement(0)->getType()),
-          inletIndex + 1);
+    graph->printErr("pack: type mismatch: %s expected but got %s at inlet %i.\n",
+        StaticUtils::messageElementTypeToString(outgoingMessage->getElement(inletIndex)->getType()),
+        StaticUtils::messageElementTypeToString(message->getElement(0)->getType()),
+        inletIndex + 1);
+    return;
   }
   if (inletIndex == 0) {
     // send the outgoing message
@@ -70,7 +70,5 @@ void MessagePack::processMessage(int inletIndex, PdMessage *message) {
 }
 
 PdMessage *MessagePack::newCanonicalMessage(int outletIndex) {
-  PdMessage *message = new PdMessage();
-  message->clearAndCopyFrom(templateMessage, 0);
-  return message;
+  return templateMessage->copy();
 }
