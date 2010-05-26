@@ -35,7 +35,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 /**
- * This class is an test suite for all implemented objects.
+ * This class is a test suite for all implemented objects.
  * 
  * @author Martin Roth (mhroth@rjdj.me)
  */
@@ -71,6 +71,11 @@ public class PdObjectTest implements ZenGardenListener {
   @Test
   public void testMessageNotEquals() {
     genericMessageTest("MessageNotEquals.pd");
+  }
+  
+  @Test
+  public void testMessagePack() {
+    genericMessageTest("MessagePack.pd");
   }
   
   /**
