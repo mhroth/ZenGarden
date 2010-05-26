@@ -23,9 +23,9 @@
 #include "MessageUnpack.h"
 #include "PdGraph.h"
 
-MessageUnpack::MessageUnpack(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, initMessage->getNumElements(), graph) {
-  templateMessage = new PdMessage();
-  templateMessage->clearAndCopyFrom(initMessage, 0);
+MessageUnpack::MessageUnpack(PdMessage *initMessage, PdGraph *graph) :
+    MessageObject(1, initMessage->getNumElements(), graph) {
+  templateMessage = initMessage->copy();
 }
 
 MessageUnpack::~MessageUnpack() {
@@ -42,18 +42,18 @@ void MessageUnpack::processMessage(int inletIndex, PdMessage *message) {
     numElements = templateMessage->getNumElements();
   }
   for (int i = numElements-1; i >=0; i--) {
-    if (templateMessage->getElement(i)->getType() == message->getElement(i)->getType()) {
-      switch (templateMessage->getElement(i)->getType()) {
+    if (templateMessage->getType(i) == message->getType(i)) {
+      switch (templateMessage->getType(i)) {
         case FLOAT: {
           PdMessage *outgoingMessage = getNextOutgoingMessage(i);
-          outgoingMessage->getElement(0)->setFloat(message->getElement(i)->getFloat());
+          outgoingMessage->setFloat(0, message->getFloat(i));
           outgoingMessage->setTimestamp(message->getTimestamp());
           sendMessage(i, outgoingMessage);
           break;
         }
         case SYMBOL: {
           PdMessage *outgoingMessage = getNextOutgoingMessage(i);
-          outgoingMessage->getElement(0)->setSymbol(message->getElement(i)->getSymbol());
+          outgoingMessage->setSymbol(0, message->getSymbol(i));
           outgoingMessage->setTimestamp(message->getTimestamp());
           sendMessage(i, outgoingMessage);
           break;
