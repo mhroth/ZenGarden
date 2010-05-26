@@ -26,8 +26,7 @@
 MessageSelect::MessageSelect(PdMessage *initMessage, PdGraph *graph) : 
     MessageObject((initMessage->getNumElements() < 2) ? 2 : 1, 
                   (initMessage->getNumElements() < 2) ? 2 : initMessage->getNumElements()+1, graph) {
-  selectorMessage = new PdMessage();
-  selectorMessage->clearAndCopyFrom(initMessage, 0);
+  selectorMessage = initMessage->copy();
 }
 
 MessageSelect::~MessageSelect() {
