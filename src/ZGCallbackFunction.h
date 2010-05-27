@@ -24,9 +24,9 @@
 #define _ZG_CALLBACK_FUNCTION_H_
 
 /** An enumeration of the different operations available from a graph's callback function. */
-enum ZGCallbackFunction {
+typedef enum {
   ZG_PRINT_STD, // print to standard out
   ZG_PRINT_ERR  // print to standard error
-};
+} ZGCallbackFunction;
 
 #endif // _ZG_CALLBACK_FUNCTION_H_

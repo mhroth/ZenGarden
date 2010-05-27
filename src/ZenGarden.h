@@ -80,9 +80,10 @@ extern "C" {
    * All messages are sent to <code>notein</code> objects, i.e. omni. Channels are zero-index and only
    * 16 are supported. A note off message is generally interpreted as having velocity zero.
    */
-  void zg_send_midinote(PdGraph *graph, int channel, int noteNumber, int velocity, double blockIndex);
+  void zg_send_midinote(ZGGraph *graph, int channel, int noteNumber, int velocity, double blockIndex);
   
-  void zg_register_callback(PdGraph *graph, void (*callbackFunction)(ZGCallbackFunction, void *, void *), void *userData);
+  void zg_register_callback(ZGGraph *graph,
+      void (*callbackFunction)(ZGCallbackFunction function, void *userData, void *ptr), void *userData);
   
 #ifdef __cplusplus
 }
