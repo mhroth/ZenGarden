@@ -171,6 +171,22 @@ char *PdMessage::resolveString(char *initString, PdMessage *arguments, int offse
   return buffer;
 }
 
+void PdMessage::resolveSymbolsToType() {
+  int numElements = elementList->size();
+  for (int i = 0; i < numElements; i++) {
+    MessageElement *messageElement = (MessageElement *) elementList->get(i);
+    if (messageElement->isSymbolAnythingOrA()) {
+      messageElement->setAnything();
+    } else if (messageElement->isSymbolBangOrB()) {
+      messageElement->setBang();
+    } else if (messageElement->isSymbolFloatOrF()) {
+      messageElement->setFloat(0.0f);
+    } else if (messageElement->isSymbolListOrL()) {
+      messageElement->setList();
+    }
+  }
+}
+
 int PdMessage::getMessageId() {
   return messageId;
 }

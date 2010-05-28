@@ -65,6 +65,13 @@ class PdMessage {
     static char *resolveString(char *initString, PdMessage *arguments, int offset);
   
     /**
+     * Converts symbolic elements referring to message element types (e.g., float or f) to those
+     * types. For instance, if an element has a symbolic value of "float", then that element is
+     * converted into one of type <code>FLOAT</code>.
+     */
+    void resolveSymbolsToType();
+  
+    /**
      * Set the contents of the message. This function is especially useful when constructing messages
      * using known amounts external data. This function is not meant to be used directly, but
      * rather through the <code>zg_send_message()</code> function available from <code>ZenGarden.h</code>.

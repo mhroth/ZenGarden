@@ -24,20 +24,8 @@
 
 MessageTrigger::MessageTrigger(PdMessage *initMessage, PdGraph *graph) :
     MessageObject(1, initMessage->getNumElements(), graph) {
-      
   castMessage = initMessage->copy();
-  for (int i = 0; i < castMessage->getNumElements(); i++) {
-    MessageElement *messageElement = (MessageElement *) castMessage->getElement(i);
-    if (messageElement->isSymbolAnythingOrA()) {
-      messageElement->setAnything();
-    } else if (messageElement->isSymbolBangOrB()) {
-      messageElement->setBang();
-    } else if (messageElement->isSymbolFloatOrF()) {
-      messageElement->setFloat(0.0f);
-    } else if (messageElement->isSymbolListOrL()) {
-      messageElement->setList();
-    }
-  }
+  castMessage->resolveSymbolsToType();
 }
 
 MessageTrigger::~MessageTrigger() {

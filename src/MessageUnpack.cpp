@@ -26,6 +26,7 @@
 MessageUnpack::MessageUnpack(PdMessage *initMessage, PdGraph *graph) :
     MessageObject(1, initMessage->getNumElements(), graph) {
   templateMessage = initMessage->copy();
+  templateMessage->resolveSymbolsToType();
 }
 
 MessageUnpack::~MessageUnpack() {

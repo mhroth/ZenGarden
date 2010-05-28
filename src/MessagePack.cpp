@@ -25,14 +25,7 @@
 
 MessagePack::MessagePack(PdMessage *initMessage, PdGraph *graph) : MessageObject(initMessage->getNumElements(), 1, graph) {
   templateMessage = initMessage->copy();
-  for (int i = 0; i < templateMessage->getNumElements(); i++) {
-    MessageElement *messageElement = (MessageElement *) templateMessage->getElement(i);
-    if (messageElement->isSymbolFloatOrF()) {
-      messageElement->setFloat(0.0f);
-    } else if (messageElement->isSymbolBangOrB()) {
-      messageElement->setBang();
-    }
-  }
+  templateMessage->resolveSymbolsToType();
   outgoingMessage = getNextOutgoingMessage(0);
 }
 
