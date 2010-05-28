@@ -44,7 +44,7 @@ class MessageTrigger : public MessageObject {
     int numCasts;
   
     /** A list of the message types to cast the outlet of each outlet to. */
-    MessageElementType *castArray;
+    PdMessage *castMessage;
 };
 
 #endif // _MESSAGE_TRIGGER_H_

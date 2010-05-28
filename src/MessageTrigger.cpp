@@ -22,43 +22,26 @@
 
 #include "MessageTrigger.h"
 
-MessageTrigger::MessageTrigger(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, initMessage->getNumElements(), graph) {
-  numCasts = initMessage->getNumElements();
-  castArray = (MessageElementType *) malloc(numCasts * sizeof(MessageElementType));
-  
-  for (int i = 0; i < initMessage->getNumElements(); i++) {
-    MessageElement *messageElement = initMessage->getElement(0);
-    switch (initMessage->getElement(i)->getType()) {
-      case FLOAT: {
-        castArray[i] = FLOAT;
-        break;
-      }
-      case SYMBOL: {
-        if (strcmp(messageElement->getSymbol(), "anything") == 0 ||
-            strcmp(messageElement->getSymbol(), "a") == 0) {
-          castArray[i] = ANYTHING;
-        } else if (strcmp(messageElement->getSymbol(), "list") == 0 ||
-                   strcmp(messageElement->getSymbol(), "l") == 0) {
-          castArray[i] = LIST;
-        } else {
-          castArray[i] = SYMBOL;
-        }
-        break;
-      }
-      case BANG: {
-        castArray[i] = BANG;
-        break;
-      }
-      default: {
-        castArray[i] = BANG; // error
-        break;
-      }
+MessageTrigger::MessageTrigger(PdMessage *initMessage, PdGraph *graph) :
+    MessageObject(1, initMessage->getNumElements(), graph) {
+      
+  castMessage = initMessage->copy();
+  for (int i = 0; i < castMessage->getNumElements(); i++) {
+    MessageElement *messageElement = (MessageElement *) castMessage->getElement(i);
+    if (messageElement->isSymbolAnythingOrA()) {
+      messageElement->setAnything();
+    } else if (messageElement->isSymbolBangOrB()) {
+      messageElement->setBang();
+    } else if (messageElement->isSymbolFloatOrF()) {
+      messageElement->setFloat(0.0f);
+    } else if (messageElement->isSymbolListOrL()) {
+      messageElement->setList();
     }
   }
 }
 
 MessageTrigger::~MessageTrigger() {
-  free(castArray);
+  delete castMessage;
 }
 
 const char *MessageTrigger::getObjectLabel() {
@@ -72,7 +55,7 @@ void MessageTrigger::processMessage(int inletIndex, PdMessage *message) {
     // TODO(mhroth): There is currently no support for converting to a LIST type
     switch (message->getElement(0)->getType()) { // converting from...
       case FLOAT: {
-        switch (castArray[i]) { // converting to...
+        switch (castMessage->getType(i)) { // converting to...
           case ANYTHING:
           case FLOAT: {
             outgoingMessage->getElement(0)->setFloat(message->getElement(0)->getFloat());
@@ -94,7 +77,7 @@ void MessageTrigger::processMessage(int inletIndex, PdMessage *message) {
         break;
       }
       case SYMBOL: {
-        switch (castArray[i]) {
+        switch (castMessage->getType(i)) {
           case FLOAT: {
             outgoingMessage->getElement(0)->setFloat(0.0f);
             break;
@@ -117,7 +100,7 @@ void MessageTrigger::processMessage(int inletIndex, PdMessage *message) {
         break;
       }
       case BANG: {
-        switch (castArray[i]) {
+        switch (castMessage->getType(i)) {
           case FLOAT: {
             outgoingMessage->getElement(0)->setFloat(0.0f);
             break;
