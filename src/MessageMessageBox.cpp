@@ -37,8 +37,11 @@
  * 
  * TODO(mhroth): <code>MessageMessageBox</code> currently cases A) and B), including argument $X
  * resolution and replacement.
+ *
+ * NOTE(mhroth): MessageBoxes can only support up to 32 total messages.
  */
-MessageMessageBox::MessageMessageBox(char *initString, PdGraph *graph) : MessageObject(1, 1, graph) {
+MessageMessageBox::MessageMessageBox(char *initString, PdGraph *graph) :
+    MessageObject(1, 32, graph) {
   // parse the entire initialisation string
   List *messageInitListAll = StaticUtils::tokenizeString(initString, "\\;");
   
@@ -46,7 +49,8 @@ MessageMessageBox::MessageMessageBox(char *initString, PdGraph *graph) : Message
   localMessageList = new List();
   List *messageInitList = StaticUtils::tokenizeString((char *) messageInitListAll->get(0), "\\,");
   for (int i = 0; i < messageInitList->size(); i++) {
-    PdMessage *message = new PdMessage((char *) messageInitList->get(i), NULL);
+    char *initString = (char *) messageInitList->get(i);
+    PdMessage *message = new PdMessage(initString);
     localMessageList->add(message);
   }
   StaticUtils::destroyTokenizedStringList(messageInitList);
@@ -54,11 +58,17 @@ MessageMessageBox::MessageMessageBox(char *initString, PdGraph *graph) : Message
   // parse the remainder of the init list for all remote messages
   remoteMessageList = new List();
   for (int i = 1; i < messageInitListAll->size(); i++) {
-    MessageNamedDestination *namedDestination = (MessageNamedDestination *) malloc(sizeof(MessageNamedDestination));
     char *initString = (char *) messageInitListAll->get(i);
-    namedDestination->name = StaticUtils::copyString(strtok(initString, " "));
-    namedDestination->message = new PdMessage(strtok(NULL, ";"), NULL);
-    remoteMessageList->add(namedDestination);
+    // HACK(mhroth): StaticUtils::tokenizeString does not remove the trailing ";" from the
+    // original string. We shouldn't process it.
+    if (strcmp(initString, ";") != 0) {
+      MessageNamedDestination *namedDestination =
+          (MessageNamedDestination *) malloc(sizeof(MessageNamedDestination));
+      // NOTE(mhroth): name string is not resolved
+      namedDestination->name = StaticUtils::copyString(strtok(initString, " "));
+      namedDestination->message = new PdMessage(strtok(NULL, ";"));
+      remoteMessageList->add(namedDestination);
+    }
   }
 }
 
@@ -72,7 +82,8 @@ MessageMessageBox::~MessageMessageBox() {
   
   // delete the remote message list
   for (int i = 0; i < remoteMessageList->size(); i++) {
-    MessageNamedDestination *namedDestination = (MessageNamedDestination *) remoteMessageList->get(i);
+    MessageNamedDestination *namedDestination =
+        (MessageNamedDestination *) remoteMessageList->get(i);
     free(namedDestination->name);
     delete namedDestination->message;
     free(namedDestination);
@@ -85,93 +96,51 @@ const char *MessageMessageBox::getObjectLabel() {
 }
 
 void MessageMessageBox::processMessage(int inletIndex, PdMessage *message) {
-  for (int i = 0; i < localMessageList->size(); i++) {
-    PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-    outgoingMessage->clearAndCopyFrom((PdMessage *) localMessageList->get(i), 0);
-    outgoingMessage->setTimestamp(message->getTimestamp());
-    for (int j = 0; j < outgoingMessage->getNumElements(); j++) {
-      MessageElement *messageElement = outgoingMessage->getElement(j);
-      if (messageElement->getType() == SYMBOL && 
-          StaticUtils::isArgumentIndex(messageElement->getSymbol())) {
-        int argumentIndex = StaticUtils::getArgumentIndex(messageElement->getSymbol()) - 1;
-        if (argumentIndex >= message->getNumElements()) {
-          // if argument is out of range
-          messageElement->setFloat(0.0f); // default value
-        } else {
-          // argument is in range
-          switch (message->getElement(argumentIndex)->getType()) {
-            case FLOAT: {
-              messageElement->setFloat(message->getElement(argumentIndex)->getFloat());
-              break;
-            }
-            case SYMBOL: {
-              messageElement->setSymbol(message->getElement(argumentIndex)->getSymbol());
-              break;
-            }
-            default: {
-              messageElement->setFloat(0.0f); // default value
-              break;
-            }
-          }
-        }
-      }
-    }
-    sendMessage(0, outgoingMessage);
-  }
-  /*
-  // ===
   
   // send local messages
-  for (int i = 0; i < localMessageList->size(); i++) {
+  int objMessageIndex = 0;
+  for (int i = 0; i < localMessageList->size(); i++, objMessageIndex++) {
     PdMessage *messageTemplate = (PdMessage *) localMessageList->get(i);
-    PdMessage *outgoingMessage = getNextResolvedMessage(messageTemplate, message);
+    PdMessage *outgoingMessage = getNextResolvedMessage(objMessageIndex, messageTemplate, message);
     sendMessage(0, outgoingMessage);
   }
   
   // send remote messages
-  for (int i = 0; i < remoteMessageList->size(); i++) {
-    MessageNamedDestination *namedDestination = (MessageNamedDestination *) remoteMessageList->get(i);
-    PdMessage *outgoingMessage = getNextResolvedMessage(namedDestination->message, message);
-    graph->dispatchMessageToNamedReceivers(namedDestination->name, outgoingMessage);
+  for (int i = 0; i < remoteMessageList->size(); i++, objMessageIndex++) {
+    MessageNamedDestination *namedDestination =
+        (MessageNamedDestination *) remoteMessageList->get(i);
+    PdMessage *outgoingMessage = getNextResolvedMessage(objMessageIndex,
+        namedDestination->message, message);
+    char *resolvedName = PdMessage::resolveString(namedDestination->name, message, 1);
+    graph->dispatchMessageToNamedReceivers(resolvedName, outgoingMessage);
   }
-  */
 }
 
-PdMessage *MessageMessageBox::getNextResolvedMessage(PdMessage *templateMessage, PdMessage *incomingMessage) {
-  PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-  outgoingMessage->clearAndCopyFrom(templateMessage, 0);
+PdMessage *MessageMessageBox::getNextResolvedMessage(int objMessageIndex,
+    PdMessage *templateMessage, PdMessage *incomingMessage) {
+  
+  PdMessage *outgoingMessage = getNextOutgoingMessage(objMessageIndex);
   outgoingMessage->setTimestamp(incomingMessage->getTimestamp());
-  for (int j = 0; j < outgoingMessage->getNumElements(); j++) {
-    MessageElement *messageElement = outgoingMessage->getElement(j);
-    if (messageElement->getType() == SYMBOL && 
-        StaticUtils::isArgumentIndex(messageElement->getSymbol())) {
-      int argumentIndex = StaticUtils::getArgumentIndex(messageElement->getSymbol()) - 1;
-      if (argumentIndex >= incomingMessage->getNumElements()) {
-        // if argument is out of range
-        messageElement->setFloat(0.0f); // default value
-      } else {
-        // argument is in range
-        switch (incomingMessage->getElement(argumentIndex)->getType()) {
-          case FLOAT: {
-            messageElement->setFloat(incomingMessage->getElement(argumentIndex)->getFloat());
-            break;
-          }
-          case SYMBOL: {
-            messageElement->setSymbol(incomingMessage->getElement(argumentIndex)->getSymbol());
-            break;
-          }
-          default: {
-            messageElement->setFloat(0.0f); // default value
-            break;
-          }
-        }
-      }
+  for (int i = 0; i < templateMessage->getNumElements(); i++) {
+    if (templateMessage->isSymbol(i)) {
+      PdMessage::resolveElement(templateMessage->getSymbol(i), incomingMessage,
+          outgoingMessage->getElement(i));
     }
   }
+  
   return outgoingMessage;
 }
 
 PdMessage *MessageMessageBox::newCanonicalMessage(int outletIndex) {
-  // return only a simple PdMessage, as it will be cleared anyway
-  return new PdMessage();
+  // outletIndex in this case is actually the objMessageIndex
+  PdMessage *message = NULL;
+  if (outletIndex < localMessageList->size()) {
+    message = (PdMessage *) localMessageList->get(outletIndex);
+  } else {
+    outletIndex -= localMessageList->size();
+    MessageNamedDestination *namedDestination =
+        (MessageNamedDestination *) remoteMessageList->get(outletIndex);
+    message = namedDestination->message;
+  }
+  return message->copy();
 }

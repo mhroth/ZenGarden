@@ -42,6 +42,10 @@ class MessageElement {
     bool isFloat();
     bool isSymbol();
     bool isBang();
+    bool isSymbolAnythingOrA();
+    bool isSymbolBangOrB();
+    bool isSymbolFloatOrF();
+    bool isSymbolListOrL();
     
     void setFloat(float constant);
     float getFloat();
@@ -50,6 +54,12 @@ class MessageElement {
     char *getSymbol();
   
     void setBang();
+  
+    /** Sets the type of this element to ANYTHING. What that means is otherwise undefined. */
+    void setAnything();
+  
+    /** Sets the type of this element to LIST. What that means is otherwise undefined. */
+    void setList();
   
     MessageElement *copy();
   

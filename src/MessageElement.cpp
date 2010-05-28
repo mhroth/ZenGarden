@@ -57,7 +57,23 @@ bool MessageElement::isFloat() {
 }
 
 bool MessageElement::isSymbol() {
-  return (currentType = SYMBOL);
+  return (currentType == SYMBOL);
+}
+
+bool MessageElement::isSymbolAnythingOrA() {
+  return (currentType == SYMBOL && (strcmp(symbol, "anything") == 0 || strcmp(symbol, "a") == 0));
+}
+
+bool MessageElement::isSymbolBangOrB() {
+  return (currentType == SYMBOL && (strcmp(symbol, "bang") == 0 || strcmp(symbol, "b") == 0));
+}
+
+bool MessageElement::isSymbolFloatOrF() {
+  return (currentType == SYMBOL && (strcmp(symbol, "float") == 0 || strcmp(symbol, "f") == 0));
+}
+
+bool MessageElement::isSymbolListOrL() {
+  return (currentType == SYMBOL && (strcmp(symbol, "list") == 0 || strcmp(symbol, "l") == 0));
 }
 
 bool MessageElement::isBang() {
@@ -88,6 +104,14 @@ char *MessageElement::getSymbol() {
 
 void MessageElement::setBang() {
   currentType = BANG;
+}
+
+void MessageElement::setAnything() {
+  currentType = ANYTHING;
+}
+
+void MessageElement::setList() {
+  currentType = LIST;
 }
 
 MessageElement *MessageElement::copy() {

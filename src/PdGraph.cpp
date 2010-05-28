@@ -214,7 +214,7 @@ PdGraph::PdGraph(PdFileParser *fileParser, char *directory, int blockSize,
         strtok(NULL, " "); // read the second canvas coordinate
         char *objectLabel = strtok(NULL, " ;"); // delimit with " " or ";"
         char *objectInitString = strtok(NULL, ";"); // get the object initialisation string
-        PdMessage *initMessage = new PdMessage(objectInitString, this);
+        PdMessage *initMessage = new PdMessage(objectInitString, getArguments());
         MessageObject *pdNode = newObject(objectType, objectLabel, initMessage, this);
         delete initMessage;
         if (pdNode == NULL) {
@@ -271,7 +271,7 @@ PdGraph::PdGraph(PdFileParser *fileParser, char *directory, int blockSize,
       } else if (strcmp(objectType, "declare") == 0) {
         // set environment for loading patch
         char *objectInitString = strtok(NULL, ";"); // get the arguments to declare
-        PdMessage *initMessage = new PdMessage(objectInitString, this); // parse them
+        PdMessage *initMessage = new PdMessage(objectInitString, getArguments()); // parse them
         if (initMessage->isSymbol(0)) {
           if (strcmp(initMessage->getSymbol(0), "-path") == 0 ||
               strcmp(initMessage->getSymbol(0), "-stdpath") == 0) {

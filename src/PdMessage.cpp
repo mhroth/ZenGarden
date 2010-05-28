@@ -25,6 +25,8 @@
 #include "PdMessage.h"
 #include "StaticUtils.h"
 
+char *PdMessage::resolutionBuffer = NULL;
+int PdMessage::resBufferRefCount = 0;
 int PdMessage::globalMessageId = 0;
 
 PdMessage::PdMessage() {
@@ -32,37 +34,58 @@ PdMessage::PdMessage() {
   messageId = globalMessageId++;
   timestamp = 0.0;
   reservedList = new LinkedList();
+  
+  PdMessage::resBufferRefCount++;
+  if (PdMessage::resolutionBuffer == NULL) {
+    PdMessage::resolutionBuffer = (char *) calloc(1024, sizeof(char));
+  }
 }
 
-PdMessage::PdMessage(char *initString, PdGraph *graph) {
+PdMessage::PdMessage(char *initString) {
   elementList = new List();
   messageId = globalMessageId++;
   timestamp = 0.0;
   reservedList = new LinkedList();
   
-  if (initString == NULL) {
-    return;
+  PdMessage::resBufferRefCount++;
+  if (PdMessage::resolutionBuffer == NULL) {
+    PdMessage::resolutionBuffer = (char *) calloc(1024, sizeof(char));
   }
   
-  char *resolvedString = resolve(initString, graph->getArguments());
-  char *token = strtok(resolvedString, " ;");
+  // generate the elements by tokenizing the string
+  initWithString(initString);
+}
+
+PdMessage::PdMessage(char *initString, PdMessage *arguments) {
+  elementList = new List();
+  messageId = globalMessageId++;
+  timestamp = 0.0;
+  reservedList = new LinkedList();
+  
+  PdMessage::resBufferRefCount++;
+  if (PdMessage::resolutionBuffer == NULL) {
+    PdMessage::resolutionBuffer = (char *) calloc(1024, sizeof(char));
+  }
+  
+  // resolve entire string with offset 0 (allow for $0)
+  char *buffer = PdMessage::resolveString(initString, arguments, 0);
+  
+  // generate the elements by tokenizing the string
+  initWithString(buffer);
+}
+
+void PdMessage::initWithString(char *initString) {
+  char *token = strtok(initString, " ;");
   if (token != NULL) {
     do {
       if (StaticUtils::isNumeric(token)) {
         addElement(new MessageElement(atof(token)));
-      } else if (strcmp(token, "float") == 0 ||
-                 strcmp(token, "f") == 0) {
-        addElement(new MessageElement(0.0f));
-      } else if (strcmp(token, "bang") == 0 ||
-                 strcmp(token, "b") == 0) {
-        addElement(new MessageElement());
       } else {
         // element is symbolic
         addElement(new MessageElement(token));
       }
     } while ((token = strtok(NULL, " ;")) != NULL);
   }
-  free(resolvedString);
 }
 
 PdMessage::~PdMessage() {
@@ -74,56 +97,77 @@ PdMessage::~PdMessage() {
   
   // delete the reserved list
   delete reservedList;
+  
+  PdMessage::resBufferRefCount--;
+  if (PdMessage::resBufferRefCount == 0) {
+    free(PdMessage::resolutionBuffer);
+    PdMessage::resolutionBuffer = NULL;
+  }
 }
 
-char *PdMessage::resolve(char *initString, PdMessage *arguments) {
-  char *buffer = (char *) malloc(1024 * sizeof(char));
+void PdMessage::resolveElement(char *templateString, PdMessage *arguments,
+    MessageElement *messageElement) {
+  char *buffer = resolveString(templateString, arguments, 1);
+  if (StaticUtils::isNumeric(buffer)) {
+    messageElement->setFloat(atof(buffer));
+  } else {
+    messageElement->setSymbol(buffer);
+  }
+}
+
+char *PdMessage::resolveString(char *initString, PdMessage *arguments, int offset) {
+  char *buffer = PdMessage::resolutionBuffer;
   int bufferPos = 0;
   int initPos = 0;
   char *argPos = NULL;
   int numCharsWritten = 0;
   
-  while ((argPos = strstr(initString + initPos, "\\$")) != NULL) {
-    memcpy(buffer + bufferPos, initString + initPos, argPos - initString - initPos);
-    initPos += 3;
-    int argumentIndex = -1;
-    switch (argPos[2]) {
-      case '0': { argumentIndex = 0; break; }
-      case '1': { argumentIndex = 1; break; }
-      case '2': { argumentIndex = 2; break; }
-      case '3': { argumentIndex = 3; break; }
-      case '4': { argumentIndex = 4; break; }
-      case '5': { argumentIndex = 5; break; }
-      case '6': { argumentIndex = 6; break; }
-      case '7': { argumentIndex = 7; break; }
-      case '8': { argumentIndex = 8; break; }
-      case '9': { argumentIndex = 9; break; }
-      default: { break; }
-    }
-    if (argumentIndex >= 0 && argumentIndex < arguments->getNumElements()) {
-      switch (arguments->getType(argumentIndex)) {
-        case FLOAT: {
-          numCharsWritten = sprintf(buffer + bufferPos, "%g", arguments->getFloat(argumentIndex));
-          bufferPos += numCharsWritten;
-          break;
-        }
-        case SYMBOL: {
-          numCharsWritten = sprintf(buffer + bufferPos, "%s", arguments->getSymbol(argumentIndex));
-          bufferPos += numCharsWritten;
-          break;
-        }
-        default: {
-          break;
+  if (initString == NULL) {
+    buffer[0] = '\0'; // a NULL string input yields a string of length zero
+  } else if (arguments == NULL) {
+    strcpy(buffer, initString); // NULL arguments returns the original string
+  } else {
+    while ((argPos = strstr(initString + initPos, "\\$")) != NULL) {
+      memcpy(buffer + bufferPos, initString + initPos, argPos - initString - initPos);
+      initPos += 3;
+      int argumentIndex = -1;
+      switch (argPos[2]) {
+        case '0': { argumentIndex = 0; break; }
+        case '1': { argumentIndex = 1; break; }
+        case '2': { argumentIndex = 2; break; }
+        case '3': { argumentIndex = 3; break; }
+        case '4': { argumentIndex = 4; break; }
+        case '5': { argumentIndex = 5; break; }
+        case '6': { argumentIndex = 6; break; }
+        case '7': { argumentIndex = 7; break; }
+        case '8': { argumentIndex = 8; break; }
+        case '9': { argumentIndex = 9; break; }
+        default: { continue; }
+      }
+      argumentIndex -= offset;
+      if (argumentIndex >= 0 && argumentIndex < arguments->getNumElements()) {
+        switch (arguments->getType(argumentIndex)) {
+          case FLOAT: {
+            numCharsWritten = sprintf(buffer + bufferPos, "%g", arguments->getFloat(argumentIndex));
+            bufferPos += numCharsWritten;
+            break;
+          }
+          case SYMBOL: {
+            numCharsWritten = sprintf(buffer + bufferPos, "%s", arguments->getSymbol(argumentIndex));
+            bufferPos += numCharsWritten;
+            break;
+          }
+          default: {
+            break;
+          }
         }
       }
     }
+    
+    // no more arguments remaining. copy the remainder of the string including '\0'
+    strcpy(buffer + bufferPos, initString + initPos);
   }
   
-  // no more arguments remaining. copy the remainder of the string
-  int numCharsRemaining = strlen(initString) - initPos;
-  memcpy(buffer + bufferPos, initString + initPos, numCharsRemaining);
-  bufferPos += numCharsRemaining;
-  buffer[bufferPos] = '\0';
   return buffer;
 }
 
@@ -197,7 +241,7 @@ bool PdMessage::isReserved() {
 
 bool PdMessage::isFloat(int index) {
   if (index >= 0 && index < elementList->size()) {
-    return getElement(index)->getType() == FLOAT;
+    return ((MessageElement *) elementList->get(index))->isFloat();
   } else {
     return false;
   }
@@ -205,7 +249,7 @@ bool PdMessage::isFloat(int index) {
 
 bool PdMessage::isSymbol(int index) {
   if (index >= 0 && index < elementList->size()) {
-    return getElement(index)->getType() == SYMBOL;
+    return ((MessageElement *) elementList->get(index))->isSymbol();
   } else {
     return false;
   }
@@ -213,7 +257,7 @@ bool PdMessage::isSymbol(int index) {
 
 bool PdMessage::isBang(int index) {
   if (index >= 0 && index < elementList->size()) {
-    return getElement(index)->getType() == BANG;
+    return ((MessageElement *) elementList->get(index))->isBang();
   } else {
     return false;
   }
