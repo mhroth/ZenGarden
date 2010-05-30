@@ -145,6 +145,12 @@ class PdMessage {
      */
     void initWithString(char *initString);
   
+    /** Increment the reference count of the resolution buffer, also allocating it if necessary. */
+    void retainResBuffer();
+  
+    /** Decrement the reference count of the resolution buffer, also deallocating it if necessary. */
+    void releaseResBuffer();
+  
     /** A global string buffer used for message resolution. */
     static char *resolutionBuffer;
   

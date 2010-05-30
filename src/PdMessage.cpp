@@ -35,10 +35,7 @@ PdMessage::PdMessage() {
   timestamp = 0.0;
   reservedList = new LinkedList();
   
-  PdMessage::resBufferRefCount++;
-  if (PdMessage::resolutionBuffer == NULL) {
-    PdMessage::resolutionBuffer = (char *) calloc(1024, sizeof(char));
-  }
+  retainResBuffer();
 }
 
 PdMessage::PdMessage(char *initString) {
@@ -47,10 +44,7 @@ PdMessage::PdMessage(char *initString) {
   timestamp = 0.0;
   reservedList = new LinkedList();
   
-  PdMessage::resBufferRefCount++;
-  if (PdMessage::resolutionBuffer == NULL) {
-    PdMessage::resolutionBuffer = (char *) calloc(1024, sizeof(char));
-  }
+  retainResBuffer();
   
   // generate the elements by tokenizing the string
   initWithString(initString);
@@ -62,16 +56,28 @@ PdMessage::PdMessage(char *initString, PdMessage *arguments) {
   timestamp = 0.0;
   reservedList = new LinkedList();
   
-  PdMessage::resBufferRefCount++;
-  if (PdMessage::resolutionBuffer == NULL) {
-    PdMessage::resolutionBuffer = (char *) calloc(1024, sizeof(char));
-  }
+  retainResBuffer();
   
   // resolve entire string with offset 0 (allow for $0)
   char *buffer = PdMessage::resolveString(initString, arguments, 0);
   
   // generate the elements by tokenizing the string
   initWithString(buffer);
+}
+
+void PdMessage::retainResBuffer() {
+  PdMessage::resBufferRefCount++;
+  if (PdMessage::resolutionBuffer == NULL) {
+    PdMessage::resolutionBuffer = (char *) calloc(1024, sizeof(char));
+  }
+}
+
+void PdMessage::releaseResBuffer() {
+  PdMessage::resBufferRefCount--;
+  if (PdMessage::resBufferRefCount == 0) {
+    free(PdMessage::resolutionBuffer);
+    PdMessage::resolutionBuffer = NULL;
+  }
 }
 
 void PdMessage::initWithString(char *initString) {
@@ -98,11 +104,7 @@ PdMessage::~PdMessage() {
   // delete the reserved list
   delete reservedList;
   
-  PdMessage::resBufferRefCount--;
-  if (PdMessage::resBufferRefCount == 0) {
-    free(PdMessage::resolutionBuffer);
-    PdMessage::resolutionBuffer = NULL;
-  }
+  releaseResBuffer();
 }
 
 void PdMessage::resolveElement(char *templateString, PdMessage *arguments,
@@ -127,10 +129,11 @@ char *PdMessage::resolveString(char *initString, PdMessage *arguments, int offse
   } else if (arguments == NULL) {
     strcpy(buffer, initString); // NULL arguments returns the original string
   } else {
+    int numArguments = arguments->getNumElements();
     while ((argPos = strstr(initString + initPos, "\\$")) != NULL) {
       memcpy(buffer + bufferPos, initString + initPos, argPos - initString - initPos);
       initPos += 3;
-      int argumentIndex = -1;
+      int argumentIndex;
       switch (argPos[2]) {
         case '0': { argumentIndex = 0; break; }
         case '1': { argumentIndex = 1; break; }
@@ -145,7 +148,7 @@ char *PdMessage::resolveString(char *initString, PdMessage *arguments, int offse
         default: { continue; }
       }
       argumentIndex -= offset;
-      if (argumentIndex >= 0 && argumentIndex < arguments->getNumElements()) {
+      if (argumentIndex >= 0 && argumentIndex < numArguments) {
         switch (arguments->getType(argumentIndex)) {
           case FLOAT: {
             numCharsWritten = sprintf(buffer + bufferPos, "%g", arguments->getFloat(argumentIndex));
@@ -175,14 +178,16 @@ void PdMessage::resolveSymbolsToType() {
   int numElements = elementList->size();
   for (int i = 0; i < numElements; i++) {
     MessageElement *messageElement = (MessageElement *) elementList->get(i);
-    if (messageElement->isSymbolAnythingOrA()) {
-      messageElement->setAnything();
-    } else if (messageElement->isSymbolBangOrB()) {
-      messageElement->setBang();
-    } else if (messageElement->isSymbolFloatOrF()) {
-      messageElement->setFloat(0.0f);
-    } else if (messageElement->isSymbolListOrL()) {
-      messageElement->setList();
+    if (messageElement->isSymbol()) {
+      if (messageElement->isSymbolAnythingOrA()) {
+        messageElement->setAnything();
+      } else if (messageElement->isSymbolBangOrB()) {
+        messageElement->setBang();
+      } else if (messageElement->isSymbolFloatOrF()) {
+        messageElement->setFloat(0.0f);
+      } else if (messageElement->isSymbolListOrL()) {
+        messageElement->setList();
+      }
     }
   }
 }
@@ -257,7 +262,7 @@ bool PdMessage::isReserved() {
 
 bool PdMessage::isFloat(int index) {
   if (index >= 0 && index < elementList->size()) {
-    return ((MessageElement *) elementList->get(index))->isFloat();
+    return getElement(index)->isFloat();
   } else {
     return false;
   }
@@ -265,7 +270,7 @@ bool PdMessage::isFloat(int index) {
 
 bool PdMessage::isSymbol(int index) {
   if (index >= 0 && index < elementList->size()) {
-    return ((MessageElement *) elementList->get(index))->isSymbol();
+    return getElement(index)->isSymbol();
   } else {
     return false;
   }
@@ -273,7 +278,7 @@ bool PdMessage::isSymbol(int index) {
 
 bool PdMessage::isBang(int index) {
   if (index >= 0 && index < elementList->size()) {
-    return ((MessageElement *) elementList->get(index))->isBang();
+    return getElement(index)->isBang();
   } else {
     return false;
   }
@@ -281,7 +286,7 @@ bool PdMessage::isBang(int index) {
 
 MessageElementType PdMessage::getType(int index) {
   if (index >= 0 && index < elementList->size()) {
-    return ((MessageElement *) elementList->get(index))->getType();
+    return getElement(index)->getType();
   } else {
     return ANYTHING;
   }
