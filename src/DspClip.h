@@ -23,24 +23,21 @@
 #ifndef _DSP_CLIP_H_
 #define _DSP_CLIP_H_
 
-#include "DspMessageInputDspOutputObject.h"
+#include "DspObject.h"
 
-/**
- * clip~
- */
-class DspClip : public DspMessageInputDspOutputObject {
+/** [clip~ float float] */
+class DspClip : public DspObject {
   
   public:
-    DspClip(int blockSize, char *initString);
-    DspClip(float lowerBound, int blockSize, char *initString);
-    DspClip(float lowerBound, float upperBound, int blockSize, char *initString);
+    DspClip(PdMessage *initMessage, PdGraph *graph);
     ~DspClip();
-    
-  protected:
-    void processMessage(int inletIndex, PdMessage *message);
-    void processDspToIndex(int newBlockIndex);
   
+    const char *getObjectLabel();
+    
   private:
+    void processMessage(int inletIndex, PdMessage *message);
+    void processDspToIndex(float newBlockIndex);
+  
     float lowerBound;
     float upperBound;
 };

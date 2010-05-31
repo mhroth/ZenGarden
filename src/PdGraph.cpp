@@ -94,6 +94,7 @@
 #include "DspAdd.h"
 #include "DspBandpassFilter.h"
 #include "DspCatch.h"
+#include "DspClip.h"
 #include "DspCosine.h"
 #include "DspDac.h"
 #include "DspDelayRead.h"
@@ -498,6 +499,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new DspBandpassFilter(initMessage, graph);
     } else if (strcmp(objectLabel, "catch~") == 0) {
       return new DspCatch(initMessage, graph);
+    } else if (strcmp(objectLabel, "clip~") == 0) {
+      return new DspClip(initMessage, graph);
     } else if (strcmp(objectLabel, "cos~") == 0) {
       return new DspCosine(initMessage,graph);
     } else if (strcmp(objectLabel, "dac~") == 0) {

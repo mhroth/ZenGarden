@@ -94,6 +94,9 @@
 		905A195C11B3E82100255831 /* DspBandpassFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 905A195A11B3E82100255831 /* DspBandpassFilter.cpp */; };
 		905A195D11B3E82100255831 /* DspBandpassFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 905A195B11B3E82100255831 /* DspBandpassFilter.h */; };
 		905A195E11B3E82100255831 /* DspBandpassFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 905A195A11B3E82100255831 /* DspBandpassFilter.cpp */; };
+		905A19A311B3EE8300255831 /* DspClip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 905A19A111B3EE8300255831 /* DspClip.cpp */; };
+		905A19A411B3EE8300255831 /* DspClip.h in Headers */ = {isa = PBXBuildFile; fileRef = 905A19A211B3EE8300255831 /* DspClip.h */; };
+		905A19A511B3EE8300255831 /* DspClip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 905A19A111B3EE8300255831 /* DspClip.cpp */; };
 		90792CCC118B118E00B428F6 /* DspThrow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90792CCB118B118E00B428F6 /* DspThrow.cpp */; };
 		90792CCD118B118E00B428F6 /* DspThrow.h in Headers */ = {isa = PBXBuildFile; fileRef = 90792CCA118B118E00B428F6 /* DspThrow.h */; };
 		90792CCE118B118E00B428F6 /* DspThrow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90792CCB118B118E00B428F6 /* DspThrow.cpp */; };
@@ -383,6 +386,8 @@
 		9056A415118F334200E4429E /* MessageSelect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageSelect.h; path = ../src/MessageSelect.h; sourceTree = SOURCE_ROOT; };
 		905A195A11B3E82100255831 /* DspBandpassFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspBandpassFilter.cpp; path = ../src/DspBandpassFilter.cpp; sourceTree = SOURCE_ROOT; };
 		905A195B11B3E82100255831 /* DspBandpassFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspBandpassFilter.h; path = ../src/DspBandpassFilter.h; sourceTree = SOURCE_ROOT; };
+		905A19A111B3EE8300255831 /* DspClip.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspClip.cpp; path = ../src/DspClip.cpp; sourceTree = SOURCE_ROOT; };
+		905A19A211B3EE8300255831 /* DspClip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspClip.h; path = ../src/DspClip.h; sourceTree = SOURCE_ROOT; };
 		90792CCA118B118E00B428F6 /* DspThrow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspThrow.h; path = ../src/DspThrow.h; sourceTree = SOURCE_ROOT; };
 		90792CCB118B118E00B428F6 /* DspThrow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspThrow.cpp; path = ../src/DspThrow.cpp; sourceTree = SOURCE_ROOT; };
 		9079726D118654C90005E8DF /* ZenGarden.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZenGarden.h; path = ../src/ZenGarden.h; sourceTree = SOURCE_ROOT; };
@@ -542,6 +547,8 @@
 				905A195B11B3E82100255831 /* DspBandpassFilter.h */,
 				9029F190118B3AEB00E08A54 /* DspCatch.cpp */,
 				9029F18F118B3AEB00E08A54 /* DspCatch.h */,
+				905A19A111B3EE8300255831 /* DspClip.cpp */,
+				905A19A211B3EE8300255831 /* DspClip.h */,
 				90E9C5DF118211A0004D912D /* DspCosine.cpp */,
 				90E9C5E0118211A0004D912D /* DspCosine.h */,
 				90398C6E1113564400E5A8B6 /* DspDac.cpp */,
@@ -813,6 +820,7 @@
 				9045501711A2B8E100BD51F7 /* MessageNotein.h in Headers */,
 				902A5E0611A84A7300C208C3 /* ZGCallbackFunction.h in Headers */,
 				905A195D11B3E82100255831 /* DspBandpassFilter.h in Headers */,
+				905A19A411B3EE8300255831 /* DspClip.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -986,6 +994,7 @@
 				90454F9211A2B2F300BD51F7 /* RemoteMessageReceiver.cpp in Sources */,
 				9045501911A2B8E100BD51F7 /* MessageNotein.cpp in Sources */,
 				905A195E11B3E82100255831 /* DspBandpassFilter.cpp in Sources */,
+				905A19A511B3EE8300255831 /* DspClip.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1101,6 +1110,7 @@
 				90454F9411A2B2F300BD51F7 /* RemoteMessageReceiver.cpp in Sources */,
 				9045501811A2B8E100BD51F7 /* MessageNotein.cpp in Sources */,
 				905A195C11B3E82100255831 /* DspBandpassFilter.cpp in Sources */,
+				905A19A311B3EE8300255831 /* DspClip.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
