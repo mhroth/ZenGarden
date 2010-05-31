@@ -100,7 +100,8 @@ void DspBandpassFilter::processMessage(int inletIndex, PdMessage *message) {
 void DspBandpassFilter::processDspToIndex(float newBlockIndex) {
   float *inputBuffer = localDspBufferAtInlet[0]; 
   float *outputBuffer = localDspBufferAtOutlet[0];
-  for (int i = blockIndexOfLastMessage; i < newBlockIndex; i++) {
+  int endSampleIndex = getEndSampleIndex(newBlockIndex);
+  for (int i = getStartSampleIndex(); i < endSampleIndex; i++) {
     outputBuffer[i] =  inputBuffer[i] + (coef1 * tap_0) + (coef2 * tap_1);
     tap_1 = tap_0;
     tap_0 = outputBuffer[i];
