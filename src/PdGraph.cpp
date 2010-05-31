@@ -92,6 +92,7 @@
 
 #include "DspAdc.h"
 #include "DspAdd.h"
+#include "DspBandpassFilter.h"
 #include "DspCatch.h"
 #include "DspCosine.h"
 #include "DspDac.h"
@@ -493,6 +494,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new DspDivide(initMessage, graph);
     } else if (strcmp(objectLabel, "adc~") == 0) {
       return new DspAdc(graph);
+    } else if (strcmp(objectLabel, "bp~") == 0) {
+      return new DspBandpassFilter(initMessage, graph);
     } else if (strcmp(objectLabel, "catch~") == 0) {
       return new DspCatch(initMessage, graph);
     } else if (strcmp(objectLabel, "cos~") == 0) {

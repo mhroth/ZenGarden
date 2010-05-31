@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -20,26 +20,25 @@
  *
  */
 
-#include <math.h>
-#include <stdlib.h>
 #include "DspBandpassFilter.h"
+#include "PdGraph.h"
 
-DspBandpassFilter::DspBandpassFilter(int blockSize, int sampleRate, char *initString) : 
-    DspMessageInputDspOutputObject(3, 1, blockSize, initString) {
-  this->sampleRate = (float) sampleRate;
-  calculateFilterCoefficients((float) (sampleRate/2), 1.0f); // initialise the filter completely open
-  tap_0 = tap_1 = 0.0f;
-}
-
-DspBandpassFilter::DspBandpassFilter(float cutoffFrequency, float q, int blockSize, int sampleRate, char *initString) : 
-    DspMessageInputDspOutputObject(3, 1, blockSize, initString) {
-  this->sampleRate = (float) sampleRate;
-  calculateFilterCoefficients(cutoffFrequency, q);
-  tap_0 = tap_1 = 0.0f;
+DspBandpassFilter::DspBandpassFilter(PdMessage *initMessage, PdGraph *graph) : DspObject(3, 1, 0, 1, graph) {
+  sampleRate = graph->getSampleRate();
+  tap_0 = 0.0f;
+  tap_1 = 0.0f;
+  
+  centerFrequency = initMessage->isFloat(0) ? initMessage->getFloat(0) : sampleRate/2.0f;
+  q = initMessage->isFloat(1) ? initMessage->getFloat(1) : 1.0f;
+  calculateFilterCoefficients(centerFrequency, q);
 }
 
 DspBandpassFilter::~DspBandpassFilter() {
   // nothing to do
+}
+
+const char *DspBandpassFilter::getObjectLabel() {
+  return "bp~";
 }
 
 void DspBandpassFilter::calculateFilterCoefficients(float f, float q) {
@@ -55,7 +54,7 @@ void DspBandpassFilter::calculateFilterCoefficients(float f, float q) {
   r = 1.0f - oneminusr;
   coef1 = 2.0f * sigbp_qcos(omega) * r;
   coef2 = - r * r;
-  gain = 2 * oneminusr * (oneminusr + r * omega);
+  gain = 2.0f * oneminusr * (oneminusr + r * omega);
 }
 
 float DspBandpassFilter::sigbp_qcos(float f) {
@@ -67,33 +66,28 @@ float DspBandpassFilter::sigbp_qcos(float f) {
   }
 }
 
-inline void DspBandpassFilter::processMessage(int inletIndex, PdMessage *message) {
+void DspBandpassFilter::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
-      MessageElement *messageElement = message->getElement(0);
-      if (messageElement != NULL && messageElement->getType() == SYMBOL) {
-        // TODO(mhroth): how to handle filter resets? What type of message is this?
-        tap_0 = tap_1 = 0.0f;
+      if (message->isSymbol(0)) {
+        if (strcmp(message->getSymbol(0), "clear") == 0) {
+          tap_0 = 0.0f; // TODO(mhroth): how to handle filter resets?
+          tap_1 = 0.0f;
+        }
       }
       break;
     }
     case 1: {
-      // update the cutoff frequency
-      MessageElement *messageElement = message->getElement(0);
-      if (messageElement != NULL && messageElement->getType() == FLOAT) {
-        processDspToIndex(message->getBlockIndex());
-        calculateFilterCoefficients(messageElement->getFloat(), q);
-        blockIndexOfLastMessage = message->getBlockIndex();
+      if (message->isFloat(0)) {
+        processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
+        calculateFilterCoefficients(message->getFloat(0), q);
       }
       break;
     }
     case 2: {
-      // update the filter resonance
-      MessageElement *messageElement = message->getElement(0);
-      if (messageElement != NULL && messageElement->getType() == FLOAT) {
-        processDspToIndex(message->getBlockIndex());
-        calculateFilterCoefficients(centerFrequency, messageElement->getFloat());
-        blockIndexOfLastMessage = message->getBlockIndex();
+      if (message->isFloat(0)) {
+        processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
+        calculateFilterCoefficients(centerFrequency, message->getFloat(0));
       }
       break;
     }
@@ -103,16 +97,14 @@ inline void DspBandpassFilter::processMessage(int inletIndex, PdMessage *message
   }
 }
 
-inline void DspBandpassFilter::processDspToIndex(int newBlockIndex) {
-  // DspBandpassFilter only supports signalPresedence == DSP_MESSAGE
-  if (signalPresedence == DSP_MESSAGE) {
-    float *inputBuffer = localDspBufferAtInlet[0]; 
-    float *outputBuffer = localDspBufferAtOutlet[0];
-    for (int i = blockIndexOfLastMessage; i < newBlockIndex; i++) {
-      outputBuffer[i] =  inputBuffer[i] + (coef1 * tap_0) + (coef2 * tap_1);
-      tap_1 = tap_0;
-      tap_0 = outputBuffer[i];
-      outputBuffer[i] *= gain;
-    }
+void DspBandpassFilter::processDspToIndex(float newBlockIndex) {
+  float *inputBuffer = localDspBufferAtInlet[0]; 
+  float *outputBuffer = localDspBufferAtOutlet[0];
+  for (int i = blockIndexOfLastMessage; i < newBlockIndex; i++) {
+    outputBuffer[i] =  inputBuffer[i] + (coef1 * tap_0) + (coef2 * tap_1);
+    tap_1 = tap_0;
+    tap_0 = outputBuffer[i];
+    outputBuffer[i] *= gain;
   }
+  blockIndexOfLastMessage = newBlockIndex;
 }
