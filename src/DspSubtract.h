@@ -29,13 +29,11 @@ class DspSubtract : public DspObject {
 
   public:
     DspSubtract(PdMessage *initMessage, PdGraph *graph);
-    DspSubtract(float constant, PdGraph *graph);
     ~DspSubtract();
 
     const char *getObjectLabel();
 
   private:
-    void init(float constant);
     void processMessage(int inletIndex, PdMessage *message);
     void processDspToIndex(float blockIndex);
 
