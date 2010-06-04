@@ -20,28 +20,16 @@
  *
  */
 
+#include "ArrayArithmetic.h"
 #include "DspSubtract.h"
 #include "PdGraph.h"
 
 DspSubtract::DspSubtract(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
-  if (initMessage->getNumElements() > 0 &&
-      initMessage->getElement(0)->getType() == FLOAT) {
-    init(initMessage->getElement(0)->getFloat());
-  } else {
-    init(0.0f);
-  }
-}
-
-DspSubtract::DspSubtract(float constant, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
-  init(constant);
+  constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
 }
 
 DspSubtract::~DspSubtract() {
   // nothing to do
-}
-
-void DspSubtract::init(float constant) {
-  this->constant = constant;
 }
 
 const char *DspSubtract::getObjectLabel() {
@@ -51,10 +39,9 @@ const char *DspSubtract::getObjectLabel() {
 void DspSubtract::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 1: {
-      MessageElement *messageElement = message->getElement(0);
-      if (messageElement->getType() == FLOAT) {
+      if (message->isFloat(0)) {
         processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
-        constant = messageElement->getFloat();
+        constant = message->getFloat(0);
       }
       break;
     }
@@ -67,22 +54,13 @@ void DspSubtract::processMessage(int inletIndex, PdMessage *message) {
 void DspSubtract::processDspToIndex(float blockIndex) {
   switch (signalPrecedence) {
     case DSP_DSP: {
-      int blockIndexInt = getEndSampleIndex(blockIndex);
-      float *inputBuffer0 = localDspBufferAtInlet[0];
-      float *inputBuffer1 = localDspBufferAtInlet[1];
-      float *outputBuffer = localDspBufferAtOutlet[0];
-      for (int i = getStartSampleIndex(); i < blockIndexInt; i++) {
-        outputBuffer[i] = inputBuffer0[i] - inputBuffer1[i];
-      }
+      ArrayArithmetic::subtract(localDspBufferAtInlet[0], localDspBufferAtInlet[1],
+          localDspBufferAtOutlet[0], getStartSampleIndex(), getEndSampleIndex(blockIndex));
       break;
     }
     case DSP_MESSAGE: {
-      int blockIndexInt = getEndSampleIndex(blockIndex);
-      float *inputBuffer = localDspBufferAtInlet[0];
-      float *outputBuffer = localDspBufferAtOutlet[0];
-      for (int i = getStartSampleIndex(); i < blockIndexInt; i++) {
-        outputBuffer[i] = inputBuffer[i] - constant;
-      }
+      ArrayArithmetic::subtract(localDspBufferAtInlet[0], constant, localDspBufferAtOutlet[0],
+          getStartSampleIndex(), getEndSampleIndex(blockIndex));
       break;
     }
     case MESSAGE_DSP:

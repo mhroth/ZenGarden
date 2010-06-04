@@ -30,13 +30,11 @@ class DspAdd : public DspObject {
   
   public:
     DspAdd(PdMessage *initMessage, PdGraph *graph);
-    DspAdd(float constant, PdGraph *graph);
     ~DspAdd();
   
     const char *getObjectLabel();
     
   private:
-    void init(float constant);
     void processMessage(int inletIndex, PdMessage *message);
     void processDspToIndex(float blockIndex);
     
