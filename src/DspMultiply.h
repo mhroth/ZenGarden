@@ -29,13 +29,11 @@ class DspMultiply : public DspObject {
   
   public:
     DspMultiply(PdMessage *initMessage, PdGraph *graph);
-    DspMultiply(float constant, PdGraph *graph);
     ~DspMultiply();
   
     const char *getObjectLabel();
     
   private:
-    void init(float constant);
     void processMessage(int inletIndex, PdMessage *message);
     void processDspToIndex(float blockIndex);
     
