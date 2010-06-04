@@ -20,6 +20,7 @@
  *
  */
 
+#include "ArrayArithmetic.h"
 #include "DspObject.h"
 #include "PdGraph.h"
 
@@ -218,9 +219,8 @@ void DspObject::resolveInputBuffersAtInlet(int inletIndex) {
       for (int j = 1; j < numConnections; j++) {
         objectLetPair = (ObjectLetPair *) incomingDspConnectionsList->get(j);
         remoteOutputBuffer = ((DspObject *) objectLetPair->object)->getDspBufferAtOutlet(objectLetPair->index);
-        for (int k = 0; k < blockSizeInt; k++) {
-          localInputBuffer[k] += remoteOutputBuffer[k];
-        }
+        // NOTE(mhroth): is it ok to use the localInputBuffer both as input and output buffer under NEON?
+        ArrayArithmetic::add(localInputBuffer, remoteOutputBuffer, localInputBuffer, 0, blockSizeInt);
       }
       break;
     }
