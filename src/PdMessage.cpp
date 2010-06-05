@@ -33,7 +33,7 @@ PdMessage::PdMessage() {
   elementList = new List();
   messageId = globalMessageId++;
   timestamp = 0.0;
-  reservedList = new LinkedList();
+  reservedList = new ZGLinkedList();
   
   retainResBuffer();
 }
@@ -42,7 +42,7 @@ PdMessage::PdMessage(char *initString) {
   elementList = new List();
   messageId = globalMessageId++;
   timestamp = 0.0;
-  reservedList = new LinkedList();
+  reservedList = new ZGLinkedList();
   
   retainResBuffer();
   
@@ -54,7 +54,7 @@ PdMessage::PdMessage(char *initString, PdMessage *arguments) {
   elementList = new List();
   messageId = globalMessageId++;
   timestamp = 0.0;
-  reservedList = new LinkedList();
+  reservedList = new ZGLinkedList();
   
   retainResBuffer();
   

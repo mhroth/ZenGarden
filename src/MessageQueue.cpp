@@ -22,7 +22,7 @@
 
 #include "MessageQueue.h"
 
-MessageQueue::MessageQueue() : LinkedList() {
+MessageQueue::MessageQueue() : ZGLinkedList() {
   // nothing to do
 }
 
@@ -31,7 +31,7 @@ MessageQueue::~MessageQueue() {
 }
 
 void MessageQueue::add(int inletIndex, PdMessage *message) {
-  void **data = LinkedList::add(); // add a new node to the list
+  void **data = ZGLinkedList::add(); // add a new node to the list
   MessageLetPair *messageLetPair = (MessageLetPair *) *data;
   messageLetPair->index = inletIndex;
   messageLetPair->message = message;

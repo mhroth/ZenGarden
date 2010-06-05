@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -20,9 +20,9 @@
  *
  */
 
-#include "LinkedList.h"
+#include "ZGLinkedList.h"
 
-LinkedList::LinkedList() {
+ZGLinkedList::ZGLinkedList() {
   numElements = 0;
   numEmptyElements = 0;
   head = NULL;
@@ -31,7 +31,7 @@ LinkedList::LinkedList() {
   emptyTail = NULL;
 }
 
-LinkedList::~LinkedList() {
+ZGLinkedList::~ZGLinkedList() {
   LinkedListNode* node = head;
   LinkedListNode* nextNode = NULL;
   
@@ -53,11 +53,11 @@ LinkedList::~LinkedList() {
   }
 }
 
-int LinkedList::size() {
+int ZGLinkedList::size() {
   return numElements;
 }
 
-void *LinkedList::get(int index) {
+void *ZGLinkedList::get(int index) {
   if (index < 0 || index >= numElements) {
     return NULL;
   } else {
@@ -69,13 +69,13 @@ void *LinkedList::get(int index) {
   }
 }
 
-void **LinkedList::add() {
+void **ZGLinkedList::add() {
   LinkedListNode *newNode = getEmptyNode();
   insertAfter(newNode, tail);
   return &(newNode->data);
 }
 
-LinkedListNode *LinkedList::getEmptyNode() {
+LinkedListNode *ZGLinkedList::getEmptyNode() {
   LinkedListNode *newNode = NULL;
   if (numEmptyElements > 0) {
     // if a node is already available from the empty pool, use it
@@ -91,7 +91,7 @@ LinkedListNode *LinkedList::getEmptyNode() {
   return newNode;
 }
 
-void *LinkedList::remove(LinkedListNode *node) {
+void *ZGLinkedList::remove(LinkedListNode *node) {
   // remove the current node from the list
   if (head == tail && node == head && numElements == 1) {
     // if there is only one node in the list and this node is it
@@ -126,7 +126,7 @@ void *LinkedList::remove(LinkedListNode *node) {
   return node->data;
 }
 
-void *LinkedList::remove(int index) {
+void *ZGLinkedList::remove(int index) {
   if (index < 0 || index >= numElements) {
     return NULL;
   } else {
@@ -138,7 +138,7 @@ void *LinkedList::remove(int index) {
   }
 }
 
-void LinkedList::remove(void *element) {
+void ZGLinkedList::remove(void *element) {
   LinkedListNode *node = head;
   while (node != NULL) {
     if (isDataEqualTo(node->data, element)) {
@@ -150,7 +150,7 @@ void LinkedList::remove(void *element) {
   }
 }
 
-void LinkedList::insertAfter(LinkedListNode *nodeA, LinkedListNode *nodeB) {
+void ZGLinkedList::insertAfter(LinkedListNode *nodeA, LinkedListNode *nodeB) {
   if (nodeB == NULL) {
     // no tail has been defined (the list must be empty)
     nodeA->next = NULL;
@@ -172,7 +172,7 @@ void LinkedList::insertAfter(LinkedListNode *nodeA, LinkedListNode *nodeB) {
   numElements++;
 }
 
-void LinkedList::insertBefore(LinkedListNode *nodeA, LinkedListNode *nodeB) {
+void ZGLinkedList::insertBefore(LinkedListNode *nodeA, LinkedListNode *nodeB) {
   if (nodeB == NULL) {
     // no head has been defined (the list must be empty)
     nodeA->next = NULL;

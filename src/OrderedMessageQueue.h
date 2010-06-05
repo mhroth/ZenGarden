@@ -23,11 +23,11 @@
 #ifndef _ORDERED_MESSAGE_QUEUE_H_
 #define _ORDERED_MESSAGE_QUEUE_H_
 
-#include "LinkedList.h"
 #include "MessageDestination.h"
 #include "PdMessage.h"
+#include "ZGLinkedList.h"
 
-class OrderedMessageQueue : public LinkedList {
+class OrderedMessageQueue : public ZGLinkedList {
   
   public:
     OrderedMessageQueue();

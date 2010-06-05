@@ -51,7 +51,6 @@
 		90398CA41113564400E5A8B6 /* DspAdd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C6C1113564400E5A8B6 /* DspAdd.cpp */; };
 		90398CA51113564400E5A8B6 /* DspDac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C6E1113564400E5A8B6 /* DspDac.cpp */; };
 		90398CA61113564400E5A8B6 /* DspObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C701113564400E5A8B6 /* DspObject.cpp */; };
-		90398CA71113564400E5A8B6 /* LinkedList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C721113564400E5A8B6 /* LinkedList.cpp */; };
 		90398CA81113564400E5A8B6 /* List.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C741113564400E5A8B6 /* List.cpp */; };
 		90398CA91113564400E5A8B6 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C761113564400E5A8B6 /* main.cpp */; };
 		90398CAA1113564400E5A8B6 /* MessageAdd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C771113564400E5A8B6 /* MessageAdd.cpp */; };
@@ -131,6 +130,9 @@
 		909A959F1170E97D00E52B96 /* MessagePack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 909A959D1170E97D00E52B96 /* MessagePack.cpp */; };
 		909A95A01170E97D00E52B96 /* MessagePack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 909A959D1170E97D00E52B96 /* MessagePack.cpp */; };
 		909A95A11170E97D00E52B96 /* MessagePack.h in Headers */ = {isa = PBXBuildFile; fileRef = 909A959E1170E97D00E52B96 /* MessagePack.h */; };
+		909C859211BAD5A800E15BE8 /* ZGLinkedList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 909C859011BAD5A800E15BE8 /* ZGLinkedList.cpp */; };
+		909C859311BAD5A800E15BE8 /* ZGLinkedList.h in Headers */ = {isa = PBXBuildFile; fileRef = 909C859111BAD5A800E15BE8 /* ZGLinkedList.h */; };
+		909C859411BAD5A800E15BE8 /* ZGLinkedList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 909C859011BAD5A800E15BE8 /* ZGLinkedList.cpp */; };
 		90A050DD118E4377007D3FDE /* DspHighpassFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90A050DB118E4377007D3FDE /* DspHighpassFilter.cpp */; };
 		90A050DE118E4377007D3FDE /* DspHighpassFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 90A050DC118E4377007D3FDE /* DspHighpassFilter.h */; };
 		90A050DF118E4377007D3FDE /* DspHighpassFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90A050DB118E4377007D3FDE /* DspHighpassFilter.cpp */; };
@@ -139,7 +141,6 @@
 		90AA637F116F502200477770 /* DspAdd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C6C1113564400E5A8B6 /* DspAdd.cpp */; };
 		90AA6380116F502200477770 /* DspDac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C6E1113564400E5A8B6 /* DspDac.cpp */; };
 		90AA6381116F502200477770 /* DspObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C701113564400E5A8B6 /* DspObject.cpp */; };
-		90AA6382116F502200477770 /* LinkedList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C721113564400E5A8B6 /* LinkedList.cpp */; };
 		90AA6383116F502200477770 /* List.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C741113564400E5A8B6 /* List.cpp */; };
 		90AA6385116F502200477770 /* MessageAdd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C771113564400E5A8B6 /* MessageAdd.cpp */; };
 		90AA6386116F502200477770 /* MessageDelay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90398C791113564400E5A8B6 /* MessageDelay.cpp */; };
@@ -273,7 +274,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		8DD76F6C0486A84900D96B5E /* pdm10 */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "compiled.mach-o.executable"; path = pdm10; sourceTree = BUILT_PRODUCTS_DIR; };
+		8DD76F6C0486A84900D96B5E /* pdm10 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = pdm10; sourceTree = BUILT_PRODUCTS_DIR; };
 		900FD5D0116A523F00603221 /* DspLine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspLine.cpp; path = ../src/DspLine.cpp; sourceTree = SOURCE_ROOT; };
 		900FD5D1116A523F00603221 /* DspLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspLine.h; path = ../src/DspLine.h; sourceTree = SOURCE_ROOT; };
 		900FD622116A68D700603221 /* DspLowpassFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspLowpassFilter.cpp; path = ../src/DspLowpassFilter.cpp; sourceTree = SOURCE_ROOT; };
@@ -326,8 +327,6 @@
 		90398C6F1113564400E5A8B6 /* DspDac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspDac.h; path = ../src/DspDac.h; sourceTree = SOURCE_ROOT; };
 		90398C701113564400E5A8B6 /* DspObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspObject.cpp; path = ../src/DspObject.cpp; sourceTree = SOURCE_ROOT; };
 		90398C711113564400E5A8B6 /* DspObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspObject.h; path = ../src/DspObject.h; sourceTree = SOURCE_ROOT; };
-		90398C721113564400E5A8B6 /* LinkedList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LinkedList.cpp; path = ../src/LinkedList.cpp; sourceTree = SOURCE_ROOT; };
-		90398C731113564400E5A8B6 /* LinkedList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LinkedList.h; path = ../src/LinkedList.h; sourceTree = SOURCE_ROOT; };
 		90398C741113564400E5A8B6 /* List.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = List.cpp; path = ../src/List.cpp; sourceTree = SOURCE_ROOT; };
 		90398C751113564400E5A8B6 /* List.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = List.h; path = ../src/List.h; sourceTree = SOURCE_ROOT; };
 		90398C761113564400E5A8B6 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../src/main.cpp; sourceTree = SOURCE_ROOT; };
@@ -433,6 +432,8 @@
 		909A93F41170B3FF00E52B96 /* DspVariableDelay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspVariableDelay.h; path = ../src/DspVariableDelay.h; sourceTree = SOURCE_ROOT; };
 		909A959D1170E97D00E52B96 /* MessagePack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessagePack.cpp; path = ../src/MessagePack.cpp; sourceTree = SOURCE_ROOT; };
 		909A959E1170E97D00E52B96 /* MessagePack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessagePack.h; path = ../src/MessagePack.h; sourceTree = SOURCE_ROOT; };
+		909C859011BAD5A800E15BE8 /* ZGLinkedList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ZGLinkedList.cpp; path = ../src/ZGLinkedList.cpp; sourceTree = SOURCE_ROOT; };
+		909C859111BAD5A800E15BE8 /* ZGLinkedList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZGLinkedList.h; path = ../src/ZGLinkedList.h; sourceTree = SOURCE_ROOT; };
 		90A050DB118E4377007D3FDE /* DspHighpassFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspHighpassFilter.cpp; path = ../src/DspHighpassFilter.cpp; sourceTree = SOURCE_ROOT; };
 		90A050DC118E4377007D3FDE /* DspHighpassFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspHighpassFilter.h; path = ../src/DspHighpassFilter.h; sourceTree = SOURCE_ROOT; };
 		90AA54D511295EF900E8796B /* DspMessagePresedence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspMessagePresedence.h; path = ../src/DspMessagePresedence.h; sourceTree = SOURCE_ROOT; };
@@ -603,8 +604,6 @@
 				909A93F41170B3FF00E52B96 /* DspVariableDelay.h */,
 				90E9C5E3118211A0004D912D /* DspWrap.cpp */,
 				90E9C5E4118211A0004D912D /* DspWrap.h */,
-				90398C721113564400E5A8B6 /* LinkedList.cpp */,
-				90398C731113564400E5A8B6 /* LinkedList.h */,
 				90398C741113564400E5A8B6 /* List.cpp */,
 				90398C751113564400E5A8B6 /* List.h */,
 				90398C761113564400E5A8B6 /* main.cpp */,
@@ -767,6 +766,8 @@
 				9079726D118654C90005E8DF /* ZenGarden.h */,
 				9079726E118654C90005E8DF /* ZenGarden.cpp */,
 				902A5E0511A84A7300C208C3 /* ZGCallbackFunction.h */,
+				909C859011BAD5A800E15BE8 /* ZGLinkedList.cpp */,
+				909C859111BAD5A800E15BE8 /* ZGLinkedList.h */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -825,6 +826,7 @@
 				905A195D11B3E82100255831 /* DspBandpassFilter.h in Headers */,
 				905A19A411B3EE8300255831 /* DspClip.h in Headers */,
 				9089092511B9797E004A0210 /* ArrayArithmetic.h in Headers */,
+				909C859311BAD5A800E15BE8 /* ZGLinkedList.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -894,7 +896,6 @@
 				90398CA41113564400E5A8B6 /* DspAdd.cpp in Sources */,
 				90398CA51113564400E5A8B6 /* DspDac.cpp in Sources */,
 				90398CA61113564400E5A8B6 /* DspObject.cpp in Sources */,
-				90398CA71113564400E5A8B6 /* LinkedList.cpp in Sources */,
 				90398CA81113564400E5A8B6 /* List.cpp in Sources */,
 				90398CA91113564400E5A8B6 /* main.cpp in Sources */,
 				90398CAA1113564400E5A8B6 /* MessageAdd.cpp in Sources */,
@@ -999,6 +1000,7 @@
 				9045501911A2B8E100BD51F7 /* MessageNotein.cpp in Sources */,
 				905A195E11B3E82100255831 /* DspBandpassFilter.cpp in Sources */,
 				905A19A511B3EE8300255831 /* DspClip.cpp in Sources */,
+				909C859411BAD5A800E15BE8 /* ZGLinkedList.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1012,7 +1014,6 @@
 				902C1DEC116FA65C00C244A9 /* DspDivide.cpp in Sources */,
 				90AA6381116F502200477770 /* DspObject.cpp in Sources */,
 				90FC0C83116F74F10044AFAC /* DspSubtract.cpp in Sources */,
-				90AA6382116F502200477770 /* LinkedList.cpp in Sources */,
 				90AA6383116F502200477770 /* List.cpp in Sources */,
 				90AA6385116F502200477770 /* MessageAdd.cpp in Sources */,
 				90AA6386116F502200477770 /* MessageDelay.cpp in Sources */,
@@ -1115,6 +1116,7 @@
 				9045501811A2B8E100BD51F7 /* MessageNotein.cpp in Sources */,
 				905A195C11B3E82100255831 /* DspBandpassFilter.cpp in Sources */,
 				905A19A311B3EE8300255831 /* DspClip.cpp in Sources */,
+				909C859211BAD5A800E15BE8 /* ZGLinkedList.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

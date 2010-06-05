@@ -23,12 +23,12 @@
 #ifndef _MESSAGE_QUEUE_H_
 #define _MESSAGE_QUEUE_H_
 
-#include "LinkedList.h"
 #include "MessageLetPair.h"
+#include "ZGLinkedList.h"
 
 class PdMessage;
 
-class MessageQueue : public LinkedList {
+class MessageQueue : public ZGLinkedList {
   
   public:
     MessageQueue();

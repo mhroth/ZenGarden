@@ -22,7 +22,7 @@
 
 #include "OrderedMessageQueue.h"
 
-OrderedMessageQueue::OrderedMessageQueue() : LinkedList() {
+OrderedMessageQueue::OrderedMessageQueue() : ZGLinkedList() {
   // nothing to do
 }
 

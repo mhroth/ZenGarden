@@ -24,9 +24,9 @@
 #define _PD_MESSAGE_H_
 
 #include <stdarg.h>
-#include "LinkedList.h"
 #include "List.h"
 #include "MessageElement.h"
+#include "ZGLinkedList.h"
 
 class MessageObject;
 class PdGraph;
@@ -169,7 +169,7 @@ class PdMessage {
   
     int messageId;
     double timestamp;
-    LinkedList *reservedList;
+    ZGLinkedList *reservedList;
     List *elementList;
 };
 

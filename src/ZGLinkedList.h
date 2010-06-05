@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef _LINKED_LIST_H_
-#define _LINKED_LIST_H_
+#ifndef _ZG_LINKED_LIST_H_
+#define _ZG_LINKED_LIST_H_
 
 #include <stdlib.h>
 
@@ -31,10 +31,10 @@ struct LinkedListNode {
   LinkedListNode *next;
 };
 
-class LinkedList {
+class ZGLinkedList {
   public:
-    LinkedList();
-    ~LinkedList();
+    ZGLinkedList();
+    ~ZGLinkedList();
 
     /** Adds a new node to the list. Returns a pointer to the data pointer of the new node.*/
     void **add();
@@ -76,4 +76,4 @@ class LinkedList {
     int numEmptyElements;
 };
 
-#endif // _LINKED_LIST_H_
+#endif // _ZG_LINKED_LIST_H_
