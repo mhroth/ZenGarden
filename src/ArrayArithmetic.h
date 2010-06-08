@@ -23,9 +23,11 @@
 #ifndef _ARRAY_ARITHMETIC_H_
 #define _ARRAY_ARITHMETIC_H_
 
-#ifdef _ARM_ARCH_7
+#ifdef __SSE__
+#include <xmmintrin.h>
+#elif _ARM_ARCH_7
 #include <arm_neon.h>
-#endif // _ARM_ARCH_7
+#endif
 
 /**
  * This class offers static inline functions for computing basic arithmetic with float arrays.
@@ -35,12 +37,25 @@ class ArrayArithmetic {
   
   public:
     static inline void add(float *input0, float *input1, float *output, int startIndex, int endIndex) {
-      #ifdef _ARM_ARCH_7
+      #ifdef __SSE__
+      __m128 inVec0, inVec1, res;
       const int numFours = (endIndex - startIndex) >> 2;
       for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
-        float32x4_t inVec0 = vld1q_f32((const float32_t *) (input0 + i));
-        float32x4_t inVec1 = vld1q_f32((const float32_t *) (input1 + i));
-        float32x4_t res = vaddq_f32(inVec0, inVec1);
+        inVec0 = _mm_load_ps(input0 + i);
+        inVec1 = _mm_load_ps(input1 + i);
+        res = _mm_add_ps(inVec0, inVec1);
+        _mm_store_ps(output + i, res);
+      }
+      for (int i = startIndex + numFours<<2; i < endIndex; i++) {
+        output[i] = input0[i] + input1[i];
+      }
+      #elif _ARM_ARCH_7
+      float32x4_t inVec0, inVec1, res;
+      const int numFours = (endIndex - startIndex) >> 2;
+      for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
+        inVec0 = vld1q_f32((const float32_t *) (input0 + i));
+        inVec1 = vld1q_f32((const float32_t *) (input1 + i));
+        res = vaddq_f32(inVec0, inVec1);
         vst1q_f32((float32_t *) (output + i), res);
       }
       for (int i = startIndex + numFours<<2; i < endIndex; i++) {
