@@ -59,8 +59,8 @@ void DspDivide::processDspToIndex(float blockIndex) {
       break;
     }
     case DSP_MESSAGE: {
-      ArrayArithmetic::divide(localDspBufferAtInlet[0], constant,
-          localDspBufferAtOutlet[0], getStartSampleIndex(), getEndSampleIndex(blockIndex));
+      ArrayArithmetic::divide(localDspBufferAtInlet[0], constant, localDspBufferAtOutlet[0],
+          getStartSampleIndex(), getEndSampleIndex(blockIndex));
       break;
     }
     case MESSAGE_DSP:
