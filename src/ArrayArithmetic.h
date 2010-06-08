@@ -88,7 +88,19 @@ class ArrayArithmetic {
     }
     
     static inline void subtract(float *input0, float *input1, float *output, int startIndex, int endIndex) {
-      #ifdef _ARM_ARCH_7
+      #ifdef __SSE__
+      __m128 inVec0, inVec1, res;
+      const int numFours = (endIndex - startIndex) >> 2;
+      for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
+        inVec0 = _mm_load_ps(input0 + i);
+        inVec1 = _mm_load_ps(input1 + i);
+        res = _mm_sub_ps(inVec0, inVec1);
+        _mm_store_ps(output + i, res);
+      }
+      for (int i = startIndex + numFours<<2; i < endIndex; i++) {
+        output[i] = input0[i] - input1[i];
+      }
+      #elif _ARM_ARCH_7
       // the number of sets of four samples in the block to be processed
       const int numFours = (endIndex - startIndex) >> 2;
       for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
@@ -128,7 +140,19 @@ class ArrayArithmetic {
     }
     
     static inline void multiply(float *input0, float *input1, float *output, int startIndex, int endIndex) {
-      #ifdef _ARM_ARCH_7
+      #ifdef __SSE__
+      __m128 inVec0, inVec1, res;
+      const int numFours = (endIndex - startIndex) >> 2;
+      for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
+        inVec0 = _mm_load_ps(input0 + i);
+        inVec1 = _mm_load_ps(input1 + i);
+        res = _mm_mul_ps(inVec0, inVec1);
+        _mm_store_ps(output + i, res);
+      }
+      for (int i = startIndex + numFours<<2; i < endIndex; i++) {
+        output[i] = input0[i] * input1[i];
+      }
+      #elif _ARM_ARCH_7
       // the number of sets of four samples in the block to be processed
       const int numFours = (endIndex - startIndex) >> 2;
       for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
@@ -167,8 +191,31 @@ class ArrayArithmetic {
     }
     
     // recipocal: vrecpeq_f32
-    static inline void divide(float *a, float *b, int startIndex, int endIndex);
-    static inline void divide(float *a, float b, int startIndex, int endIndex);
+    static inline void divide(float *input0, float *input1, float *output, int startIndex, int endIndex) {
+      #ifdef __SSE__
+      __m128 inVec0, inVec1, res;
+      const int numFours = (endIndex - startIndex) >> 2;
+      for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
+        inVec0 = _mm_load_ps(input0 + i);
+        inVec1 = _mm_load_ps(input1 + i);
+        res = _mm_div_ps(inVec0, inVec1);
+        _mm_store_ps(output + i, res);
+      }
+      for (int i = startIndex + numFours<<2; i < endIndex; i++) {
+        output[i] = input0[i] / input1[i];
+      }
+      #else
+      for (int i = startIndex; i < endIndex; i++) {
+        output[i] = input0[i] / input1[i];
+      }
+      #endif
+    }
+  
+    static inline void divide(float *input, float constant, float *output, int startIndex, int endIndex) {
+      for (int i = startIndex; i < endIndex; i++) {
+        output[i] = input[i] / constant;
+      }
+    }
     
   private:
     ArrayArithmetic(); // no instances of this object are allowed
