@@ -30,7 +30,6 @@ LOCAL_SRC_FILES := \
 ./DspThrow.cpp \
 ./DspVariableDelay.cpp \
 ./DspWrap.cpp \
-./LinkedList.cpp \
 ./List.cpp \
 ./MessageAbsoluteValue.cpp \
 ./MessageAdd.cpp \
@@ -106,4 +105,5 @@ LOCAL_SRC_FILES := \
 ./PdMessage.cpp \
 ./RemoteMessageReceiver.cpp \
 ./StaticUtils.cpp \
-./ZenGarden.cpp
+./ZenGarden.cpp \
+./ZGLinkedList.cpp 
