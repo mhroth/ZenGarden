@@ -32,6 +32,8 @@
 /**
  * This class offers static inline functions for computing basic arithmetic with float arrays.
  * It offers a central place for optimised implements of certain compute-intensive operations.
+ * In all cases, input vectors can be (16-byte) unaligned, but output vectors must be properly
+ * aligned.
  */
 class ArrayArithmetic {
   
@@ -72,7 +74,19 @@ class ArrayArithmetic {
     }
   
     static inline void add(float *input, float constant, float *output, int startIndex, int endIndex) {
-      #ifdef _ARM_ARCH_7
+      #ifdef __SSE__
+      __m128 inVec, res;
+      const __m128 constVec = _mm_load1_ps(&constant);
+      const int numFours = (endIndex - startIndex) >> 2;
+      for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
+        inVec = _mm_loadu_ps(input + i);
+        res = _mm_add_ps(inVec, constVec);
+        _mm_store_ps(output + i, res);
+      }
+      for (int i = startIndex + numFours<<2; i < endIndex; i++) {
+        output[i] = input[i] + constant;
+      }
+      #elif _ARM_ARCH_7
       const int numFours = (endIndex - startIndex) >> 2;
       const float32x4_t constVec = vdupq_n_f32(constant);
       for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
@@ -125,7 +139,19 @@ class ArrayArithmetic {
     }
   
     static inline void subtract(float *input, float constant, float *output, int startIndex, int endIndex) {
-      #ifdef _ARM_ARCH_7
+      #ifdef __SSE__
+      __m128 inVec, res;
+      const __m128 constVec = _mm_load1_ps(&constant);
+      const int numFours = (endIndex - startIndex) >> 2;
+      for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
+        inVec = _mm_loadu_ps(input + i);
+        res = _mm_sub_ps(inVec, constVec);
+        _mm_store_ps(output + i, res);
+      }
+      for (int i = startIndex + numFours<<2; i < endIndex; i++) {
+        output[i] = input[i] - constant;
+      }
+      #elif _ARM_ARCH_7
       const int numFours = (endIndex - startIndex) >> 2;
       const float32x4_t constVec = vdupq_n_f32(constant);
       for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
@@ -178,7 +204,19 @@ class ArrayArithmetic {
     }
   
     static inline void multiply(float *input, float constant, float *output, int startIndex, int endIndex) {
-      #ifdef _ARM_ARCH_7
+      #ifdef __SSE__
+      __m128 inVec, res;
+      const __m128 constVec = _mm_load1_ps(&constant);
+      const int numFours = (endIndex - startIndex) >> 2;
+      for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
+        inVec = _mm_loadu_ps(input + i);
+        res = _mm_mul_ps(inVec, constVec);
+        _mm_store_ps(output + i, res);
+      }
+      for (int i = startIndex + numFours<<2; i < endIndex; i++) {
+        output[i] = input[i] * constant;
+      }
+      #elif _ARM_ARCH_7
       const int numFours = (endIndex - startIndex) >> 2;
       for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
         float32x4_t inVec = vld1q_f32((const float32_t *) (input + i));
@@ -217,9 +255,23 @@ class ArrayArithmetic {
     }
   
     static inline void divide(float *input, float constant, float *output, int startIndex, int endIndex) {
+      #ifdef __SSE__
+      __m128 inVec, res;
+      const __m128 constVec = _mm_load1_ps(&constant);
+      const int numFours = (endIndex - startIndex) >> 2;
+      for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
+        inVec = _mm_loadu_ps(input + i);
+        res = _mm_div_ps(inVec, constVec);
+        _mm_store_ps(output + i, res);
+      }
+      for (int i = startIndex + numFours<<2; i < endIndex; i++) {
+        output[i] = input[i] / constant;
+      }
+      #else
       for (int i = startIndex; i < endIndex; i++) {
         output[i] = input[i] / constant;
       }
+      #endif
     }
     
   private:
