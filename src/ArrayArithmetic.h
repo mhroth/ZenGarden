@@ -32,8 +32,7 @@
 /**
  * This class offers static inline functions for computing basic arithmetic with float arrays.
  * It offers a central place for optimised implements of certain compute-intensive operations.
- * In all cases, input vectors can be (16-byte) unaligned, but output vectors must be properly
- * aligned.
+ * In all SSE cases, input vectors can be (16-byte) unaligned, but output vectors must be aligned.
  */
 class ArrayArithmetic {
   
