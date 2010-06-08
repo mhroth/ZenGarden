@@ -41,8 +41,11 @@ class ArrayArithmetic {
       __m128 inVec0, inVec1, res;
       const int numFours = (endIndex - startIndex) >> 2;
       for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
-        inVec0 = _mm_load_ps(input0 + i);
-        inVec1 = _mm_load_ps(input1 + i);
+        // load must be for unaligned addresses primarily because input can be anything, especially
+        // in the case of when receiving data from delay lines. Their output pointer can point
+        // at any sample in the line, and not just at 16-byte boundaries.
+        inVec0 = _mm_loadu_ps(input0 + i);
+        inVec1 = _mm_loadu_ps(input1 + i);
         res = _mm_add_ps(inVec0, inVec1);
         _mm_store_ps(output + i, res);
       }
@@ -92,8 +95,8 @@ class ArrayArithmetic {
       __m128 inVec0, inVec1, res;
       const int numFours = (endIndex - startIndex) >> 2;
       for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
-        inVec0 = _mm_load_ps(input0 + i);
-        inVec1 = _mm_load_ps(input1 + i);
+        inVec0 = _mm_loadu_ps(input0 + i);
+        inVec1 = _mm_loadu_ps(input1 + i);
         res = _mm_sub_ps(inVec0, inVec1);
         _mm_store_ps(output + i, res);
       }
@@ -102,11 +105,12 @@ class ArrayArithmetic {
       }
       #elif _ARM_ARCH_7
       // the number of sets of four samples in the block to be processed
+      float32x4_t inVec0, inVec1, res;
       const int numFours = (endIndex - startIndex) >> 2;
       for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
-        float32x4_t inVec0 = vld1q_f32((const float32_t *) (input0 + i)); // use VLD1 as data is NOT interleaved
-        float32x4_t inVec1 = vld1q_f32((const float32_t *) (input1 + i)); // load
-        float32x4_t res = vsubq_f32(inVec0, inVec1); // compute
+        inVec0 = vld1q_f32((const float32_t *) (input0 + i)); // use VLD1 as data is NOT interleaved
+        inVec1 = vld1q_f32((const float32_t *) (input1 + i)); // load
+        res = vsubq_f32(inVec0, inVec1); // compute
         vst1q_f32((float32_t *) (output + i), res); // store
       }
       // compute the remainder of the block (if any)
@@ -144,8 +148,8 @@ class ArrayArithmetic {
       __m128 inVec0, inVec1, res;
       const int numFours = (endIndex - startIndex) >> 2;
       for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
-        inVec0 = _mm_load_ps(input0 + i);
-        inVec1 = _mm_load_ps(input1 + i);
+        inVec0 = _mm_loadu_ps(input0 + i);
+        inVec1 = _mm_loadu_ps(input1 + i);
         res = _mm_mul_ps(inVec0, inVec1);
         _mm_store_ps(output + i, res);
       }
@@ -154,11 +158,12 @@ class ArrayArithmetic {
       }
       #elif _ARM_ARCH_7
       // the number of sets of four samples in the block to be processed
+      float32x4_t inVec0, inVec1, res;
       const int numFours = (endIndex - startIndex) >> 2;
       for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
-        float32x4_t inVec0 = vld1q_f32((const float32_t *) (input0 + i)); // use VLD1 as data is NOT interleaved
-        float32x4_t inVec1 = vld1q_f32((const float32_t *) (input1 + i)); // load
-        float32x4_t res = vmulq_f32(inVec0, inVec1); // compute
+        inVec0 = vld1q_f32((const float32_t *) (input0 + i)); // use VLD1 as data is NOT interleaved
+        inVec1 = vld1q_f32((const float32_t *) (input1 + i)); // load
+        res = vmulq_f32(inVec0, inVec1); // compute
         vst1q_f32((float32_t *) (output + i), res); // store
       }
       // compute the remainder of the block (if any)
@@ -196,8 +201,8 @@ class ArrayArithmetic {
       __m128 inVec0, inVec1, res;
       const int numFours = (endIndex - startIndex) >> 2;
       for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
-        inVec0 = _mm_load_ps(input0 + i);
-        inVec1 = _mm_load_ps(input1 + i);
+        inVec0 = _mm_loadu_ps(input0 + i);
+        inVec1 = _mm_loadu_ps(input1 + i);
         res = _mm_div_ps(inVec0, inVec1);
         _mm_store_ps(output + i, res);
       }
