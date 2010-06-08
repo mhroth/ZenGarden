@@ -29,13 +29,11 @@ class DspDivide : public DspObject {
 
   public:
     DspDivide(PdMessage *initMessage, PdGraph *graph);
-    DspDivide(float constant, PdGraph *graph);
     ~DspDivide();
 
     const char *getObjectLabel();
 
   private:
-    void init(float constant);
     void processMessage(int inletIndex, PdMessage *message);
     void processDspToIndex(float blockIndex);
 
