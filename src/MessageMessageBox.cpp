@@ -32,11 +32,9 @@
  * B) A slightly more complicated case is where several messages in the form of A) are separated
  * by a comma (','). Each of the messages is processed and sent independently from the message box
  * when it is triggered.
- * C) The most complex case is where messages in the form of B) are separated by a semicolon (';').
- * TODO(mhroth): err... how exactly does case C) work?
- * 
- * TODO(mhroth): <code>MessageMessageBox</code> currently cases A) and B), including argument $X
- * resolution and replacement.
+ * C) The most complex case is where messages in the form of A) are separated by a semicolon (';').
+ * The first symbol is the name of a message receiver. The remainder of the string is converted
+ * into a message.
  *
  * NOTE(mhroth): MessageBoxes can only support up to 32 total messages.
  */
@@ -70,6 +68,8 @@ MessageMessageBox::MessageMessageBox(char *initString, PdGraph *graph) :
       remoteMessageList->add(namedDestination);
     }
   }
+      
+  StaticUtils::destroyTokenizedStringList(messageInitListAll);
 }
 
 MessageMessageBox::~MessageMessageBox() {
