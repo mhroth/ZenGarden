@@ -49,7 +49,6 @@ DspDelayRead::DspDelayRead(PdMessage *initMessage, PdGraph *graph) : DelayReceiv
 }
 
 DspDelayRead::~DspDelayRead() {
-  free(name);
   // The original value of localDspBufferAtOutlet[0] is restored such that the original output buffer
   // is properly freed.
   localDspBufferAtOutlet[0] = originalOutputBuffer;
