@@ -34,6 +34,7 @@ DspDac::DspDac(PdGraph *graph) : DspObject(0, graph->getNumOutputChannels(), 0, 
 DspDac::~DspDac() {
   for (int i = 0; i < numDspInlets; i++) {
     localDspBufferAtInlet[i] = NULL;
+    localDspBufferAtInletReserved[i] = NULL;
   }
 }
 
