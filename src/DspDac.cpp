@@ -20,6 +20,7 @@
  *
  */
 
+#include "ArrayArithmetic.h"
 #include "DspDac.h"
 #include "PdGraph.h"
 
@@ -51,9 +52,7 @@ void DspDac::processDsp() {
     for (int j = 0; j < numConnections; j++) {
       ObjectLetPair *objectLetPair = (ObjectLetPair *) incomingDspConnectionsList->get(j);
       float *remoteOutputBuffer = ((DspObject *) objectLetPair->object)->getDspBufferAtOutlet(objectLetPair->index);
-      for (int k = 0; k < blockSizeInt; k++) {
-        globalOutputBuffer[k] += remoteOutputBuffer[k];
-      }
+      ArrayArithmetic::add(globalOutputBuffer, remoteOutputBuffer, globalOutputBuffer, 0, blockSizeInt);
     }
   }
 }
