@@ -20,21 +20,22 @@
  *
  */
 
+#include "ArrayArithmetic.h"
 #include "DspLowpassFilter.h"
 #include "PdGraph.h"
 
 DspLowpassFilter::DspLowpassFilter(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 1, 0, 1, graph) {
-  if (initMessage->getNumElements() == 1 && initMessage->getElement(0)->getType() == FLOAT) {
-    calculateFilterCoefficients(initMessage->getElement(0)->getFloat());
-  } else {
-    // initialise the filter completely open
-    calculateFilterCoefficients(graph->getSampleRate()/2.0f);
-  }
   tap_0 = 0.0f;
+  coefficients = (float *) calloc(5, sizeof(float));
+  filterInputBuffer = (float *) calloc(blockSizeInt+2, sizeof(float));
+  filterOutputBuffer = (float *) calloc(blockSizeInt+2, sizeof(float));
+  calculateFilterCoefficients(initMessage->isFloat(0) ? initMessage->getFloat(0) : graph->getSampleRate()/2.0f);
 }
 
 DspLowpassFilter::~DspLowpassFilter() {
-  // nothing to do
+  free(filterInputBuffer);
+  free(filterOutputBuffer);
+  free(coefficients);
 }
 
 const char *DspLowpassFilter::getObjectLabel() {
@@ -49,25 +50,23 @@ void DspLowpassFilter::calculateFilterCoefficients(float cutoffFrequency) {
     alpha = 1.0f;
   }
   beta = 1.0f - alpha;
+  coefficients[0] = alpha;
+  coefficients[3] = -1.0f * beta;
 }
 
 void DspLowpassFilter::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
-      MessageElement *messageElement = message->getElement(0);
-      if (messageElement->getType() == SYMBOL) {
-        if (strcmp(messageElement->getSymbol(), "clear") == 0) {
-          processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
-          tap_0 = 0.0f;
-        }
+      if (message->isSymbol(0) && strcmp(message->getSymbol(0), "clear") == 0) {
+        processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
+        tap_0 = 0.0f;
       }
       break;
     }
     case 1: {
-      MessageElement *messageElement = message->getElement(0);
-      if (messageElement->getType() == FLOAT) {
+      if (message->isFloat(0)) {
         processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
-        calculateFilterCoefficients(messageElement->getFloat());
+        calculateFilterCoefficients(message->getFloat(0));
       }
       break;
     }
@@ -80,13 +79,25 @@ void DspLowpassFilter::processMessage(int inletIndex, PdMessage *message) {
 void DspLowpassFilter::processDspToIndex(float blockIndex) {
   float *inputBuffer = localDspBufferAtInlet[0]; 
   float *outputBuffer = localDspBufferAtOutlet[0];
-  outputBuffer[getStartSampleIndex()] = 
-      (alpha * inputBuffer[getStartSampleIndex()]) + (beta * tap_0);
-  int blockIndexInt = getEndSampleIndex(blockIndex);
-  for (int i = getStartSampleIndex()+1; i < blockIndexInt; i++) {
-    outputBuffer[i] = alpha * inputBuffer[i] + beta * outputBuffer[i-1];
+  const int startSampleIndex = getStartSampleIndex();
+  const int endSampleIndex = getEndSampleIndex(blockIndex);
+  const int duration = endSampleIndex - startSampleIndex;
+  const int durationBytes = duration * sizeof(float);
+  #if TARGET_OS_MAC || TARGET_OS_IPHONE
+  memcpy(filterInputBuffer+2, inputBuffer+startSampleIndex, durationBytes);
+  vDSP_deq22(filterInputBuffer, 1, coefficients, filterOutputBuffer, 1, duration);
+  memcpy(outputBuffer+startSampleIndex, filterOutputBuffer+2, durationBytes);
+  // copy last two inputs and outputs to start of filter buffer arrays
+  memcpy(filterInputBuffer, filterInputBuffer+duration, 2 * sizeof(float));
+  memcpy(filterOutputBuffer, filterOutputBuffer+duration, 2 * sizeof(float));
+  #else
+  ArrayArithmetic::multiply(inputBuffer, alpha, outputBuffer, startSampleIndex, endSampleIndex);
+  outputBuffer[startSampleIndex] += beta * tap_0;
+  for (int i = startSampleIndex+1; i < endSampleIndex; i++) {
+    outputBuffer[i] += beta * outputBuffer[i-1];
   }
-  tap_0 = outputBuffer[blockIndexInt-1];
+  tap_0 = outputBuffer[endSampleIndex-1];
+  #endif
   
   blockIndexOfLastMessage = blockIndex;
 }

@@ -46,6 +46,10 @@ class DspLowpassFilter : public DspObject {
     float tap_0;
     float alpha;
     float beta; // 1 - alpha;
+  
+    float *filterInputBuffer;
+    float *filterOutputBuffer;
+    float *coefficients;
 };
 
 #endif // _DSP_LOW_PASS_FILTER_H_
