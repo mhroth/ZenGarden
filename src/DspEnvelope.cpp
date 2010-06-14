@@ -20,6 +20,7 @@
  *
  */
 
+#include "ArrayArithmetic.h"
 #include "DspEnvelope.h"
 #include "PdGraph.h"
 
@@ -62,6 +63,7 @@ DspEnvelope::DspEnvelope(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 
 DspEnvelope::~DspEnvelope() {
   free(signalBuffer);
   free(hanningCoefficients);
+  free(rmsBuffer);
 }
 
 const char *DspEnvelope::getObjectLabel() {
@@ -94,6 +96,7 @@ void DspEnvelope::initBuffers() {
   int bufferSize = numBlocksPerWindow * graph->getBlockSize();
   signalBuffer = (float *) malloc(bufferSize * sizeof(float));
   hanningCoefficients = (float *) malloc(bufferSize * sizeof(float));
+  rmsBuffer = (float *) malloc(bufferSize * sizeof(float));
   float N_1 = (float) (windowSize - 1); // (N == windowSize) - 1
   float hanningSum = 0.0f;
   for (int i = 0; i < windowSize; i++) {
@@ -118,11 +121,17 @@ void DspEnvelope::processDspToIndex(float newBlockIndex) {
   }
   if (numSamplesReceivedSinceLastInterval == windowInterval) {
     numSamplesReceivedSinceLastInterval -= windowInterval;
-    float rms = 0.0f;
     // apply hanning window to signal and calculate Root Mean Square
+    float rms = 0.0f;
+    #if TARGET_OS_MAC || TARGET_OS_IPHONE
+    vDSP_vsq(signalBuffer, 1, rmsBuffer, 1, windowSize); // signalBuffer^2 
+    vDSP_vmul(rmsBuffer, 1, hanningCoefficients, 1, rmsBuffer, 1, windowSize); // * hanning window
+    vDSP_sve(rmsBuffer, 1, &rms, windowSize); // sum the result
+    #else
     for (int i = 0; i < windowSize; i++) {
       rms += signalBuffer[i] * signalBuffer[i] * hanningCoefficients[i];
     }
+    #endif
     // finish RMS calculation. sqrt is removed as it can be combined with the log operation.
     // result is normalised such that 1 RMS == 100 dB
     rms = 10.0f * log10f(rms) + 100.0f;
@@ -131,7 +140,7 @@ void DspEnvelope::processDspToIndex(float newBlockIndex) {
     // graph will schedule this at the beginning of the next block because the timestamp will be
     // behind the block start timestamp
     outgoingMessage->setTimestamp(0.0);
-    outgoingMessage->getElement(0)->setFloat((rms < 0.0f) ? 0.0f : rms);
+    outgoingMessage->setFloat(0, (rms < 0.0f) ? 0.0f : rms);
     graph->scheduleMessage(this, 0, outgoingMessage);
   }
 }
