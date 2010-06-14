@@ -23,7 +23,14 @@
 #ifndef _ARRAY_ARITHMETIC_H_
 #define _ARRAY_ARITHMETIC_H_
 
-#ifdef __SSE__
+#ifdef __APPLE__
+#include "TargetConditionals.h"
+#endif // __APPLE__
+
+#if TARGET_OS_MAC || TARGET_OS_IPHONE
+// The Accelerate framework is a library of tuned vector operations
+#include <Accelerate/Accelerate.h>
+#elif __SSE__
 #include <xmmintrin.h>
 #elif _ARM_ARCH_7
 #include <arm_neon.h>
@@ -31,14 +38,16 @@
 
 /**
  * This class offers static inline functions for computing basic arithmetic with float arrays.
- * It offers a central place for optimised implements of certain compute-intensive operations.
+ * It offers a central place for optimised implementations of common compute-intensive operations.
  * In all SSE cases, input vectors can be (16-byte) unaligned, but output vectors must be aligned.
  */
 class ArrayArithmetic {
   
   public:
     static inline void add(float *input0, float *input1, float *output, int startIndex, int endIndex) {
-      #ifdef __SSE__
+      #ifdef TARGET_OS_MAC
+      vDSP_vadd(input0+startIndex, 1, input1+startIndex, 1, output+startIndex, 1, endIndex-startIndex);
+      #elif __SSE__
       __m128 inVec0, inVec1, res;
       const int numFours = (endIndex - startIndex) >> 2;
       for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
@@ -73,7 +82,9 @@ class ArrayArithmetic {
     }
   
     static inline void add(float *input, float constant, float *output, int startIndex, int endIndex) {
-      #ifdef __SSE__
+      #if TARGET_OS_MAC || TARGET_OS_IPHONE
+      vDSP_vsadd(input+startIndex, 1, &constant, output+startIndex, 1, endIndex-startIndex);
+      #elif __SSE__
       __m128 inVec, res;
       const __m128 constVec = _mm_load1_ps(&constant);
       const int numFours = (endIndex - startIndex) >> 2;
@@ -104,7 +115,9 @@ class ArrayArithmetic {
     }
     
     static inline void subtract(float *input0, float *input1, float *output, int startIndex, int endIndex) {
-      #ifdef __SSE__
+      #if TARGET_OS_MAC || TARGET_OS_IPHONE
+      vDSP_vsub(input1+startIndex, 1, input0+startIndex, 1, output+startIndex, 1, endIndex-startIndex);
+      #elif __SSE__
       __m128 inVec0, inVec1, res;
       const int numFours = (endIndex - startIndex) >> 2;
       for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
@@ -138,7 +151,10 @@ class ArrayArithmetic {
     }
   
     static inline void subtract(float *input, float constant, float *output, int startIndex, int endIndex) {
-      #ifdef __SSE__
+#if TARGET_OS_MAC || TARGET_OS_IPHONE
+      float negation = -1.0f * constant;
+      vDSP_vsadd(input+startIndex, 1, &negation, output+startIndex, 1, endIndex-startIndex);
+      #elif __SSE__
       __m128 inVec, res;
       const __m128 constVec = _mm_load1_ps(&constant);
       const int numFours = (endIndex - startIndex) >> 2;
@@ -169,7 +185,9 @@ class ArrayArithmetic {
     }
     
     static inline void multiply(float *input0, float *input1, float *output, int startIndex, int endIndex) {
-      #ifdef __SSE__
+      #if TARGET_OS_MAC || TARGET_OS_IPHONE
+      vDSP_vmul(input0+startIndex, 1, input1+startIndex, 1, output+startIndex, 1, endIndex-startIndex);
+      #elif __SSE__
       __m128 inVec0, inVec1, res;
       const int numFours = (endIndex - startIndex) >> 2;
       for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
@@ -203,7 +221,9 @@ class ArrayArithmetic {
     }
   
     static inline void multiply(float *input, float constant, float *output, int startIndex, int endIndex) {
-      #ifdef __SSE__
+      #if TARGET_OS_MAC || TARGET_OS_IPHONE
+      vDSP_vsmul(input+startIndex, 1, &constant, output+startIndex, 1, endIndex-startIndex);
+      #elif __SSE__
       __m128 inVec, res;
       const __m128 constVec = _mm_load1_ps(&constant);
       const int numFours = (endIndex - startIndex) >> 2;
@@ -234,7 +254,9 @@ class ArrayArithmetic {
     
     // recipocal: vrecpeq_f32
     static inline void divide(float *input0, float *input1, float *output, int startIndex, int endIndex) {
-      #ifdef __SSE__
+      #if TARGET_OS_MAC || TARGET_OS_IPHONE
+      vDSP_vdiv(input1+startIndex, 1, input0+startIndex, 1, output+startIndex, 1, endIndex-startIndex);
+      #elif __SSE__
       __m128 inVec0, inVec1, res;
       const int numFours = (endIndex - startIndex) >> 2;
       for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
@@ -254,7 +276,9 @@ class ArrayArithmetic {
     }
   
     static inline void divide(float *input, float constant, float *output, int startIndex, int endIndex) {
-      #ifdef __SSE__
+      #if TARGET_OS_MAC || TARGET_OS_IPHONE
+      vDSP_vsdiv(input+startIndex, 1, &constant, output+startIndex, 1, endIndex-startIndex);
+      #elif __SSE__
       __m128 inVec, res;
       const __m128 constVec = _mm_load1_ps(&constant);
       const int numFours = (endIndex - startIndex) >> 2;
