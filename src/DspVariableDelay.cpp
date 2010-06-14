@@ -20,22 +20,34 @@
  *
  */
 
+#include "ArrayArithmetic.h"
 #include "DspDelayWrite.h"
 #include "DspVariableDelay.h"
 #include "PdGraph.h"
 
 DspVariableDelay::DspVariableDelay(PdMessage *initMessage, PdGraph *graph) : DelayReceiver(0, 1, 0, 1, graph) {
-  if (initMessage->getNumElements() > 0 && initMessage->getElement(0)->getType() == SYMBOL) {
-    name = StaticUtils::copyString(initMessage->getElement(0)->getSymbol());
+  if (initMessage->isSymbol(0)) {
+    name = StaticUtils::copyString(initMessage->getSymbol(0));
     sampleRate = graph->getSampleRate();
+    y0Array = (float *) malloc(blockSizeInt * sizeof(float));
+    y1Array = (float *) malloc(blockSizeInt * sizeof(float));
+    xArray = (float *) malloc(blockSizeInt * sizeof(float));
+    targetIndexBaseArray = (float *) malloc(blockSizeInt * sizeof(float));
   } else {
     graph->printErr("vd~ requires the name of a delayline. None given.");
     name = NULL;
+    y0Array = NULL;
+    y1Array = NULL;
+    xArray = NULL;
+    targetIndexBaseArray = NULL;
   }
 }
 
 DspVariableDelay::~DspVariableDelay() {
-  // nothing to do
+  free(y0Array);
+  free(y1Array);
+  free(xArray);
+  free(targetIndexBaseArray);
 }
 
 const char *DspVariableDelay::getObjectLabel() {
@@ -50,10 +62,36 @@ void DspVariableDelay::processDspToIndex(float newBlockIndex) {
   float *inputBuffer = localDspBufferAtInlet[0];
   float *outputBuffer = localDspBufferAtOutlet[0];
   
-  int endSampleIndex = getEndSampleIndex(newBlockIndex);
-  int startSampleIndex = getStartSampleIndex();
-  float targetIndexBase = (float) (headIndex - blockSizeInt + startSampleIndex);
-  for (int i = startSampleIndex; i < endSampleIndex; i++, targetIndexBase+=1.0f) {
+  float targetIndexBase = (float) (headIndex - blockSizeInt);
+  #if TARGET_OS_MAC || TARGET_OS_IPHONE
+  // calculate delay in samples (vector version of StaticUtils::millisecondsToSamples)
+  float oneThousand = 1000.0f;
+  vDSP_vsdiv(inputBuffer, 1, &oneThousand, xArray, 1, blockSizeInt); // inputBuffer / 1000.0f
+  vDSP_vsmul(xArray, 1, &sampleRate, xArray, 1, blockSizeInt); // * sampleRate
+  
+  float zero = 0.0f;
+  float one = 1.0f;
+  vDSP_vclip(xArray, 1, &zero, &bufferLengthFloat, xArray, 1, blockSizeInt); // clip the delay between 0 and the buffer length
+  vDSP_vramp(&targetIndexBase, &one, targetIndexBaseArray, 1, blockSizeInt);  // create targetIndexBaseArray
+  vDSP_vsub(xArray, 1, targetIndexBaseArray, 1, xArray, 1, blockSizeInt); // targetIndexBaseArray - xArray (== targetSampleIndex)
+  
+  // ensure that targetSampleIndex is positive
+  // TODO(mhroth): vectorise this!
+  for (int i = 0; i < blockSizeInt; i++) {
+    if (xArray[i] < 0.0f) {
+      xArray[i] += bufferLengthFloat;
+    }
+  }
+  
+  vDSP_vindex(buffer, xArray, 1, y0Array, 1, blockSizeInt); // calculate y0 based on xArray index
+  vDSP_vsadd(xArray, 1, &one, xArray, 1, blockSizeInt); // increment index by 1
+  vDSP_vindex(buffer, xArray, 1, y1Array, 1, blockSizeInt); // calculate y1 based on index
+  
+  vDSP_vfrac(xArray, 1, xArray, 1, blockSizeInt); // get the fractional part of x
+  vDSP_vsbm(y1Array, 1, y0Array, 1, xArray, 1, outputBuffer, 1, blockSizeInt); // output = (y1-y0)*x
+  vDSP_vadd(outputBuffer, 1, y0Array, 1, outputBuffer, 1, blockSizeInt); // output = output + y0
+  #else
+  for (int i = 0; i < blockSizeInt; i++, targetIndexBase+=1.0f) {
     float delayInSamples = StaticUtils::millisecondsToSamples(inputBuffer[i], sampleRate);
     if (delayInSamples < 0.0f) {
       delayInSamples = 0.0f;
@@ -74,5 +112,5 @@ void DspVariableDelay::processDspToIndex(float newBlockIndex) {
     float slope = (y1 - y0); // /(x1 - x0) == 1.0f!
     outputBuffer[i] = (slope * dx) + y0;
   }
-  blockIndexOfLastMessage = newBlockIndex;
+  #endif
 }

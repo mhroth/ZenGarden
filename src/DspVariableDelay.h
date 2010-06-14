@@ -44,6 +44,10 @@ class DspVariableDelay : public DelayReceiver {
     void processDspToIndex(float newBlockIndex);
   
     float sampleRate;
+    float *y0Array;
+    float *y1Array;
+    float *xArray;
+    float *targetIndexBaseArray;
 };
 
 #endif // _DSP_VARIABLE_DELAY_H_
