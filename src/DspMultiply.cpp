@@ -57,29 +57,6 @@ void DspMultiply::processDspToIndex(float blockIndex) {
     case DSP_DSP: {
       ArrayArithmetic::multiply(localDspBufferAtInlet[0], localDspBufferAtInlet[1], 
           localDspBufferAtOutlet[0], getStartSampleIndex(), getEndSampleIndex(blockIndex));
-      
-      /*
-       * This approach is cleaner, considering that in DSP_DSP mode, no message should be received
-       * and thus all blocks are processed in full. However, this approach also assumes that the
-       * total block size is a positive multiple of four. This wil be true in almost all practical
-       * cases, but I KNOW that some bitch will start complaining that he can't set the block size
-       * to 1 for his miracle Karplus-Strong implementation (or whatever). So, we'll leave the
-       * slower but more general method for now. The more general method must be used for the 
-       * DSP_MESSAGE case anyway, because message must be able to be processed at any time during
-       * the block
-      #ifdef _ARM_ARCH_7
-      for (int i = 0, i < blockSizeInt; i+=4) {
-        float32x4_t inVec0 = vld1q_f32((const float32_t *) (inputBuffer0 + i));
-        float32x4_t inVec1 = vld1q_f32((const float32_t *) (inputBuffer1 + i));
-        float32x4_t res = vmulq_f32(inVec0, inVec1);
-        vst1q_f32((float32_t *) (outputBuffer + i), res);
-      }
-      #else
-      for (int i = 0; i < blockSizeInt; i++) {
-        outputBuffer[i] = inputBuffer0[i] * inputBuffer1[i];
-      }
-      #endif
-      */
       break;
     }
     case DSP_MESSAGE: {
