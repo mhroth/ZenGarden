@@ -29,7 +29,7 @@
 class DspCosine : public DspObject {
 
   public:
-    DspCosine(PdMessage *initMessage, PdGraph *graph); // and Cosineillator of default zero frequency
+    DspCosine(PdMessage *initMessage, PdGraph *graph);
     ~DspCosine();
 
     const char *getObjectLabel();
