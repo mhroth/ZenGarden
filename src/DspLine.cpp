@@ -20,6 +20,7 @@
  *
  */
 
+#include "ArrayArithmetic.h"
 #include "DspLine.h"
 #include "PdGraph.h"
 
@@ -46,10 +47,9 @@ void DspLine::processMessage(int inletIndex, PdMessage *message) {
       }
       case 1: {
         // jump to value
-        MessageElement *messageElement = message->getElement(0);
-        if (messageElement->getType() == FLOAT) {
+        if (message->isFloat(0)) {
           processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
-          target = messageElement->getFloat();
+          target = message->getFloat(0);
           slope = 0.0f;
           numSamplesToTarget = 0.0f;
         }
@@ -57,12 +57,10 @@ void DspLine::processMessage(int inletIndex, PdMessage *message) {
       }
       default: { // at least two inputs
         // new ramp
-        MessageElement *messageElement0 = message->getElement(0);
-        MessageElement *messageElement1 = message->getElement(1);
-        if (messageElement0->getType() == FLOAT && messageElement1->getType() == FLOAT) {
+        if (message->isFloat(0) && message->isFloat(1)) {
           processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
-          target = messageElement0->getFloat();
-          float timeToTargetMs = messageElement1->getFloat(); // no negative time to targets!
+          target = message->getFloat(0);
+          float timeToTargetMs = message->getFloat(1); // no negative time to targets!
           numSamplesToTarget = StaticUtils::millisecondsToSamples(
               (timeToTargetMs < 1.0f) ? 1.0f : timeToTargetMs, graph->getSampleRate());
           slope = (target - lastOutputSample) / numSamplesToTarget;
@@ -76,22 +74,30 @@ void DspLine::processMessage(int inletIndex, PdMessage *message) {
 void DspLine::processDspToIndex(float blockIndex) {
   float *outputBuffer = localDspBufferAtOutlet[0];
   if (numSamplesToTarget <= 0.0f) { // if we have already reached the target
+    #if TARGET_OS_MAC || TARGET_OS_IPHONE
+    vDSP_vfill(&target, outputBuffer+getStartSampleIndex(), 1, getEndSampleIndex(blockIndex)-getStartSampleIndex());
+    #else
     // TODO(mhroth): can this be replaced with memset() or something similar?
     // can this be made faster?
     int blockIndexInt = getEndSampleIndex(blockIndex);
     for (int i = getStartSampleIndex(); i < blockIndexInt; i++) {
       outputBuffer[i] = target; // stay at the target
     }
+    #endif
     lastOutputSample = target;
   } else {
     // the number of samples to be processed this iteration
     float processLength = blockIndex - blockIndexOfLastMessage;
-    if (processLength > 0) {
+    if (processLength > 0.0f) {
       // if there is anything to process at all (several messages may be received at once)
       if (numSamplesToTarget < processLength) {
+        int targetIndexInt = getEndSampleIndex(blockIndexOfLastMessage + numSamplesToTarget);
+        #if TARGET_OS_MAC || TARGET_OS_IPHONE
+        vDSP_vramp(&lastOutputSample, &slope, outputBuffer+getStartSampleIndex(), 1, targetIndexInt-getStartSampleIndex());
+        vDSP_vfill(&target, outputBuffer+targetIndexInt, 1, getEndSampleIndex(blockIndex)-targetIndexInt);
+        #else
         // if we will process more samples than we have remaining to the target
         // i.e., if we will arrive at the target while processing
-        int targetIndexInt = getEndSampleIndex(blockIndexOfLastMessage + numSamplesToTarget);
         outputBuffer[getStartSampleIndex()] = lastOutputSample + slope;
         for (int i = getStartSampleIndex()+1; i < targetIndexInt; i++) {
           outputBuffer[i] = outputBuffer[i-1] + slope;
@@ -100,16 +106,21 @@ void DspLine::processDspToIndex(float blockIndex) {
         for (int i = targetIndexInt; i < blockIndexInt; i++) {
           outputBuffer[i] = target;
         }
+        #endif
         lastOutputSample = target;
         numSamplesToTarget = 0;
       } else {
         // if the target is far off
-        outputBuffer[getStartSampleIndex()] = lastOutputSample + slope;
         int blockIndexInt = getEndSampleIndex(blockIndex);
+        #if TARGET_OS_MAC || TARGET_OS_IPHONE
+        vDSP_vramp(&lastOutputSample, &slope, outputBuffer+getStartSampleIndex(), 1, blockIndexInt-getStartSampleIndex());
+        #else
+        outputBuffer[getStartSampleIndex()] = lastOutputSample + slope;
         for (int i = getStartSampleIndex()+1; i < blockIndexInt; i++) {
           outputBuffer[i] = outputBuffer[i-1] + slope;
         }
-        lastOutputSample = outputBuffer[blockIndexInt-1];
+        #endif
+        lastOutputSample = outputBuffer[blockIndexInt-1];  
         numSamplesToTarget -= processLength;
       }
     }
