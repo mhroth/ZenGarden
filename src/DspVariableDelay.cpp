@@ -65,9 +65,8 @@ void DspVariableDelay::processDspToIndex(float newBlockIndex) {
   float targetIndexBase = (float) (headIndex - blockSizeInt);
   #if TARGET_OS_MAC || TARGET_OS_IPHONE
   // calculate delay in samples (vector version of StaticUtils::millisecondsToSamples)
-  float oneThousand = 1000.0f;
-  vDSP_vsdiv(inputBuffer, 1, &oneThousand, xArray, 1, blockSizeInt); // inputBuffer / 1000.0f
-  vDSP_vsmul(xArray, 1, &sampleRate, xArray, 1, blockSizeInt); // * sampleRate
+  float samplesPerMillisecond = sampleRate / 1000.0f;
+  vDSP_vsmul(xArray, 1, &samplesPerMillisecond, xArray, 1, blockSizeInt);
   
   float zero = 0.0f;
   float one = 1.0f;
