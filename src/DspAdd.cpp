@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -37,16 +37,10 @@ const char *DspAdd::getObjectLabel() {
 }
 
 void DspAdd::processMessage(int inletIndex, PdMessage *message) {
-  switch (inletIndex) {
-    case 1: {
-      if (message->isFloat(0)) {
-        processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
-        constant = message->getFloat(0);
-      }
-      break;
-    }
-    default: {
-      break;
+  if (inletIndex == 1) {
+    if (message->isFloat(0)) {
+      processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
+      constant = message->getFloat(0);
     }
   }
 }
@@ -55,7 +49,7 @@ void DspAdd::processDspToIndex(float blockIndex) {
   switch (signalPrecedence) {
     case DSP_DSP: {
       ArrayArithmetic::add(localDspBufferAtInlet[0], localDspBufferAtInlet[1],
-          localDspBufferAtOutlet[0], getStartSampleIndex(), getEndSampleIndex(blockIndex));
+          localDspBufferAtOutlet[0], 0, blockSizeInt);
       break;
     }
     case DSP_MESSAGE: {
