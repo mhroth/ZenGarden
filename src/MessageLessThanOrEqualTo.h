@@ -40,6 +40,7 @@ class MessageLessThanOrEqualTo : public MessageObject {
     void processMessage(int inletIndex, PdMessage *message);
 
     float constant;
+    float lastOutput;
 };
 
 #endif // _MESSAGE_LessThanOrEqualToOREQUALTO_H_
