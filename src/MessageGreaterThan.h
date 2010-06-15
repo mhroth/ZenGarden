@@ -40,6 +40,7 @@ class MessageGreaterThan : public MessageObject {
     void processMessage(int inletIndex, PdMessage *message);
 
     float constant;
+    float lastOutput;
 };
 
 #endif // _MESSAGE_GREATERTHAN_H_
