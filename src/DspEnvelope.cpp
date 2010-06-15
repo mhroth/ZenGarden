@@ -114,8 +114,8 @@ void DspEnvelope::initBuffers() {
 void DspEnvelope::processDspToIndex(float newBlockIndex) {
   // copy the input into the signal buffer
   memcpy(signalBuffer + numSamplesReceived, localDspBufferAtInlet[0], numBytesInBlock);
-  numSamplesReceived += graph->getBlockSize();
-  numSamplesReceivedSinceLastInterval += graph->getBlockSize();
+  numSamplesReceived += blockSizeInt;
+  numSamplesReceivedSinceLastInterval += blockSizeInt;
   if (numSamplesReceived >= windowSize) {
     numSamplesReceived = 0;
   }
