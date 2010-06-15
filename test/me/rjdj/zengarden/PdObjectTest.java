@@ -79,6 +79,11 @@ public class PdObjectTest implements ZenGardenListener {
   }
   */
   @Test
+  public void testMessageLessThan() {
+    genericMessageTest("MessageLessThan.pd");
+  }
+
+  @Test
   public void testMessageNotEquals() {
     genericMessageTest("MessageNotEquals.pd");
   }

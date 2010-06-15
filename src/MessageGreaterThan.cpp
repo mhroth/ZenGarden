@@ -32,7 +32,7 @@ MessageGreaterThan::~MessageGreaterThan() {
 }
 
 const char *MessageGreaterThan::getObjectLabel() {
-  return "!=";
+  return ">";
 }
 
 void MessageGreaterThan::processMessage(int inletIndex, PdMessage *message) {
