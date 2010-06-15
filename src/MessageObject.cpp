@@ -99,20 +99,19 @@ void MessageObject::receiveMessage(int inletIndex, PdMessage *message) {
   if (shouldDistributeMessageToInlets() &&
       inletIndex == 0 &&
       numMessageInlets > 1 &&
-      message->getNumElements() > 1 &&
-      message->getNumElements() <= numMessageInlets) {
+      message->getNumElements() > 1) {
     // if the message should be distributed across the inlets
     distributedMessage->setTimestamp(message->getTimestamp());
-    MessageElement *messageElement;
-    for (int i = numMessageInlets-1; i >= 0; i--) { // send to right-most inlet first
-      messageElement = message->getElement(i);
-      switch (messageElement->getType()) {
+    int maxInletToDistribute = (message->getNumElements() < numMessageInlets)
+        ? message->getNumElements() : numMessageInlets;
+    for (int i = maxInletToDistribute-1; i >= 0; i--) { // send to right-most inlet first
+      switch (message->getType(i)) {
         case FLOAT: {
-          distributedMessage->getElement(0)->setFloat(messageElement->getFloat());
+          distributedMessage->setFloat(0, message->getFloat(i));
           break;
         }
         case SYMBOL: {
-          distributedMessage->getElement(0)->setSymbol(messageElement->getSymbol());
+          distributedMessage->setSymbol(0, message->getSymbol(i));
           break;
         }
         case BANG: {
