@@ -39,10 +39,9 @@ const char *DspMultiply::getObjectLabel() {
 void DspMultiply::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 1: {
-      MessageElement *messageElement = message->getElement(0);
-      if (messageElement->getType() == FLOAT) {
+      if (message->isFloat(0)) {
         processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
-        constant = messageElement->getFloat();
+        constant = message->getFloat(0);
       }
       break;
     }
@@ -56,7 +55,7 @@ void DspMultiply::processDspToIndex(float blockIndex) {
   switch (signalPrecedence) {
     case DSP_DSP: {
       ArrayArithmetic::multiply(localDspBufferAtInlet[0], localDspBufferAtInlet[1], 
-          localDspBufferAtOutlet[0], getStartSampleIndex(), getEndSampleIndex(blockIndex));
+          localDspBufferAtOutlet[0], 0, blockSizeInt);
       break;
     }
     case DSP_MESSAGE: {
