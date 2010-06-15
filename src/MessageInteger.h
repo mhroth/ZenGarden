@@ -30,7 +30,6 @@ class MessageInteger : public MessageObject {
 
   public:
     MessageInteger(PdMessage *initMessage, PdGraph *graph);
-    MessageInteger(float constant, PdGraph *graph);
     ~MessageInteger();
 
     const char *getObjectLabel();

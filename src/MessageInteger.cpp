@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009, 2010 Reality Jockey, Ltd.
+ *  Copyright 2009 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -24,24 +24,11 @@
 #include "MessageInteger.h"
 
 MessageInteger::MessageInteger(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
-  if (initMessage->getNumElements() > 0 &&
-      initMessage->getElement(0)->getType() == FLOAT) {
-    init(initMessage->getElement(0)->getFloat());
-  } else {
-    init(0.0f);
-  }
-}
-
-MessageInteger::MessageInteger(float constant, PdGraph *graph) : MessageObject(2, 1, graph) {
-  init(constant);
+  constant = initMessage->isFloat(0) ? truncf(initMessage->getFloat(0)) : 0.0f;
 }
 
 MessageInteger::~MessageInteger() {
   // nothing to do
-}
-
-void MessageInteger::init(float constant) {
-  this->constant = constant;
 }
 
 const char *MessageInteger::getObjectLabel() {
@@ -51,17 +38,15 @@ const char *MessageInteger::getObjectLabel() {
 void MessageInteger::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
-      MessageElement *messageElement = message->getElement(0);
-      switch (messageElement->getType()) {
+      switch (message->getType(0)) {
         case FLOAT: {
-          constant = truncf(messageElement->getFloat());
-          // allow fallthrough
+          constant = truncf(message->getFloat(0));
         }
         case BANG: {
           PdMessage *outgoingMessage = getNextOutgoingMessage(0);
           outgoingMessage->getElement(0)->setFloat(constant);
           outgoingMessage->setTimestamp(message->getTimestamp());
-          sendMessage(0, outgoingMessage); // send a message from outlet 0
+          sendMessage(0, outgoingMessage);
           break;
         }
         default: {
@@ -71,9 +56,8 @@ void MessageInteger::processMessage(int inletIndex, PdMessage *message) {
       break;
     }
     case 1: {
-      MessageElement *messageElement = message->getElement(0);
-      if (messageElement->getType() == FLOAT) {
-        constant = truncf(messageElement->getFloat());
+      if (message->isFloat(0)) {
+        constant = truncf(message->getFloat(0));
       }
       break;
     }
