@@ -23,7 +23,7 @@
 #ifndef _DELAY_RECEIVER_H_
 #define _DELAY_RECEIVER_H_
 
-#import "DspObject.h"
+#include "DspObject.h"
 
 class DspDelayWrite;
 
