@@ -29,23 +29,17 @@ DspVariableDelay::DspVariableDelay(PdMessage *initMessage, PdGraph *graph) : Del
   if (initMessage->isSymbol(0)) {
     name = StaticUtils::copyString(initMessage->getSymbol(0));
     sampleRate = graph->getSampleRate();
-    y0Array = (float *) malloc(blockSizeInt * sizeof(float));
-    y1Array = (float *) malloc(blockSizeInt * sizeof(float));
     xArray = (float *) malloc(blockSizeInt * sizeof(float));
     targetIndexBaseArray = (float *) malloc(blockSizeInt * sizeof(float));
   } else {
     graph->printErr("vd~ requires the name of a delayline. None given.");
     name = NULL;
-    y0Array = NULL;
-    y1Array = NULL;
     xArray = NULL;
     targetIndexBaseArray = NULL;
   }
 }
 
 DspVariableDelay::~DspVariableDelay() {
-  free(y0Array);
-  free(y1Array);
   free(xArray);
   free(targetIndexBaseArray);
 }
@@ -70,6 +64,9 @@ void DspVariableDelay::processDspToIndex(float newBlockIndex) {
   
   float zero = 0.0f;
   float one = 1.0f;
+  // TODO(mhroth): because vDSP_vtabi already does clipping to the buffer bounds, can the following
+  // steps be rearranged or optimised in order to provide the minimum necessary information to the
+  // tablel lookup. Let it do as much work as possible.
   vDSP_vclip(xArray, 1, &zero, &bufferLengthFloat, xArray, 1, blockSizeInt); // clip the delay between 0 and the buffer length
   vDSP_vramp(&targetIndexBase, &one, targetIndexBaseArray, 1, blockSizeInt);  // create targetIndexBaseArray
   vDSP_vsub(xArray, 1, targetIndexBaseArray, 1, xArray, 1, blockSizeInt); // targetIndexBaseArray - xArray (== targetSampleIndex)
@@ -81,14 +78,9 @@ void DspVariableDelay::processDspToIndex(float newBlockIndex) {
       xArray[i] += bufferLengthFloat;
     }
   }
-  
-  vDSP_vindex(buffer, xArray, 1, y0Array, 1, blockSizeInt); // calculate y0 based on xArray index
-  vDSP_vsadd(xArray, 1, &one, xArray, 1, blockSizeInt); // increment index by 1
-  vDSP_vindex(buffer, xArray, 1, y1Array, 1, blockSizeInt); // calculate y1 based on index
-  
-  vDSP_vfrac(xArray, 1, xArray, 1, blockSizeInt); // get the fractional part of x
-  vDSP_vsbm(y1Array, 1, y0Array, 1, xArray, 1, outputBuffer, 1, blockSizeInt); // output = (y1-y0)*x
-  vDSP_vadd(outputBuffer, 1, y0Array, 1, outputBuffer, 1, blockSizeInt); // output = output + y0
+
+  // do table lookup (in buffer) using xArray as indicies, with linear interpolation 
+  vDSP_vtabi(xArray, 1, &one, &zero, buffer, bufferLength+1, outputBuffer, 1, blockSizeInt);
   #else
   for (int i = 0; i < blockSizeInt; i++, targetIndexBase+=1.0f) {
     float delayInSamples = StaticUtils::millisecondsToSamples(inputBuffer[i], sampleRate);
