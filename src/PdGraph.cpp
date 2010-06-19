@@ -117,6 +117,7 @@
 #include "DspSig.h"
 #include "DspSnapshot.h"
 #include "DspSubtract.h"
+#include "DspTableRead.h"
 #include "DspThrow.h"
 #include "DspVariableDelay.h"
 #include "DspWrap.h"
@@ -182,6 +183,7 @@ PdGraph::PdGraph(PdFileParser *fileParser, char *directory, int blockSize,
     catchList = new List();
     declareList = new List();
     tableList = new List();
+    tableReceiverList = new List();
     sendController = new MessageSendController(this);
   } else {
     messageCallbackQueue = NULL;
@@ -197,6 +199,7 @@ PdGraph::PdGraph(PdFileParser *fileParser, char *directory, int blockSize,
     catchList = NULL;
     declareList = NULL;
     tableList = NULL;
+    tableReceiverList = NULL;
     sendController = NULL;
   }
 
@@ -310,6 +313,7 @@ PdGraph::~PdGraph() {
     delete delaylineList;
     delete delayReceiverList;
     delete tableList;
+    delete tableReceiverList;
     free(globalDspInputBuffers);
     free(globalDspOutputBuffers);
     
@@ -549,6 +553,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new DspSnapshot(initMessage, graph);
     } else if (strcmp(objectLabel, "switch~") == 0) {
       return new MessageSwitch(initMessage, graph);
+    } else if (strcmp(objectLabel, "tabread4~") == 0) {
+      return new DspTableRead(initMessage, graph);
     } else if (strcmp(objectLabel, "throw~") == 0) {
       return new DspThrow(initMessage, graph);
     } else if (strcmp(objectLabel, "vd~") == 0) {
@@ -598,6 +604,8 @@ void PdGraph::addObject(MessageObject *node) {
     registerDspSend((DspSend *) node);
   } else if (strcmp(node->getObjectLabel(), "receive~") == 0) {
     registerDspReceive((DspReceive *) node);
+  } else if (strcmp(node->getObjectLabel(), "tabread4~") == 0) {
+    registerTableReceiver((TableReceiver *) node);
   } else if (strcmp(node->getObjectLabel(), "throw~") == 0) {
     registerDspThrow((DspThrow *) node);
   }
@@ -830,14 +838,14 @@ void PdGraph::registerTable(MessageTable *table) {
     }
     
     tableList->add(table);
-    /*
+
     for (int i = 0; i < tableReceiverList->size(); i++) {
       TableReceiver *receiver = (TableReceiver *) tableReceiverList->get(i);
       if (strcmp(receiver->getName(), table->getName()) == 0) {
-        receiver->setTable(newTable);
+        receiver->setTable(table);
       }
     }
-    */
+
   } else {
     parentGraph->registerTable(table);
   }
@@ -853,7 +861,18 @@ MessageTable *PdGraph::getTable(char *name) {
     }
     return NULL;
   } else {
-    parentGraph->getTable(name);
+    return parentGraph->getTable(name);
+  }
+}
+
+void PdGraph::registerTableReceiver(TableReceiver *tableReceiver) {
+  if (isRootGraph()) {
+    tableReceiverList->add(tableReceiver); // add the new receiver
+    
+    MessageTable *table = getTable(tableReceiver->getName());
+    tableReceiver->setTable(table); // set table whether it is NULL or not
+  } else {
+    parentGraph->registerTableReceiver(tableReceiver);
   }
 }
 

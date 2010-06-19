@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -20,23 +20,22 @@
  *
  */
 
-#ifndef _DSP_TABLE_READ_H_
-#define _DSP_TABLE_READ_H_
-
 #include "TableReceiver.h"
 
-/** [tabread4~ name] */
-class DspTableRead : public TableReceiver {
-  
-  public:
-    DspTableRead(PdMessage *initMessage, PdGraph *graph);
-    ~DspTableRead();
-  
-    const char *getObjectLabel();
-  
-  private:
-    void processMessage(int inletIndex, PdMessage *message);
-    void processDspToIndex(float blockIndex);
-};
+TableReceiver::TableReceiver(int numMessageInlets, int numDspInlets, int numMessageOutlets, int numDspOutlets, PdGraph *graph) :
+    DspObject(numMessageInlets, numDspInlets, numMessageOutlets, numDspOutlets, graph) {
+  name = NULL;
+  table = NULL;
+}
 
-#endif // _DSP_TABLE_READ_H_
+TableReceiver::~TableReceiver() {
+  // nothing to do. Subclasses release all resources.
+}
+
+char *TableReceiver::getName() {
+  return name;
+}
+
+void TableReceiver::setTable(MessageTable *newTable) {
+  table = newTable;
+}

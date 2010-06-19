@@ -35,6 +35,7 @@ class MessageTable : public MessageObject {
     const char *getObjectLabel();
   
     char *getName();
+    float *getBuffer(int *bufferLength);
   
   private:
     char *name;

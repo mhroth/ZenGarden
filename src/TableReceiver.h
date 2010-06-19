@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -20,23 +20,28 @@
  *
  */
 
-#ifndef _DSP_TABLE_READ_H_
-#define _DSP_TABLE_READ_H_
+#ifndef _TABLE_RECEIVER_H_
+#define _TABLE_RECEIVER_H_
 
-#include "TableReceiver.h"
+#include "DspObject.h"
+#include "MessageTable.h";
 
-/** [tabread4~ name] */
-class DspTableRead : public TableReceiver {
-  
+/**
+ * This class has a similar function to <code>DelayReceiver</code> in that it is a the superclass
+ * of all objects which read from tables. This includes <code>DspTableRead</code> and
+ * <code>DspTablePlay</code>.
+ */
+class TableReceiver : public DspObject {
   public:
-    DspTableRead(PdMessage *initMessage, PdGraph *graph);
-    ~DspTableRead();
-  
-    const char *getObjectLabel();
-  
-  private:
-    void processMessage(int inletIndex, PdMessage *message);
-    void processDspToIndex(float blockIndex);
+    TableReceiver(int numMessageInlets, int numDspInlets, int numMessageOutlets, int numDspOutlets, PdGraph *graph);
+    virtual ~TableReceiver();
+    
+    char *getName();
+    void setTable(MessageTable *table);
+    
+  protected:
+    char *name;
+    MessageTable *table;
 };
 
-#endif // _DSP_TABLE_READ_H_
+#endif // _TABLE_RECEIVER_H_

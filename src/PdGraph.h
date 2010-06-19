@@ -40,6 +40,7 @@ class MessageReceive;
 class MessageSend;
 class MessageSendController;
 class MessageTable;
+class TableReceiver;
 
 class PdGraph : public DspObject {
   
@@ -151,6 +152,9 @@ class PdGraph : public DspObject {
     /** Returns a list of directories which have neen delcared via a "declare" object. */
     List *getDeclareList();
   
+    /** Gets the named (global) table object. */
+    MessageTable *getTable(char *name);
+  
   private:
     PdGraph(PdFileParser *fileParser, char *directory, int blockSize, int numInputChannels, 
             int numOutputChannels, float sampleRate, PdGraph *parentGraph);
@@ -198,7 +202,7 @@ class PdGraph : public DspObject {
   
     void registerTable(MessageTable *table);
   
-    MessageTable *getTable(char *name);
+    void registerTableReceiver(TableReceiver *tableReceiver);
   
     /** The unique id for this subgraph. Defines "$0". */
     int graphId;
@@ -259,6 +263,9 @@ class PdGraph : public DspObject {
   
     /** A global list of all [table] objects. */
     List *tableList;
+  
+    /** A global list of all table receivers ([tabread4~] and [tabplay~]) */
+    List *tableReceiverList;
   
     /**
      * The global <code>MessageSendController</code> which dispatches messages to named

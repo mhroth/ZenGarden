@@ -27,6 +27,7 @@ LOCAL_SRC_FILES := \
 ./DspSig.cpp \
 ./DspSnapshot.cpp \
 ./DspSubtract.cpp \
+./DspTableRead.cpp \
 ./DspThrow.cpp \
 ./DspVariableDelay.cpp \
 ./DspWrap.cpp \
@@ -106,5 +107,6 @@ LOCAL_SRC_FILES := \
 ./PdMessage.cpp \
 ./RemoteMessageReceiver.cpp \
 ./StaticUtils.cpp \
+./TableReceiver.cpp \
 ./ZenGarden.cpp \
 ./ZGLinkedList.cpp 

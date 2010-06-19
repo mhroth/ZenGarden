@@ -26,13 +26,9 @@
 MessageTable::MessageTable(PdMessage *initMessage, PdGraph *graph) : MessageObject(0, 0, graph) {
   if (initMessage->isSymbol(0)) {
     name = StaticUtils::copyString(initMessage->getSymbol(0));
-    if (initMessage->isFloat(1)) {
-      bufferLength = (int) initMessage->getFloat(1);
-      buffer = (float *) calloc(bufferLength, sizeof(float));
-    } else {
-      buffer = NULL;
-      bufferLength = 0;
-    }
+    // by default, the buffer length is 1024. The buffer should never be NULL.
+    bufferLength = initMessage->isFloat(1) ? (int) initMessage->getFloat(1) : 1024;
+    buffer = (float *) calloc(bufferLength, sizeof(float));
   } else {
     name = NULL;
     buffer = NULL;
@@ -52,4 +48,9 @@ const char *MessageTable::getObjectLabel() {
 
 char *MessageTable::getName() {
   return name;
+}
+
+float *MessageTable::getBuffer(int *bufferLength) {
+  *bufferLength = this->bufferLength;
+  return buffer;
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -20,63 +20,84 @@
  *
  */
 
-#include <math.h>
-#include "DspTable.h"
+#include "ArrayArithmetic.h"
 #include "DspTableRead.h"
+#include "PdGraph.h"
 
-DspTableRead::DspTableRead(char *tag, int blockSize, PdGraph *pdGraph, char *initString) : 
-    RemoteBufferReceiverObject(tag, blockSize, initString) {
-  this->pdGraph = pdGraph;
+DspTableRead::DspTableRead(PdMessage *initMessage, PdGraph *graph) : TableReceiver(2, 1, 0, 1, graph) {
+  if (initMessage->isSymbol(0)) {
+    name = StaticUtils::copyString(initMessage->getSymbol(0));
+  } else {
+    graph->printErr("Object \"tabread4~\" must be initialised with an array name.");
+  }
 }
 
 DspTableRead::~DspTableRead() {
-  // nothing to do
+  free(name);
 }
 
-inline void DspTableRead::processMessage(int inletIndex, PdMessage *message) {
-  if (inletIndex == 0) {
-    if (message->getNumElements() > 1) {
-      MessageElement *messageElement0 = message->getElement(0);
-      if (messageElement0 != NULL && messageElement0->getType() == SYMBOL &&
-          strcmp(messageElement0->getSymbol(), "set") == 0) {
-        MessageElement *messageElement1 = message->getElement(1);
-        if (messageElement1 != NULL && messageElement1->getType() == SYMBOL) {
-          DspTable *newTable = pdGraph->getTable(messageElement1->getSymbol());
-          if (newTable != NULL) {
-            processDspToIndex(message->getBlockIndex());
-            blockIndexOfLastMessage = message->getBlockIndex();
-            setRemoteBuffer(newTable);
-          }
+const char *DspTableRead::getObjectLabel() {
+  return "tabread4~";
+}
+
+void DspTableRead::processMessage(int inletIndex, PdMessage *message) {
+  switch (inletIndex) {
+    case 0: {
+      if (message->isSymbol(0) && message->isSymbol(1) &&
+          strcmp(message->getSymbol(0), "set") == 0) {
+        // change the table from which this object reads
+        processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
+        table = graph->getTable(message->getSymbol(1));
+      }
+      break;
+    }
+    case 1: {
+      // set onset into table
+      // TODO(mhroth): not exactly sure what this means
+      graph->printErr("tabread~ offset not yet supported.");
+      break;
+    }
+    default: {
+      break;
+    }
+  }
+}
+
+void DspTableRead::processDspToIndex(float blockIndex) {
+  if (table != NULL) { // ensure that there is a table to read from!
+    int bufferLength;
+    float *buffer = table->getBuffer(&bufferLength); // TODO(mhroth): ensure that the buffer is non-NULL?
+    float *inputBuffer = localDspBufferAtInlet[0];
+    float *outputBuffer = localDspBufferAtOutlet[0];
+    int startSampleIndex = getStartSampleIndex();
+    int endSampleIndex = getEndSampleIndex(blockIndex);
+    #if TARGET_OS_MAC || TARGET_OS_IPHONE
+    float zero = 0.0f;
+    float one = 1.0f;
+    vDSP_vtabi(inputBuffer, 1, &one, &zero, buffer, bufferLength, outputBuffer, 1,
+        endSampleIndex-startSampleIndex);
+    #else
+    float bufferLengthFloat = (float) bufferLength;
+    for (int i = startSampleIndex; i < endSampleIndex; i++) {
+      if (inputBuffer[i] < 0.0f) {
+        outputBuffer[i] = 0.0f;
+      } else if (inputBuffer[i] > (bufferLengthFloat-1.0f)) {
+        outputBuffer[i] = 0.0f;
+      } else {
+        float floorX = floorf(inputBuffer[i]);
+        float ceilX = ceilf(inputBuffer[i]);
+        if (floorX == ceilX) {
+          outputBuffer[i] = buffer[(int) floorX];
+        } else {
+          // 2-point linear interpolation
+          float y0 = buffer[(int) floorX];
+          float y1 = (ceilX >= bufferLengthFloat) ? 0.0f : buffer[(int) ceilX];
+          float slope = (y1 - y0) / (ceilX - floorX);
+          outputBuffer[i] = (slope * (inputBuffer[i] - floorX)) + y0;
         }
       }
     }
+    #endif
   }
-}
-
-inline void DspTableRead::processDspToIndex(int newBlockIndex) {
-  int headIndex;
-  int bufferLength;
-  float *buffer = remoteBuffer->getBuffer(&headIndex, &bufferLength);
-  float bufferLengthFloat = (float) bufferLength;
-  float *inputBuffer = localDspBufferAtInlet[0];
-  float *outputBuffer = localDspBufferAtOutlet[0];
-  for (int i = blockIndexOfLastMessage; i < newBlockIndex; i++) {
-    if (inputBuffer[i] < 0.0f) {
-      outputBuffer[i] = 0.0f;
-    } else if (inputBuffer[i] > (bufferLengthFloat-1.0f)) {
-      outputBuffer[i] = 0.0f;
-    } else {
-      float floorX = floorf(inputBuffer[i]);
-      float ceilX = ceilf(inputBuffer[i]);
-      if (floorX == ceilX) {
-        outputBuffer[i] = buffer[(int) floorX];
-      } else {
-        // 2-point linear interpolation
-        float y0 = buffer[(int) floorX];
-        float y1 = (ceilX >= bufferLengthFloat) ? 0.0f : buffer[(int) ceilX];
-        float slope = (y1 - y0) / (ceilX - floorX);
-        outputBuffer[i] = (slope * (inputBuffer[i] - floorX)) + y0;
-      }
-    }
-  }
+  blockIndexOfLastMessage = blockIndex;
 }
