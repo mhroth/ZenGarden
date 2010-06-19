@@ -1169,9 +1169,11 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GENERATE_PROFILING_CODE = NO;
+				HEADER_SEARCH_PATHS = /usr/local/include;
 				INSTALL_PATH = /usr/local/bin;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = "-lsndfile";
 				PRODUCT_NAME = pdm10;
 				SDKROOT = macosx10.6;
 			};
@@ -1189,9 +1191,11 @@
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_UNROLL_LOOPS = NO;
 				GENERATE_PROFILING_CODE = NO;
+				HEADER_SEARCH_PATHS = /usr/local/include;
 				INSTALL_PATH = /usr/local/bin;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = "-lsndfile";
 				PRODUCT_NAME = pdm10;
 			};
 			name = Release;
@@ -1246,9 +1250,11 @@
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_UNROLL_LOOPS = NO;
 				GENERATE_PROFILING_CODE = NO;
+				HEADER_SEARCH_PATHS = /usr/local/include;
 				INSTALL_PATH = /usr/local/bin;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = "-lsndfile";
 				PRODUCT_NAME = pdm10;
 			};
 			name = "Simulator Release";
