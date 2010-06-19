@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -20,22 +20,24 @@
  *
  */
 
-#ifndef _DSP_TABLE_H_
-#define _DSP_TABLE_H_
+#ifndef _MESSAGE_TABLE_H_
+#define _MESSAGE_TABLE_H_
 
-#include "RemoteBufferObject.h"
+#include "MessageObject.h"
 
-/**
- * table
- */
-class DspTable : public RemoteBufferObject {
+/** [table name] */
+class MessageTable : public MessageObject {
   
   public:
-    DspTable(char *tag, int blockSize, char *initString);
-    DspTable(int bufferLengthInSamples, char *tag, int blockSize, char *initString);
-    ~DspTable();
+    MessageTable(PdMessage *initMessage, PdGraph *graph);
+    ~MessageTable();
   
-    void processDspToIndex(int newBlockIndex);
+    const char *getObjectLabel();
+  
+  private:
+    char *name;
+    float *buffer;
+    int bufferLength;
 };
 
-#endif // _DSP_TABLE_H_
+#endif // _MESSAGE_TABLE_H_

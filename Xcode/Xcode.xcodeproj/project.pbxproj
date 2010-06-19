@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		8DD76F6A0486A84900D96B5E /* pdm10.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6859E8B029090EE04C91782 /* pdm10.1 */; };
+		900BE81111CD3437003AFE4B /* MessageTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 900BE80F11CD3437003AFE4B /* MessageTable.cpp */; };
+		900BE81211CD3437003AFE4B /* MessageTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 900BE80F11CD3437003AFE4B /* MessageTable.cpp */; };
+		900BE81311CD3437003AFE4B /* MessageTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 900BE81011CD3437003AFE4B /* MessageTable.h */; };
 		900FD5D2116A523F00603221 /* DspLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 900FD5D0116A523F00603221 /* DspLine.cpp */; };
 		900FD624116A68D700603221 /* DspLowpassFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 900FD622116A68D700603221 /* DspLowpassFilter.cpp */; };
 		900FD649116A834800603221 /* DspEnvelope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 900FD647116A834800603221 /* DspEnvelope.cpp */; };
@@ -276,6 +279,8 @@
 
 /* Begin PBXFileReference section */
 		8DD76F6C0486A84900D96B5E /* pdm10 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = pdm10; sourceTree = BUILT_PRODUCTS_DIR; };
+		900BE80F11CD3437003AFE4B /* MessageTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageTable.cpp; path = ../src/MessageTable.cpp; sourceTree = SOURCE_ROOT; };
+		900BE81011CD3437003AFE4B /* MessageTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageTable.h; path = ../src/MessageTable.h; sourceTree = SOURCE_ROOT; };
 		900FD5D0116A523F00603221 /* DspLine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspLine.cpp; path = ../src/DspLine.cpp; sourceTree = SOURCE_ROOT; };
 		900FD5D1116A523F00603221 /* DspLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspLine.h; path = ../src/DspLine.h; sourceTree = SOURCE_ROOT; };
 		900FD622116A68D700603221 /* DspLowpassFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspLowpassFilter.cpp; path = ../src/DspLowpassFilter.cpp; sourceTree = SOURCE_ROOT; };
@@ -738,6 +743,8 @@
 				90B692C51142956C00501D0A /* MessageSwitch.h */,
 				90CA1EF111451A4E00DE0D8A /* MessageSymbol.cpp */,
 				90CA1EF211451A4E00DE0D8A /* MessageSymbol.h */,
+				900BE80F11CD3437003AFE4B /* MessageTable.cpp */,
+				900BE81011CD3437003AFE4B /* MessageTable.h */,
 				90266AE8112ED31D00E3F6F1 /* MessageTangent.cpp */,
 				90266AE9112ED31D00E3F6F1 /* MessageTangent.h */,
 				90CC80BE11711375009D1539 /* MessageText.cpp */,
@@ -831,6 +838,7 @@
 				905A19A411B3EE8300255831 /* DspClip.h in Headers */,
 				9089092511B9797E004A0210 /* ArrayArithmetic.h in Headers */,
 				909C859311BAD5A800E15BE8 /* ZGLinkedList.h in Headers */,
+				900BE81311CD3437003AFE4B /* MessageTable.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1005,6 +1013,7 @@
 				905A195E11B3E82100255831 /* DspBandpassFilter.cpp in Sources */,
 				905A19A511B3EE8300255831 /* DspClip.cpp in Sources */,
 				909C859411BAD5A800E15BE8 /* ZGLinkedList.cpp in Sources */,
+				900BE81111CD3437003AFE4B /* MessageTable.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1121,6 +1130,7 @@
 				905A195C11B3E82100255831 /* DspBandpassFilter.cpp in Sources */,
 				905A19A311B3EE8300255831 /* DspClip.cpp in Sources */,
 				909C859211BAD5A800E15BE8 /* ZGLinkedList.cpp in Sources */,
+				900BE81211CD3437003AFE4B /* MessageTable.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

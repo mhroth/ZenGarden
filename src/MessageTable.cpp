@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -20,22 +20,32 @@
  *
  */
 
-#include "DspTable.h"
+#include "MessageTable.h"
+#include "PdGraph.h"
 
-DspTable::DspTable(char *tag, int blockSize, char *initString) : 
-    RemoteBufferObject(tag, blockSize, initString) {
-  // nothing to do
+MessageTable::MessageTable(PdMessage *initMessage, PdGraph *graph) : MessageObject(0, 0, graph) {
+  if (initMessage->isSymbol(0)) {
+    name = StaticUtils::copyString(initMessage->getSymbol(0));
+    if (initMessage->isFloat(1)) {
+      bufferLength = (int) initMessage->getFloat(1);
+      buffer = (float *) calloc(bufferLength, sizeof(float));
+    } else {
+      buffer = NULL;
+      bufferLength = 0;
+    }
+  } else {
+    name = NULL;
+    buffer = NULL;
+    bufferLength = 0;
+    graph->printErr("Object \"table\" must be initialised with a name.");
+  }
 }
 
-DspTable::DspTable(int bufferLengthInSamples, char *tag, int blockSize, char *initString) : 
-    RemoteBufferObject(bufferLengthInSamples, tag, blockSize, initString) {
-  // nothing to do
+MessageTable::~MessageTable() {
+  free(name);
+  free(buffer);
 }
 
-DspTable::~DspTable() {
-  // nothing to do
-}
-
-void DspTable::processDspToIndex(int newBlockIndex) {
-  // nothing to do
+const char *MessageTable::getObjectLabel() {
+  return "table";
 }
