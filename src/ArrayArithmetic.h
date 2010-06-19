@@ -30,6 +30,10 @@
 #if TARGET_OS_MAC || TARGET_OS_IPHONE
 // The Accelerate framework is a library of tuned vector operations
 #include <Accelerate/Accelerate.h>
+// used for testing if the accelerate framework exists
+// http://developer.apple.com/mac/library/documentation/MacOSX/Conceptual/BPFrameworks/Concepts/WeakLinking.html
+extern void vDSP_vadd(const float*, vDSP_Stride, const float*, vDSP_Stride, float*, vDSP_Stride,
+    vDSP_Length) __attribute__((weak_import));
 #elif __SSE__
 #include <xmmintrin.h>
 #elif _ARM_ARCH_7
@@ -44,6 +48,8 @@
 class ArrayArithmetic {
   
   public:
+    const static bool hasAccelerate;
+  
     static inline void add(float *input0, float *input1, float *output, int startIndex, int endIndex) {
       #ifdef TARGET_OS_MAC
       vDSP_vadd(input0+startIndex, 1, input1+startIndex, 1, output+startIndex, 1, endIndex-startIndex);
