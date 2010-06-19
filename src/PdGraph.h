@@ -39,6 +39,7 @@ class MessageObject;
 class MessageReceive;
 class MessageSend;
 class MessageSendController;
+class MessageTable;
 
 class PdGraph : public DspObject {
   
@@ -195,6 +196,10 @@ class PdGraph : public DspObject {
   
     void registerDspCatch(DspCatch *dspCatch);
   
+    void registerTable(MessageTable *table);
+  
+    MessageTable *getTable(char *name);
+  
     /** The unique id for this subgraph. Defines "$0". */
     int graphId;
   
@@ -251,6 +256,9 @@ class PdGraph : public DspObject {
   
     /** A global list of all declared directories (-path and -stdpath) */
     List *declareList;
+  
+    /** A global list of all [table] objects. */
+    List *tableList;
   
     /**
      * The global <code>MessageSendController</code> which dispatches messages to named

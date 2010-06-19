@@ -49,3 +49,7 @@ MessageTable::~MessageTable() {
 const char *MessageTable::getObjectLabel() {
   return "table";
 }
+
+char *MessageTable::getName() {
+  return name;
+}

@@ -181,6 +181,7 @@ PdGraph::PdGraph(PdFileParser *fileParser, char *directory, int blockSize,
     throwList = new List();
     catchList = new List();
     declareList = new List();
+    tableList = new List();
     sendController = new MessageSendController(this);
   } else {
     messageCallbackQueue = NULL;
@@ -195,6 +196,7 @@ PdGraph::PdGraph(PdFileParser *fileParser, char *directory, int blockSize,
     throwList = NULL;
     catchList = NULL;
     declareList = NULL;
+    tableList = NULL;
     sendController = NULL;
   }
 
@@ -307,6 +309,7 @@ PdGraph::~PdGraph() {
     delete sendController;
     delete delaylineList;
     delete delayReceiverList;
+    delete tableList;
     free(globalDspInputBuffers);
     free(globalDspOutputBuffers);
     
@@ -574,6 +577,8 @@ void PdGraph::addObject(MessageObject *node) {
   } else if (strcmp(node->getObjectLabel(), "receive") == 0 ||
              strcmp(node->getObjectLabel(), "notein") == 0) {
     sendController->addReceiver((RemoteMessageReceiver *) node);
+  } else if (strcmp(node->getObjectLabel(), "table") == 0) {
+    registerTable((MessageTable *) node);
   } else if (strcmp(node->getObjectLabel(), "catch~") == 0) {
     registerDspCatch((DspCatch *) node);
   } else if (strcmp(node->getObjectLabel(), "delread~") == 0 ||
@@ -814,6 +819,42 @@ DspCatch *PdGraph::getDspCatch(char *name) {
     }
   }
   return NULL;
+}
+
+void PdGraph::registerTable(MessageTable *table) {
+  if (isRootGraph()) {
+    // duplicate check
+    if (getTable(table->getName()) != NULL) {
+      printErr("Table with name \"%s\" already exists.", table->getName());
+      return;
+    }
+    
+    tableList->add(table);
+    /*
+    for (int i = 0; i < tableReceiverList->size(); i++) {
+      TableReceiver *receiver = (TableReceiver *) tableReceiverList->get(i);
+      if (strcmp(receiver->getName(), table->getName()) == 0) {
+        receiver->setTable(newTable);
+      }
+    }
+    */
+  } else {
+    parentGraph->registerTable(table);
+  }
+}
+
+MessageTable *PdGraph::getTable(char *name) {
+  if (isRootGraph()) {
+    for (int i = 0; i < tableList->size(); i++) {
+      MessageTable *table = (MessageTable *) tableList->get(i);
+      if (strcmp(table->getName(), name) == 0) {
+        return table;
+      }
+    }
+    return NULL;
+  } else {
+    parentGraph->getTable(name);
+  }
 }
 
 List *PdGraph::getDeclareList() {
