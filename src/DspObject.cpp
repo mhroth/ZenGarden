@@ -219,7 +219,6 @@ void DspObject::resolveInputBuffersAtInlet(int inletIndex) {
       for (int j = 1; j < numConnections; j++) {
         objectLetPair = (ObjectLetPair *) incomingDspConnectionsList->get(j);
         remoteOutputBuffer = ((DspObject *) objectLetPair->object)->getDspBufferAtOutlet(objectLetPair->index);
-        // NOTE(mhroth): is it ok to use the localInputBuffer both as input and output buffer under NEON?
         ArrayArithmetic::add(localInputBuffer, remoteOutputBuffer, localInputBuffer, 0, blockSizeInt);
       }
       break;
