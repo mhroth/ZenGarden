@@ -124,6 +124,7 @@
 		908F65D211582ED5007FDD74 /* MessageClip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908F65D011582ED5007FDD74 /* MessageClip.cpp */; };
 		908F65DE11583013007FDD74 /* MessageRemainder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908F65DC11583013007FDD74 /* MessageRemainder.cpp */; };
 		908F65EA115831C9007FDD74 /* MessageModulus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908F65E8115831C9007FDD74 /* MessageModulus.cpp */; };
+		9099D2E111C5AA3100EB5784 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9099D2E011C5AA3100EB5784 /* Accelerate.framework */; };
 		909A93F51170B3FF00E52B96 /* DspVariableDelay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 909A93F31170B3FF00E52B96 /* DspVariableDelay.cpp */; };
 		909A93F61170B3FF00E52B96 /* DspVariableDelay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 909A93F31170B3FF00E52B96 /* DspVariableDelay.cpp */; };
 		909A93F71170B3FF00E52B96 /* DspVariableDelay.h in Headers */ = {isa = PBXBuildFile; fileRef = 909A93F41170B3FF00E52B96 /* DspVariableDelay.h */; };
@@ -428,6 +429,7 @@
 		908F65DD11583013007FDD74 /* MessageRemainder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageRemainder.h; path = ../src/MessageRemainder.h; sourceTree = SOURCE_ROOT; };
 		908F65E8115831C9007FDD74 /* MessageModulus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageModulus.cpp; path = ../src/MessageModulus.cpp; sourceTree = SOURCE_ROOT; };
 		908F65E9115831C9007FDD74 /* MessageModulus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageModulus.h; path = ../src/MessageModulus.h; sourceTree = SOURCE_ROOT; };
+		9099D2E011C5AA3100EB5784 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		909A93F31170B3FF00E52B96 /* DspVariableDelay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspVariableDelay.cpp; path = ../src/DspVariableDelay.cpp; sourceTree = SOURCE_ROOT; };
 		909A93F41170B3FF00E52B96 /* DspVariableDelay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspVariableDelay.h; path = ../src/DspVariableDelay.h; sourceTree = SOURCE_ROOT; };
 		909A959D1170E97D00E52B96 /* MessagePack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessagePack.cpp; path = ../src/MessagePack.cpp; sourceTree = SOURCE_ROOT; };
@@ -513,6 +515,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9099D2E111C5AA3100EB5784 /* Accelerate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -532,6 +535,7 @@
 				08FB7795FE84155DC02AAC07 /* Source */,
 				C6859E8C029090F304C91782 /* Documentation */,
 				1AB674ADFE9D54B511CA2CBB /* Products */,
+				9099D2E011C5AA3100EB5784 /* Accelerate.framework */,
 			);
 			name = pdm10;
 			sourceTree = "<group>";
@@ -541,8 +545,8 @@
 			children = (
 				9089092411B9797E004A0210 /* ArrayArithmetic.h */,
 				90398C691113564400E5A8B6 /* ConnectionType.h */,
-				90D7B8B3117BA3520005984A /* DelayReceiver.h */,
 				90AA92DD117FB129001CBE3F /* DelayReceiver.cpp */,
+				90D7B8B3117BA3520005984A /* DelayReceiver.h */,
 				90398C6C1113564400E5A8B6 /* DspAdd.cpp */,
 				90398C6D1113564400E5A8B6 /* DspAdd.h */,
 				90398C6A1113564400E5A8B6 /* DspAdc.cpp */,
@@ -1136,6 +1140,8 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GENERATE_PROFILING_CODE = NO;
 				INSTALL_PATH = /usr/local/bin;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = pdm10;
 				SDKROOT = macosx10.6;
 			};
@@ -1154,6 +1160,8 @@
 				GCC_UNROLL_LOOPS = NO;
 				GENERATE_PROFILING_CODE = NO;
 				INSTALL_PATH = /usr/local/bin;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = pdm10;
 			};
 			name = Release;
@@ -1184,6 +1192,56 @@
 			};
 			name = Release;
 		};
+		903620C611C0509B00578E47 /* Simulator Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.6;
+			};
+			name = "Simulator Release";
+		};
+		903620C711C0509B00578E47 /* Simulator Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_UNROLL_LOOPS = NO;
+				GENERATE_PROFILING_CODE = NO;
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = pdm10;
+			};
+			name = "Simulator Release";
+		};
+		903620C811C0509B00578E47 /* Simulator Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				OTHER_CFLAGS = "-msse";
+				PREBINDING = NO;
+				PRODUCT_NAME = zengarden;
+				SDKROOT = iphonesimulator3.0;
+				ZERO_LINK = NO;
+			};
+			name = "Simulator Release";
+		};
 		90AA6369116F4E7C00477770 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1201,7 +1259,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
@@ -1227,6 +1285,7 @@
 			buildConfigurations = (
 				1DEB923208733DC60010E9CD /* Debug */,
 				1DEB923308733DC60010E9CD /* Release */,
+				903620C711C0509B00578E47 /* Simulator Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1236,6 +1295,7 @@
 			buildConfigurations = (
 				1DEB923608733DC60010E9CD /* Debug */,
 				1DEB923708733DC60010E9CD /* Release */,
+				903620C611C0509B00578E47 /* Simulator Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1245,6 +1305,7 @@
 			buildConfigurations = (
 				90AA6369116F4E7C00477770 /* Debug */,
 				90AA636A116F4E7C00477770 /* Release */,
+				903620C811C0509B00578E47 /* Simulator Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
