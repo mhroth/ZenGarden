@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,27 +23,19 @@
 #ifndef _MESSAGE_SOUNDFILER_H_
 #define _MESSAGE_SOUNDFILER_H_
 
-#include "MessageInputMessageOutputObject.h"
-#include "PdGraph.h"
+#include "MessageObject.h"
 
-/**
- * Implements the soundfiler message object.
- *
- * This is it, this bad boy reads (and is supposed to write according to the specifications)
- * wav (and supposedly aiff) files into memory.
- */
-class MessageSoundfiler : public MessageInputMessageOutputObject {
+/** [soundfiler~] */
+class MessageSoundfiler : public MessageObject {
   
   public:
-    MessageSoundfiler(PdGraph *pdGraph, char *initString);
+    MessageSoundfiler(PdMessage *initMessage, PdGraph *pdGraph);
     ~MessageSoundfiler();
-    
-  protected:
-    inline void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage();
   
+    const char *getObjectLabel();
+    
   private:
-    PdGraph *pdGraph;
+    void processMessage(int inletIndex, PdMessage *message);
 };
 
 #endif // _MESSAGE_SOUNDFILER_H_

@@ -17,6 +17,11 @@
 		900BE85811CD445F003AFE4B /* DspTableRead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 900BE85611CD445F003AFE4B /* DspTableRead.cpp */; };
 		900BE85911CD445F003AFE4B /* DspTableRead.h in Headers */ = {isa = PBXBuildFile; fileRef = 900BE85711CD445F003AFE4B /* DspTableRead.h */; };
 		900BE85A11CD445F003AFE4B /* DspTableRead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 900BE85611CD445F003AFE4B /* DspTableRead.cpp */; };
+		900BE8DD11CD526D003AFE4B /* MessageSoundfiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 900BE8DB11CD526D003AFE4B /* MessageSoundfiler.cpp */; };
+		900BE8DE11CD526D003AFE4B /* MessageSoundfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 900BE8DC11CD526D003AFE4B /* MessageSoundfiler.h */; };
+		900BE8DF11CD526D003AFE4B /* MessageSoundfiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 900BE8DB11CD526D003AFE4B /* MessageSoundfiler.cpp */; };
+		900E53BC11CD8CCA00B66B2B /* ArrayArithmetic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 900E53BB11CD8CCA00B66B2B /* ArrayArithmetic.cpp */; };
+		900E53BD11CD8CCA00B66B2B /* ArrayArithmetic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 900E53BB11CD8CCA00B66B2B /* ArrayArithmetic.cpp */; };
 		900FD5D2116A523F00603221 /* DspLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 900FD5D0116A523F00603221 /* DspLine.cpp */; };
 		900FD624116A68D700603221 /* DspLowpassFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 900FD622116A68D700603221 /* DspLowpassFilter.cpp */; };
 		900FD649116A834800603221 /* DspEnvelope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 900FD647116A834800603221 /* DspEnvelope.cpp */; };
@@ -133,7 +138,6 @@
 		908F65D211582ED5007FDD74 /* MessageClip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908F65D011582ED5007FDD74 /* MessageClip.cpp */; };
 		908F65DE11583013007FDD74 /* MessageRemainder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908F65DC11583013007FDD74 /* MessageRemainder.cpp */; };
 		908F65EA115831C9007FDD74 /* MessageModulus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 908F65E8115831C9007FDD74 /* MessageModulus.cpp */; };
-		9099D2E111C5AA3100EB5784 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9099D2E011C5AA3100EB5784 /* Accelerate.framework */; };
 		909A93F51170B3FF00E52B96 /* DspVariableDelay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 909A93F31170B3FF00E52B96 /* DspVariableDelay.cpp */; };
 		909A93F61170B3FF00E52B96 /* DspVariableDelay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 909A93F31170B3FF00E52B96 /* DspVariableDelay.cpp */; };
 		909A93F71170B3FF00E52B96 /* DspVariableDelay.h in Headers */ = {isa = PBXBuildFile; fileRef = 909A93F41170B3FF00E52B96 /* DspVariableDelay.h */; };
@@ -291,6 +295,9 @@
 		900BE84311CD3B74003AFE4B /* TableReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TableReceiver.cpp; path = ../src/TableReceiver.cpp; sourceTree = SOURCE_ROOT; };
 		900BE85611CD445F003AFE4B /* DspTableRead.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspTableRead.cpp; path = ../src/DspTableRead.cpp; sourceTree = SOURCE_ROOT; };
 		900BE85711CD445F003AFE4B /* DspTableRead.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspTableRead.h; path = ../src/DspTableRead.h; sourceTree = SOURCE_ROOT; };
+		900BE8DB11CD526D003AFE4B /* MessageSoundfiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageSoundfiler.cpp; path = ../src/MessageSoundfiler.cpp; sourceTree = SOURCE_ROOT; };
+		900BE8DC11CD526D003AFE4B /* MessageSoundfiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageSoundfiler.h; path = ../src/MessageSoundfiler.h; sourceTree = SOURCE_ROOT; };
+		900E53BB11CD8CCA00B66B2B /* ArrayArithmetic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ArrayArithmetic.cpp; path = ../src/ArrayArithmetic.cpp; sourceTree = SOURCE_ROOT; };
 		900FD5D0116A523F00603221 /* DspLine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspLine.cpp; path = ../src/DspLine.cpp; sourceTree = SOURCE_ROOT; };
 		900FD5D1116A523F00603221 /* DspLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspLine.h; path = ../src/DspLine.h; sourceTree = SOURCE_ROOT; };
 		900FD622116A68D700603221 /* DspLowpassFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspLowpassFilter.cpp; path = ../src/DspLowpassFilter.cpp; sourceTree = SOURCE_ROOT; };
@@ -444,7 +451,6 @@
 		908F65DD11583013007FDD74 /* MessageRemainder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageRemainder.h; path = ../src/MessageRemainder.h; sourceTree = SOURCE_ROOT; };
 		908F65E8115831C9007FDD74 /* MessageModulus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageModulus.cpp; path = ../src/MessageModulus.cpp; sourceTree = SOURCE_ROOT; };
 		908F65E9115831C9007FDD74 /* MessageModulus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageModulus.h; path = ../src/MessageModulus.h; sourceTree = SOURCE_ROOT; };
-		9099D2E011C5AA3100EB5784 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		909A93F31170B3FF00E52B96 /* DspVariableDelay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspVariableDelay.cpp; path = ../src/DspVariableDelay.cpp; sourceTree = SOURCE_ROOT; };
 		909A93F41170B3FF00E52B96 /* DspVariableDelay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspVariableDelay.h; path = ../src/DspVariableDelay.h; sourceTree = SOURCE_ROOT; };
 		909A959D1170E97D00E52B96 /* MessagePack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessagePack.cpp; path = ../src/MessagePack.cpp; sourceTree = SOURCE_ROOT; };
@@ -530,7 +536,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9099D2E111C5AA3100EB5784 /* Accelerate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -550,7 +555,6 @@
 				08FB7795FE84155DC02AAC07 /* Source */,
 				C6859E8C029090F304C91782 /* Documentation */,
 				1AB674ADFE9D54B511CA2CBB /* Products */,
-				9099D2E011C5AA3100EB5784 /* Accelerate.framework */,
 			);
 			name = pdm10;
 			sourceTree = "<group>";
@@ -559,6 +563,7 @@
 			isa = PBXGroup;
 			children = (
 				9089092411B9797E004A0210 /* ArrayArithmetic.h */,
+				900E53BB11CD8CCA00B66B2B /* ArrayArithmetic.cpp */,
 				90398C691113564400E5A8B6 /* ConnectionType.h */,
 				90AA92DD117FB129001CBE3F /* DelayReceiver.cpp */,
 				90D7B8B3117BA3520005984A /* DelayReceiver.h */,
@@ -743,6 +748,8 @@
 				908C3476114FFD940092985C /* MessageSendController.h */,
 				908A374B1125DFF800558388 /* MessageSine.cpp */,
 				908A374C1125DFF800558388 /* MessageSine.h */,
+				900BE8DB11CD526D003AFE4B /* MessageSoundfiler.cpp */,
+				900BE8DC11CD526D003AFE4B /* MessageSoundfiler.h */,
 				90D2713C11625D2C000E9E5F /* MessageSpigot.cpp */,
 				90D2713D11625D2C000E9E5F /* MessageSpigot.h */,
 				90C0514C11347FC500117E4B /* MessageSqrt.cpp */,
@@ -855,6 +862,7 @@
 				900BE81311CD3437003AFE4B /* MessageTable.h in Headers */,
 				900BE84411CD3B74003AFE4B /* TableReceiver.h in Headers */,
 				900BE85911CD445F003AFE4B /* DspTableRead.h in Headers */,
+				900BE8DE11CD526D003AFE4B /* MessageSoundfiler.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1032,6 +1040,8 @@
 				900BE81111CD3437003AFE4B /* MessageTable.cpp in Sources */,
 				900BE84611CD3B74003AFE4B /* TableReceiver.cpp in Sources */,
 				900BE85A11CD445F003AFE4B /* DspTableRead.cpp in Sources */,
+				900BE8DF11CD526D003AFE4B /* MessageSoundfiler.cpp in Sources */,
+				900E53BD11CD8CCA00B66B2B /* ArrayArithmetic.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1151,6 +1161,8 @@
 				900BE81211CD3437003AFE4B /* MessageTable.cpp in Sources */,
 				900BE84511CD3B74003AFE4B /* TableReceiver.cpp in Sources */,
 				900BE85811CD445F003AFE4B /* DspTableRead.cpp in Sources */,
+				900BE8DD11CD526D003AFE4B /* MessageSoundfiler.cpp in Sources */,
+				900E53BC11CD8CCA00B66B2B /* ArrayArithmetic.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1173,7 +1185,11 @@
 				INSTALL_PATH = /usr/local/bin;
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "-lsndfile";
+				OTHER_LDFLAGS = (
+					"-weak_framework",
+					Accelerate,
+					"-lsndfile",
+				);
 				PRODUCT_NAME = pdm10;
 				SDKROOT = macosx10.6;
 			};
@@ -1195,7 +1211,11 @@
 				INSTALL_PATH = /usr/local/bin;
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "-lsndfile";
+				OTHER_LDFLAGS = (
+					"-weak_framework",
+					Accelerate,
+					"-lsndfile",
+				);
 				PRODUCT_NAME = pdm10;
 			};
 			name = Release;
@@ -1254,7 +1274,11 @@
 				INSTALL_PATH = /usr/local/bin;
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "-lsndfile";
+				OTHER_LDFLAGS = (
+					"-weak_framework",
+					Accelerate,
+					"-lsndfile",
+				);
 				PRODUCT_NAME = pdm10;
 			};
 			name = "Simulator Release";

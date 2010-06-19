@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -22,19 +22,25 @@
 
 #include <sndfile.h>
 #include "MessageSoundfiler.h"
-#include "DspTable.h"
-#include "StaticUtils.h"
 
-MessageSoundfiler::MessageSoundfiler(PdGraph *pdGraph, char *initString) : 
-    MessageInputMessageOutputObject(1, 1, initString) {
-  this->pdGraph = pdGraph;
+MessageSoundfiler::MessageSoundfiler(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
+  // TODO(mhroth)
 }
 
 MessageSoundfiler::~MessageSoundfiler() {
   // nothing to do
 }
 
-inline void MessageSoundfiler::processMessage(int inletIndex, PdMessage *message) {
+const char *MessageSoundfiler::getObjectLabel() {
+  return "soundfiler";
+}
+
+void MessageSoundfiler::processMessage(int inletIndex, PdMessage *message) {
+  if (message->isSymbol(0) && strcmp(message->getSymbol(0), "read") == 0) {
+    
+  }
+  
+  /*
   if (inletIndex == 0) {
     int currentElementIndex = 0;
     bool shouldResizeTable = false;
@@ -112,10 +118,5 @@ inline void MessageSoundfiler::processMessage(int inletIndex, PdMessage *message
       // TODO(mhroth): not supported yet
     }
   }
-}
-
-PdMessage *MessageSoundfiler::newCanonicalMessage() {
-  PdMessage *message = new PdMessage();
-  message->addElement(new MessageElement(0.0f));
-  return message;
+  */
 }
