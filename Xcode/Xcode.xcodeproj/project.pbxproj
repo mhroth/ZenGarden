@@ -1295,6 +1295,10 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				OTHER_CFLAGS = "-msse";
+				OTHER_LDFLAGS = (
+					"-weak_framework",
+					Accelerate,
+				);
 				PREBINDING = NO;
 				PRODUCT_NAME = zengarden;
 				SDKROOT = iphonesimulator3.0;
@@ -1309,6 +1313,10 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_LDFLAGS = (
+					"-weak_framework",
+					Accelerate,
+				);
 				PREBINDING = NO;
 				PRODUCT_NAME = zengarden;
 				SDKROOT = iphoneos3.0;
@@ -1329,6 +1337,10 @@
 				OTHER_CFLAGS = (
 					"-mfpu=neon",
 					"-mfloat-abi=softfp",
+				);
+				OTHER_LDFLAGS = (
+					"-weak_framework",
+					Accelerate,
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = zengarden;

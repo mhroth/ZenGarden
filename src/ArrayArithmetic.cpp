@@ -22,4 +22,8 @@
 
 #include "ArrayArithmetic.h"
 
+#ifdef __APPLE__
 const bool ArrayArithmetic::hasAccelerate = (vDSP_vadd != NULL);
+#else
+const bool ArrayArithmetic::hasAccelerate = false;
+#endif
