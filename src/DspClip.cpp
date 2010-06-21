@@ -20,6 +20,7 @@
  *
  */
 
+#include "ArrayArithmetic.h"
 #include "DspClip.h"
 #include "PdGraph.h"
 
@@ -58,18 +59,26 @@ void DspClip::processMessage(int inletIndex, PdMessage *message) {
   }
 }
 
-void DspClip::processDspToIndex(float newBlockIndex) {
+void DspClip::processDspToIndex(float blockIndex) {
   float *inputBuffer = localDspBufferAtInlet[0];
   float *outputBuffer = localDspBufferAtOutlet[0];
-  int endSampleIndex = getEndSampleIndex(newBlockIndex);
-  for (int i = getStartSampleIndex(); i < endSampleIndex; i++) {
-    if (inputBuffer[i] <= lowerBound) {
-      outputBuffer[i] = lowerBound;
-    } else if (inputBuffer[i] >= upperBound) {
-      outputBuffer[i] = upperBound;
-    } else {
-      outputBuffer[i] = inputBuffer[i];
+  int startSampleIndex = getStartSampleIndex();
+  int endSampleIndex = getEndSampleIndex(blockIndex);
+  if (ArrayArithmetic::hasAccelerate) {
+    #if __APPLE__
+    vDSP_vclip(inputBuffer+startSampleIndex, 1, &lowerBound, &upperBound,
+        outputBuffer+startSampleIndex, 1, endSampleIndex-startSampleIndex);
+    #endif
+  } else {
+    for (int i = startSampleIndex; i < endSampleIndex; i++) {
+      if (inputBuffer[i] <= lowerBound) {
+        outputBuffer[i] = lowerBound;
+      } else if (inputBuffer[i] >= upperBound) {
+        outputBuffer[i] = upperBound;
+      } else {
+        outputBuffer[i] = inputBuffer[i];
+      }
     }
   }
-  blockIndexOfLastMessage = newBlockIndex;
+  blockIndexOfLastMessage = blockIndex;
 }
