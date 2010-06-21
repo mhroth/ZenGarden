@@ -83,21 +83,22 @@ void DspLowpassFilter::processDspToIndex(float blockIndex) {
   const int endSampleIndex = getEndSampleIndex(blockIndex);
   const int duration = endSampleIndex - startSampleIndex;
   const int durationBytes = duration * sizeof(float);
-  #if TARGET_OS_MAC || TARGET_OS_IPHONE
-  memcpy(filterInputBuffer+2, inputBuffer+startSampleIndex, durationBytes);
-  vDSP_deq22(filterInputBuffer, 1, coefficients, filterOutputBuffer, 1, duration);
-  memcpy(outputBuffer+startSampleIndex, filterOutputBuffer+2, durationBytes);
-  // copy last two inputs and outputs to start of filter buffer arrays
-  memcpy(filterInputBuffer, filterInputBuffer+duration, 2 * sizeof(float));
-  memcpy(filterOutputBuffer, filterOutputBuffer+duration, 2 * sizeof(float));
-  #else
-  ArrayArithmetic::multiply(inputBuffer, alpha, outputBuffer, startSampleIndex, endSampleIndex);
-  outputBuffer[startSampleIndex] += beta * tap_0;
-  for (int i = startSampleIndex+1; i < endSampleIndex; i++) {
-    outputBuffer[i] += beta * outputBuffer[i-1];
+  if (ArrayArithmetic::hasAccelerate) {
+    #if __APPLE__
+    memcpy(filterInputBuffer+2, inputBuffer+startSampleIndex, durationBytes);
+    vDSP_deq22(filterInputBuffer, 1, coefficients, filterOutputBuffer, 1, duration);
+    memcpy(outputBuffer+startSampleIndex, filterOutputBuffer+2, durationBytes);
+    // copy last two inputs and outputs to start of filter buffer arrays
+    memcpy(filterInputBuffer, filterInputBuffer+duration, 2 * sizeof(float));
+    memcpy(filterOutputBuffer, filterOutputBuffer+duration, 2 * sizeof(float));
+    #endif
+  } else {
+    ArrayArithmetic::multiply(inputBuffer, alpha, outputBuffer, startSampleIndex, endSampleIndex);
+    outputBuffer[startSampleIndex] += beta * tap_0;
+    for (int i = startSampleIndex+1; i < endSampleIndex; i++) {
+      outputBuffer[i] += beta * outputBuffer[i-1];
+    }
+    tap_0 = outputBuffer[endSampleIndex-1];
   }
-  tap_0 = outputBuffer[endSampleIndex-1];
-  #endif
-  
   blockIndexOfLastMessage = blockIndex;
 }
