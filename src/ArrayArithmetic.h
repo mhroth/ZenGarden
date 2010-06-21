@@ -132,186 +132,210 @@ class ArrayArithmetic {
     }
     
     static inline void subtract(float *input0, float *input1, float *output, int startIndex, int endIndex) {
-      #if TARGET_OS_MAC || TARGET_OS_IPHONE
-      vDSP_vsub(input1+startIndex, 1, input0+startIndex, 1, output+startIndex, 1, endIndex-startIndex);
-      #elif __SSE__
-      __m128 inVec0, inVec1, res;
-      const int numFours = (endIndex - startIndex) >> 2;
-      for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
-        inVec0 = _mm_loadu_ps(input0 + i);
-        inVec1 = _mm_loadu_ps(input1 + i);
-        res = _mm_sub_ps(inVec0, inVec1);
-        _mm_store_ps(output + i, res);
+      if (ArrayArithmetic::hasAccelerate) {
+        #if __APPLE__
+        vDSP_vsub(input1+startIndex, 1, input0+startIndex, 1, output+startIndex, 1, endIndex-startIndex);
+        #endif
+      } else {
+        #if __SSE__
+        __m128 inVec0, inVec1, res;
+        const int numFours = (endIndex - startIndex) >> 2;
+        for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
+          inVec0 = _mm_loadu_ps(input0 + i);
+          inVec1 = _mm_loadu_ps(input1 + i);
+          res = _mm_sub_ps(inVec0, inVec1);
+          _mm_store_ps(output + i, res);
+        }
+        for (int i = startIndex + numFours<<2; i < endIndex; i++) {
+          output[i] = input0[i] - input1[i];
+        }
+        #elif __ARM_NEON__
+        // the number of sets of four samples in the block to be processed
+        float32x4_t inVec0, inVec1, res;
+        const int numFours = (endIndex - startIndex) >> 2;
+        for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
+          inVec0 = vld1q_f32((const float32_t *) (input0 + i)); // use VLD1 as data is NOT interleaved
+          inVec1 = vld1q_f32((const float32_t *) (input1 + i)); // load
+          res = vsubq_f32(inVec0, inVec1); // compute
+          vst1q_f32((float32_t *) (output + i), res); // store
+        }
+        // compute the remainder of the block (if any)
+        for (int i = startIndex + numFours<<2; i < endIndex; i++) {
+          output[i] = input0[i] - input1[i];
+        }
+        #else
+        for (int i = startIndex; i < endIndex; i++) {
+          output[i] = input0[i] - input1[i];
+        }
+        #endif
       }
-      for (int i = startIndex + numFours<<2; i < endIndex; i++) {
-        output[i] = input0[i] - input1[i];
-      }
-      #elif __ARM_NEON__
-      // the number of sets of four samples in the block to be processed
-      float32x4_t inVec0, inVec1, res;
-      const int numFours = (endIndex - startIndex) >> 2;
-      for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
-        inVec0 = vld1q_f32((const float32_t *) (input0 + i)); // use VLD1 as data is NOT interleaved
-        inVec1 = vld1q_f32((const float32_t *) (input1 + i)); // load
-        res = vsubq_f32(inVec0, inVec1); // compute
-        vst1q_f32((float32_t *) (output + i), res); // store
-      }
-      // compute the remainder of the block (if any)
-      for (int i = startIndex + numFours<<2; i < endIndex; i++) {
-        output[i] = input0[i] - input1[i];
-      }
-      #else
-      for (int i = startIndex; i < endIndex; i++) {
-        output[i] = input0[i] - input1[i];
-      }
-      #endif
     }
   
     static inline void subtract(float *input, float constant, float *output, int startIndex, int endIndex) {
-#if TARGET_OS_MAC || TARGET_OS_IPHONE
-      float negation = -1.0f * constant;
-      vDSP_vsadd(input+startIndex, 1, &negation, output+startIndex, 1, endIndex-startIndex);
-      #elif __SSE__
-      __m128 inVec, res;
-      const __m128 constVec = _mm_load1_ps(&constant);
-      const int numFours = (endIndex - startIndex) >> 2;
-      for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
-        inVec = _mm_loadu_ps(input + i);
-        res = _mm_sub_ps(inVec, constVec);
-        _mm_store_ps(output + i, res);
+      if (ArrayArithmetic::hasAccelerate) {
+        #if __APPLE__
+        float negation = -1.0f * constant;
+        vDSP_vsadd(input+startIndex, 1, &negation, output+startIndex, 1, endIndex-startIndex);  
+        #endif
+      } else {
+        #if __SSE__
+        __m128 inVec, res;
+        const __m128 constVec = _mm_load1_ps(&constant);
+        const int numFours = (endIndex - startIndex) >> 2;
+        for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
+          inVec = _mm_loadu_ps(input + i);
+          res = _mm_sub_ps(inVec, constVec);
+          _mm_store_ps(output + i, res);
+        }
+        for (int i = startIndex + numFours<<2; i < endIndex; i++) {
+          output[i] = input[i] - constant;
+        }
+        #elif __ARM_NEON__
+        const int numFours = (endIndex - startIndex) >> 2;
+        const float32x4_t constVec = vdupq_n_f32(constant);
+        for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
+          float32x4_t inVec = vld1q_f32((const float32_t *) (input + i));
+          float32x4_t res = vsubq_f32(inVec, constVec);
+          vst1q_f32((float32_t *) (output + i), res);
+        }
+        for (int i = startIndex + numFours<<2; i < endIndex; i++) {
+          output[i] = input[i] - constant;
+        }
+        #else
+        for (int i = startIndex; i < endIndex; i++) {
+          output[i] = input[i] - constant;
+        }
+        #endif
       }
-      for (int i = startIndex + numFours<<2; i < endIndex; i++) {
-        output[i] = input[i] - constant;
-      }
-      #elif __ARM_NEON__
-      const int numFours = (endIndex - startIndex) >> 2;
-      const float32x4_t constVec = vdupq_n_f32(constant);
-      for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
-        float32x4_t inVec = vld1q_f32((const float32_t *) (input + i));
-        float32x4_t res = vsubq_f32(inVec, constVec);
-        vst1q_f32((float32_t *) (output + i), res);
-      }
-      for (int i = startIndex + numFours<<2; i < endIndex; i++) {
-        output[i] = input[i] - constant;
-      }
-      #else
-      for (int i = startIndex; i < endIndex; i++) {
-        output[i] = input[i] - constant;
-      }
-      #endif
     }
     
     static inline void multiply(float *input0, float *input1, float *output, int startIndex, int endIndex) {
-      #if TARGET_OS_MAC || TARGET_OS_IPHONE
-      vDSP_vmul(input0+startIndex, 1, input1+startIndex, 1, output+startIndex, 1, endIndex-startIndex);
-      #elif __SSE__
-      __m128 inVec0, inVec1, res;
-      const int numFours = (endIndex - startIndex) >> 2;
-      for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
-        inVec0 = _mm_loadu_ps(input0 + i);
-        inVec1 = _mm_loadu_ps(input1 + i);
-        res = _mm_mul_ps(inVec0, inVec1);
-        _mm_store_ps(output + i, res);
+      if (ArrayArithmetic::hasAccelerate) {
+        #if __APPLE__
+        vDSP_vmul(input0+startIndex, 1, input1+startIndex, 1, output+startIndex, 1, endIndex-startIndex);
+        #endif
+      } else {
+        #if __SSE__
+        __m128 inVec0, inVec1, res;
+        const int numFours = (endIndex - startIndex) >> 2;
+        for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
+          inVec0 = _mm_loadu_ps(input0 + i);
+          inVec1 = _mm_loadu_ps(input1 + i);
+          res = _mm_mul_ps(inVec0, inVec1);
+          _mm_store_ps(output + i, res);
+        }
+        for (int i = startIndex + numFours<<2; i < endIndex; i++) {
+          output[i] = input0[i] * input1[i];
+        }
+        #elif __ARM_NEON__
+        // the number of sets of four samples in the block to be processed
+        float32x4_t inVec0, inVec1, res;
+        const int numFours = (endIndex - startIndex) >> 2;
+        for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
+          inVec0 = vld1q_f32((const float32_t *) (input0 + i)); // use VLD1 as data is NOT interleaved
+          inVec1 = vld1q_f32((const float32_t *) (input1 + i)); // load
+          res = vmulq_f32(inVec0, inVec1); // compute
+          vst1q_f32((float32_t *) (output + i), res); // store
+        }
+        // compute the remainder of the block (if any)
+        for (int i = startIndex + numFours<<2; i < endIndex; i++) {
+          output[i] = input0[i] * input1[i];
+        }
+        #else
+        for (int i = startIndex; i < endIndex; i++) {
+          output[i] = input0[i] * input1[i];
+        }
+        #endif
       }
-      for (int i = startIndex + numFours<<2; i < endIndex; i++) {
-        output[i] = input0[i] * input1[i];
-      }
-      #elif __ARM_NEON__
-      // the number of sets of four samples in the block to be processed
-      float32x4_t inVec0, inVec1, res;
-      const int numFours = (endIndex - startIndex) >> 2;
-      for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
-        inVec0 = vld1q_f32((const float32_t *) (input0 + i)); // use VLD1 as data is NOT interleaved
-        inVec1 = vld1q_f32((const float32_t *) (input1 + i)); // load
-        res = vmulq_f32(inVec0, inVec1); // compute
-        vst1q_f32((float32_t *) (output + i), res); // store
-      }
-      // compute the remainder of the block (if any)
-      for (int i = startIndex + numFours<<2; i < endIndex; i++) {
-        output[i] = input0[i] * input1[i];
-      }
-      #else
-      for (int i = startIndex; i < endIndex; i++) {
-        output[i] = input0[i] * input1[i];
-      }
-      #endif
     }
   
     static inline void multiply(float *input, float constant, float *output, int startIndex, int endIndex) {
-      #if TARGET_OS_MAC || TARGET_OS_IPHONE
-      vDSP_vsmul(input+startIndex, 1, &constant, output+startIndex, 1, endIndex-startIndex);
-      #elif __SSE__
-      __m128 inVec, res;
-      const __m128 constVec = _mm_load1_ps(&constant);
-      const int numFours = (endIndex - startIndex) >> 2;
-      for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
-        inVec = _mm_loadu_ps(input + i);
-        res = _mm_mul_ps(inVec, constVec);
-        _mm_store_ps(output + i, res);
+      if (ArrayArithmetic::hasAccelerate) {
+        #if __APPLE__
+        vDSP_vsmul(input+startIndex, 1, &constant, output+startIndex, 1, endIndex-startIndex);
+        #endif
+      } else {
+        #elif __SSE__
+        __m128 inVec, res;
+        const __m128 constVec = _mm_load1_ps(&constant);
+        const int numFours = (endIndex - startIndex) >> 2;
+        for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
+          inVec = _mm_loadu_ps(input + i);
+          res = _mm_mul_ps(inVec, constVec);
+          _mm_store_ps(output + i, res);
+        }
+        for (int i = startIndex + numFours<<2; i < endIndex; i++) {
+          output[i] = input[i] * constant;
+        }
+        #elif __ARM_NEON__
+        const int numFours = (endIndex - startIndex) >> 2;
+        for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
+          float32x4_t inVec = vld1q_f32((const float32_t *) (input + i));
+          float32x4_t res = vmulq_n_f32(inVec, constant);
+          vst1q_f32((float32_t *) (output + i), res);
+        }
+        for (int i = startIndex + numFours<<2; i < endIndex; i++) {
+          output[i] = input[i] * constant;
+        }
+        #else
+        for (int i = startIndex; i < endIndex; i++) {
+          output[i] = input[i] * constant;
+        }
+        #endif
       }
-      for (int i = startIndex + numFours<<2; i < endIndex; i++) {
-        output[i] = input[i] * constant;
-      }
-      #elif __ARM_NEON__
-      const int numFours = (endIndex - startIndex) >> 2;
-      for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
-        float32x4_t inVec = vld1q_f32((const float32_t *) (input + i));
-        float32x4_t res = vmulq_n_f32(inVec, constant);
-        vst1q_f32((float32_t *) (output + i), res);
-      }
-      for (int i = startIndex + numFours<<2; i < endIndex; i++) {
-        output[i] = input[i] * constant;
-      }
-      #else
-      for (int i = startIndex; i < endIndex; i++) {
-        output[i] = input[i] * constant;
-      }
-      #endif
     }
     
     // recipocal: vrecpeq_f32
     static inline void divide(float *input0, float *input1, float *output, int startIndex, int endIndex) {
-      #if TARGET_OS_MAC || TARGET_OS_IPHONE
-      vDSP_vdiv(input1+startIndex, 1, input0+startIndex, 1, output+startIndex, 1, endIndex-startIndex);
-      #elif __SSE__
-      __m128 inVec0, inVec1, res;
-      const int numFours = (endIndex - startIndex) >> 2;
-      for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
-        inVec0 = _mm_loadu_ps(input0 + i);
-        inVec1 = _mm_loadu_ps(input1 + i);
-        res = _mm_div_ps(inVec0, inVec1);
-        _mm_store_ps(output + i, res);
+      if (ArrayArithmetic::hasAccelerate) {
+        #if __APPLE__
+        vDSP_vdiv(input1+startIndex, 1, input0+startIndex, 1, output+startIndex, 1, endIndex-startIndex);
+        #endif
+      } else {
+        #if __SSE__
+        __m128 inVec0, inVec1, res;
+        const int numFours = (endIndex - startIndex) >> 2;
+        for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
+          inVec0 = _mm_loadu_ps(input0 + i);
+          inVec1 = _mm_loadu_ps(input1 + i);
+          res = _mm_div_ps(inVec0, inVec1);
+          _mm_store_ps(output + i, res);
+        }
+        for (int i = startIndex + numFours<<2; i < endIndex; i++) {
+          output[i] = input0[i] / input1[i];
+        }
+        #else
+        for (int i = startIndex; i < endIndex; i++) {
+          output[i] = input0[i] / input1[i];
+        }
+        #endif
       }
-      for (int i = startIndex + numFours<<2; i < endIndex; i++) {
-        output[i] = input0[i] / input1[i];
-      }
-      #else
-      for (int i = startIndex; i < endIndex; i++) {
-        output[i] = input0[i] / input1[i];
-      }
-      #endif
     }
   
     static inline void divide(float *input, float constant, float *output, int startIndex, int endIndex) {
-      #if TARGET_OS_MAC || TARGET_OS_IPHONE
-      vDSP_vsdiv(input+startIndex, 1, &constant, output+startIndex, 1, endIndex-startIndex);
-      #elif __SSE__
-      __m128 inVec, res;
-      const __m128 constVec = _mm_load1_ps(&constant);
-      const int numFours = (endIndex - startIndex) >> 2;
-      for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
-        inVec = _mm_loadu_ps(input + i);
-        res = _mm_div_ps(inVec, constVec);
-        _mm_store_ps(output + i, res);
+      if (ArrayArithmetic::hasAccelerate) {
+        #if __APPLE__
+        vDSP_vsdiv(input+startIndex, 1, &constant, output+startIndex, 1, endIndex-startIndex);
+        #endif
+      } else {
+        #if __SSE__
+        __m128 inVec, res;
+        const __m128 constVec = _mm_load1_ps(&constant);
+        const int numFours = (endIndex - startIndex) >> 2;
+        for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
+          inVec = _mm_loadu_ps(input + i);
+          res = _mm_div_ps(inVec, constVec);
+          _mm_store_ps(output + i, res);
+        }
+        for (int i = startIndex + numFours<<2; i < endIndex; i++) {
+          output[i] = input[i] / constant;
+        }
+        #else
+        for (int i = startIndex; i < endIndex; i++) {
+          output[i] = input[i] / constant;
+        }
+        #endif
       }
-      for (int i = startIndex + numFours<<2; i < endIndex; i++) {
-        output[i] = input[i] / constant;
-      }
-      #else
-      for (int i = startIndex; i < endIndex; i++) {
-        output[i] = input[i] / constant;
-      }
-      #endif
     }
     
   private:
