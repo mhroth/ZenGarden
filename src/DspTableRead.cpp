@@ -25,11 +25,7 @@
 #include "PdGraph.h"
 
 DspTableRead::DspTableRead(PdMessage *initMessage, PdGraph *graph) : TableReceiver(2, 1, 0, 1, graph) {
-  if (initMessage->isSymbol(0)) {
-    name = StaticUtils::copyString(initMessage->getSymbol(0));
-  } else {
-    graph->printErr("Object \"tabread4~\" must be initialised with an array name.");
-  }
+  name = initMessage->isSymbol(0) ? StaticUtils::copyString(initMessage->getSymbol(0)) : NULL;
 }
 
 DspTableRead::~DspTableRead() {
@@ -66,38 +62,41 @@ void DspTableRead::processMessage(int inletIndex, PdMessage *message) {
 void DspTableRead::processDspToIndex(float blockIndex) {
   if (table != NULL) { // ensure that there is a table to read from!
     int bufferLength;
-    float *buffer = table->getBuffer(&bufferLength); // TODO(mhroth): ensure that the buffer is non-NULL?
+    float *buffer = table->getBuffer(&bufferLength);
     float *inputBuffer = localDspBufferAtInlet[0];
     float *outputBuffer = localDspBufferAtOutlet[0];
     int startSampleIndex = getStartSampleIndex();
     int endSampleIndex = getEndSampleIndex(blockIndex);
-    #if TARGET_OS_MAC || TARGET_OS_IPHONE
-    float zero = 0.0f;
-    float one = 1.0f;
-    vDSP_vtabi(inputBuffer, 1, &one, &zero, buffer, bufferLength, outputBuffer, 1,
-        endSampleIndex-startSampleIndex);
-    #else
-    float bufferLengthFloat = (float) bufferLength;
-    for (int i = startSampleIndex; i < endSampleIndex; i++) {
-      if (inputBuffer[i] < 0.0f) {
-        outputBuffer[i] = 0.0f;
-      } else if (inputBuffer[i] > (bufferLengthFloat-1.0f)) {
-        outputBuffer[i] = 0.0f;
-      } else {
-        float floorX = floorf(inputBuffer[i]);
-        float ceilX = ceilf(inputBuffer[i]);
-        if (floorX == ceilX) {
-          outputBuffer[i] = buffer[(int) floorX];
+    if (ArrayArithmetic::hasAccelerate) {
+      #if __APPLE__
+      float zero = 0.0f;
+      float one = 1.0f;
+      vDSP_vtabi(inputBuffer, 1, &one, &zero, buffer, bufferLength, outputBuffer, 1,
+          endSampleIndex-startSampleIndex);
+      #endif
+    } else {
+      // TODO(mhroth): this can be optimised, as has been done in DspVariableDelay
+      float bufferLengthFloat = (float) bufferLength;
+      for (int i = startSampleIndex; i < endSampleIndex; i++) {
+        if (inputBuffer[i] < 0.0f) {
+          outputBuffer[i] = 0.0f;
+        } else if (inputBuffer[i] > (bufferLengthFloat-1.0f)) {
+          outputBuffer[i] = 0.0f;
         } else {
-          // 2-point linear interpolation
-          float y0 = buffer[(int) floorX];
-          float y1 = (ceilX >= bufferLengthFloat) ? 0.0f : buffer[(int) ceilX];
-          float slope = (y1 - y0) / (ceilX - floorX);
-          outputBuffer[i] = (slope * (inputBuffer[i] - floorX)) + y0;
+          float floorX = floorf(inputBuffer[i]);
+          float ceilX = ceilf(inputBuffer[i]);
+          if (floorX == ceilX) {
+            outputBuffer[i] = buffer[(int) floorX];
+          } else {
+            // 2-point linear interpolation
+            float y0 = buffer[(int) floorX];
+            float y1 = (ceilX >= bufferLengthFloat) ? 0.0f : buffer[(int) ceilX];
+            float slope = (y1 - y0) / (ceilX - floorX);
+            outputBuffer[i] = (slope * (inputBuffer[i] - floorX)) + y0;
+          }
         }
       }
     }
-    #endif
   }
   blockIndexOfLastMessage = blockIndex;
 }
