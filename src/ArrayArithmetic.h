@@ -30,9 +30,10 @@
 // http://developer.apple.com/mac/library/documentation/MacOSX/Conceptual/BPFrameworks/Concepts/WeakLinking.html
 extern void vDSP_vadd(const float*, vDSP_Stride, const float*, vDSP_Stride, float*, vDSP_Stride,
     vDSP_Length) __attribute__((weak_import));
-#elif __SSE__
+#endif
+#if __SSE__
 #include <xmmintrin.h>
-#elif _ARM_ARCH_7
+#elif __ARM_NEON__
 #include <arm_neon.h>
 #endif
 
@@ -44,8 +45,11 @@ extern void vDSP_vadd(const float*, vDSP_Stride, const float*, vDSP_Stride, floa
 class ArrayArithmetic {
   
   public:
-    /** A constant boolean indicating if Apple's Accelerate framework is available for use. */
-    const static bool hasAccelerate;
+    /**
+     * A constant boolean indicating if Apple's Accelerate framework is available for use. Is
+     * accurate on any platform, even non-Apple.
+     */
+    static const bool hasAccelerate;
   
     static inline void add(float *input0, float *input1, float *output, int startIndex, int endIndex) {
       if (ArrayArithmetic::hasAccelerate) {
@@ -70,7 +74,7 @@ class ArrayArithmetic {
         for (int i = startIndex + numFours<<2; i < endIndex; i++) {
           output[i] = input0[i] + input1[i];
         }
-        #elif _ARM_ARCH_7
+        #elif __ARM_NEON__
         float32x4_t inVec0, inVec1, res;
         const int numFours = (endIndex - startIndex) >> 2;
         for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
@@ -108,7 +112,7 @@ class ArrayArithmetic {
         for (int i = startIndex + numFours<<2; i < endIndex; i++) {
           output[i] = input[i] + constant;
         }
-        #elif _ARM_ARCH_7
+        #elif __ARM_NEON__
         const int numFours = (endIndex - startIndex) >> 2;
         const float32x4_t constVec = vdupq_n_f32(constant);
         for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
@@ -142,7 +146,7 @@ class ArrayArithmetic {
       for (int i = startIndex + numFours<<2; i < endIndex; i++) {
         output[i] = input0[i] - input1[i];
       }
-      #elif _ARM_ARCH_7
+      #elif __ARM_NEON__
       // the number of sets of four samples in the block to be processed
       float32x4_t inVec0, inVec1, res;
       const int numFours = (endIndex - startIndex) >> 2;
@@ -179,7 +183,7 @@ class ArrayArithmetic {
       for (int i = startIndex + numFours<<2; i < endIndex; i++) {
         output[i] = input[i] - constant;
       }
-      #elif _ARM_ARCH_7
+      #elif __ARM_NEON__
       const int numFours = (endIndex - startIndex) >> 2;
       const float32x4_t constVec = vdupq_n_f32(constant);
       for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
@@ -212,7 +216,7 @@ class ArrayArithmetic {
       for (int i = startIndex + numFours<<2; i < endIndex; i++) {
         output[i] = input0[i] * input1[i];
       }
-      #elif _ARM_ARCH_7
+      #elif __ARM_NEON__
       // the number of sets of four samples in the block to be processed
       float32x4_t inVec0, inVec1, res;
       const int numFours = (endIndex - startIndex) >> 2;
@@ -248,7 +252,7 @@ class ArrayArithmetic {
       for (int i = startIndex + numFours<<2; i < endIndex; i++) {
         output[i] = input[i] * constant;
       }
-      #elif _ARM_ARCH_7
+      #elif __ARM_NEON__
       const int numFours = (endIndex - startIndex) >> 2;
       for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
         float32x4_t inVec = vld1q_f32((const float32_t *) (input + i));

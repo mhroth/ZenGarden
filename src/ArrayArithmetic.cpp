@@ -22,7 +22,8 @@
 
 #include "ArrayArithmetic.h"
 
-#ifdef __APPLE__
+#if __APPLE__
+// test to see if the function vDSP_vadd has been defined
 const bool ArrayArithmetic::hasAccelerate = (vDSP_vadd != NULL);
 #else
 const bool ArrayArithmetic::hasAccelerate = false;
