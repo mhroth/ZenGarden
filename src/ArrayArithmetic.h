@@ -255,7 +255,7 @@ class ArrayArithmetic {
         vDSP_vsmul(input+startIndex, 1, &constant, output+startIndex, 1, endIndex-startIndex);
         #endif
       } else {
-        #elif __SSE__
+        #if __SSE__
         __m128 inVec, res;
         const __m128 constVec = _mm_load1_ps(&constant);
         const int numFours = (endIndex - startIndex) >> 2;
