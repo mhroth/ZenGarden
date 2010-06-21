@@ -40,22 +40,24 @@ void DspWrap::processDspToIndex(float blockIndex) {
   int endSampleIndex = getEndSampleIndex(blockIndex);
   float *inputBuffer = localDspBufferAtInlet[0];
   float *outputBuffer = localDspBufferAtOutlet[0];
-  #if TARGET_OS_MAC || TARGET_OS_IPHONE
-  inputBuffer += startSampleIndex;
-  outputBuffer += startSampleIndex;
-  int duration = endSampleIndex-startSampleIndex;
-  float one = 1.0f;
-  // get fractional part of all input
-  vDSP_vfrac(inputBuffer, 1, outputBuffer, 1, duration);
-  // add one to all fractions (making negative fractions positive)
-  vDSP_vsadd(outputBuffer, 1, &one, outputBuffer, 1, duration);
-  // take fractional part again, removing positive results greater than one
-  vDSP_vfrac(inputBuffer, 1, outputBuffer, 1, duration);
-  #else
-  for (int i = startSampleIndex; i < endSampleIndex; i++) {
-    float f = inputBuffer[i];
-    outputBuffer[i] = f - floorf(f);
+  if (ArrayArithmetic::hasAccelerate) {
+    #if __APPLE__
+    inputBuffer += startSampleIndex;
+    outputBuffer += startSampleIndex;
+    int duration = endSampleIndex-startSampleIndex;
+    float one = 1.0f;
+    // get fractional part of all input
+    vDSP_vfrac(inputBuffer, 1, outputBuffer, 1, duration);
+    // add one to all fractions (making negative fractions positive)
+    vDSP_vsadd(outputBuffer, 1, &one, outputBuffer, 1, duration);
+    // take fractional part again, removing positive results greater than one
+    vDSP_vfrac(inputBuffer, 1, outputBuffer, 1, duration);
+    #endif
+  } else {
+    for (int i = startSampleIndex; i < endSampleIndex; i++) {
+      float f = inputBuffer[i];
+      outputBuffer[i] = f - floorf(f);
+    }
   }
-  #endif
   blockIndexOfLastMessage = blockIndex;
 }
