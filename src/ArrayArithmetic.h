@@ -34,6 +34,7 @@ extern void vDSP_vadd(const float*, vDSP_Stride, const float*, vDSP_Stride, floa
 #if __SSE__
 #include <xmmintrin.h>
 #elif __ARM_NEON__
+// __ARM_NEON__ is defined by the compiler if the arguments "-mfloat-abi=softfp -mfpu=neon" are passed.
 #include <arm_neon.h>
 #endif
 
