@@ -6,8 +6,8 @@ bin
 .project
 .classpath
 Xcode/build
-Xcode/Xcode.xcodeproj/mhroth.pbxuser
-Xcode/Xcode.xcodeproj/mhroth.mode1v3
+Xcode/ZenGarden.xcodeproj/mhroth.pbxuser
+Xcode/ZenGarden.xcodeproj/mhroth.mode1v3
 src/main.cpp
 src/sndfile.h
 .*.swp
