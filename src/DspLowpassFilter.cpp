@@ -60,6 +60,8 @@ void DspLowpassFilter::processMessage(int inletIndex, PdMessage *message) {
       if (message->isSymbol(0) && strcmp(message->getSymbol(0), "clear") == 0) {
         processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
         tap_0 = 0.0f;
+        memset(filterInputBuffer, 0, (blockSizeInt+2) * sizeof(float));
+        memset(filterOutputBuffer, 0, (blockSizeInt+2) * sizeof(float));
       }
       break;
     }
@@ -81,11 +83,13 @@ void DspLowpassFilter::processDspToIndex(float blockIndex) {
   float *outputBuffer = localDspBufferAtOutlet[0];
   const int startSampleIndex = getStartSampleIndex();
   const int endSampleIndex = getEndSampleIndex(blockIndex);
-  const int duration = endSampleIndex - startSampleIndex;
-  const int durationBytes = duration * sizeof(float);
   if (ArrayArithmetic::hasAccelerate) {
     #if __APPLE__
+    const int duration = endSampleIndex - startSampleIndex;
+    const int durationBytes = duration * sizeof(float);
     memcpy(filterInputBuffer+2, inputBuffer+startSampleIndex, durationBytes);
+    // vDSP_deq22 =
+    // out[i] = coeff[0]*in[i] + coeff[1]*in[i-1] + coeff[3]*in[i-2] - coeff[4]*out[i-1] - coeff[5]*out[i-2]
     vDSP_deq22(filterInputBuffer, 1, coefficients, filterOutputBuffer, 1, duration);
     memcpy(outputBuffer+startSampleIndex, filterOutputBuffer+2, durationBytes);
     // copy last two inputs and outputs to start of filter buffer arrays

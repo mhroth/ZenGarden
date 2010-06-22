@@ -39,12 +39,16 @@ class DspHighpassFilter : public DspObject {
   
   private:
     void processMessage(int inletIndex, PdMessage *message);
-    void processDspToIndex(float newBlockIndex);
+    void processDspToIndex(float blockIndex);
     void calculateFilterCoefficients(float cutoffFrequency);
     
     float sampleRate;
-    float tap_0;
+    float tapIn;
+    float tapOut;
     float alpha;
+    float *coefficients;
+    float *filterInputBuffer;
+    float *filterOutputBuffer;
 };
 
 #endif // _DSP_HIGH_PASS_FILTER_H_
