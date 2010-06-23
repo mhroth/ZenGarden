@@ -35,10 +35,10 @@ const char *MessageFrequencyToMidi::getObjectLabel() {
 }
 
 void MessageFrequencyToMidi::processMessage(int inletIndex, PdMessage *message) {
-  if (message->getElement(0)->getType() == FLOAT) {
+  if (message->isFloat(0)) {
     PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-    int f = message->getElement(0)->getFloat();
-    outgoingMessage->getElement(0)->setFloat((f < 0.0f) ? -1500.0f : (12.0f * (logf(f / 440.0f) / M_LN2)) + 69.0f);
+    float f = message->getFloat(0);
+    outgoingMessage->setFloat(0, (f <= 0.0f) ? -1500.0f : (12.0f * (logf(f / 440.0f) / M_LN2)) + 69.0f);
     outgoingMessage->setTimestamp(message->getTimestamp());
     sendMessage(0, outgoingMessage); // send a message from outlet 0
   }
