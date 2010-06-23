@@ -89,7 +89,7 @@ void DspLowpassFilter::processDspToIndex(float blockIndex) {
     const int durationBytes = duration * sizeof(float);
     memcpy(filterInputBuffer+2, inputBuffer+startSampleIndex, durationBytes);
     // vDSP_deq22 =
-    // out[i] = coeff[0]*in[i] + coeff[1]*in[i-1] + coeff[3]*in[i-2] - coeff[4]*out[i-1] - coeff[5]*out[i-2]
+    // out[i] = coeff[0]*in[i] + coeff[1]*in[i-1] + coeff[2]*in[i-2] - coeff[3]*out[i-1] - coeff[4]*out[i-2]
     vDSP_deq22(filterInputBuffer, 1, coefficients, filterOutputBuffer, 1, duration);
     memcpy(outputBuffer+startSampleIndex, filterOutputBuffer+2, durationBytes);
     // copy last two inputs and outputs to start of filter buffer arrays
