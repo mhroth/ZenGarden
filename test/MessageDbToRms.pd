@@ -8,7 +8,7 @@
 #X msg 197 99 0;
 #X obj 104 54 t b b b b;
 #X msg 235 99 24 35 48;
-#X obj 104 148 dbtopow;
+#X obj 104 148 dbtorms;
 #X connect 0 0 6 0;
 #X connect 2 0 6 0;
 #X connect 3 0 8 0;
