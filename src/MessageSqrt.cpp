@@ -39,7 +39,7 @@ void MessageSqrt::processMessage(int inletIndex, PdMessage *message) {
     PdMessage *outgoingMessage = getNextOutgoingMessage(0);
     outgoingMessage->setTimestamp(message->getTimestamp());
     float value = message->getFloat(0);
-    outgoingMessage->setFloat(0, value < 0.0f ? -1000.0f : sqrtf(value));
+    outgoingMessage->setFloat(0, value < 0.0f ? 0.0f : sqrtf(value));
     sendMessage(0, outgoingMessage); // send a message from outlet 0
   }
 }

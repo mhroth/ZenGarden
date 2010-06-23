@@ -1,0 +1,13 @@
+[@ 0.000ms] c: 42
+[@ 0.000ms] d: 11
+[@ 0.000ms] e: one
+unpack: type mismatch: FLOAT expected but got SYMBOL.
+unpack: type mismatch: FLOAT expected but got SYMBOL.
+unpack: type mismatch: SYMBOL expected but got FLOAT.
+[@ 0.000ms] a: 4
+[@ 0.000ms] b: 3
+[@ 0.000ms] c: 2
+[@ 0.000ms] d: 1
+[@ 0.000ms] e: a
+unpack: type mismatch: SYMBOL expected but got FLOAT.
+[@ 0.000ms] e: hello
