@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -27,9 +27,7 @@
 #include "List.h"
 #include "MessageElementType.h"
 
-/**
- * Implements a Pd message element.
- */
+/** Implements a Pd message element. */
 class MessageElement {
   
   public:
@@ -46,6 +44,7 @@ class MessageElement {
     bool isSymbolBangOrB();
     bool isSymbolFloatOrF();
     bool isSymbolListOrL();
+    bool isSymbolSymbolOrS();
     
     void setFloat(float constant);
     float getFloat();

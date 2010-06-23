@@ -43,7 +43,8 @@ void MessageUnpack::processMessage(int inletIndex, PdMessage *message) {
     numElements = templateMessage->getNumElements();
   }
   for (int i = numElements-1; i >=0; i--) {
-    if (templateMessage->getType(i) == message->getType(i)) {
+    if (templateMessage->getType(i) == message->getType(i) ||
+        templateMessage->getType(i) == ANYTHING) {
       switch (templateMessage->getType(i)) {
         case FLOAT: {
           PdMessage *outgoingMessage = getNextOutgoingMessage(i);
@@ -58,6 +59,23 @@ void MessageUnpack::processMessage(int inletIndex, PdMessage *message) {
           outgoingMessage->setTimestamp(message->getTimestamp());
           sendMessage(i, outgoingMessage);
           break;
+        } case ANYTHING: {
+          PdMessage *outgoingMessage = getNextOutgoingMessage(i);
+          switch (message->getType(i)) {
+            case FLOAT: {
+              outgoingMessage->setFloat(0, message->getFloat(i));
+              break;
+            }
+            case SYMBOL: {
+              outgoingMessage->setSymbol(0, message->getSymbol(i));
+              break;
+            }
+            default: {
+              break;
+            }
+          }
+          outgoingMessage->setTimestamp(message->getTimestamp());
+          sendMessage(i, outgoingMessage);
         }
         default: {
           break;

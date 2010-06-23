@@ -179,7 +179,9 @@ void PdMessage::resolveSymbolsToType() {
   for (int i = 0; i < numElements; i++) {
     MessageElement *messageElement = (MessageElement *) elementList->get(i);
     if (messageElement->isSymbol()) {
-      if (messageElement->isSymbolAnythingOrA()) {
+      if (messageElement->isSymbolSymbolOrS()) {
+        // do nothing, but leave the symbol as is
+      } else if (messageElement->isSymbolAnythingOrA()) {
         messageElement->setAnything();
       } else if (messageElement->isSymbolBangOrB()) {
         messageElement->setBang();
@@ -187,6 +189,9 @@ void PdMessage::resolveSymbolsToType() {
         messageElement->setFloat(0.0f);
       } else if (messageElement->isSymbolListOrL()) {
         messageElement->setList();
+      } else {
+        // if the symbol string is unknown, leave is as ANYTHING
+        messageElement->setAnything();
       }
     }
   }

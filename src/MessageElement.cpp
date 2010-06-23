@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -74,6 +74,10 @@ bool MessageElement::isSymbolFloatOrF() {
 
 bool MessageElement::isSymbolListOrL() {
   return (currentType == SYMBOL && (strcmp(symbol, "list") == 0 || strcmp(symbol, "l") == 0));
+}
+
+bool MessageElement::isSymbolSymbolOrS() {
+  return (currentType == SYMBOL && (strcmp(symbol, "symbol") == 0 || strcmp(symbol, "s") == 0));
 }
 
 bool MessageElement::isBang() {
