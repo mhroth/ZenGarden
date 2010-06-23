@@ -74,6 +74,16 @@ public class PdObjectTest implements ZenGardenListener {
   }
 
   @Test
+  public void testMessageArcTangent() {
+    genericMessageTest("MessageArcTangent.pd");
+  }
+
+  @Test
+  public void testMessageArcTangent2() {
+    genericMessageTest("MessageArcTangent2.pd");
+  }
+
+  @Test
   public void testMessageCosine() {
     genericMessageTest("MessageCosine.pd");
   }
@@ -81,6 +91,16 @@ public class PdObjectTest implements ZenGardenListener {
   @Test
   public void testMessageDivide() {
     genericMessageTest("MessageDivide.pd");
+  }
+
+  @Test
+  public void testMessageDbToPow() {
+    genericMessageTest("MessageDbToPow.pd");
+  }
+
+  @Test
+  public void testMessageDbToRms() {
+    genericMessageTest("MessageDbToRms.pd");
   }
 
   @Test
@@ -96,6 +116,11 @@ public class PdObjectTest implements ZenGardenListener {
   @Test
   public void testMessageFloat() {
     genericMessageTest("MessageFloat.pd");
+  }
+
+  @Test
+  public void testMessageFrequencyToMidi() {
+    genericMessageTest("MessageFrequencyToMidi.pd");
   }
 
   @Test
@@ -148,7 +173,22 @@ public class PdObjectTest implements ZenGardenListener {
   public void testMessagePack() {
     genericMessageTest("MessagePack.pd");
   }
+
+  @Test
+  public void testMessagePow() {
+    genericMessageTest("MessagePow.pd");
+  }
   
+  @Test
+  public void testMessageReminder() {
+    genericMessageTest("MessageRemainder.pd");
+  }
+
+  @Test
+  public void testMessageRmsToDb() {
+    genericMessageTest("MessageRmsToDb.pd");
+  }
+
   @Test
   public void testMessageSine() {
     genericMessageTest("MessageSine.pd");
@@ -159,6 +199,16 @@ public class PdObjectTest implements ZenGardenListener {
     genericMessageTest("MessageSubtract.pd");
   }
 
+  @Test
+  public void testMessageSqrt() {
+    genericMessageTest("MessageSqrt.pd");
+  }
+  /*
+  @Test
+  public void testMessageUnpack() {
+    genericMessageTest("MessageUnpack.pd");
+  }
+  */
   /**
    * Encompasses a generic test for message objects. It processes the graph once and compares the
    * standard output to the golden file, and ensures that the error output is empty.
