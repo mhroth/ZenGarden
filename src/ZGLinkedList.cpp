@@ -69,6 +69,16 @@ void *ZGLinkedList::get(int index) {
   }
 }
 
+void ZGLinkedList::resetIterator() {
+  iteratorNode = head;
+}
+
+void *ZGLinkedList::getNext() {
+  LinkedListNode *node = iteratorNode;
+  iteratorNode = (node == NULL) ? NULL : node->next;
+  return node;
+}
+
 void **ZGLinkedList::add() {
   LinkedListNode *newNode = getEmptyNode();
   insertAfter(newNode, tail);

@@ -51,6 +51,12 @@ class ZGLinkedList {
 
     /** Returns the data at the given index. <code>NULL</code> if out-of-bounds. */
     void *get(int index);
+  
+    /** Reset the iterator for this list. */
+    void resetIterator();
+    
+    /** Get the next node in the list according to the iterator. */
+    void *getNext();
 
   protected:
     LinkedListNode *getEmptyNode();
@@ -67,6 +73,8 @@ class ZGLinkedList {
 
     virtual void deleteDataHolder(void *data) { /* nothing to do */ }
 
+    LinkedListNode *iteratorNode;
+  
     LinkedListNode *head;
     LinkedListNode *tail;
     int numElements;
