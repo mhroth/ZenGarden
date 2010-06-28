@@ -29,10 +29,12 @@
 #include "ZGCallbackFunction.h"
 #include "ZGLinkedList.h"
 
+class DspCatch;
 class DelayReceiver;
 class DspDelayWrite;
 class DspReceive;
 class DspSend;
+class DspThrow;
 
 class PdContext {
   
@@ -85,6 +87,13 @@ class PdContext {
      * be connected to [delwrite~] objects are they are added to the graph.
      */
     void registerDelayReceiver(DelayReceiver *delayReceiver);
+  
+    void registerDspThrow(DspThrow *dspThrow);
+    
+    void registerDspCatch(DspCatch *dspCatch);
+  
+    /** Returns the named global <code>DspCatch</code> object. */
+    DspCatch *getDspCatch(char *name);
   
     /** Prints the given message to error output. */
     void printErr(char *msg);

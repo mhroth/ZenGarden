@@ -21,9 +21,11 @@
  */
 
 #include "DelayReceiver.h"
+#include "DspCatch.h"
 #include "DspDelayWrite.h"
 #include "DspReceive.h"
 #include "DspSend.h"
+#include "DspThrow.h"
 #include "PdContext.h"
 
 #pragma mark -
@@ -261,6 +263,42 @@ DspDelayWrite *PdContext::getDelayline(char *name) {
   while ((delayline = (DspDelayWrite *) delaylineList->getNext()) != NULL) {
     if (strcmp(delayline->getName(), name) == 0) {
       return delayline;
+    }
+  }
+  return NULL;
+}
+
+void PdContext::registerDspThrow(DspThrow *dspThrow) {
+  throwList->add(dspThrow);
+  
+  DspCatch *dspCatch = getDspCatch(dspThrow->getName());
+  if (dspCatch != NULL) {
+    dspCatch->addThrow(dspThrow);
+  }
+}
+
+void PdContext::registerDspCatch(DspCatch *dspCatch) {
+  DspCatch *catchObject = getDspCatch(dspCatch->getName());
+  if (catchObject != NULL) {
+    printErr("catch~ with duplicate name \"%s\" already exists.\n", dspCatch->getName());
+    return;
+  }
+  catchList->add(dspCatch);
+  
+  // connect catch~ to all associated throw~s
+  DspThrow *dspThrow = NULL;
+  throwList->resetIterator();
+  while ((dspThrow = (DspThrow *) throwList->getNext()) != NULL) {
+    dspCatch->addThrow(dspThrow);
+  }
+}
+
+DspCatch *PdContext::getDspCatch(char *name) {
+  DspCatch *dspCatch = NULL;
+  catchList->resetIterator();
+  while ((dspCatch = (DspCatch *) catchList->getNext()) != NULL) {
+    if (strcmp(dspCatch->getName(), name) == 0) {
+      return dspCatch;
     }
   }
   return NULL;
