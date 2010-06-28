@@ -39,7 +39,7 @@ void MessageAdd::processMessage(int inletIndex, PdMessage *message) {
     case 0: {
       if (message->isFloat(0)) {
         PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-        outgoingMessage->getElement(0)->setFloat(message->getFloat(0) + constant);
+        outgoingMessage->setFloat(0, message->getFloat(0) + constant);
         outgoingMessage->setTimestamp(message->getTimestamp());
         sendMessage(0, outgoingMessage); // send a message from outlet 0
       }
