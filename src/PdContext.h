@@ -29,6 +29,8 @@
 #include "ZGCallbackFunction.h"
 #include "ZGLinkedList.h"
 
+class DelayReceiver;
+class DspDelayWrite;
 class DspReceive;
 class DspSend;
 
@@ -68,6 +70,21 @@ class PdContext {
   
     /** Returns the named global <code>DspSend</code> object. */
     DspSend *getDspSend(char *name);
+  
+    /**
+     * Globally register a [delwrite~] object. Registration is necessary such that they can
+     * be connected to [delread~] and [vd~] objects as are they are added to the graph.
+     */
+    void registerDelayline(DspDelayWrite *delayline);
+    
+    /** Returns the named global <code>DspDelayWrite</code> object. */
+    DspDelayWrite *getDelayline(char *name);
+    
+    /**
+     * Globally register a [delread~] or [vd~] object. Registration is necessary such that they can
+     * be connected to [delwrite~] objects are they are added to the graph.
+     */
+    void registerDelayReceiver(DelayReceiver *delayReceiver);
   
     /** Prints the given message to error output. */
     void printErr(char *msg);

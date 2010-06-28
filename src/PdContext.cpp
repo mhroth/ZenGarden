@@ -20,9 +20,14 @@
  *
  */
 
+#include "DelayReceiver.h"
+#include "DspDelayWrite.h"
 #include "DspReceive.h"
 #include "DspSend.h"
 #include "PdContext.h"
+
+#pragma mark -
+#pragma mark PdContext Constructor/Deconstructor
 
 PdContext::PdContext(int numInputChannels, int numOutputChannels, int blockSize, float sampleRate,
     void (*function)(ZGCallbackFunction, void *, void *), void *userData) {
@@ -46,7 +51,13 @@ PdContext::PdContext(int numInputChannels, int numOutputChannels, int blockSize,
   delayReceiverList = new ZGLinkedList();
   throwList = new ZGLinkedList();
   catchList = new ZGLinkedList();
-  declareList = new ZGLinkedList();
+  
+  // delete all declare path string
+  for (int i = 0; i < declareList->size(); i++) {
+    free(declareList->get(i));
+  }
+  delete declareList;
+  
   tableList = new ZGLinkedList();
   tableReceiverList = new ZGLinkedList();
 }
@@ -73,6 +84,9 @@ PdContext::~PdContext() {
   pthread_mutex_destroy(&contextLock);
 }
 
+#pragma mark -
+#pragma mark Get Context Attributes
+
 int PdContext::getNumInputChannels() {
   return numInputChannels;
 }
@@ -96,6 +110,8 @@ float *PdContext::getGlobalDspBufferAtInlet(int inletIndex) {
 float *PdContext::getGlobalDspBufferAtOutlet(int outletIndex) {
   return globalDspOutputBuffers + (outletIndex * blockSize);
 }
+
+#pragma mark -
 
 void PdContext::process(float *inputBuffer, float *outputBuffer) {
   lock();
@@ -132,6 +148,9 @@ void PdContext::unlock() {
   pthread_mutex_unlock(&contextLock);
 }
 
+#pragma mark -
+#pragma mark PrintStd/PrintErr
+
 void PdContext::printErr(char *msg) {
   if (callbackFunction != NULL) {
     callbackFunction(ZG_PRINT_ERR, callbackUserData, msg);
@@ -165,6 +184,9 @@ void PdContext::printStd(const char *msg, ...) {
   
   printStd(stringBuffer);
 }
+
+#pragma mark -
+#pragma mark Register/Unregister Objects
 
 void PdContext::registerDspReceive(DspReceive *dspReceive) {
   dspReceiveList->add(dspReceive);
@@ -201,6 +223,44 @@ DspSend *PdContext::getDspSend(char *name) {
   while ((dspSend = (DspSend *) dspSendList->getNext()) != NULL) {
     if (strcmp(dspSend->getName(), name) == 0) {
       return dspSend;
+    }
+  }
+  return NULL;
+}
+
+void PdContext::registerDelayline(DspDelayWrite *delayline) {
+  // detect delwrite~ with duplicate name
+  if (getDelayline(delayline->getName()) != NULL) {
+    printErr("delwrite~ with duplicate name \"%s\" registered.", delayline->getName());
+    return;
+  }
+  
+  delaylineList->add(delayline);
+  
+  // connect this delayline to all same-named delay receivers
+  DelayReceiver *delayReceiver = NULL;
+  delayReceiverList->resetIterator();
+  while ((delayReceiver = (DelayReceiver *) delayReceiverList->getNext()) != NULL) {
+    if (strcmp(delayReceiver->getName(), delayline->getName()) == 0) {
+      delayReceiver->setDelayline(delayline);
+    }
+  }
+}
+
+void PdContext::registerDelayReceiver(DelayReceiver *delayReceiver) {
+  delayReceiverList->add(delayReceiver);
+  
+  // connect the delay receiver to the named delayline
+  DspDelayWrite *delayline = getDelayline(delayReceiver->getName());
+  delayReceiver->setDelayline(delayline);
+}
+
+DspDelayWrite *PdContext::getDelayline(char *name) {
+  DspDelayWrite *delayline = NULL;
+  delaylineList->resetIterator();
+  while ((delayline = (DspDelayWrite *) delaylineList->getNext()) != NULL) {
+    if (strcmp(delayline->getName(), name) == 0) {
+      return delayline;
     }
   }
   return NULL;
