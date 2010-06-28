@@ -601,6 +601,11 @@
 		90337EE511D0D847009FCC01 /* ZGLinkedList.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C5C11D0D847009FCC01 /* ZGLinkedList.h */; };
 		9069DFD211D17BD600889A5B /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9069DFD111D17BD600889A5B /* Accelerate.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		9069DFD311D17BF100889A5B /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9069DFD111D17BD600889A5B /* Accelerate.framework */; };
+		E4A3DD0211D93E8D007FE6FC /* MessageSoundfiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A3DD0011D93E8D007FE6FC /* MessageSoundfiler.cpp */; };
+		E4A3DD0311D93E8D007FE6FC /* MessageSoundfiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A3DD0011D93E8D007FE6FC /* MessageSoundfiler.cpp */; };
+		E4A3DD0411D93E8D007FE6FC /* MessageSoundfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = E4A3DD0111D93E8D007FE6FC /* MessageSoundfiler.h */; };
+		E4A3DD0511D93E8D007FE6FC /* MessageSoundfiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A3DD0011D93E8D007FE6FC /* MessageSoundfiler.cpp */; };
+		E4A3DD0611D93E8D007FE6FC /* MessageSoundfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = E4A3DD0111D93E8D007FE6FC /* MessageSoundfiler.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -861,6 +866,8 @@
 		90337C5C11D0D847009FCC01 /* ZGLinkedList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZGLinkedList.h; path = ../src/ZGLinkedList.h; sourceTree = SOURCE_ROOT; };
 		9069DFD111D17BD600889A5B /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		C6859E8B029090EE04C91782 /* ZenGardenNp.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ZenGardenNp.1; sourceTree = "<group>"; };
+		E4A3DD0011D93E8D007FE6FC /* MessageSoundfiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageSoundfiler.cpp; path = ../src/MessageSoundfiler.cpp; sourceTree = SOURCE_ROOT; };
+		E4A3DD0111D93E8D007FE6FC /* MessageSoundfiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageSoundfiler.h; path = ../src/MessageSoundfiler.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -906,6 +913,8 @@
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				E4A3DD0011D93E8D007FE6FC /* MessageSoundfiler.cpp */,
+				E4A3DD0111D93E8D007FE6FC /* MessageSoundfiler.h */,
 				90337B4911D0D847009FCC01 /* ArrayArithmetic.cpp */,
 				90337B4A11D0D847009FCC01 /* ArrayArithmetic.h */,
 				90337B4B11D0D847009FCC01 /* ConnectionType.h */,
@@ -1297,6 +1306,7 @@
 				90337DDC11D0D847009FCC01 /* ZenGarden.h in Headers */,
 				90337DDF11D0D847009FCC01 /* ZGCallbackFunction.h in Headers */,
 				90337DE111D0D847009FCC01 /* ZGLinkedList.h in Headers */,
+				E4A3DD0411D93E8D007FE6FC /* MessageSoundfiler.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1428,6 +1438,7 @@
 				90337EE011D0D847009FCC01 /* ZenGarden.h in Headers */,
 				90337EE311D0D847009FCC01 /* ZGCallbackFunction.h in Headers */,
 				90337EE511D0D847009FCC01 /* ZGLinkedList.h in Headers */,
+				E4A3DD0611D93E8D007FE6FC /* MessageSoundfiler.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1624,6 +1635,7 @@
 				90337CD911D0D847009FCC01 /* TableReceiver.cpp in Sources */,
 				90337CDA11D0D847009FCC01 /* ZenGarden.cpp in Sources */,
 				90337CDD11D0D847009FCC01 /* ZGLinkedList.cpp in Sources */,
+				E4A3DD0211D93E8D007FE6FC /* MessageSoundfiler.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1745,6 +1757,7 @@
 				90337DD911D0D847009FCC01 /* TableReceiver.cpp in Sources */,
 				90337DDB11D0D847009FCC01 /* ZenGarden.cpp in Sources */,
 				90337DE011D0D847009FCC01 /* ZGLinkedList.cpp in Sources */,
+				E4A3DD0311D93E8D007FE6FC /* MessageSoundfiler.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1866,6 +1879,7 @@
 				90337EDD11D0D847009FCC01 /* TableReceiver.cpp in Sources */,
 				90337EDF11D0D847009FCC01 /* ZenGarden.cpp in Sources */,
 				90337EE411D0D847009FCC01 /* ZGLinkedList.cpp in Sources */,
+				E4A3DD0511D93E8D007FE6FC /* MessageSoundfiler.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

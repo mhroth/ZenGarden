@@ -54,3 +54,22 @@ float *MessageTable::getBuffer(int *bufferLength) {
   *bufferLength = this->bufferLength;
   return buffer;
 }
+
+void MessageTable::setBuffer(float *buffer, int bufferLength, bool shouldResizeTable) {
+	if (shouldResizeTable ) { // || bufferLength!=this->bufferLength
+		free(this->buffer);
+		this->bufferLength = bufferLength;
+		this->buffer = (float *) calloc(bufferLength, sizeof(float));
+	}
+	
+	if (this->bufferLength!=bufferLength) { // roikr: sanity check
+		graph->printErr("MessageTable setBuffer with wrong buffer size");
+	}
+	
+	memcpy(this->buffer, buffer, bufferLength);
+	//for (int i = 0 ; i < bufferLength; i++) {
+//		this->buffer[i] = buffer[i];
+//	}
+	
+}
+

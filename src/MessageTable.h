@@ -36,6 +36,9 @@ class MessageTable : public MessageObject {
   
     char *getName();
     float *getBuffer(int *bufferLength);
+	void resize(int bufferLength);
+	
+	void setBuffer(float *buffer, int bufferLength, bool shouldResizeTable);
   
   private:
     char *name;
