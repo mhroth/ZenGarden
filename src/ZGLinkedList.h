@@ -38,6 +38,7 @@ class ZGLinkedList {
 
     /** Adds a new node to the list. Returns a pointer to the data pointer of the new node.*/
     void **add();
+    void add(void *data);
 
     /** Removes the given element from the list. */
     void remove(void *element);

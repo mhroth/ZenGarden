@@ -85,6 +85,11 @@ void **ZGLinkedList::add() {
   return &(newNode->data);
 }
 
+void ZGLinkedList::add(void *data) {
+  void **nodeData = add();
+  *nodeData = data;
+}
+
 LinkedListNode *ZGLinkedList::getEmptyNode() {
   LinkedListNode *newNode = NULL;
   if (numEmptyElements > 0) {
