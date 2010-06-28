@@ -1900,6 +1900,7 @@
 				INSTALL_PATH = /usr/local/bin;
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "-lsndfile";
 				PRODUCT_NAME = ZenGarden;
 			};
 			name = Debug;
@@ -1957,7 +1958,9 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
+				HEADER_SEARCH_PATHS = "/Users/roikr/Developer/OpenSource/libsndfile-1.0.21/src";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				LIBRARY_SEARCH_PATHS = "/Users/roikr/Developer/OpenSource/libsndfile-1.0.21/Xcode/build/Debug-iphoneos";
 				ONLY_ACTIVE_ARCH = NO;
 				PREBINDING = NO;
 				PRODUCT_NAME = zengarden;
