@@ -182,6 +182,8 @@ PdGraph::PdGraph(PdFileParser *fileParser, char *directory, int blockSize,
     throwList = new List();
     catchList = new List();
     declareList = new List();
+    // by default add base directory to declare list
+    declareList->add(StaticUtils::copyString(directory));
     tableList = new List();
     tableReceiverList = new List();
     sendController = new MessageSendController(this);
