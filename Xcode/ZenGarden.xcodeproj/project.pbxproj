@@ -8,6 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		8DD76F6A0486A84900D96B5E /* ZenGardenNp.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6859E8B029090EE04C91782 /* ZenGardenNp.1 */; };
+		902BFE5F11D36F0A00D4E401 /* PdContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 902BFE5E11D36F0A00D4E401 /* PdContext.cpp */; };
+		902BFE6011D36F0A00D4E401 /* PdContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 902BFE5D11D36F0A00D4E401 /* PdContext.h */; };
+		902BFE6111D36F0A00D4E401 /* PdContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 902BFE5E11D36F0A00D4E401 /* PdContext.cpp */; };
+		902BFE6211D36F0A00D4E401 /* PdContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 902BFE5D11D36F0A00D4E401 /* PdContext.h */; };
+		902BFE6311D36F0A00D4E401 /* PdContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 902BFE5E11D36F0A00D4E401 /* PdContext.cpp */; };
 		903374F411D0D34D009FCC01 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 903374F311D0D34D009FCC01 /* Accelerate.framework */; };
 		90337C5D11D0D847009FCC01 /* ArrayArithmetic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B4911D0D847009FCC01 /* ArrayArithmetic.cpp */; };
 		90337C5E11D0D847009FCC01 /* DelayReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B4C11D0D847009FCC01 /* DelayReceiver.cpp */; };
@@ -618,6 +623,8 @@
 
 /* Begin PBXFileReference section */
 		8DD76F6C0486A84900D96B5E /* ZenGarden */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ZenGarden; sourceTree = BUILT_PRODUCTS_DIR; };
+		902BFE5D11D36F0A00D4E401 /* PdContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PdContext.h; path = ../src/PdContext.h; sourceTree = SOURCE_ROOT; };
+		902BFE5E11D36F0A00D4E401 /* PdContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PdContext.cpp; path = ../src/PdContext.cpp; sourceTree = SOURCE_ROOT; };
 		9033711811D0CF07009FCC01 /* libzengarden.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libzengarden.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		9033712011D0CF2B009FCC01 /* libzengarden.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libzengarden.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		903374F311D0D34D009FCC01 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
@@ -1127,6 +1134,8 @@
 				90337C4211D0D847009FCC01 /* ObjectLetPair.h */,
 				90337C4311D0D847009FCC01 /* OrderedMessageQueue.cpp */,
 				90337C4411D0D847009FCC01 /* OrderedMessageQueue.h */,
+				902BFE5E11D36F0A00D4E401 /* PdContext.cpp */,
+				902BFE5D11D36F0A00D4E401 /* PdContext.h */,
 				90337C4511D0D847009FCC01 /* PdFileParser.cpp */,
 				90337C4611D0D847009FCC01 /* PdFileParser.h */,
 				90337C4711D0D847009FCC01 /* PdGraph.cpp */,
@@ -1297,6 +1306,7 @@
 				90337DDC11D0D847009FCC01 /* ZenGarden.h in Headers */,
 				90337DDF11D0D847009FCC01 /* ZGCallbackFunction.h in Headers */,
 				90337DE111D0D847009FCC01 /* ZGLinkedList.h in Headers */,
+				902BFE6011D36F0A00D4E401 /* PdContext.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1428,6 +1438,7 @@
 				90337EE011D0D847009FCC01 /* ZenGarden.h in Headers */,
 				90337EE311D0D847009FCC01 /* ZGCallbackFunction.h in Headers */,
 				90337EE511D0D847009FCC01 /* ZGLinkedList.h in Headers */,
+				902BFE6211D36F0A00D4E401 /* PdContext.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1624,6 +1635,7 @@
 				90337CD911D0D847009FCC01 /* TableReceiver.cpp in Sources */,
 				90337CDA11D0D847009FCC01 /* ZenGarden.cpp in Sources */,
 				90337CDD11D0D847009FCC01 /* ZGLinkedList.cpp in Sources */,
+				902BFE5F11D36F0A00D4E401 /* PdContext.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1745,6 +1757,7 @@
 				90337DD911D0D847009FCC01 /* TableReceiver.cpp in Sources */,
 				90337DDB11D0D847009FCC01 /* ZenGarden.cpp in Sources */,
 				90337DE011D0D847009FCC01 /* ZGLinkedList.cpp in Sources */,
+				902BFE6111D36F0A00D4E401 /* PdContext.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1866,6 +1879,7 @@
 				90337EDD11D0D847009FCC01 /* TableReceiver.cpp in Sources */,
 				90337EDF11D0D847009FCC01 /* ZenGarden.cpp in Sources */,
 				90337EE411D0D847009FCC01 /* ZGLinkedList.cpp in Sources */,
+				902BFE6311D36F0A00D4E401 /* PdContext.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
