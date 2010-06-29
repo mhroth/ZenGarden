@@ -87,6 +87,7 @@ LOCAL_SRC_FILES := \
 ./MessageSend.cpp \
 ./MessageSendController.cpp \
 ./MessageSine.cpp \
+./MessageSoundfiler.cpp \
 ./MessageSpigot.cpp \
 ./MessageSqrt.cpp \
 ./MessageSubtract.cpp \

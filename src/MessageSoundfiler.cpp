@@ -53,80 +53,77 @@ void MessageSoundfiler::processMessage(int inletIndex, PdMessage *message) {
 				  // which are file location and destination table name
 				  MessageElement *tableNameElement = message->getElement(currentElementIndex++);
 				  if (messageElement != NULL && messageElement->getType() == SYMBOL &&
-					  tableNameElement != NULL && tableNameElement->getType() == SYMBOL) {
-					  // use libsndfile to load and read the file (also converting the samples to [-1,1] float)
-					  SF_INFO sfInfo;
-						
-						char *directory = (char *) graph->getDeclareList()->get(0);
-					  char *filename = StaticUtils::joinPaths(directory, messageElement->getSymbol());
-					  SNDFILE *sndFile = sf_open(filename, SFM_READ, &sfInfo);
-					  
-					  if (sndFile == NULL) {
-							graph->printErr("soundfiler can't open %s\n",filename);
-							free(filename);
-						  return; // there was an error reading the file. Move on with life.
-					  } 
-						
-						free(filename);
-						
-						/*
-						else if (!((sfInfo.format & 0x00FF0000) == SF_FORMAT_WAV ||
-								   (sfInfo.format & 0x00FF0000) == SF_FORMAT_AIFF)) {
-						  // we only support WAV and AIFF files (somewhat artificially
-						  // because libsndfile can easily load other formats)
-						  return;
-					  }
-						 */
-					  // It is assumed that the channels are interleaved.
-					  int samplesPerChannel = sfInfo.frames;
-					  int bufferLength = samplesPerChannel * sfInfo.channels;
-					  float *buffer = (float *) malloc(bufferLength * sizeof(float)); // create a buffer in memory for the file data
-					  sf_read_float(sndFile, buffer, bufferLength); // read the whole file into memory
-					  sf_close(sndFile); // release the handle to the file
-					  
-					  /*
-					   The soundfiler object reads and writes floating point arrays to binary soundfiles which 
-					   may contain 2 or 3 byte fixed point or 4 byte floating point samples in wave, aiff, or next formats (no floating point aiff, though.). 
-					   The number of channels of the soundfile need not match the number of arrays given (extras are dropped and unsupplied channels are zeroed out.)
-					  */
-					  
-					  if (sfInfo.channels > 0) { // sanity check
-						  // extract the first channel
-						  float *channelBuffer = (float *) malloc(samplesPerChannel * sizeof(float));
-						  for (int i = 0, j = 0; i < bufferLength; i+=sfInfo.channels, j++) {
-							  channelBuffer[j] = buffer[i];
-						  }
-						  MessageTable *table = graph->getTable(tableNameElement->getSymbol());
-						  if (table != NULL) {
-							  // copy the buffer to the table
-							  table->setBuffer(channelBuffer, samplesPerChannel, shouldResizeTable);
-							  
-								PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-								outgoingMessage->getElement(0)->setFloat((float) samplesPerChannel);
-								outgoingMessage->setTimestamp(message->getTimestamp());
-								sendMessage(0, outgoingMessage); // send a message from outlet 0
-						  }
-						  
-						  // extract the second channel (if it exists and if there is a table to write it to)
-						  if (sfInfo.channels > 1 &&
-							  (tableNameElement = message->getElement(currentElementIndex++)) != NULL &&
-							  tableNameElement->getType() == SYMBOL &&
-							  (table = graph->getTable(tableNameElement->getSymbol())) != NULL) {
-							  for (int i = 1, j = 0; i < bufferLength; i+=sfInfo.channels, j++) {
-								  channelBuffer[j] = buffer[i];
-							  }
-							  table->setBuffer(channelBuffer, samplesPerChannel, shouldResizeTable);
-						  }
-						  free(channelBuffer);
-					  }
-					  free(buffer);
-				  }
+					    tableNameElement != NULL && tableNameElement->getType() == SYMBOL) {
+            MessageTable *table = graph->getTable(tableNameElement->getSymbol());
+            if (table != NULL) {
+              // use libsndfile to load and read the file (also converting the samples to [-1,1] float)
+              SF_INFO sfInfo;
+              
+              char *directory = (char *) graph->getDeclareList()->get(0);
+              char *filename = StaticUtils::joinPaths(directory, messageElement->getSymbol());
+              SNDFILE *sndFile = sf_open(filename, SFM_READ, &sfInfo);
+              
+              if (sndFile == NULL) {
+                graph->printErr("soundfiler can't open %s.", filename);
+                free(filename);
+                return; // there was an error reading the file. Move on with life.
+              } 
+              free(filename);
+              
+              // It is assumed that the channels are interleaved.
+              int samplesPerChannel = sfInfo.frames;
+              int bufferLength = samplesPerChannel * sfInfo.channels;
+              // create a buffer in memory for the file data
+              float *buffer = (float *) malloc(bufferLength * sizeof(float));
+              sf_read_float(sndFile, buffer, bufferLength); // read the whole file into memory
+              sf_close(sndFile); // release the handle to the file
+              
+              if (sfInfo.channels > 0) { // sanity check
+                // get the table's buffer. Resize the buffer if necessary.
+                int tableLength = samplesPerChannel;
+                float *tableBuffer = shouldResizeTable ? table->resizeBuffer(samplesPerChannel) :
+                    table->getBuffer(&tableLength);
+                if (tableLength > samplesPerChannel) {
+                  // avoid trying to read more into the table buffer than is available
+                  tableLength = samplesPerChannel;
+                }
+                
+                // extract the first channel
+                for (int i = 0, j = 0; i < tableLength; i+=sfInfo.channels, j++) {
+                  tableBuffer[j] = buffer[i];
+                }
+                
+                // extract the second channel (if it exists and if there is a table to write it to)
+                if (sfInfo.channels > 1 &&
+                    (tableNameElement = message->getElement(currentElementIndex++)) != NULL &&
+                    tableNameElement->getType() == SYMBOL &&
+                    (table = graph->getTable(tableNameElement->getSymbol())) != NULL) {
+                  tableLength = samplesPerChannel;
+                  tableBuffer = shouldResizeTable ? table->resizeBuffer(samplesPerChannel) :
+                      table->getBuffer(&tableLength);
+                  if (tableLength > samplesPerChannel) {
+                    // avoid trying to read more into the table buffer than is available
+                    tableLength = samplesPerChannel;
+                  }
+                  for (int i = 1, j = 0; i < tableLength; i+=sfInfo.channels, j++) {
+                    tableBuffer[j] = buffer[i];
+                  }
+                }
+              }
+              free(buffer);
+              
+              // send message with sample length when all tables have been filled
+              PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+              outgoingMessage->setFloat(0, (float) samplesPerChannel);
+              outgoingMessage->setTimestamp(message->getTimestamp());
+              sendMessage(0, outgoingMessage);
+            }
+          }
 			  }
 		  }
 		}
-		  
   } else if (message->isSymbol(0) && strcmp(message->getSymbol(0), "write") == 0) {
 		// TODO(mhroth): not supported yet
+    graph->printErr("The \"write\" command to soundfiler is not supported.");
 	}
-  
 }

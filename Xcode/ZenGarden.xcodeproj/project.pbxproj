@@ -913,8 +913,6 @@
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				E4A3DD0011D93E8D007FE6FC /* MessageSoundfiler.cpp */,
-				E4A3DD0111D93E8D007FE6FC /* MessageSoundfiler.h */,
 				90337B4911D0D847009FCC01 /* ArrayArithmetic.cpp */,
 				90337B4A11D0D847009FCC01 /* ArrayArithmetic.h */,
 				90337B4B11D0D847009FCC01 /* ConnectionType.h */,
@@ -1103,6 +1101,8 @@
 				90337C1F11D0D847009FCC01 /* MessageSendController.h */,
 				90337C2011D0D847009FCC01 /* MessageSine.cpp */,
 				90337C2111D0D847009FCC01 /* MessageSine.h */,
+				E4A3DD0011D93E8D007FE6FC /* MessageSoundfiler.cpp */,
+				E4A3DD0111D93E8D007FE6FC /* MessageSoundfiler.h */,
 				90337C2411D0D847009FCC01 /* MessageSpigot.cpp */,
 				90337C2511D0D847009FCC01 /* MessageSpigot.h */,
 				90337C2611D0D847009FCC01 /* MessageSqrt.cpp */,
@@ -1890,6 +1890,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -1909,6 +1910,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
@@ -1919,6 +1921,7 @@
 				INSTALL_PATH = /usr/local/bin;
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "-lsndfile";
 				PRODUCT_NAME = ZenGarden;
 				STRIP_INSTALLED_PRODUCT = YES;
 			};
@@ -1958,10 +1961,11 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				HEADER_SEARCH_PATHS = "/Users/roikr/Developer/OpenSource/libsndfile-1.0.21/src";
+				HEADER_SEARCH_PATHS = /usr/local/include;
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
-				LIBRARY_SEARCH_PATHS = "/Users/roikr/Developer/OpenSource/libsndfile-1.0.21/Xcode/build/Debug-iphoneos";
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../libs/iOS";
 				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = "-lsndfile";
 				PREBINDING = NO;
 				PRODUCT_NAME = zengarden;
 				SDKROOT = iphoneos4.0;
@@ -1978,7 +1982,10 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
+				HEADER_SEARCH_PATHS = /usr/local/include;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../libs/iOS";
+				OTHER_LDFLAGS = "-lsndfile";
 				PREBINDING = NO;
 				PRODUCT_NAME = zengarden;
 				SDKROOT = iphoneos4.0;
