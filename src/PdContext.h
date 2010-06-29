@@ -25,6 +25,7 @@
 
 #include <pthread.h>
 
+#include "OrderedMessageQueue.h"
 #include "PdGraph.h"
 #include "ZGCallbackFunction.h"
 #include "ZGLinkedList.h"
@@ -36,6 +37,10 @@ class DspReceive;
 class DspSend;
 class DspThrow;
 
+/**
+ * The <code>PdContext</code> is a container for a set of <code>PdGraph</code>s operating in
+ * a common environment. The <code>PdContext</code> tracks all relevent global variables.
+ */
 class PdContext {
   
   public:
@@ -50,7 +55,7 @@ class PdContext {
   
     void addNewGraph(void);
     
-    void process(float *inputBuffer, float *outputBuffer);
+    void process(float *inputBuffers, float *outputBuffers);
   
     void lock();
     void unlock();
@@ -115,6 +120,15 @@ class PdContext {
     
     float *globalDspInputBuffers;
     float *globalDspOutputBuffers;
+  
+    /** A message queue keeping track of all scheduled messages. */
+    OrderedMessageQueue *messageCallbackQueue;
+  
+    /** The start of the current block in milliseconds. */
+    double blockStartTimestamp;
+    
+    /** The duration of one block in milliseconds. */
+    double blockDurationMs;
   
     /** A global list of all [send~] objects. */
     ZGLinkedList *dspSendList;

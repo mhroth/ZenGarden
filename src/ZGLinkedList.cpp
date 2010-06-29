@@ -76,7 +76,7 @@ void ZGLinkedList::resetIterator() {
 void *ZGLinkedList::getNext() {
   LinkedListNode *node = iteratorNode;
   iteratorNode = (node == NULL) ? NULL : node->next;
-  return node;
+  return node->data;
 }
 
 void **ZGLinkedList::add() {

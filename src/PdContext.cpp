@@ -28,7 +28,6 @@
 #include "DspThrow.h"
 #include "PdContext.h"
 
-#pragma mark -
 #pragma mark PdContext Constructor/Deconstructor
 
 PdContext::PdContext(int numInputChannels, int numOutputChannels, int blockSize, float sampleRate,
@@ -40,6 +39,9 @@ PdContext::PdContext(int numInputChannels, int numOutputChannels, int blockSize,
   callbackFunction = function;
   callbackUserData = userData;
   pthread_mutex_init(&contextLock, NULL);
+  blockStartTimestamp = 0.0;
+  blockDurationMs = ((double) blockSize / (double) sampleRate) * 1000.0;
+  messageCallbackQueue = new OrderedMessageQueue();
   
   numBytesInInputBuffers = blockSize * numInputChannels * sizeof(float);
   numBytesInOutputBuffers = blockSize * numOutputChannels * sizeof(float);
@@ -54,7 +56,7 @@ PdContext::PdContext(int numInputChannels, int numOutputChannels, int blockSize,
   throwList = new ZGLinkedList();
   catchList = new ZGLinkedList();
   
-  // delete all declare path string
+  // delete all declare path strings
   for (int i = 0; i < declareList->size(); i++) {
     free(declareList->get(i));
   }
@@ -67,6 +69,8 @@ PdContext::PdContext(int numInputChannels, int numOutputChannels, int blockSize,
 PdContext::~PdContext() {
   free(globalDspInputBuffers);
   free(globalDspOutputBuffers);
+  
+  delete messageCallbackQueue;
   
   PdGraph *graph = NULL;
   graphList->resetIterator();
@@ -115,16 +119,46 @@ float *PdContext::getGlobalDspBufferAtOutlet(int outletIndex) {
 
 #pragma mark -
 
-void PdContext::process(float *inputBuffer, float *outputBuffer) {
-  lock();
-  memcpy(globalDspInputBuffers, inputBuffer, numBytesInInputBuffers);
+void PdContext::process(float *inputBuffers, float *outputBuffers) {
+  lock(); // lock the context
+  
+  // set up adc~ buffers
+  memcpy(globalDspInputBuffers, inputBuffers, numBytesInInputBuffers);
+  
+  // clear the global output audio buffers so that dac~ nodes can write to it
+  memset(globalDspOutputBuffers, 0, numBytesInOutputBuffers);
+  
+  // Send all messages for this block
+  MessageDestination *destination = NULL;
+  double nextBlockStartTimestamp = blockStartTimestamp + blockDurationMs;
+  while ((destination = (MessageDestination *) messageCallbackQueue->get(0)) != NULL &&
+         destination->message->getTimestamp() < nextBlockStartTimestamp) {
+    messageCallbackQueue->remove(0); // remove the message from the queue
+    destination->message->unreserve(destination->object);
+    if (destination->message->getTimestamp() < blockStartTimestamp) {
+      // messages injected into the system with a timestamp behind the current block are automatically
+      // rescheduled for the beginning of the current block. This is done in order to normalise
+      // the treament of messages, but also to avoid difficulties in cases when messages are scheduled
+      // in subgraphs with different block sizes.
+      destination->message->setTimestamp(blockStartTimestamp);
+    }
+    // TODO(mhroth): unreserve() should probably come after sendScheduledMessage() in order
+    // to prevent the message from being resused in the case the reserving object is retriggered
+    // during the execution of sendScheduledMessage()
+    destination->object->sendMessage(destination->index, destination->message);
+  }
+  
   PdGraph *graph = NULL;
   graphList->resetIterator();
   while ((graph = (PdGraph *) graphList->getNext()) != NULL) {
-    graph->process(inputBuffer, outputBuffer);
+    graph->processDsp();
   }
-  memcpy(outputBuffer, globalDspOutputBuffers, numBytesInOutputBuffers);
-  unlock();
+  
+  // copy the output audio to the given buffer
+  memcpy(outputBuffers, globalDspOutputBuffers, numBytesInOutputBuffers);
+  
+  blockStartTimestamp = nextBlockStartTimestamp;
+  unlock(); // unlock the context
 }
 
 void PdContext::addNewGraph() {
@@ -137,8 +171,7 @@ void PdContext::addNewGraph() {
 
 void PdContext::addGraph(PdGraph *graph) {
   lock();
-  void **data = graphList->add();
-  *data = graph;
+  graphList->add(graph);
   unlock();
 }
 

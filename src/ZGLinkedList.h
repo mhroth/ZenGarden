@@ -56,7 +56,7 @@ class ZGLinkedList {
     /** Reset the iterator for this list. */
     void resetIterator();
     
-    /** Get the next node in the list according to the iterator. */
+    /** Get the data from the next node in the list according to the iterator. */
     void *getNext();
 
   protected:
