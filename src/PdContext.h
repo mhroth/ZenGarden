@@ -36,6 +36,8 @@ class DspDelayWrite;
 class DspReceive;
 class DspSend;
 class DspThrow;
+class MessageTable;
+class TableReceiver;
 
 /**
  * The <code>PdContext</code> is a container for a set of <code>PdGraph</code>s operating in
@@ -96,6 +98,12 @@ class PdContext {
     void registerDspThrow(DspThrow *dspThrow);
     
     void registerDspCatch(DspCatch *dspCatch);
+  
+    void registerTable(MessageTable *table);
+    
+    void registerTableReceiver(TableReceiver *tableReceiver);
+  
+    MessageTable *getTable(char *name);
   
     /** Returns the named global <code>DspCatch</code> object. */
     DspCatch *getDspCatch(char *name);

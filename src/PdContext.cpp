@@ -26,7 +26,9 @@
 #include "DspReceive.h"
 #include "DspSend.h"
 #include "DspThrow.h"
+#include "MessageTable.h"
 #include "PdContext.h"
+#include "TableReceiver.h"
 
 #pragma mark PdContext Constructor/Deconstructor
 
@@ -335,4 +337,40 @@ DspCatch *PdContext::getDspCatch(char *name) {
     }
   }
   return NULL;
+}
+
+void PdContext::registerTable(MessageTable *table) {
+  // duplicate check
+  if (getTable(table->getName()) != NULL) {
+    printErr("Table with name \"%s\" already exists.", table->getName());
+    return;
+  }
+  
+  tableList->add(table);
+  
+  TableReceiver *receiver = NULL;
+  tableReceiverList->resetIterator();
+  while ((receiver = (TableReceiver *) tableReceiverList->getNext()) != NULL) {
+    if (strcmp(receiver->getName(), table->getName()) == 0) {
+      receiver->setTable(table);
+    }
+  }
+}
+
+MessageTable *PdContext::getTable(char *name) {
+  MessageTable *table = NULL;
+  tableList->resetIterator();
+  while ((table = (MessageTable *) tableList->getNext()) != NULL) {
+    if (strcmp(table->getName(), name) == 0) {
+      return table;
+    }
+  }
+  return NULL;
+}
+
+void PdContext::registerTableReceiver(TableReceiver *tableReceiver) {
+  tableReceiverList->add(tableReceiver); // add the new receiver
+  
+  MessageTable *table = getTable(tableReceiver->getName());
+  tableReceiver->setTable(table); // set table whether it is NULL or not
 }
