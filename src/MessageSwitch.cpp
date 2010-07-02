@@ -36,7 +36,7 @@ const char *MessageSwitch::getObjectLabel() {
 }
 
 void MessageSwitch::processMessage(int inletIndex, PdMessage *message) {
-  if (message->getElement(0)->getType() == FLOAT) {
-    graph->setSwitch(message->getElement(0)->getFloat() != 0.0f);
+  if (message->isFloat(0)) {
+    graph->setSwitch(message->getFloat(0) != 0.0f);
   }
 }
