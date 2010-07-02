@@ -2,7 +2,7 @@
  *  Copyright 2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
- * 
+ *
  *  This file is part of ZenGarden.
  *
  *  ZenGarden is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU Lesser General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with ZenGarden.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -24,7 +24,7 @@
 #define _TABLE_RECEIVER_H_
 
 #include "DspObject.h"
-#include "MessageTable.h";
+#include "MessageTable.h"
 
 /**
  * This class has a similar function to <code>DelayReceiver</code> in that it is a the superclass
@@ -35,10 +35,10 @@ class TableReceiver : public DspObject {
   public:
     TableReceiver(int numMessageInlets, int numDspInlets, int numMessageOutlets, int numDspOutlets, PdGraph *graph);
     virtual ~TableReceiver();
-    
+
     char *getName();
     void setTable(MessageTable *table);
-    
+
   protected:
     char *name;
     MessageTable *table;
