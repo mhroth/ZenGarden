@@ -38,6 +38,7 @@ class ZGLinkedList {
 
     /** Adds a new node to the list. Returns a pointer to the data pointer of the new node.*/
     void **add();
+    void add(void *data);
 
     /** Removes the given element from the list. */
     void remove(void *element);
@@ -55,7 +56,7 @@ class ZGLinkedList {
     /** Reset the iterator for this list. */
     void resetIterator();
     
-    /** Get the next node in the list according to the iterator. */
+    /** Get the data from the next node in the list according to the iterator. */
     void *getNext();
 
   protected:
