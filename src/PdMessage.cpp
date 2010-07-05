@@ -281,6 +281,19 @@ bool PdMessage::isSymbol(int index) {
   }
 }
 
+bool PdMessage::isSymbol(int index, const char *test) {
+  if (index >= 0 && index < elementList->size()) {
+    MessageElement *messageElement = getElement(index);
+    if (messageElement->isSymbol()) {
+      return (strcmp(messageElement->getSymbol(), test) == 0);
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
+}
+
 bool PdMessage::isBang(int index) {
   if (index >= 0 && index < elementList->size()) {
     return getElement(index)->isBang();

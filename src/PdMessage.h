@@ -119,6 +119,7 @@ class PdMessage {
     /** Convenience function to determine if a particular message element is a float. */
     bool isFloat(int index);
     bool isSymbol(int index);
+    bool isSymbol(int index, const char *test);
     bool isBang(int index);
     MessageElementType getType(int index);
   
