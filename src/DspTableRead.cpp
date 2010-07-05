@@ -71,8 +71,8 @@ void DspTableRead::processDspToIndex(float blockIndex) {
       #if __APPLE__
       float zero = 0.0f;
       float one = 1.0f;
-      vDSP_vtabi(inputBuffer, 1, &one, &zero, buffer, bufferLength, outputBuffer, 1,
-          endSampleIndex-startSampleIndex);
+      vDSP_vtabi(inputBuffer+startSampleIndex, 1, &one, &zero, buffer, bufferLength,
+          outputBuffer+startSampleIndex, 1, endSampleIndex-startSampleIndex);
       #endif
     } else {
       // TODO(mhroth): this can be optimised, as has been done in DspVariableDelay
