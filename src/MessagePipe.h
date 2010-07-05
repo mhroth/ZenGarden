@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -32,11 +32,16 @@ class MessagePipe : public MessageObject {
     ~MessagePipe();
   
     const char *getObjectLabel();
+  
+    // override <code>sendMessage</code> in order to remove the message from the scheduled
+    // message list as it is sent out.
+    void sendMessage(int outletIndex, PdMessage *message);
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
   
     double delayMs; // the delay in milliseconds
+    ZGLinkedList *scheduledMessagesList;
 };
 
 #endif // _MESSAGE_PIPE_H_

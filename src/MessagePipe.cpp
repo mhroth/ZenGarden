@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -22,35 +22,47 @@
 
 #include "MessagePipe.h"
 #include "PdGraph.h"
+#include "ZGLinkedList.h"
 
 MessagePipe::MessagePipe(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
-  if (initMessage->getNumElements() > 0 &&
-      initMessage->getElement(0)->getType() == FLOAT) {
-    delayMs = (double) initMessage->getElement(0)->getFloat();
-  } else {
-    delayMs = 0.0;
-  }
+  delayMs = initMessage->isFloat(0) ? (double) initMessage->getFloat(0) : 0.0;
+  scheduledMessagesList = new ZGLinkedList();
 }
 
 MessagePipe::~MessagePipe() {
-  // nothing to do
+  delete scheduledMessagesList;
 }
 
 const char *MessagePipe::getObjectLabel() {
   return "pipe";
 }
 
+void MessagePipe::sendMessage(int outletIndex, PdMessage *message) {
+  // remove the scheduled message from the list before it is send
+  scheduledMessagesList->remove(message);
+  MessageObject::sendMessage(outletIndex, message);
+}
+
 void MessagePipe::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
-      MessageElement *messageElement = message->getElement(0);
-      switch (messageElement->getType()) {
+      switch (message->getType(0)) {
         case SYMBOL: {
-          if (strcmp(messageElement->getSymbol(), "flush") == 0) {
-            // TODO(mhroth): output all stored messages immediately
+          if (message->isSymbol(0, "flush")) {
+            // cancel all scheduled messages and send them immediately
+            PdMessage *scheduledMessage = NULL;
+            while ((scheduledMessage = (PdMessage *) scheduledMessagesList->getNext()) != NULL) {
+              graph->cancelMessage(this, 0, scheduledMessage);
+              scheduledMessage->setTimestamp(message->getTimestamp());
+              sendMessage(0, scheduledMessage);
+            }
             break;
-          } else if (strcmp(messageElement->getSymbol(), "clear") == 0) {
-            // TODO(mhroth): forget all stored messages
+          } else if (message->isSymbol(0, "clear")) {
+            // cancel all scheduled messages
+            PdMessage *scheduledMessage = NULL;
+            while ((scheduledMessage = (PdMessage *) scheduledMessagesList->getNext()) != NULL) {
+              graph->cancelMessage(this, 0, scheduledMessage);
+            }
             break;
           }
           // allow fall-through
@@ -58,6 +70,7 @@ void MessagePipe::processMessage(int inletIndex, PdMessage *message) {
         case FLOAT:
         case BANG: {
           message->setTimestamp(message->getTimestamp() + delayMs);
+          scheduledMessagesList->add(message);
           graph->scheduleMessage(this, 0, message);
           break;
         }
@@ -65,6 +78,12 @@ void MessagePipe::processMessage(int inletIndex, PdMessage *message) {
           break;
         }
       }
+    }
+    case 1: {
+      if (message->isFloat(0)) {
+        delayMs = (double) message->getFloat(0);
+      }
+      break;
     }
     default: {
       break;
