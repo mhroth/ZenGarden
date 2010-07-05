@@ -119,6 +119,11 @@ public class PdObjectTest implements ZenGardenListener {
   }
 
   @Test
+  public void testMessageDelay() {
+    genericMessageTest("MessageDelay.pd", 2000.0f);
+  }
+
+  @Test
   public void testMessageEqualsEquals() {
     genericMessageTest("MessageEqualsEquals.pd");
   }
@@ -224,12 +229,11 @@ public class PdObjectTest implements ZenGardenListener {
     genericMessageTest("MessageUnpack.pd");
   }
   */
+  
   /**
-   * Encompasses a generic test for message objects. It processes the graph once and compares the
-   * standard output to the golden file, and ensures that the error output is empty.
-   * @param testFilename
+   * Executes the generic message test for at least the given minimum runtime (in milliseconds).
    */
-  private void genericMessageTest(String testFilename) {
+  private void genericMessageTest(String testFilename, float minmumRuntimeMs) {
     ZenGarden graph = null;
     try {
       graph = new ZenGarden(new File(TEST_PATHNAME, testFilename),
@@ -239,7 +243,11 @@ public class PdObjectTest implements ZenGardenListener {
     }
     graph.addListener(this);
     
-    graph.process(INPUT_BUFFER, OUTPUT_BUFFER);
+    // process at least as many blocks as necessary to cover the givenruntime
+    int numBlocksToProcess = (int) (Math.floor(((minmumRuntimeMs/1000.0f)*SAMPLE_RATE)/BLOCK_SIZE)+1);
+    for (int i = 0; i < numBlocksToProcess; i++) {
+      graph.process(INPUT_BUFFER, OUTPUT_BUFFER);
+    }
     
     String messageStdOutput = stringBuilderStd.toString();
     String messageErrOutput = stringBuilderErr.toString();
@@ -253,6 +261,15 @@ public class PdObjectTest implements ZenGardenListener {
     assertEquals(messageErrOutput, "");
     
     graph.unloadNativeComponentIfStillLoaded();
+  }
+  
+  /**
+   * Encompasses a generic test for message objects. It processes the graph once and compares the
+   * standard output to the golden file, and ensures that the error output is empty.
+   * @param testFilename
+   */
+  private void genericMessageTest(String testFilename) {
+    genericMessageTest(testFilename, 0.0f);
   }
   
   private String readTextFile(File file) {

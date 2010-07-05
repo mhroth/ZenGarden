@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -24,24 +24,12 @@
 #include "PdGraph.h"
 
 MessageDelay::MessageDelay(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
-  if (initMessage->getNumElements() > 0 &&
-      initMessage->getElement(0)->getType() == FLOAT) {
-    init(initMessage->getElement(0)->getFloat());
-  } else {
-    init(0.0f);
-  }
-}
-
-MessageDelay::MessageDelay(float delayMs, PdGraph *graph) : MessageObject(2, 1, graph) {
-  init(delayMs);
+  delayMs = initMessage->isFloat(0) ? (double) initMessage->getFloat(0) : 0.0;
+  scheduledMessage = NULL;
 }
 
 MessageDelay::~MessageDelay() {
   // nothing to do
-}
-
-void MessageDelay::init(float delayMs) {
-  this->delayMs = (double) delayMs;
 }
 
 const char *MessageDelay::getObjectLabel() {
@@ -51,20 +39,25 @@ const char *MessageDelay::getObjectLabel() {
 void MessageDelay::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
-      MessageElement *messageElement = message->getElement(0);
-      switch (messageElement->getType()) {
+      switch (message->getType(0)) {
         case SYMBOL: {
-          if (strcmp(messageElement->getSymbol(), "stop") == 0) {
-            // TODO(mhroth): cancel the delay's action
+          if (message->isSymbol(0, "stop")) {
+            if (scheduledMessage != NULL) {
+              graph->cancelMessage(this, 0, scheduledMessage);
+            }
             break;
           }
           // allow fall-through
         }
         case FLOAT:
         case BANG: {
-          PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-          outgoingMessage->setTimestamp(message->getTimestamp() + delayMs);
-          graph->scheduleMessage(this, 0, outgoingMessage);
+          if (scheduledMessage != NULL) {
+            graph->cancelMessage(this, 0, scheduledMessage);
+            scheduledMessage = NULL;
+          }
+          scheduledMessage = getNextOutgoingMessage(0);
+          scheduledMessage->setTimestamp(message->getTimestamp() + delayMs);
+          graph->scheduleMessage(this, 0, scheduledMessage);
           break;
         }
         default: {
@@ -74,9 +67,13 @@ void MessageDelay::processMessage(int inletIndex, PdMessage *message) {
       break;
     }
     case 1: {
-      MessageElement *messageElement = message->getElement(0);
-      if (messageElement->getType() == FLOAT) {
-        delayMs = (double) messageElement->getFloat();
+      if (message->isFloat(0)) {
+        if (scheduledMessage != NULL) {
+          // if an outstanding message exists when the delay is reset, the message is cancelled
+          graph->cancelMessage(this, 0, scheduledMessage);
+          scheduledMessage = NULL;
+        }
+        delayMs = (double) message->getFloat(0);
       }
       break;
     }
