@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -20,107 +20,132 @@
  *
  */
 
-#include "DspTable.h"
 #include "DspTablePlay.h"
+#include "MessageTable.h"
+#include "PdGraph.h"
 
-DspTablePlay::DspTablePlay(int blockSize, PdGraph *pdGraph, char *initString) : 
-    RemoteBufferReceiverObject(NULL, blockSize, initString) {
-  this->pdGraph = pdGraph;
-  startIndex = 0;
-  currentIndex = 0;
-  endIndex = -1; // run all the way to the end
-}
-
-DspTablePlay::DspTablePlay(char *tag, int blockSize, PdGraph *pdGraph, char *initString) : 
-    RemoteBufferReceiverObject(tag, blockSize, initString) {
-  this->pdGraph = pdGraph;
-  startIndex = 0;
-  currentIndex = 0;
-  endIndex = -1;
+DspTablePlay::DspTablePlay(PdMessage *initMessage, PdGraph *graph) : TableReceiver(1, 0, 2, 1, graph) {
+  name = initMessage->isSymbol(0) ? StaticUtils::copyString(initMessage->getSymbol(0)) : NULL;
+  table = NULL;
+  outgoingMessage = NULL;
+  localDspBufferAtOutletReserved = localDspBufferAtOutlet[0];
+  currentTableIndex = 0;
+  endTableIndex = 0;
 }
 
 DspTablePlay::~DspTablePlay() {
-  // nothing to do
+  free(name);
+  // allow the original audio buffer to be properly freed
+  localDspBufferAtOutlet[0] = localDspBufferAtOutletReserved;
 }
 
-inline void DspTablePlay::processMessage(int inletIndex, PdMessage *message) {
-  if (inletIndex == 0) {
-    MessageElement *messageElement0 = message->getElement(0);
-    switch (messageElement0->getType()) {
-      case FLOAT: {
-        MessageElement *messageElement1 = message->getElement(1);
-        if (messageElement1 != NULL && messageElement1->getType() == FLOAT) {
-          startIndex = messageElement0->getFloat();
-          endIndex = startIndex + messageElement1->getFloat();
-        } else {
-          startIndex = messageElement0->getFloat();
-          endIndex = -1;
-        }
-        break;
-      }
-      case SYMBOL: {
-        if (strcmp(messageElement0->getSymbol(), "set") == 0) {
-          MessageElement *messageElement1 = message->getElement(1);
-          if (messageElement1 != NULL && messageElement1->getType() == SYMBOL) {
-            DspTable *newTable = pdGraph->getTable(messageElement1->getSymbol());
-            if (newTable != NULL) {
-              processDspToIndex(message->getBlockIndex());
-              blockIndexOfLastMessage = message->getBlockIndex();
-              setRemoteBuffer(newTable);
-            }
-          }
-        }
-        break;
-      }
-      case BANG: {
-        // reset the playback
-        processDspToIndex(message->getBlockIndex());
-        startIndex = 0;
-        currentIndex = 0;
-        endIndex = -1; // run all the way to the end
-        break;
-      }
-      default: {
-        break;
-      }
+const char *DspTablePlay::getObjectLabel() {
+  return "tabplay~";
+}
+
+ConnectionType DspTablePlay::getConnectionType(int outletIndex) {
+  // the right outlet is a message outlet, otherwise this object is considered to output audio
+  return (outletIndex == 1) ? MESSAGE : DSP;
+}
+
+void DspTablePlay::sendMessage(int outletIndex, PdMessage *message) {
+  MessageObject::sendMessage(outletIndex, message);
+  outgoingMessage = NULL;
+}
+
+void DspTablePlay::processMessage(int inletIndex, PdMessage *message) {
+  switch (message->getType(0)) {
+    case FLOAT: {
+      processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
+      playTable((int) message->getFloat(0),
+          message->isFloat(1) ? (int) message->getFloat(1) : -1);
+      break;
     }
-    
-    
-    if (message->getNumElements() > 1) {
-      MessageElement *messageElement0 = message->getElement(0);
-      if (messageElement0 != NULL && messageElement0->getType() == SYMBOL &&
-          strcmp(messageElement0->getSymbol(), "set") == 0) {
-        MessageElement *messageElement1 = message->getElement(1);
-        if (messageElement1 != NULL && messageElement1->getType() == SYMBOL) {
-          DspTable *newTable = pdGraph->getTable(messageElement1->getSymbol());
-          if (newTable != NULL) {
-            processDspToIndex(message->getBlockIndex());
-            blockIndexOfLastMessage = message->getBlockIndex();
-            setRemoteBuffer(newTable);
-          }
-        }
+    case SYMBOL: {
+      if (message->isSymbol(0, "set") && message->isSymbol(1)) {
+        processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
+        table = graph->getTable(message->getSymbol(1));
       }
+      break;
+    }
+    case BANG: {
+      processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
+      playTable(0, -1);
+      break;
+    }
+    default: {
+      break;
     }
   }
 }
 
-inline void DspTablePlay::processDspToIndex(int newBlockIndex) {
-  /*
-  int processLength = newBlockIndex - blockIndexOfLastMessage;
-  if (remoteBuffer != NULL && processLength > 0) {
-    int headIndex;
-    int bufferLength;
-    float *buffer = remoteBuffer->getBuffer(&headIndex, &bufferLength);
-    float *outputBuffer = localDspBufferAtOutlet[0];
-    int readIndex = headIndex - delayInSamples - (blockSize - blockIndexOfLastMessage);
-    if (readIndex < 0) {
-      readIndex += bufferLength;
-      // WARNING: this code does not account for the requested buffer length exceeding
-      // the buffer's limits
+void DspTablePlay::playTable(int startIndex, int duration) {
+  if (startIndex >= 0 && duration >= -1) {
+    if (outgoingMessage != NULL) {
+      // if the table is currently playing and there is an outstanding scheduled message, cancel it
+      graph->cancelMessage(this, 1, outgoingMessage);
+      outgoingMessage = NULL;
     }
-    memcpy(localDspBufferAtOutlet[0] + blockIndexOfLastMessage, 
-        buffer + readIndex, processLength * sizeof(float));
-    blockIndexOfLastMessage = newBlockIndex;
+    int bufferLength = 0;
+    table->getBuffer(&bufferLength);
+    if (startIndex < bufferLength) {
+      // sanity check that table should be played from a point before it ends
+      currentTableIndex = startIndex;
+      endTableIndex = (duration == -1) ? bufferLength : startIndex + duration;
+      if (endTableIndex > bufferLength) {
+        endTableIndex = bufferLength;
+      }
+      outgoingMessage = getNextOutgoingMessage(1);
+      double durationMs = 1000.0 * ((double) (endTableIndex-startIndex)) / (double) graph->getSampleRate();
+      outgoingMessage->setTimestamp(graph->getBlockStartTimestamp() + durationMs);
+      graph->scheduleMessage(this, 1, outgoingMessage);
+    } else {
+      currentTableIndex = bufferLength;
+    }
   }
-   */
+}
+
+void DspTablePlay::processDspToIndex(float blockIndex) {
+  if (table != NULL) {
+    int bufferLength = 0;
+    float *tableBuffer = table->getBuffer(&bufferLength);
+    if (bufferLength < endTableIndex) {
+      // in case the table length has been reset while tabplay~ is playing the buffer
+      endTableIndex = bufferLength;
+    }
+    int startSampleIndex = getStartSampleIndex();
+    int endSampleIndex = getEndSampleIndex(blockIndex);
+    int duration = endSampleIndex - startSampleIndex; // the duration of the output buffer to fill
+    // the number of reamining samples in the table buffer
+    int remainingTableSamples = endTableIndex - currentTableIndex;
+    if (remainingTableSamples <= 0) {
+      // if the entire buffer has already been read, fill the output with silence
+      localDspBufferAtOutlet[0] = localDspBufferAtOutletReserved;
+      memset(localDspBufferAtOutletReserved + startSampleIndex, 0, duration * sizeof(float));
+    } else if (startSampleIndex == 0 && endSampleIndex == blockSizeInt &&
+        duration <= remainingTableSamples) {
+      // if the entire output must be filled and there are more than one buffer's worth of
+      // samples still available from the table, just set the output buffer pointer
+      localDspBufferAtOutlet[0] = tableBuffer + currentTableIndex;
+      currentTableIndex += blockSizeInt;
+    } else if (duration <= remainingTableSamples) {
+      // if the number of remaining samples in the table is more than the number of samples
+      // which need to be read to the output buffer
+      localDspBufferAtOutlet[0] = localDspBufferAtOutletReserved;
+      memcpy(localDspBufferAtOutletReserved + startSampleIndex,
+             tableBuffer + currentTableIndex, duration * sizeof(float));
+      currentTableIndex += duration;
+    } else {
+      // if the number of output buffer samples to fill is larger than the number of remaining table
+      // samples, fill the output with the maximum available table samples, and fill in the remainder
+      // with zero
+      localDspBufferAtOutlet[0] = localDspBufferAtOutletReserved;
+      memcpy(localDspBufferAtOutletReserved + startSampleIndex,
+             tableBuffer + currentTableIndex, remainingTableSamples * sizeof(float));
+      memset(localDspBufferAtOutletReserved + startSampleIndex + remainingTableSamples, 0,
+             (duration-remainingTableSamples) * sizeof(float));
+      currentTableIndex += duration;
+    }
+  }
+  blockIndexOfLastMessage = blockIndex;
 }

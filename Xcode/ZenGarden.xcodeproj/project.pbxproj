@@ -8,6 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		8DD76F6A0486A84900D96B5E /* ZenGardenNp.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6859E8B029090EE04C91782 /* ZenGardenNp.1 */; };
+		9017567511DFDD4B00A22517 /* DspTablePlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9017567311DFDD4B00A22517 /* DspTablePlay.cpp */; };
+		9017567611DFDD4B00A22517 /* DspTablePlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9017567311DFDD4B00A22517 /* DspTablePlay.cpp */; };
+		9017567711DFDD4B00A22517 /* DspTablePlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 9017567411DFDD4B00A22517 /* DspTablePlay.h */; };
+		9017567811DFDD4B00A22517 /* DspTablePlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9017567311DFDD4B00A22517 /* DspTablePlay.cpp */; };
+		9017567911DFDD4B00A22517 /* DspTablePlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 9017567411DFDD4B00A22517 /* DspTablePlay.h */; };
 		903374F411D0D34D009FCC01 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 903374F311D0D34D009FCC01 /* Accelerate.framework */; };
 		90337C5D11D0D847009FCC01 /* ArrayArithmetic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B4911D0D847009FCC01 /* ArrayArithmetic.cpp */; };
 		90337C5E11D0D847009FCC01 /* DelayReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B4C11D0D847009FCC01 /* DelayReceiver.cpp */; };
@@ -194,7 +199,6 @@
 		90337D2611D0D847009FCC01 /* DspWrap.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337B9111D0D847009FCC01 /* DspWrap.h */; };
 		90337D2711D0D847009FCC01 /* List.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B9211D0D847009FCC01 /* List.cpp */; };
 		90337D2811D0D847009FCC01 /* List.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337B9311D0D847009FCC01 /* List.h */; };
-		90337D2911D0D847009FCC01 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B9411D0D847009FCC01 /* main.cpp */; };
 		90337D3211D0D847009FCC01 /* MersenneTwister.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337BA811D0D847009FCC01 /* MersenneTwister.h */; };
 		90337D3311D0D847009FCC01 /* MessageAbsoluteValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337BA911D0D847009FCC01 /* MessageAbsoluteValue.cpp */; };
 		90337D3411D0D847009FCC01 /* MessageAbsoluteValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337BAA11D0D847009FCC01 /* MessageAbsoluteValue.h */; };
@@ -623,6 +627,8 @@
 
 /* Begin PBXFileReference section */
 		8DD76F6C0486A84900D96B5E /* ZenGarden */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ZenGarden; sourceTree = BUILT_PRODUCTS_DIR; };
+		9017567311DFDD4B00A22517 /* DspTablePlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspTablePlay.cpp; path = ../src/DspTablePlay.cpp; sourceTree = SOURCE_ROOT; };
+		9017567411DFDD4B00A22517 /* DspTablePlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspTablePlay.h; path = ../src/DspTablePlay.h; sourceTree = SOURCE_ROOT; };
 		9033711811D0CF07009FCC01 /* libzengarden.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libzengarden.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		9033712011D0CF2B009FCC01 /* libzengarden.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libzengarden.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		903374F311D0D34D009FCC01 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
@@ -974,6 +980,8 @@
 				90337B8311D0D847009FCC01 /* DspSnapshot.h */,
 				90337B8411D0D847009FCC01 /* DspSubtract.cpp */,
 				90337B8511D0D847009FCC01 /* DspSubtract.h */,
+				9017567311DFDD4B00A22517 /* DspTablePlay.cpp */,
+				9017567411DFDD4B00A22517 /* DspTablePlay.h */,
 				90337B8811D0D847009FCC01 /* DspTableRead.cpp */,
 				90337B8911D0D847009FCC01 /* DspTableRead.h */,
 				90337B8A11D0D847009FCC01 /* DspThrow.cpp */,
@@ -1307,6 +1315,7 @@
 				90337DDF11D0D847009FCC01 /* ZGCallbackFunction.h in Headers */,
 				90337DE111D0D847009FCC01 /* ZGLinkedList.h in Headers */,
 				E4A3DD0411D93E8D007FE6FC /* MessageSoundfiler.h in Headers */,
+				9017567711DFDD4B00A22517 /* DspTablePlay.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1439,6 +1448,7 @@
 				90337EE311D0D847009FCC01 /* ZGCallbackFunction.h in Headers */,
 				90337EE511D0D847009FCC01 /* ZGLinkedList.h in Headers */,
 				E4A3DD0611D93E8D007FE6FC /* MessageSoundfiler.h in Headers */,
+				9017567911DFDD4B00A22517 /* DspTablePlay.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1636,6 +1646,7 @@
 				90337CDA11D0D847009FCC01 /* ZenGarden.cpp in Sources */,
 				90337CDD11D0D847009FCC01 /* ZGLinkedList.cpp in Sources */,
 				E4A3DD0211D93E8D007FE6FC /* MessageSoundfiler.cpp in Sources */,
+				9017567511DFDD4B00A22517 /* DspTablePlay.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1677,7 +1688,6 @@
 				90337D2111D0D847009FCC01 /* DspVariableDelay.cpp in Sources */,
 				90337D2511D0D847009FCC01 /* DspWrap.cpp in Sources */,
 				90337D2711D0D847009FCC01 /* List.cpp in Sources */,
-				90337D2911D0D847009FCC01 /* main.cpp in Sources */,
 				90337D3311D0D847009FCC01 /* MessageAbsoluteValue.cpp in Sources */,
 				90337D3511D0D847009FCC01 /* MessageAdd.cpp in Sources */,
 				90337D3711D0D847009FCC01 /* MessageArcTangent.cpp in Sources */,
@@ -1758,6 +1768,7 @@
 				90337DDB11D0D847009FCC01 /* ZenGarden.cpp in Sources */,
 				90337DE011D0D847009FCC01 /* ZGLinkedList.cpp in Sources */,
 				E4A3DD0311D93E8D007FE6FC /* MessageSoundfiler.cpp in Sources */,
+				9017567611DFDD4B00A22517 /* DspTablePlay.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1880,6 +1891,7 @@
 				90337EDF11D0D847009FCC01 /* ZenGarden.cpp in Sources */,
 				90337EE411D0D847009FCC01 /* ZGLinkedList.cpp in Sources */,
 				E4A3DD0511D93E8D007FE6FC /* MessageSoundfiler.cpp in Sources */,
+				9017567811DFDD4B00A22517 /* DspTablePlay.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1979,9 +1991,13 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../libs/iOS";
@@ -1989,6 +2005,8 @@
 				PREBINDING = NO;
 				PRODUCT_NAME = zengarden;
 				SDKROOT = iphoneos4.0;
+				SEPARATE_STRIP = NO;
+				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
 				STRIP_INSTALLED_PRODUCT = YES;
 				STRIP_STYLE = all;
 				ZERO_LINK = NO;

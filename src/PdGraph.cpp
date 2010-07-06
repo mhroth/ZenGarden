@@ -118,6 +118,7 @@
 #include "DspSig.h"
 #include "DspSnapshot.h"
 #include "DspSubtract.h"
+#include "DspTablePlay.h"
 #include "DspTableRead.h"
 #include "DspThrow.h"
 #include "DspVariableDelay.h"
@@ -558,6 +559,8 @@ MessageObject *PdGraph::newObject(char *objectType, char *objectLabel, PdMessage
       return new DspSnapshot(initMessage, graph);
     } else if (strcmp(objectLabel, "switch~") == 0) {
       return new MessageSwitch(initMessage, graph);
+    } else if (strcmp(objectLabel, "tabplay~") == 0) {
+      return new DspTablePlay(initMessage, graph);
     } else if (strcmp(objectLabel, "tabread4~") == 0) {
       return new DspTableRead(initMessage, graph);
     } else if (strcmp(objectLabel, "throw~") == 0) {
@@ -609,7 +612,8 @@ void PdGraph::addObject(MessageObject *node) {
     registerDspSend((DspSend *) node);
   } else if (strcmp(node->getObjectLabel(), "receive~") == 0) {
     registerDspReceive((DspReceive *) node);
-  } else if (strcmp(node->getObjectLabel(), "tabread4~") == 0) {
+  } else if (strcmp(node->getObjectLabel(), "tabread4~") == 0 ||
+             strcmp(node->getObjectLabel(), "tabplay~") == 0) {
     registerTableReceiver((TableReceiver *) node);
   } else if (strcmp(node->getObjectLabel(), "throw~") == 0) {
     registerDspThrow((DspThrow *) node);

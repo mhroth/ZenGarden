@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,30 +23,36 @@
 #ifndef _DSP_TABLE_PLAY_H_
 #define _DSP_TABLE_PLAY_H_
 
-#include "PdGraph.h"
-#include "RemoteBufferReceiverObject.h"
+#include "TableReceiver.h"
 
-/**
- * tabplay~
- * This object technically has a right outlet. But I'm not sure what it does
- * and no one seems to use it.
- */
-class DspTablePlay : public RemoteBufferReceiverObject {
+/** [tabplay~] */
+class DspTablePlay : public TableReceiver {
   
   public:
-    DspTablePlay(int blockSize, PdGraph *pdGraph, char *initString);
-    DspTablePlay(char *tag, int blockSize, PdGraph *pdGraph, char *initString);
+    DspTablePlay(PdMessage *initMessage, PdGraph *graph);
     ~DspTablePlay();
-    
-  protected:
-    inline void processMessage(int inletIndex, PdMessage *message);
-    inline void processDspToIndex(int newBlockIndex);
+  
+    const char *getObjectLabel();
+  
+    ConnectionType getConnectionType(int outletIndex);
+  
+    void sendMessage(int outletIndex, PdMessage *message);
     
   private:
-    PdGraph *pdGraph;
-    int startIndex;
-    int currentIndex;
-    int endIndex;
+    void processMessage(int inletIndex, PdMessage *message);
+    void processDspToIndex(float blockIndex);
+  
+    /**
+     * Sets up outgoing message message and other conditions to play the table from the given start
+     * to end sample indicies. The entire sample is played if <code>endIndex</code> is -1.
+     */
+    void playTable(int startIndex, int duration);
+  
+    // the message which is scheduled to be issues when the sample finishes playing
+    PdMessage *outgoingMessage;
+    float *localDspBufferAtOutletReserved;
+    int currentTableIndex; // the current index 
+    int endTableIndex; // the index to play to
 };
 
 #endif // _DSP_TABLE_PLAY_H_
