@@ -89,7 +89,7 @@ void MessageSoundfiler::processMessage(int inletIndex, PdMessage *message) {
                 }
                 
                 // extract the first channel
-                for (int i = 0, j = 0; i < tableLength; i+=sfInfo.channels, j++) {
+                for (int i = 0, j = 0; i < bufferLength; i+=sfInfo.channels, j++) {
                   tableBuffer[j] = buffer[i];
                 }
                 
@@ -105,7 +105,7 @@ void MessageSoundfiler::processMessage(int inletIndex, PdMessage *message) {
                     // avoid trying to read more into the table buffer than is available
                     tableLength = samplesPerChannel;
                   }
-                  for (int i = 1, j = 0; i < tableLength; i+=sfInfo.channels, j++) {
+                  for (int i = 1, j = 0; i < bufferLength; i+=sfInfo.channels, j++) {
                     tableBuffer[j] = buffer[i];
                   }
                 }
