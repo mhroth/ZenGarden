@@ -59,7 +59,8 @@ void MessageUnpack::processMessage(int inletIndex, PdMessage *message) {
           outgoingMessage->setTimestamp(message->getTimestamp());
           sendMessage(i, outgoingMessage);
           break;
-        } case ANYTHING: {
+        }
+        case ANYTHING: {
           PdMessage *outgoingMessage = getNextOutgoingMessage(i);
           switch (message->getType(i)) {
             case FLOAT: {
