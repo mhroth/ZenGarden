@@ -175,8 +175,33 @@ public class PdObjectTest implements ZenGardenListener {
   }
 
   @Test
+  public void testMessageLoadbang() {
+    genericMessageTest("MessageLoadbang.pd");
+  }
+
+  @Test
   public void testMessageLog() {
     genericMessageTest("MessageLog.pd");
+  }
+
+  @Test
+  public void testMessageMaximum() {
+    genericMessageTest("MessageMaximum.pd");
+  }  
+
+  @Test
+  public void testMessageMetro() {
+    genericMessageTest("MessageMetro.pd", 11000.0f);
+  } 
+
+  @Test
+  public void testMessageMinimum() {
+    genericMessageTest("MessageMinimum.pd");
+  }  
+
+  @Test
+  public void testMessageModulus() {
+    genericMessageTest("MessageModulus.pd");
   }
 
   @Test
@@ -199,6 +224,16 @@ public class PdObjectTest implements ZenGardenListener {
     genericMessageTest("MessagePow.pd");
   }
   
+  @Test
+  public void testMessagePrint() {
+    genericMessageTest("MessagePrint.pd");
+  }
+
+  @Test
+  public void testMessageRandom() {
+    genericMessageTest("MessageRandom.pd");
+  }
+
   @Test
   public void testMessageReminder() {
     genericMessageTest("MessageRemainder.pd");
