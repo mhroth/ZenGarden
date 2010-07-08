@@ -31,10 +31,6 @@ MessageMinimum::MessageMinimum(PdMessage *initMessage, PdGraph *graph) : Message
   }
 }
 
-MessageMinimum::MessageMinimum(float constant, PdGraph *graph) : MessageObject(2, 1, graph) {
-  init(constant);
-}
-
 MessageMinimum::~MessageMinimum() {
   // nothing to do
 }
@@ -48,21 +44,29 @@ const char *MessageMinimum::getObjectLabel() {
 }
 
 void MessageMinimum::processMessage(int inletIndex, PdMessage *message) {
-  switch (inletIndex) {
+   switch (inletIndex) {
     case 0: {
-      MessageElement *messageElement = message->getElement(0);
-      if (messageElement->getType() == FLOAT) {
-        PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-        outgoingMessage->getElement(0)->setFloat(fminf(messageElement->getFloat(),constant));
-        outgoingMessage->setTimestamp(message->getTimestamp());
-        sendMessage(0, outgoingMessage); // send a message from outlet 0
+      switch (message->getType(0)) {
+        case FLOAT: {
+          lastOutput = fminf(message->getFloat(0), constant);
+          // allow fallthrough
+        }
+        case BANG: {
+          PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+          outgoingMessage->setFloat(0, lastOutput);
+          outgoingMessage->setTimestamp(message->getTimestamp());
+          sendMessage(0, outgoingMessage);
+          break;
+        }
+        default: {
+          break;
+        }
       }
       break;
     }
     case 1: {
-      MessageElement *messageElement = message->getElement(0);
-      if (messageElement->getType() == FLOAT) {
-        constant = messageElement->getFloat();
+      if (message->isFloat(0)) {
+        constant = message->getFloat(0);
       }
       break;
     }
