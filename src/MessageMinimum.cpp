@@ -23,12 +23,8 @@
 #include "MessageMinimum.h"
 
 MessageMinimum::MessageMinimum(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
-  if (initMessage->getNumElements() > 0 &&
-      initMessage->getElement(0)->getType() == FLOAT) {
-    init(initMessage->getElement(0)->getFloat());
-  } else {
-    init(0.0f);
-  }
+  constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
+  lastOutput = 0.0f;
 }
 
 MessageMinimum::~MessageMinimum() {
