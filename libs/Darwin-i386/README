@@ -1,1 +1,6 @@
-This is a placeholder such that this directory exists in the repository.
+This directory contains libsndfilezg.a. It is a universal binary (i386/x86_64) for libsndfile 1.0.20. It is renamed to libsndfilezg.a because if Xcode is instructed to link with -lsndfile, then it seems to automatically use the system one instead of the given one.
+
+In order to create the universal binary, follow these steps:
+1) configure, and make libsndfile. This will create a x86_64 version in .lib/.
+2) env CPPFLAGS=-I/usr/local/include LDFLAGS=-s CFLAGS="-arch i386" LDFLAGS="-arch i386" ./configure, and make. This will create a i386 version in the same location.
+3) lipo -create -arch i386 ./libsndfile.i386.a -arch x86_64 libsndfile.x86_64.a -output libsndfile.a, to fuse the two libraries together

@@ -1902,7 +1902,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -1911,10 +1911,11 @@
 				GCC_VERSION = 4.2;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				INSTALL_PATH = /usr/local/bin;
-				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../libs/Darwin-i386/";
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "-lsndfile";
+				OTHER_LDFLAGS = "-lsndfilezg";
 				PRODUCT_NAME = ZenGarden;
+				VALID_ARCHS = "i386 x86_64";
 			};
 			name = Debug;
 		};
@@ -1922,7 +1923,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
@@ -1931,11 +1932,12 @@
 				GCC_VERSION = 4.2;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				INSTALL_PATH = /usr/local/bin;
-				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../libs/Darwin-i386/";
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "-lsndfile";
+				OTHER_LDFLAGS = "-lsndfilezg";
 				PRODUCT_NAME = ZenGarden;
 				STRIP_INSTALLED_PRODUCT = YES;
+				VALID_ARCHS = "i386 x86_64";
 			};
 			name = Release;
 		};
@@ -2024,7 +2026,8 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				INSTALL_PATH = /usr/local/lib;
-				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../libs/Darwin-i386/";
+				OTHER_LDFLAGS = "-lsndfilezg";
 				PREBINDING = NO;
 				PRODUCT_NAME = zengarden;
 			};
@@ -2042,10 +2045,12 @@
 				GCC_OPTIMIZATION_LEVEL = 3;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				INSTALL_PATH = /usr/local/lib;
-				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../libs/Darwin-i386/";
+				OTHER_LDFLAGS = "-lsndfilezg";
 				PREBINDING = NO;
 				PRODUCT_NAME = zengarden;
 				STRIP_INSTALLED_PRODUCT = YES;
+				VALID_ARCHS = "i386 x86_64";
 				ZERO_LINK = NO;
 			};
 			name = Release;
