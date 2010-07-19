@@ -205,6 +205,11 @@ public class PdObjectTest implements ZenGardenListener {
   }
 
   @Test
+  public void testMessageMoses() {
+    genericMessageTest("MessageMoses.pd");
+  }
+
+  @Test
   public void testMessageMultiply() {
     genericMessageTest("MessageMultiply.pd");
   }
