@@ -24,7 +24,7 @@
 #include "PdGraph.h"
 #include "ZGLinkedList.h"
 
-MessagePipe::MessagePipe(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
+MessagePipe::MessagePipe(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
   delayMs = initMessage->isFloat(0) ? (double) initMessage->getFloat(0) : 0.0;
   scheduledMessagesList = new ZGLinkedList();
 }
@@ -35,6 +35,10 @@ MessagePipe::~MessagePipe() {
 
 const char *MessagePipe::getObjectLabel() {
   return "pipe";
+}
+
+bool MessagePipe::shouldDistributeMessageToInlets() {
+  return false;
 }
 
 void MessagePipe::sendMessage(int outletIndex, PdMessage *message) {

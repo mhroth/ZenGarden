@@ -33,6 +33,8 @@ class MessagePipe : public MessageObject {
   
     const char *getObjectLabel();
   
+    bool shouldDistributeMessageToInlets();
+  
     // override <code>sendMessage</code> in order to remove the message from the scheduled
     // message list as it is sent out.
     void sendMessage(int outletIndex, PdMessage *message);
