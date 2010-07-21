@@ -1911,7 +1911,7 @@
 				GCC_VERSION = 4.2;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				INSTALL_PATH = /usr/local/bin;
-				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../libs/Darwin-i386/";
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../libs/Darwin/";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-lsndfilezg";
 				PRODUCT_NAME = ZenGarden;
@@ -1932,7 +1932,7 @@
 				GCC_VERSION = 4.2;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				INSTALL_PATH = /usr/local/bin;
-				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../libs/Darwin-i386/";
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../libs/Darwin/";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-lsndfilezg";
 				PRODUCT_NAME = ZenGarden;
