@@ -24,7 +24,8 @@
 
 MessageReceive::MessageReceive(PdMessage *initMessage, PdGraph *graph) :
     RemoteMessageReceiver(0, 1, graph) {
-  name = initMessage->isSymbol(0) ? StaticUtils::copyString(initMessage->getSymbol(0)) : NULL;
+  // a receive object can be instantiated with no name. It receives a default.
+  name = StaticUtils::copyString(initMessage->isSymbol(0) ? initMessage->getSymbol(0) : (char *) "zg_receive");
 }
 
 MessageReceive::~MessageReceive() {
