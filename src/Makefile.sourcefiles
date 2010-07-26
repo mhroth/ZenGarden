@@ -17,6 +17,7 @@ LOCAL_SRC_FILES := \
 ./DspLine.cpp \
 ./DspLog.cpp \
 ./DspLowpassFilter.cpp \
+./DspMinimum.cpp \
 ./DspMultiply.cpp \
 ./DspNoise.cpp \
 ./DspObject.cpp \
