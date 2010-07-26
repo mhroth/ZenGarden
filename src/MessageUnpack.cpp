@@ -24,8 +24,15 @@
 #include "PdGraph.h"
 
 MessageUnpack::MessageUnpack(PdMessage *initMessage, PdGraph *graph) :
-    MessageObject(1, initMessage->getNumElements(), graph) {
-  templateMessage = initMessage->copy();
+    MessageObject(1, (initMessage->getNumElements() < 2) ? 2 : initMessage->getNumElements(), graph) {
+  if (initMessage->getNumElements() < 2) {
+    // if unpack is not initialised with anything, assume two "anything" outputs
+    templateMessage = new PdMessage();
+    templateMessage->addElement(new MessageElement(StaticUtils::copyString((char *) "a")));
+    templateMessage->addElement(new MessageElement(StaticUtils::copyString((char *) "a")));
+  } else {
+    templateMessage = initMessage->copy();
+  }
   templateMessage->resolveSymbolsToType();
 }
 
@@ -42,7 +49,7 @@ void MessageUnpack::processMessage(int inletIndex, PdMessage *message) {
   if (templateMessage->getNumElements() < message->getNumElements()) {
     numElements = templateMessage->getNumElements();
   }
-  for (int i = numElements-1; i >=0; i--) {
+  for (int i = numElements-1; i >= 0; i--) {
     if (templateMessage->getType(i) == message->getType(i) ||
         templateMessage->getType(i) == ANYTHING) {
       switch (templateMessage->getType(i)) {
