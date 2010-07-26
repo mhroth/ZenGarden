@@ -28,8 +28,8 @@ MessageUnpack::MessageUnpack(PdMessage *initMessage, PdGraph *graph) :
   if (initMessage->getNumElements() < 2) {
     // if unpack is not initialised with anything, assume two "anything" outputs
     templateMessage = new PdMessage();
-    templateMessage->addElement(new MessageElement(StaticUtils::copyString((char *) "a")));
-    templateMessage->addElement(new MessageElement(StaticUtils::copyString((char *) "a")));
+    templateMessage->addElement(new MessageElement((char *) "a"));
+    templateMessage->addElement(new MessageElement((char *) "a"));
   } else {
     templateMessage = initMessage->copy();
   }
