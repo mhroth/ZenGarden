@@ -201,41 +201,6 @@ int PdMessage::getMessageId() {
   return messageId;
 }
 
-void PdMessage::setMessage(const char *messageFormat, va_list ap) {
-  int numElements = strlen(messageFormat);
-  MessageElement *messageElement = NULL;
-  for (int i = 0; i < numElements; i++) {
-    messageElement = getElement(i);
-    if (messageElement == NULL) {
-      // add extra elements as necessary
-      messageElement = new MessageElement();
-      addElement(messageElement);
-    }
-    switch (messageFormat[i]) {
-      case 'f': {
-        messageElement->setFloat((float) va_arg(ap, double));
-        break;
-      }
-      case 's': {
-        messageElement->setSymbol((char *) va_arg(ap, char *));
-        break;
-      }
-      case 'b': {
-        messageElement->setBang();
-        break;
-      }
-      default: {
-        break;
-      }
-    }
-  }
-  for (int i = numElements; i < getNumElements(); i++) {
-    // delete extra elements as necessary
-    messageElement = (MessageElement *) elementList->remove(numElements);
-    delete messageElement;
-  }
-}
-
 void PdMessage::addElement(MessageElement *messageElement) {
   elementList->add(messageElement);
 }
@@ -246,11 +211,6 @@ int PdMessage::getNumElements() {
 
 MessageElement *PdMessage::getElement(int index) {
   return (MessageElement *) elementList->get(index);
-}
-
-float PdMessage::getBlockIndex(double currentBlockTimestamp, float sampleRate) {
-  // sampleRate is in samples/second, but we need samples/millisecond
-  return ((float) (timestamp - currentBlockTimestamp)) * sampleRate / 1000.0f;
 }
 
 void PdMessage::setTimestamp(double timestamp) {
@@ -276,6 +236,19 @@ bool PdMessage::isFloat(int index) {
 bool PdMessage::isSymbol(int index) {
   if (index >= 0 && index < elementList->size()) {
     return getElement(index)->isSymbol();
+  } else {
+    return false;
+  }
+}
+
+bool PdMessage::isSymbol(int index, const char *test) {
+  if (index >= 0 && index < elementList->size()) {
+    MessageElement *messageElement = getElement(index);
+    if (messageElement->isSymbol()) {
+      return (strcmp(messageElement->getSymbol(), test) == 0);
+    } else {
+      return false;
+    }
   } else {
     return false;
   }

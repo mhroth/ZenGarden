@@ -25,6 +25,7 @@
 
 #include "ConnectionType.h"
 #include "ObjectLetPair.h"
+#include "ObjectType.h"
 #include "PdMessage.h"
 #include "StaticUtils.h"
 
@@ -65,6 +66,8 @@ class MessageObject {
   
     /** Returns the label for this object. */
     virtual const char *getObjectLabel() = 0;
+  
+    virtual ObjectType getObjectType();
   
     /** Returns <code>true</code> if this object processes audio, <code>false</code> otherwise. */
     virtual bool doesProcessAudio();

@@ -33,6 +33,7 @@ class MessageInlet : public MessageObject {
     ~MessageInlet();
     
     const char *getObjectLabel();
+    ObjectType getObjectType();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);

@@ -65,7 +65,7 @@ void DspOsc::processMessage(int inletIndex, PdMessage *message) {
     case 0: { // update the frequency
       MessageElement *messageElement = message->getElement(0);
       if (messageElement->getType() == FLOAT) {
-        processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), sampleRate));
+        processDspToIndex(graph->getBlockIndex(message));
         frequency = fabsf(messageElement->getFloat());
       }
       break;

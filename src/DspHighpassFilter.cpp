@@ -63,7 +63,7 @@ void DspHighpassFilter::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
       if (message->isSymbol(0) && strcmp(message->getSymbol(0), "clear") == 0) {
-        processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), sampleRate));
+        processDspToIndex(graph->getBlockIndex(message));
         tapIn = 0.0f;
         tapOut = 0.0f;
         memset(filterInputBuffer, 0, (blockSizeInt+2) * sizeof(float));
@@ -73,7 +73,7 @@ void DspHighpassFilter::processMessage(int inletIndex, PdMessage *message) {
     }
     case 1: {
       if (message->isFloat(0)) {
-        processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), sampleRate));
+        processDspToIndex(graph->getBlockIndex(message));
         calculateFilterCoefficients(message->getFloat(0));
       }
       break;

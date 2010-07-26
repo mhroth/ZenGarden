@@ -33,6 +33,7 @@ class MessageOutlet : public MessageObject {
     ~MessageOutlet();
     
     const char *getObjectLabel();
+    ObjectType getObjectType();
   
     /**
      * Set the outlet index of this object in the parent-graph.

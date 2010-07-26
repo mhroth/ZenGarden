@@ -20,53 +20,85 @@
  *
  */
 
+#include "PdContext.h"
 #include "PdGraph.h"
 #include "ZenGarden.h"
 
-ZGGraph *zg_new_graph(char *directory, char *filename, int blockSize, 
-    int numInputChannels, int numOutputChannels, float sampleRate) {
-  return PdGraph::newInstance(directory, filename, blockSize, numInputChannels, numOutputChannels,
-      sampleRate, NULL);
+ZGContext *zg_new_context(int numInputChannels, int numOutputChannels, int blockSize, float sampleRate,
+    void (*callbackFunction)(ZGCallbackFunction function, void *userData, void *ptr), void *userData) {
+  PdContext *context = new PdContext(numInputChannels, numOutputChannels, blockSize, sampleRate,
+      callbackFunction, userData);
+  return context;
 }
 
-void zg_delete_graph(PdGraph *graph) {
+ZGGraph *zg_new_empty_graph(PdContext *context) {
+  PdMessage *initMessage = new PdMessage(); // create an empty message to use for initialisation
+  // the new graph has no parent grpah and is created in the given context
+  PdGraph *graph = new PdGraph(initMessage, NULL, context, context->getNextGraphId());
+  delete initMessage; // destroy the dummy initial message
+  return graph;
+}
+
+ZGGraph *zg_new_graph(PdContext *context, char *directory, char *filename) {
+  PdMessage *initMessage = new PdMessage(); // create an empty initMessage
+  // no parent graph
+  PdGraph *graph = context->newGraph(directory, filename, initMessage, NULL);
+  delete initMessage;
+  return graph;
+}
+
+void zg_attach_graph(PdContext *context, PdGraph *graph) {
+  context->attachGraph(graph);
+}
+/*
+void zg_remove_graph(PdContext *context, PdGraph *graph) {
+  context->removeGraph(graph);
+}
+*/
+void zg_add_object(PdGraph *graph, MessageObject *object) {
+  graph->addObject(object);
+}
+/*
+void zg_remove_object(PdGraph *graph, MessageObject *object) {
+  graph->removeObject(object);
+}
+*/
+void zg_delete_context(ZGContext *context) {
+  if (context != NULL) {
+    delete context;
+  }
+}
+
+void zg_delete_graph(ZGGraph *graph) {
   if (graph != NULL) {
     delete graph;
   }
 }
 
-void zg_process(PdGraph *graph, float *inputBuffers, float *outputBuffers) {
-  graph->process(inputBuffers, outputBuffers);
+void zg_process(PdContext *context, float *inputBuffers, float *outputBuffers) {
+  context->process(inputBuffers, outputBuffers);
 }
 
-void zg_send_message(PdGraph *graph, const char *receiverName, const char *messageFormat, ...) {
-  PdMessage *message = graph->scheduleExternalMessage((char *) receiverName);
-  if (message != NULL) { // message is NULL if no receiver of the given name exists
-    va_list ap;
-    va_start(ap, messageFormat);
-    message->setMessage(messageFormat, ap);
-    va_end(ap); // release the va_list
-  }
+void zg_send_message(PdContext *context, const char *receiverName, const char *messageFormat, ...) {
+  va_list ap;
+  va_start(ap, messageFormat);
+  context->scheduleExternalMessageV(receiverName, 0.0, messageFormat, ap);
+  va_end(ap); // release the va_list
 }
 
-void zg_send_message_at_blockindex(ZGGraph *graph, const char *receiverName, double blockIndex,
+void zg_send_message_at_blockindex(PdContext *context, const char *receiverName, double blockIndex,
     const char *messageFormat, ...) {
-  PdMessage *message = graph->scheduleExternalMessage((char *) receiverName);
-  if (message != NULL) {
-    double timestamp = graph->getBlockStartTimestamp();
-    if (blockIndex >= 0.0 && blockIndex <= (double) (graph->getBlockSize()-1)) {
-      timestamp += blockIndex / graph->getSampleRate();
-    }
-    message->setTimestamp(timestamp);
-    
-    va_list ap;
-    va_start(ap, messageFormat);
-    message->setMessage(messageFormat, ap);
-    va_end(ap);
+  va_list ap;
+  va_start(ap, messageFormat);
+  double timestamp = context->getBlockStartTimestamp();
+  if (blockIndex >= 0.0 && blockIndex <= (double) (context->getBlockSize()-1)) {
+    timestamp += blockIndex / context->getSampleRate();
   }
+  context->scheduleExternalMessageV(receiverName, timestamp, messageFormat, ap);
+  va_end(ap);
 }
 
-void zg_send_midinote(PdGraph *graph, int channel, int noteNumber, int velocity, double blockIndex) {
+void zg_send_midinote(PdContext *context, int channel, int noteNumber, int velocity, double blockIndex) {
   const char *receiverName;
   switch (channel) {
     case 0:  { receiverName = "zg_notein_0";  break; }
@@ -90,14 +122,10 @@ void zg_send_midinote(PdGraph *graph, int channel, int noteNumber, int velocity,
     }
   }
   
-  zg_send_message_at_blockindex(graph, receiverName, blockIndex, "fff",
+  zg_send_message_at_blockindex(context, receiverName, blockIndex, "fff",
       (float) noteNumber, (float) velocity, (float) channel);
   
   // all message are also sent to the omni listener
-  zg_send_message_at_blockindex(graph, "zg_notein_omni", blockIndex, "fff",
+  zg_send_message_at_blockindex(context, "zg_notein_omni", blockIndex, "fff",
       (float) noteNumber, (float) velocity, (float) channel);
-}
-
-void zg_register_callback(PdGraph *graph, void (*callbackFunction)(ZGCallbackFunction, void *, void *), void *userData) {
-  graph->registerCallback(callbackFunction, userData);
 }

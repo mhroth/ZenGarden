@@ -49,9 +49,9 @@ const char *MessagePrint::getObjectLabel() {
 void MessagePrint::processMessage(int inletIndex, PdMessage *message) {
   char *out = message->toString();
   if (name != NULL) {
-    graph->printStd("[@ %.3fms] %s: %s\n", message->getTimestamp(), name, out);
+    graph->printStd("[@ %.3fms] %s: %s", message->getTimestamp(), name, out);
   } else {
-    graph->printStd("[@ %.3fms] %s\n", message->getTimestamp(), out);
+    graph->printStd("[@ %.3fms] %s", message->getTimestamp(), out);
   }
   free(out);
 }

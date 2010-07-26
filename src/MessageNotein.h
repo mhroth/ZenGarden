@@ -33,6 +33,7 @@ class MessageNotein : public RemoteMessageReceiver {
     ~MessageNotein();
     
     const char *getObjectLabel();
+    ObjectType getObjectType();
   
     /** Returns the zero-indexed midi channel which this object outputs. -1 if omni. */
     int getChannel();

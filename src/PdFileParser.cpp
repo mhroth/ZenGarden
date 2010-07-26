@@ -26,13 +26,14 @@ PdFileParser::PdFileParser(char *filePath) {
   fp = fopen(filePath, "r");
   if (fp == NULL) {
     // error condition
+    line = NULL;
     isDone = true;
   } else {
     line = (char *) calloc(LINE_LENGTH, sizeof(char));
     nextLine();
-    buffer = NULL;
     isDone = false;
   }
+  buffer = NULL;
 }
 
 PdFileParser::~PdFileParser() {

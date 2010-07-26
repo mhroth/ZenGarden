@@ -42,6 +42,7 @@ class DspCatch : public DspObject {
   
     char *getName();
     const char *getObjectLabel();
+    ObjectType getObjectType();
     void processDsp();
     
   private:

@@ -38,6 +38,7 @@ class DspDelayRead : public DelayReceiver {
     ~DspDelayRead();
   
     const char *getObjectLabel();
+    ObjectType getObjectType();
   
   private:
     void processMessage(int inletIndex, PdMessage *message);

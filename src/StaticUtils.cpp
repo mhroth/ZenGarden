@@ -21,6 +21,7 @@
  */
 
 #include <math.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "StaticUtils.h"
@@ -156,4 +157,11 @@ const char *StaticUtils::messageElementTypeToString(MessageElementType type) {
       return "UNKNOWN TYPE";
     }
   }
+}
+
+bool StaticUtils::fileExists(char *path) {
+  FILE *fp = fopen(path, "r");
+  bool exists = (fp != NULL);
+  fclose(fp);
+  return exists;
 }

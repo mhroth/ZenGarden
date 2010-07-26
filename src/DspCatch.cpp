@@ -46,6 +46,10 @@ const char *DspCatch::getObjectLabel() {
   return "catch~";
 }
 
+ObjectType DspCatch::getObjectType() {
+  return DSP_CATCH;
+}
+
 char *DspCatch::getName() {
   return name;
 }

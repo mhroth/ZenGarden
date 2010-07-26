@@ -21,7 +21,7 @@
  */
 
 #include "MessageSendController.h"
-#include "PdGraph.h"
+#include "PdContext.h"
 
 /*
  * DISCUSSION(mhroth): Ideally it would be nice to add the root PdGraph as the designated
@@ -34,23 +34,25 @@
 
 // it might nice if this class were implemented using a hashtable with receiver name as the key
 // and Lists as the value.
-MessageSendController::MessageSendController(PdGraph *graph) : MessageObject(0, 0, graph) {
-  nameList = new List();
-  receiverLists = new List();
+MessageSendController::MessageSendController(PdContext *aContext) : MessageObject(0, 0, NULL) {
+  context = aContext;
+  nameList = new ZGLinkedList();
+  receiverLists = new ZGLinkedList();
 }
 
 MessageSendController::~MessageSendController() {
-  for (int i = 0; i < nameList->size(); i++) {
-    char *name = (char *) nameList->get(i);
+  nameList->resetIterator();
+  char *name = NULL;
+  while ((name = (char *) nameList->getNext()) != NULL) {
     free(name);
   }
   delete nameList;
   
-  for (int i = 0; i < receiverLists->size(); i++) {
-    List *receiverList = (List *) receiverLists->get(i);
+  receiverLists->resetIterator();
+  ZGLinkedList *receiverList = NULL;
+  while ((receiverList = (ZGLinkedList *) receiverLists->getNext()) != NULL) {
     delete receiverList;
   }
-  delete receiverLists;
 }
 
 const char *MessageSendController::getObjectLabel() {
@@ -58,16 +60,20 @@ const char *MessageSendController::getObjectLabel() {
 }
 
 int MessageSendController::getNameIndex(char *receiverName) {
-  int numNames = nameList->size();
-  for (int i = 0; i < numNames; i++) {
-    char *name = (char *) nameList->get(i);
-    if (strcmp(name, receiverName) == 0) {
-      return i;
-    }
-  }
   if (strcmp("pd", receiverName) == 0) {
     return SYSTEM_NAME_INDEX; // a special case for sending messages to the system
   }
+  
+  nameList->resetIterator();
+  char *name = NULL;
+  int i = 0;
+  while ((name = (char *) nameList->getNext()) != NULL) {
+    if (strcmp(name, receiverName) == 0) {
+      return i;
+    }
+    i++;
+  }
+  
   return -1;
 }
 
@@ -81,13 +87,12 @@ void MessageSendController::processMessage(int inletIndex, PdMessage *message) {
 
 void MessageSendController::sendMessage(int outletIndex, PdMessage *message) {
   if (outletIndex == SYSTEM_NAME_INDEX) {
-    graph->receiveSystemMessage(message);
+    context->receiveSystemMessage(message);
   } else {
-    List *receiverList = (List *) receiverLists->get(outletIndex);
-    int numReceivers = receiverList->size();
+    ZGLinkedList *receiverList = (ZGLinkedList *) receiverLists->get(outletIndex);
+    receiverList->resetIterator();
     RemoteMessageReceiver *receiver = NULL;
-    for (int i = 0; i < numReceivers; i++) {
-      receiver = (RemoteMessageReceiver *) receiverList->get(i);
+    while ((receiver = (RemoteMessageReceiver *) receiverList->getNext()) != NULL) {
       receiver->receiveMessage(0, message);
     }
   }
@@ -97,10 +102,10 @@ void MessageSendController::addReceiver(RemoteMessageReceiver *receiver) {
   int nameIndex = getNameIndex(receiver->getName());
   if (nameIndex == -1) {
     nameList->add(StaticUtils::copyString(receiver->getName()));
-    receiverLists->add((void *) new List());
+    receiverLists->add((void *) new ZGLinkedList());
     nameIndex = nameList->size() - 1;
   }
   
-  List *receiverList = (List *) receiverLists->get(nameIndex);
+  ZGLinkedList *receiverList = (ZGLinkedList *) receiverLists->get(nameIndex);
   receiverList->add(receiver);
 }

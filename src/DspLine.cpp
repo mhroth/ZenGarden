@@ -48,7 +48,7 @@ void DspLine::processMessage(int inletIndex, PdMessage *message) {
       case 1: {
         // jump to value
         if (message->isFloat(0)) {
-          processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
+          processDspToIndex(graph->getBlockIndex(message));
           target = message->getFloat(0);
           slope = 0.0f;
           numSamplesToTarget = 0.0f;
@@ -58,7 +58,7 @@ void DspLine::processMessage(int inletIndex, PdMessage *message) {
       default: { // at least two inputs
         // new ramp
         if (message->isFloat(0) && message->isFloat(1)) {
-          processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
+          processDspToIndex(graph->getBlockIndex(message));
           target = message->getFloat(0);
           float timeToTargetMs = message->getFloat(1); // no negative time to targets!
           numSamplesToTarget = StaticUtils::millisecondsToSamples(

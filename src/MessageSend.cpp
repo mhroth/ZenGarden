@@ -39,6 +39,10 @@ const char *MessageSend::getObjectLabel() {
   return "send";
 }
 
+ObjectType MessageSend::getObjectType() {
+  return MESSAGE_SEND;
+}
+
 void MessageSend::processMessage(int inletIndex, PdMessage *message) {
   graph->dispatchMessageToNamedReceivers(name, message);
 }

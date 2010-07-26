@@ -48,7 +48,7 @@ void DspSnapshot::processMessage(int inletIndex, PdMessage *message) {
     case BANG: {
       PdMessage *outgoingMessage = getNextOutgoingMessage(0);
       outgoingMessage->setTimestamp(message->getTimestamp());
-      float blockIndex = message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate());
+      float blockIndex = graph->getBlockIndex(message);
       outgoingMessage->setFloat(0, localDspBufferAtInlet[0][(int) blockIndex]);
       sendMessage(0, outgoingMessage);
       break;

@@ -40,7 +40,7 @@ void DspMultiply::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 1: {
       if (message->isFloat(0)) {
-        processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
+        processDspToIndex(graph->getBlockIndex(message));
         constant = message->getFloat(0);
       }
       break;

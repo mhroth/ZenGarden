@@ -20,17 +20,112 @@
  *
  */
 
-#include "DelayReceiver.h"
+#include "MessageAbsoluteValue.h"
+#include "MessageAdd.h"
+#include "MessageArcTangent.h"
+#include "MessageArcTangent2.h"
+#include "MessageBang.h"
+#include "MessageCosine.h"
+#include "MessageChange.h"
+#include "MessageClip.h"
+#include "MessageDeclare.h"
+#include "MessageDelay.h"
+#include "MessageDivide.h"
+#include "MessageDbToPow.h"
+#include "MessageDbToRms.h"
+#include "MessageEqualsEquals.h"
+#include "MessageExp.h"
+#include "MessageFloat.h"
+#include "MessageFrequencyToMidi.h"
+#include "MessageGreaterThan.h"
+#include "MessageGreaterThanOrEqualTo.h"
+#include "MessageInlet.h"
+#include "MessageInteger.h"
+#include "MessageLessThan.h"
+#include "MessageLessThanOrEqualTo.h"
+#include "MessageListLength.h"
+#include "MessageLoadbang.h"
+#include "MessageLog.h"
+#include "MessageMaximum.h"
+#include "MessageMessageBox.h"
+#include "MessageMetro.h"
+#include "MessageMidiToFrequency.h"
+#include "MessageMinimum.h"
+#include "MessageModulus.h"
+#include "MessageMoses.h"
+#include "MessageMultiply.h"
+#include "MessageNotEquals.h"
+#include "MessageNotein.h"
+#include "MessageOutlet.h"
+#include "MessagePack.h"
+#include "MessagePipe.h"
+#include "MessagePow.h"
+#include "MessagePowToDb.h"
+#include "MessagePrint.h"
+#include "MessageRandom.h"
+#include "MessageReceive.h"
+#include "MessageRemainder.h"
+#include "MessageRmsToDb.h"
+#include "MessageSamplerate.h"
+#include "MessageSelect.h"
+#include "MessageSend.h"
+#include "MessageSine.h"
+#include "MessageSpigot.h"
+#include "MessageSqrt.h"
+#include "MessageSubtract.h"
+#include "MessageSwitch.h"
+#include "MessageSwap.h"
+#include "MessageSymbol.h"
+#include "MessageTable.h"
+#include "MessageTangent.h"
+#include "MessageText.h"
+#include "MessageTimer.h"
+#include "MessageToggle.h"
+#include "MessageTrigger.h"
+#include "MessageUntil.h"
+#include "MessageUnpack.h"
+#include "MessageWrap.h"
+
+#include "MessageSendController.h"
+
+#include "DspAdc.h"
+#include "DspAdd.h"
+#include "DspBandpassFilter.h"
 #include "DspCatch.h"
+#include "DspClip.h"
+#include "DspCosine.h"
+#include "DspDac.h"
+#include "DspDelayRead.h"
 #include "DspDelayWrite.h"
+#include "DspDivide.h"
+#include "DspEnvelope.h"
+#include "DspHighpassFilter.h"
+#include "DspInlet.h"
+#include "DspLine.h"
+#include "DspLog.h"
+#include "DspLowpassFilter.h"
+#include "DspMultiply.h"
+#include "DspNoise.h"
+#include "DspOsc.h"
+#include "DspOutlet.h"
+#include "DspPhasor.h"
 #include "DspReceive.h"
 #include "DspSend.h"
+#include "DspSig.h"
+#include "DspSnapshot.h"
+#include "DspSubtract.h"
+#include "DspTableRead.h"
 #include "DspThrow.h"
-#include "MessageTable.h"
-#include "PdContext.h"
-#include "TableReceiver.h"
+#include "DspVariableDelay.h"
+#include "DspWrap.h"
 
-#pragma mark PdContext Constructor/Deconstructor
+#include "PdContext.h"
+#include "PdFileParser.h"
+
+// initialise the global graph counter
+int PdContext::globalGraphId = 0;
+
+#pragma mark Constructor/Deconstructor
 
 PdContext::PdContext(int numInputChannels, int numOutputChannels, int blockSize, float sampleRate,
     void (*function)(ZGCallbackFunction, void *, void *), void *userData) {
@@ -40,7 +135,6 @@ PdContext::PdContext(int numInputChannels, int numOutputChannels, int blockSize,
   this->sampleRate = sampleRate;
   callbackFunction = function;
   callbackUserData = userData;
-  pthread_mutex_init(&contextLock, NULL);
   blockStartTimestamp = 0.0;
   blockDurationMs = ((double) blockSize / (double) sampleRate) * 1000.0;
   messageCallbackQueue = new OrderedMessageQueue();
@@ -50,6 +144,10 @@ PdContext::PdContext(int numInputChannels, int numOutputChannels, int blockSize,
   globalDspInputBuffers = (float *) calloc(blockSize * numInputChannels, sizeof(float));
   globalDspOutputBuffers = (float *) calloc(blockSize * numOutputChannels, sizeof(float));
   
+  externalMessagePool = new List();
+  
+  sendController = new MessageSendController(this);
+  
   graphList = new ZGLinkedList();
   dspReceiveList = new ZGLinkedList();
   dspSendList = new ZGLinkedList();
@@ -57,15 +155,14 @@ PdContext::PdContext(int numInputChannels, int numOutputChannels, int blockSize,
   delayReceiverList = new ZGLinkedList();
   throwList = new ZGLinkedList();
   catchList = new ZGLinkedList();
-  
-  // delete all declare path strings
-  for (int i = 0; i < declareList->size(); i++) {
-    free(declareList->get(i));
-  }
-  delete declareList;
-  
   tableList = new ZGLinkedList();
   tableReceiverList = new ZGLinkedList();
+  declareList = new ZGLinkedList();
+  
+  // lock is recursive
+  pthread_mutexattr_t mta;
+  pthread_mutexattr_settype(&mta, PTHREAD_MUTEX_RECURSIVE);
+  pthread_mutex_init(&contextLock, &mta); 
 }
 
 PdContext::~PdContext() {
@@ -79,6 +176,11 @@ PdContext::~PdContext() {
   while ((graph = (PdGraph *) graphList->getNext()) != NULL) {
     delete graph;
   }
+  for (int i = 0; i < externalMessagePool->size(); i++) {
+    PdMessage *message = (PdMessage *) externalMessagePool->get(i);
+    delete message;
+  }
+  delete externalMessagePool;
   delete graphList;
   delete dspReceiveList;
   delete dspSendList;
@@ -86,9 +188,13 @@ PdContext::~PdContext() {
   delete delayReceiverList;
   delete throwList;
   delete catchList;
-  delete declareList;
   delete tableList;
   delete tableReceiverList;
+  // delete all declare path strings
+  for (int i = 0; i < declareList->size(); i++) {
+    free(declareList->get(i));
+  }
+  delete declareList;
   pthread_mutex_destroy(&contextLock);
 }
 
@@ -119,7 +225,24 @@ float *PdContext::getGlobalDspBufferAtOutlet(int outletIndex) {
   return globalDspOutputBuffers + (outletIndex * blockSize);
 }
 
+double PdContext::getBlockStartTimestamp() {
+  return blockStartTimestamp;
+}
+
+double PdContext::getBlockDuration() {
+  return blockDurationMs;
+}
+
+int PdContext::getNextGraphId() {
+  return globalGraphId++;
+}
+
+int PdContext::getCurrentGraphId() {
+  return globalGraphId;
+}
+
 #pragma mark -
+#pragma mark process
 
 void PdContext::process(float *inputBuffers, float *outputBuffers) {
   lock(); // lock the context
@@ -156,26 +279,400 @@ void PdContext::process(float *inputBuffers, float *outputBuffers) {
     graph->processDsp();
   }
   
+  blockStartTimestamp = nextBlockStartTimestamp;
+  
   // copy the output audio to the given buffer
   memcpy(outputBuffers, globalDspOutputBuffers, numBytesInOutputBuffers);
   
-  blockStartTimestamp = nextBlockStartTimestamp;
   unlock(); // unlock the context
 }
 
-void PdContext::addNewGraph() {
-  // spin off new thread to create new graph
-  // new PdGraph(char *directory, char *filename, this) // defines a top-level graph
-  // new thread is needed in order to allow the audio thread to continue its work. Context is only
-  // locked at the end when necessary
-  // add graph to context when finished
+#pragma mark -
+#pragma mark New Graph
+
+PdGraph *PdContext::newGraph(char *directory, char *filename, PdMessage *initMessage, PdGraph *parentGraph) {
+  // create file path based on directory and filename. Parse the file.
+  char *filePath = StaticUtils::joinPaths(directory, filename);
+  
+  // if the file does not exist, return
+  if (!StaticUtils::fileExists(filePath)) {
+    printErr("The file %s could not be opened.", filePath);
+    free(filePath);
+    return NULL;
+  }
+  
+  // open the file and parse it into individual messages
+  PdFileParser *fileParser = new PdFileParser(filePath);
+  
+  PdGraph *graph = NULL;
+  char *line = fileParser->nextMessage();
+  if (strncmp(line, "#N canvas", strlen("#N canvas")) == 0) {
+    graph = new PdGraph(initMessage, parentGraph, this, getNextGraphId());
+    declareList->add(StaticUtils::copyString(directory)); // TODO(mhroth): should be moved to a better location
+    bool success = configureEmptyGraphWithParser(graph, fileParser);
+    if (!success) {
+      printErr("The file %s could not be correctly parsed. Probably an unimplemented object has been referenced, or an abstraction could not be found.", filePath);
+      delete graph;
+      graph = NULL;
+    }
+  } else {
+    printErr("The first line of Pd file %s does not define a canvas: %s", filePath, line);
+  }
+  free(filePath);
+  delete fileParser;
+  
+  return graph;
 }
 
-void PdContext::addGraph(PdGraph *graph) {
+bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser *fileParser) {
+  // TODO(mhroth): increment global graph id. Graphs made through this function are never subgraphs.
+  PdGraph *graph = emptyGraph;
+
+  // configure the graph based on the messages
+  char *line = NULL;
+  while ((line = fileParser->nextMessage()) != NULL) {
+    char *hashType = strtok(line, " ");
+    if (strcmp(hashType, "#N") == 0) {
+      char *objectType = strtok(NULL, " ");
+      if (strcmp(objectType, "canvas") == 0) {
+        // A new graph is defined inline. No arguments are passed (from this line)
+        // the graphId is not incremented as this is a subpatch, not an abstraction
+        PdGraph *newGraph = new PdGraph(graph->getArguments(), graph, this, getCurrentGraphId());
+        
+        // the new graph is pushed onto the stack
+        graph = newGraph;
+      } else {
+        printErr("Unrecognised #N object type: \"%s\".", line);
+      }
+    } else if (strcmp(hashType, "#X") == 0) {
+      char *objectType = strtok(NULL, " ");
+      if (strcmp(objectType, "obj") == 0) {
+        strtok(NULL, " "); // read the first canvas coordinate
+        strtok(NULL, " "); // read the second canvas coordinate
+        char *objectLabel = strtok(NULL, " ;"); // delimit with " " or ";"
+        char *objectInitString = strtok(NULL, ";"); // get the object initialisation string
+        PdMessage *initMessage = new PdMessage(objectInitString, graph->getArguments());
+        MessageObject *messageObject = newObject(objectType, objectLabel, initMessage, graph);
+        if (messageObject == NULL) {
+          // object could not be instantiated, probably because the object is unknown
+          // look for the object definition in an abstraction
+          // first look in the local directory (the same directory as the original file)...
+          char *filename = StaticUtils::joinPaths(objectLabel, ".pd");
+          char *directory = (char *) declareList->get(0);
+          messageObject = newGraph(directory, filename, initMessage, graph);
+          if (messageObject == NULL) {
+            // ...and if that fails, look in the declared directories
+            int i = 0;
+            while (messageObject == NULL && i < declareList->size()) {
+              char *librarySubpath = (char *) declareList->get(i++);
+              char *fullPath = StaticUtils::joinPaths(directory, librarySubpath); 
+              messageObject = newGraph(directory, filename, initMessage, graph);
+              free(fullPath);
+            }
+            if (messageObject == NULL) {
+              free(filename);
+              delete initMessage;
+              printErr("Unknown object or abstraction \"%s\".", objectInitString);
+              return false;
+            }
+            // else fallthrough, free the filename, and add the object
+          }
+          free(filename);
+        }
+        delete initMessage;
+        // add the object to the local graph and make any necessary registrations
+        graph->addObject(messageObject);
+      } else if (strcmp(objectType, "msg") == 0) {
+        strtok(NULL, " "); // read the first canvas coordinate
+        strtok(NULL, " "); // read the second canvas coordinate
+        char *objectInitString = strtok(NULL, ""); // get the message initialisation string
+        graph->addObject(new MessageMessageBox(objectInitString, graph));
+      } else if (strcmp(objectType, "connect") == 0) {
+        int fromObjectIndex = atoi(strtok(NULL, " "));
+        int outletIndex = atoi(strtok(NULL, " "));
+        int toObjectIndex = atoi(strtok(NULL, " "));
+        int inletIndex = atoi(strtok(NULL, ";"));
+        graph->addConnection(fromObjectIndex, outletIndex, toObjectIndex, inletIndex);
+      } else if (strcmp(objectType, "floatatom") == 0) {
+        graph->addObject(new MessageFloat(0.0f, graph)); // defines a number box
+      } else if (strcmp(objectType, "symbolatom") == 0) {
+        graph->addObject(new MessageSymbol("", graph)); // defines a symbol box
+      } else if (strcmp(objectType, "restore") == 0) {
+        // the graph is finished being defined, pop the graph stack to the parent graph
+        graph = graph->getParentGraph();
+        break; // finished reading a subpatch. Return the graph.
+      } else if (strcmp(objectType, "text") == 0) {
+        strtok(NULL, " "); // read the first canvas coordinate
+        strtok(NULL, " "); // read the second canvas coordinate
+        char *comment = strtok(NULL, ";"); // get the comment
+        MessageText *messageText = new MessageText(comment, graph);
+        graph->addObject(messageText);
+      } else if (strcmp(objectType, "declare") == 0) {
+        // set environment for loading patch
+        char *objectInitString = strtok(NULL, ";"); // get the arguments to declare
+        PdMessage *initMessage = new PdMessage(objectInitString); // parse them
+        if (initMessage->isSymbol(0)) {
+          if (strcmp(initMessage->getSymbol(0), "-path") == 0 ||
+              strcmp(initMessage->getSymbol(0), "-stdpath") == 0) {
+            if (initMessage->isSymbol(1)) {
+              // add symbol to declare directories
+              declareList->add(StaticUtils::copyString(initMessage->getSymbol(1)));
+            }
+          } else {
+            printErr("declare \"%s\" flag is not supported.", initMessage->getSymbol(0));
+          }
+        }
+        delete initMessage;
+      } else {
+        printErr("Unrecognised #X object type on line: \"%s\"", line);
+      }
+    } else {
+      printErr("Unrecognised hash type on line: \"%s\"", line);
+    }
+  }
+
+  return true;
+}
+
+void PdContext::attachGraph(PdGraph *graph) {
   lock();
   graphList->add(graph);
+  graph->attachToContext(true);
   unlock();
 }
+
+MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessage *initMessage, PdGraph *graph) {
+  if (strcmp(objectType, "obj") == 0) {
+    if (strcmp(objectLabel, "+") == 0) {
+      return new MessageAdd(initMessage, graph);
+    } else if (strcmp(objectLabel, "-") == 0) {
+      return new MessageSubtract(initMessage, graph);
+    } else if (strcmp(objectLabel, "*") == 0) {
+      return new MessageMultiply(initMessage, graph);
+    } else if (strcmp(objectLabel, "/") == 0) {
+      return new MessageDivide(initMessage, graph);
+    } else if (strcmp(objectLabel, "%") == 0) {
+      return new MessageRemainder(initMessage, graph);
+    } else if (strcmp(objectLabel, "pow") == 0) {
+      return new MessagePow(initMessage, graph);
+    } else if (strcmp(objectLabel, "powtodb") == 0) {
+      return new MessagePowToDb(graph);
+    } else if (strcmp(objectLabel, "dbtopow") == 0) {
+      return new MessageDbToPow(graph);
+    } else if (strcmp(objectLabel, "dbtorms") == 0) {
+      return new MessageDbToRms(graph);
+    } else if (strcmp(objectLabel, "rmstodb") == 0) {
+      return new MessageRmsToDb(graph);
+    } else if (strcmp(objectLabel, "log") == 0) {
+      return new MessageLog(initMessage, graph);
+    } else if (strcmp(objectLabel, "sqrt") == 0) {
+      return new MessageSqrt(initMessage, graph);
+    } else if (strcmp(objectLabel, ">") == 0) {
+      return new MessageGreaterThan(initMessage, graph);
+    } else if (strcmp(objectLabel, ">=") == 0) {
+      return new MessageGreaterThanOrEqualTo(initMessage, graph);
+    } else if (strcmp(objectLabel, "<") == 0) {
+      return new MessageLessThan(initMessage, graph);
+    } else if (strcmp(objectLabel, "<=") == 0) {
+      return new MessageLessThanOrEqualTo(initMessage, graph);
+    } else if (strcmp(objectLabel, "==") == 0) {
+      return new MessageEqualsEquals(initMessage, graph);
+    } else if (strcmp(objectLabel, "!=") == 0) {
+      return new MessageNotEquals(initMessage, graph);
+    } else if (strcmp(objectLabel, "abs") == 0) {
+      return new MessageAbsoluteValue(initMessage, graph);
+    } else if (strcmp(objectLabel, "atan") == 0) {
+      return new MessageArcTangent(initMessage, graph);
+    } else if (strcmp(objectLabel, "atan2") == 0) {
+      return new MessageArcTangent2(initMessage, graph);
+    } else if (strcmp(objectLabel, "bang") == 0 ||
+               strcmp(objectLabel, "bng") == 0) {
+      return new MessageBang(graph);
+    } else if (strcmp(objectLabel, "change") == 0) {
+      return new MessageChange(initMessage, graph);
+    } else if (strcmp(objectLabel, "cos") == 0) {
+      return new MessageCosine(initMessage, graph);
+    } else if (strcmp(objectLabel, "clip") == 0) {
+      return new MessageClip(initMessage, graph);
+    } else if (strcmp(objectLabel, "declare") == 0) {
+      return new MessageDeclare(initMessage, graph);
+    } else if (strcmp(objectLabel, "delay") == 0) {
+      return new MessageDelay(initMessage, graph);
+    } else if (strcmp(objectLabel, "exp") == 0) {
+      return new MessageExp(initMessage, graph);
+    } else if (strcmp(objectLabel, "float") == 0 ||
+               strcmp(objectLabel, "f") == 0) {
+      return new MessageFloat(initMessage, graph);
+    } else if (strcmp(objectLabel, "ftom") == 0) {
+      return new MessageFrequencyToMidi(graph);
+    } else if (strcmp(objectLabel, "mtof") == 0) {
+      return new MessageMidiToFrequency(graph);
+    } else if (StaticUtils::isNumeric(objectLabel)){
+      return new MessageFloat(atof(objectLabel), graph);
+    } else if (strcmp(objectLabel, "inlet") == 0) {
+      return new MessageInlet(graph);
+    } else if (strcmp(objectLabel, "int") == 0 ||
+               strcmp(objectLabel, "i") == 0) {
+      return new MessageInteger(initMessage, graph);
+    } else if (strcmp(objectLabel, "list") == 0) {
+      if (initMessage->isSymbol(0)) {
+        char *qualifier = initMessage->getSymbol(0);
+        if (strcmp(qualifier, "append") == 0) {
+          // TODO(mhroth): return new ListAppend(initMessage, graph);
+        } else if (strcmp(qualifier, "prepend") == 0) {
+          // TODO(mhroth): return new ListPrepend(initMessage, graph);
+        } else if (strcmp(qualifier, "split") == 0) {
+          // TODO(mhroth): return new ListSplit(initMessage, graph);
+        } else if (strcmp(qualifier, "trim") == 0) {
+          // TODO(mhroth): return new ListTrim(initMessage, graph);
+        } else if (strcmp(qualifier, "length") == 0) {
+          return new MessageListLength(initMessage, graph);
+        } else {
+          // TODO(mhroth): return new ListAppend(initMessage, graph);
+        }
+      } else {
+        // TODO(mhroth): return new ListAppend(initMessage, graph);
+      }
+    } else if (strcmp(objectLabel, "loadbang") == 0) {
+      return new MessageLoadbang(graph);
+    } else if (strcmp(objectLabel, "max") == 0) {
+      return new MessageMaximum(initMessage, graph);
+    } else if (strcmp(objectLabel, "min") == 0) {
+      return new MessageMinimum(initMessage, graph);
+    } else if (strcmp(objectLabel, "metro") == 0) {
+      return new MessageMetro(initMessage, graph);
+    } else if (strcmp(objectLabel, "moses") == 0) {
+      return new MessageMoses(initMessage, graph);
+    } else if (strcmp(objectLabel, "mod") == 0) {
+      return new MessageModulus(initMessage, graph);
+    } else if (strcmp(objectLabel, "notein") == 0) {
+      return new MessageNotein(initMessage, graph);
+    } else if (strcmp(objectLabel, "pack") == 0) {
+      return new MessagePack(initMessage, graph);
+    } else if (strcmp(objectLabel, "pipe") == 0) {
+      return new MessagePipe(initMessage, graph);
+    } else if (strcmp(objectLabel, "print") == 0) {
+      return new MessagePrint(initMessage, graph);
+    } else if (strcmp(objectLabel, "outlet") == 0) {
+      return new MessageOutlet(graph);
+    } else if (strcmp(objectLabel, "random") == 0) {
+      return new MessageRandom(initMessage, graph);
+    } else if (strcmp(objectLabel, "receive") == 0 ||
+               strcmp(objectLabel, "r") == 0) {
+      return new MessageReceive(initMessage, graph);
+    } else if (strcmp(objectLabel, "select") == 0 ||
+               strcmp(objectLabel, "sel") == 0) {
+      return new MessageSelect(initMessage, graph);
+    } else if (strcmp(objectLabel, "send") == 0 ||
+               strcmp(objectLabel, "s") == 0) {
+      return new MessageSend(initMessage, graph);
+    } else if (strcmp(objectLabel, "sin") == 0) {
+      return new MessageSine(initMessage, graph);
+    } else if (strcmp(objectLabel, "spigot") == 0) {
+      return new MessageSpigot(initMessage, graph);
+    } else if (strcmp(objectLabel, "swap") == 0) {
+      return new MessageSwap(initMessage, graph);
+    } else if (strcmp(objectLabel, "symbol") == 0) {
+      return new MessageSymbol(initMessage, graph);
+    } else if (strcmp(objectLabel, "table") == 0) {
+      return new MessageTable(initMessage, graph);
+    } else if (strcmp(objectLabel, "tan") == 0) {
+      return new MessageTangent(initMessage, graph);
+    } else if (strcmp(objectLabel, "timer") == 0) {
+      return new MessageTimer(initMessage, graph);
+    } else if (strcmp(objectLabel, "toggle") == 0 ||
+               strcmp(objectLabel, "tgl") == 0) {
+      return new MessageToggle(initMessage, graph);
+    } else if (strcmp(objectLabel, "trigger") == 0 ||
+               strcmp(objectLabel, "t") == 0) {
+      return new MessageTrigger(initMessage, graph);
+    } else if (strcmp(objectLabel, "until") == 0) {
+      return new MessageUntil(graph);
+    } else if (strcmp(objectLabel, "unpack") == 0) {
+      return new MessageUnpack(initMessage,graph);
+    } else if (strcmp(objectLabel, "vsl") == 0 ||
+               strcmp(objectLabel, "hsl") == 0) {
+      // gui sliders are represented as a float objects
+      return new MessageFloat(0.0f, graph);
+    } else if (strcmp(objectLabel, "wrap") == 0) {
+      return new MessageWrap(initMessage, graph);
+    } else if (strcmp(objectLabel, "+~") == 0) {
+      return new DspAdd(initMessage, graph);
+    } else if (strcmp(objectLabel, "-~") == 0) {
+      return new DspSubtract(initMessage, graph);
+    } else if (strcmp(objectLabel, "*~") == 0) {
+      return new DspMultiply(initMessage, graph);
+    } else if (strcmp(objectLabel, "/~") == 0) {
+      return new DspDivide(initMessage, graph);
+    } else if (strcmp(objectLabel, "adc~") == 0) {
+      return new DspAdc(graph);
+    } else if (strcmp(objectLabel, "bp~") == 0) {
+      return new DspBandpassFilter(initMessage, graph);
+    } else if (strcmp(objectLabel, "catch~") == 0) {
+      return new DspCatch(initMessage, graph);
+    } else if (strcmp(objectLabel, "clip~") == 0) {
+      return new DspClip(initMessage, graph);
+    } else if (strcmp(objectLabel, "cos~") == 0) {
+      return new DspCosine(initMessage,graph);
+    } else if (strcmp(objectLabel, "dac~") == 0) {
+      return new DspDac(graph);
+    } else if (strcmp(objectLabel, "delread~") == 0) {
+      return new DspDelayRead(initMessage, graph);
+    } else if (strcmp(objectLabel, "delwrite~") == 0) {
+      return new DspDelayWrite(initMessage, graph);
+    } else if (strcmp(objectLabel, "env~") == 0) {
+      return new DspEnvelope(initMessage, graph);
+    } else if (strcmp(objectLabel, "hip~") == 0) {
+      return new DspHighpassFilter(initMessage, graph);
+    } else if (strcmp(objectLabel, "inlet~") == 0) {
+      return new DspInlet(graph);
+    } else if (strcmp(objectLabel, "line~") == 0) {
+      return new DspLine(graph);
+    } else if (strcmp(objectLabel, "log~") == 0) {
+      return new DspLog(initMessage, graph);
+    } else if (strcmp(objectLabel, "lop~") == 0) {
+      return new DspLowpassFilter(initMessage, graph);
+    } else if (strcmp(objectLabel, "noise~") == 0) {
+      return new DspNoise(graph);
+    } else if (strcmp(objectLabel, "osc~") == 0) {
+      return new DspOsc(initMessage, graph);
+    } else if (strcmp(objectLabel, "outlet~") == 0) {
+      return new DspOutlet(graph);
+    } else if (strcmp(objectLabel, "phasor~") == 0) {
+      return new DspPhasor(initMessage, graph);
+    } else if (strcmp(objectLabel, "receive~") == 0 ||
+               strcmp(objectLabel, "r~") == 0) {
+      return new DspReceive(initMessage, graph);
+    } else if (strcmp(objectLabel, "samplerate~") == 0) {
+      return new MessageSamplerate(initMessage, graph);
+    } else if (strcmp(objectLabel, "send~") == 0 ||
+               strcmp(objectLabel, "s~") == 0) {
+      return new DspSend(initMessage, graph);
+    } else if (strcmp(objectLabel, "sig~") == 0) {
+      return new DspSignal(initMessage, graph);
+    } else if (strcmp(objectLabel, "snapshot~") == 0) {
+      return new DspSnapshot(initMessage, graph);
+    } else if (strcmp(objectLabel, "switch~") == 0) {
+      return new MessageSwitch(initMessage, graph);
+    } else if (strcmp(objectLabel, "tabread4~") == 0) {
+      return new DspTableRead(initMessage, graph);
+    } else if (strcmp(objectLabel, "throw~") == 0) {
+      return new DspThrow(initMessage, graph);
+    } else if (strcmp(objectLabel, "vd~") == 0) {
+      return new DspVariableDelay(initMessage, graph);
+    } else if (strcmp(objectLabel, "wrap~") == 0) {
+      return new DspWrap(initMessage, graph);
+    }
+  } else if (strcmp(objectType, "msg") == 0) {
+    // TODO(mhroth)
+  }
+  
+  // object was not recognised. It has probably not been implemented yet or exists as an abstraction
+  return NULL;
+}
+
+#pragma mark -
+#pragma mark Lock/Unlock Context
 
 void PdContext::lock() {
   pthread_mutex_lock(&contextLock);
@@ -225,6 +722,10 @@ void PdContext::printStd(const char *msg, ...) {
 #pragma mark -
 #pragma mark Register/Unregister Objects
 
+void PdContext::registerRemoteMessageReceiver(RemoteMessageReceiver *receiver) {
+  sendController->addReceiver(receiver);
+}
+
 void PdContext::registerDspReceive(DspReceive *dspReceive) {
   dspReceiveList->add(dspReceive);
   
@@ -236,10 +737,9 @@ void PdContext::registerDspReceive(DspReceive *dspReceive) {
 }
 
 void PdContext::registerDspSend(DspSend *dspSend) {
-  // detect send~ duplicates
   DspSend *sendObject = getDspSend(dspSend->getName());
   if (sendObject != NULL) {
-    printErr("Duplicate send~ object with name \"%s\" found.", dspSend->getName());
+    printErr("Duplicate send~ object found with name \"%s\".", dspSend->getName());
     return;
   }
   dspSendList->add(dspSend);
@@ -266,7 +766,6 @@ DspSend *PdContext::getDspSend(char *name) {
 }
 
 void PdContext::registerDelayline(DspDelayWrite *delayline) {
-  // detect delwrite~ with duplicate name
   if (getDelayline(delayline->getName()) != NULL) {
     printErr("delwrite~ with duplicate name \"%s\" registered.", delayline->getName());
     return;
@@ -315,7 +814,7 @@ void PdContext::registerDspThrow(DspThrow *dspThrow) {
 void PdContext::registerDspCatch(DspCatch *dspCatch) {
   DspCatch *catchObject = getDspCatch(dspCatch->getName());
   if (catchObject != NULL) {
-    printErr("catch~ with duplicate name \"%s\" already exists.\n", dspCatch->getName());
+    printErr("catch~ with duplicate name \"%s\" already exists.", dspCatch->getName());
     return;
   }
   catchList->add(dspCatch);
@@ -340,7 +839,6 @@ DspCatch *PdContext::getDspCatch(char *name) {
 }
 
 void PdContext::registerTable(MessageTable *table) {
-  // duplicate check
   if (getTable(table->getName()) != NULL) {
     printErr("Table with name \"%s\" already exists.", table->getName());
     return;
@@ -373,4 +871,101 @@ void PdContext::registerTableReceiver(TableReceiver *tableReceiver) {
   
   MessageTable *table = getTable(tableReceiver->getName());
   tableReceiver->setTable(table); // set table whether it is NULL or not
+}
+
+#pragma mark -
+#pragma mark Manage Messages
+
+void PdContext::dispatchMessageToNamedReceivers(char *name, PdMessage *message) {
+  sendController->receiveMessage(name, message);
+}
+
+void PdContext::scheduleExternalMessageV(const char *receiverName, double timestamp,
+    const char *messageFormat, va_list ap) {
+  /*
+  lock(); // NOTE(mhroth): can reduce size of critical section?
+  int receiverNameIndex = sendController->getNameIndex((char *) receiverName);
+  if (receiverNameIndex >= 0) { // if the receiver exists
+    PdMessage *message = getNextExternalMessage();
+    message->setTimestamp(timestamp);
+    
+    // format message
+    message->clear(); // removes (but does not destroy) all elements from the message
+    int numElements = strlen(messageFormat);
+    MessageElement *messageElement = NULL;
+    for (int i = 0; i < numElements; i++) {
+      messageElement = message->getElement(i);
+      if (messageElement == NULL) {
+        // add extra elements as necessary
+        messageElement = new MessageElement();
+        message->addElement(messageElement);
+      }
+      switch (messageFormat[i]) {
+        case 'f': {
+          messageElement->setFloat((float) va_arg(ap, double));
+          break;
+        }
+        case 's': {
+          messageElement->setSymbol((char *) va_arg(ap, char *));
+          break;
+        }
+        case 'b': {
+          messageElement->setBang();
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+    }
+    for (int i = numElements; i < message->getNumElements(); i++) {
+      // delete extra elements as necessary
+      messageElement = (MessageElement *) elementList->remove(numElements);
+      delete messageElement;
+    }
+    
+    scheduleMessage(sendController, receiverNameIndex, message);
+  }
+  */
+  unlock();
+}
+
+PdMessage *PdContext::getNextExternalMessage() {
+  int numMessages = externalMessagePool->size();
+  for (int i = 0; i < numMessages; i++) {
+    PdMessage *message = (PdMessage *) externalMessagePool->get(i);
+    if (!message->isReserved()) {
+      return message;
+    }
+  }
+  PdMessage *message = new PdMessage();
+  message->addElement(new MessageElement());
+  externalMessagePool->add(message);
+  return message;
+}
+
+void PdContext::scheduleMessage(MessageObject *messageObject, int outletIndex, PdMessage *message) {
+  message->reserve(messageObject);
+  messageCallbackQueue->insertMessage(messageObject, outletIndex, message);
+}
+
+void PdContext::cancelMessage(MessageObject *messageObject, int outletIndex, PdMessage *message) {
+  message->unreserve(messageObject);
+  messageCallbackQueue->removeMessage(messageObject, outletIndex, message);
+}
+
+void PdContext::receiveSystemMessage(PdMessage *message) {
+  // TODO(mhroth): What are all of the possible system messages?
+  if (message->isSymbol(0, "obj")) {
+    // TODO(mhroth)
+  } else if (callbackFunction != NULL) {
+    if (message->isSymbol(0, "dsp") && message->isFloat(1)) {
+      int result = (message->getFloat(1) != 0.0f) ? 1 : 0;
+      callbackFunction(ZG_PD_DSP, callbackUserData, &result);
+    } else {
+      char *messageString = message->toString();
+      printErr("Unrecognised system command: %s", messageString);
+      free(messageString);
+    }
+  }
 }

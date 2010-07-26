@@ -79,14 +79,14 @@ void DspBandpassFilter::processMessage(int inletIndex, PdMessage *message) {
     }
     case 1: {
       if (message->isFloat(0)) {
-        processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
+        processDspToIndex(graph->getBlockIndex(message));
         calculateFilterCoefficients(message->getFloat(0), q);
       }
       break;
     }
     case 2: {
       if (message->isFloat(0)) {
-        processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
+        processDspToIndex(graph->getBlockIndex(message));
         calculateFilterCoefficients(centerFrequency, message->getFloat(0));
       }
       break;

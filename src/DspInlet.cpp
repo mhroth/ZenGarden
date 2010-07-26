@@ -35,6 +35,10 @@ const char *DspInlet::getObjectLabel() {
   return "inlet~";
 }
 
+ObjectType DspInlet::getObjectType() {
+  return DSP_INLET;
+}
+
 void DspInlet::setInletBuffer(float **graphInletBuffer) {
   this->graphInletBuffer = graphInletBuffer;
   tempLocalDspBuffer = localDspBufferAtOutlet[0];

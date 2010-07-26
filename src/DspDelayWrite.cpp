@@ -56,6 +56,10 @@ const char *DspDelayWrite::getObjectLabel() {
   return "delwrite~";
 }
 
+ObjectType DspDelayWrite::getObjectType() {
+  return DSP_DELAY_WRITE;
+}
+
 char *DspDelayWrite::getName() {
   return name;
 }

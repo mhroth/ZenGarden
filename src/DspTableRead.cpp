@@ -39,10 +39,9 @@ const char *DspTableRead::getObjectLabel() {
 void DspTableRead::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
-      if (message->isSymbol(0) && message->isSymbol(1) &&
-          strcmp(message->getSymbol(0), "set") == 0) {
+      if (message->isSymbol(0, "set") && message->isSymbol(1)) {
         // change the table from which this object reads
-        processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
+        processDspToIndex(graph->getBlockIndex(message));
         table = graph->getTable(message->getSymbol(1));
       }
       break;
@@ -71,8 +70,8 @@ void DspTableRead::processDspToIndex(float blockIndex) {
       #if __APPLE__
       float zero = 0.0f;
       float one = 1.0f;
-      vDSP_vtabi(inputBuffer, 1, &one, &zero, buffer, bufferLength, outputBuffer, 1,
-          endSampleIndex-startSampleIndex);
+      vDSP_vtabi(inputBuffer+startSampleIndex, 1, &one, &zero, buffer, bufferLength,
+          outputBuffer+startSampleIndex, 1, endSampleIndex-startSampleIndex);
       #endif
     } else {
       // TODO(mhroth): this can be optimised, as has been done in DspVariableDelay

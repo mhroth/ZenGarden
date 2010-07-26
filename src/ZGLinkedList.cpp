@@ -74,9 +74,12 @@ void ZGLinkedList::resetIterator() {
 }
 
 void *ZGLinkedList::getNext() {
-  LinkedListNode *node = iteratorNode;
-  iteratorNode = (node == NULL) ? NULL : node->next;
-  return node->data;
+  void *data = NULL;
+  if (iteratorNode != NULL) {
+    data = iteratorNode->data;
+    iteratorNode = iteratorNode->next;
+  }
+  return data;
 }
 
 void **ZGLinkedList::add() {
@@ -163,6 +166,18 @@ void ZGLinkedList::remove(void *element) {
       node = node->next;
     }
   }
+}
+
+void ZGLinkedList::clear() {
+  if (numEmptyElements == 0) {
+    emptyHead = head;
+    emptyTail = head;
+  } else if (numEmptyElements > 0) {
+    emptyTail->next = head;
+  }
+  head = NULL;
+  numEmptyElements += numElements;
+  numElements = 0;
 }
 
 void ZGLinkedList::insertAfter(LinkedListNode *nodeA, LinkedListNode *nodeB) {

@@ -25,8 +25,18 @@
 
 /** An enumeration of the different operations available from a graph's callback function. */
 typedef enum {
-  ZG_PRINT_STD, // print to standard out
-  ZG_PRINT_ERR  // print to standard error
+  /** Print to standard out. Argument is char* to message buffer. */
+  ZG_PRINT_STD,
+  
+  /** Print to standard error. Argument is char* to message buffer. */
+  ZG_PRINT_ERR,
+  
+  /**
+   * Suggestion to turn on or off context signal processing. Argument is int* to 1 or 0.
+   * Note that message and signal processing are dependent in ZenGarden. If PdContext::process()
+   * is no longer called, then messages will also stop being processed.
+   */
+  ZG_PD_DSP
 } ZGCallbackFunction;
 
 #endif // _ZG_CALLBACK_FUNCTION_H_

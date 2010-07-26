@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -20,29 +20,35 @@
  *
  */
 
-#include "MessageOutlet.h"
-#include "PdGraph.h"
+#ifndef _OBJECT_TYPE_H_
+#define _OBJECT_TYPE_H_
 
-MessageOutlet::MessageOutlet(PdGraph *graph) : MessageObject(1, 1, graph) {
-  outletIndex = 0; // default value
-}
+/** An enumeration all supported objects. */
+enum ObjectType {
+  DSP_ADC,
+  DSP_ADD,
+  DSP_BANDPASS_FILTER,
+  DSP_CATCH,
+  DSP_CLIP,
+  DSP_COSINE,
+  DSP_DAC,
+  DSP_DELAY_READ,
+  DSP_DELAY_WRITE,
+  DSP_INLET,
+  DSP_OUTLET,
+  DSP_RECEIVE,
+  DSP_SEND,
+  DSP_TABLE_READ,
+  DSP_THROW,
+  DSP_VARIABLE_DELAY,
+  MESSAGE_INLET,
+  MESSAGE_NOTEIN,
+  MESSAGE_OUTLET,
+  MESSAGE_RECEIVE,
+  MESSAGE_SEND,
+  MESSAGE_TABLE,
+  OBJECT_PD,
+  OBJECT_UNKNOWN // unknown or unimportant
+};
 
-MessageOutlet::~MessageOutlet() {
-  // nothing to do
-}
-
-const char *MessageOutlet::getObjectLabel() {
-  return "outlet";
-}
-
-ObjectType MessageOutlet::getObjectType() {
-  return MESSAGE_OUTLET;
-}
-
-void MessageOutlet::setOutletIndex(int outletIndex) {
-  this->outletIndex = outletIndex;
-}
-
-void MessageOutlet::processMessage(int inletIndex, PdMessage *message) {
-  graph->sendMessage(outletIndex, message);
-}
+#endif // _OBJECT_TYPE_H_

@@ -173,6 +173,10 @@ void MessageObject::addConnectionToObjectFromOutlet(MessageObject *messageObject
   }
 }
 
+ObjectType MessageObject::getObjectType() {
+  return OBJECT_UNKNOWN;
+}
+
 PdMessage *MessageObject::getNextOutgoingMessage(int outletIndex) {
   List *messageOutletPool = messageOutletPools[outletIndex];
   int numMessagesInPool = messageOutletPool->size();

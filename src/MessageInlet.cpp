@@ -34,6 +34,10 @@ const char *MessageInlet::getObjectLabel() {
   return "inlet";
 }
 
+ObjectType MessageInlet::getObjectType() {
+  return MESSAGE_INLET;
+}
+
 void MessageInlet::processMessage(int inletIndex, PdMessage *message) {
   sendMessage(0, message);
 }

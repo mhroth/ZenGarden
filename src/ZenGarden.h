@@ -30,22 +30,59 @@
  * along with the <code>libzengarden</code> library in your project in order to integrate it.
  */
 #ifdef __cplusplus
+class PdContext;
 class PdGraph;
+class MessageObject;
+typedef PdContext ZGContext;
 typedef PdGraph ZGGraph;
+typedef MessageObject ZGObject;
 extern "C" {
 #else
   typedef void ZGGraph;
+  typedef void ZGContext;
+  typedef void ZGObject;
 #endif
   
-  /** Create a new graph with the given parameters. */
-  ZGGraph *zg_new_graph(char *directory, char *filename, int blockSize, 
-      int numInputChannels, int numOutputChannels, float sampleRate);
+  /** Create a new context to which graphs can be added. */
+  ZGContext *zg_new_context(int numInputChannels, int numOutputChannels, int blockSize, float sampleRate,
+      void (*callbackFunction)(ZGCallbackFunction function, void *userData, void *ptr), void *userData);
+
+  /** Create a new empty graph in the given context. Ideal for building graphs on the fly. */
+  ZGGraph *zg_new_empty_graph(ZGContext *context);
   
-  /** Delete the given graph. */
+  /* Create a new graph from a Pd file. */
+  ZGGraph *zg_new_graph(ZGContext *context, char *directory, char *filename);
+  
+  /** Attach a graph to the context. */
+  void zg_attach_graph(ZGContext *context, ZGGraph *graph);
+  
+  /** Remove the graph from the context. */
+  void zg_remove_graph(ZGContext *context, ZGGraph *graph);
+  
+  /**
+   * Delete the given context. All attached graphs are also deleted. Unattached graphs are not
+   * automatically deleted, but should be by the user. They are thereafter useless.
+   */
+  void zg_delete_context(ZGContext *context);
+  
+  /** Deletes the given graph. If attached, the graph is automatically removed from its context. */
   void zg_delete_graph(ZGGraph *graph);
   
-  /** Process the given graph. */
-  void zg_process(ZGGraph *graph, float *inputBuffers, float *outputBuffers);
+  /**
+   * Add an object to a graph. If the graph is currently attached then audio may be interrupted
+   * while the object is attached the and graph reconfigured (if necessary). If the graph is unattached
+   * then no audio interruption will take place, even if reconfiguration takes place.
+   */
+  void zg_add_object(ZGGraph *graph, ZGObject *object);
+  
+  /**
+   * Removes the object from the graph. Any connections that this object may have had in the graph
+   * are also deleted.
+   */
+  void zg_remove_object(ZGGraph *graph, ZGObject *object);
+
+  /** Process the given context. */
+  void zg_process(ZGContext *context, float *inputBuffers, float *outputBuffers);
   
   /**
    * Send a message to the named receiver with the given format at the beginning of the next audio block.
@@ -56,7 +93,7 @@ extern "C" {
    * E.g., zg_send_message(graph, "test", "s", "hello");
    * E.g., zg_send_message(graph, "test", "b");
    */
-  void zg_send_message(ZGGraph *graph, const char *receiverName, const char *messageFormat, ...);
+  void zg_send_message(ZGContext *context, const char *receiverName, const char *messageFormat, ...);
   
   /**
    * Send a message to the named receiver with the given format at the given block index. If the
@@ -71,7 +108,7 @@ extern "C" {
    * sends a message containing three floats, each with value 0.0f, to all receivers named "#accelerate"
    * between samples 56th and 57th samples (counting from zero) of the block.
    */
-  void zg_send_message_at_blockindex(ZGGraph *graph, const char *receiverName, double blockIndex,
+  void zg_send_message_at_blockindex(ZGContext *context, const char *receiverName, double blockIndex,
       const char *messageFormat, ...);
   
   /**
@@ -80,10 +117,7 @@ extern "C" {
    * All messages are sent to <code>notein</code> objects, i.e. omni. Channels are zero-index and only
    * 16 are supported. A note off message is generally interpreted as having velocity zero.
    */
-  void zg_send_midinote(ZGGraph *graph, int channel, int noteNumber, int velocity, double blockIndex);
-  
-  void zg_register_callback(ZGGraph *graph,
-      void (*callbackFunction)(ZGCallbackFunction function, void *userData, void *ptr), void *userData);
+  void zg_send_midinote(ZGContext *context, int channel, int noteNumber, int velocity, double blockIndex);
   
 #ifdef __cplusplus
 }
