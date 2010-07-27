@@ -30,11 +30,11 @@ package me.rjdj.zengarden;
 public class ZenGardenAdapter implements ZenGardenListener {
 
   public void onPrintErr(String message) {
-    System.err.print(message);
+    System.err.println(message);
   }
 
   public void onPrintStd(String message) {
-    System.out.print(message);
+    System.out.println(message);
   }
 
 }
