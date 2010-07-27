@@ -71,11 +71,11 @@ public class ZenGarden {
           Integer.toString(numOutputChannels));
     }
     
+    listenerList = new ArrayList<ZenGardenListener>();
+    
     nativePtr = loadPdPatch(
         patchFile.getAbsoluteFile().getParent() + File.separator, patchFile.getName(), 
         blockSize, numInputChannels, numOutputChannels, sampleRate);
-    
-    listenerList = new ArrayList<ZenGardenListener>();
   }
   
   static {
