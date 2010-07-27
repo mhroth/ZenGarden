@@ -255,11 +255,6 @@ public class PdObjectTest implements ZenGardenListener {
   }
 
   @Test
-  public void testMessageSine() {
-    genericMessageTest("MessageSine.pd");
-  }
-
-  @Test
   public void testMessageSelect() {
 	genericMessageTest("MessageSelect.pd");
   }	
@@ -269,15 +264,29 @@ public class PdObjectTest implements ZenGardenListener {
     genericMessageTest("MessageSend.pd");
   }	
 
+	
+  @Test
+  public void testMessageSine() {
+	genericMessageTest("MessageSine.pd");
+  }
+
+  @Test
+  public void testMessageSpigot() {
+	genericMessageTest("MessageSpigot.pd");
+  }
+	
+	
+  @Test
+  public void testMessageSqrt() {
+	genericMessageTest("MessageSqrt.pd");
+  }
+	
   @Test
   public void testMessageSubtract() {
     genericMessageTest("MessageSubtract.pd");
   }
 
-  @Test
-  public void testMessageSqrt() {
-    genericMessageTest("MessageSqrt.pd");
-  }
+
   /*
   @Test
   public void testMessageUnpack() {
