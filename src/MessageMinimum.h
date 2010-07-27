@@ -32,7 +32,6 @@ class MessageMinimum : public MessageObject {
 
   public:
     MessageMinimum(PdMessage *initMessage, PdGraph *graph);
-    MessageMinimum(float constant, PdGraph *graph);
     ~MessageMinimum();
 
     const char *getObjectLabel();
@@ -42,6 +41,7 @@ class MessageMinimum : public MessageObject {
     void processMessage(int inletIndex, PdMessage *message);
 
     float constant;
+    float lastOutput;
 };
 
 #endif // _MESSAGE_MINIMUM_H_

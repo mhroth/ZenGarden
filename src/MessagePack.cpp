@@ -38,32 +38,48 @@ const char *MessagePack::getObjectLabel() {
 }
 
 void MessagePack::processMessage(int inletIndex, PdMessage *message) {
-  if (outgoingMessage->getType(inletIndex) == message->getType(0)) {
-    switch (message->getType(0)) {
-      case FLOAT: {
+  switch (message->getType(0)) {
+    case FLOAT: {
+      if (outgoingMessage->isFloat(inletIndex)) {
         outgoingMessage->setFloat(inletIndex, message->getFloat(0));
-        break;
+        onBangAtLeftInlet(inletIndex, message->getTimestamp());
+      } else {
+        graph->printErr("pack: type mismatch: %s expected but got %s at inlet %i.\n",
+            StaticUtils::messageElementTypeToString(outgoingMessage->getType(inletIndex)),
+            StaticUtils::messageElementTypeToString(message->getType(0)),
+            inletIndex + 1);
+        return;
       }
-      case SYMBOL: {
-        outgoingMessage->setSymbol(inletIndex, message->getSymbol(0));
-        break;
-      }
-      default: {
-        break;
-      }
+      break;
     }
-  } else {
-    graph->printErr("pack: type mismatch: %s expected but got %s at inlet %i.\n",
-        StaticUtils::messageElementTypeToString(outgoingMessage->getElement(inletIndex)->getType()),
-        StaticUtils::messageElementTypeToString(message->getElement(0)->getType()),
-        inletIndex + 1);
-    return;
+    case SYMBOL: {
+      if (outgoingMessage->isSymbol(inletIndex)) {
+        outgoingMessage->setSymbol(inletIndex, message->getSymbol(0));
+        onBangAtLeftInlet(inletIndex, message->getTimestamp());
+      } else {
+        graph->printErr("pack: type mismatch: %s expected but got %s at inlet %i.\n",
+            StaticUtils::messageElementTypeToString(outgoingMessage->getType(inletIndex)),
+            StaticUtils::messageElementTypeToString(message->getType(0)),
+            inletIndex + 1);
+        return;
+      }
+      break;
+    }
+    case BANG: {
+      onBangAtLeftInlet(inletIndex, message->getTimestamp());
+    }
+    default: {
+      break;
+    }
   }
+}
+
+void MessagePack::onBangAtLeftInlet(int inletIndex, double timestamp) {
   if (inletIndex == 0) {
     // send the outgoing message
-    outgoingMessage->setTimestamp(message->getTimestamp());
+    outgoingMessage->setTimestamp(timestamp);
     sendMessage(0, outgoingMessage);
-
+    
     // prepare the next outgoing message
     // it already has the correct format due to newCanonicalMessage()
     outgoingMessage = getNextOutgoingMessage(0);

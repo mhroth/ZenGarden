@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -25,21 +25,26 @@
 
 #include "MessageObject.h"
 
-/** [delay float] */
+/**
+ * [delay float]
+ * A delay only has one outstanding message at any time. If a scheduled message already exists
+ * and a new message is sent into the object, then the previously scheduled message will be cancelled
+ * and the new one rescheduled. For a generalised delay line, use the pipe (<code>MessagePipe</code>)
+ * object.
+ */
 class MessageDelay : public MessageObject {
   
   public:
     MessageDelay(PdMessage *initMessage, PdGraph *graph);
-    MessageDelay(float delayMs, PdGraph *graph);
     ~MessageDelay();
   
     const char *getObjectLabel();
     
   private:
-    void init(float delayMs);
     void processMessage(int inletIndex, PdMessage *message);
   
     double delayMs;
+    PdMessage *scheduledMessage;
 };
 
 #endif // _MESSAGE_DELAY_H_

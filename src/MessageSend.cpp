@@ -23,12 +23,10 @@
 #include "MessageSend.h"
 #include "PdGraph.h"
 
-MessageSend::MessageSend(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 0, graph) {
-  if (initMessage->getNumElements() > 0 && initMessage->getElement(0)->getType() == SYMBOL) {
-    name = StaticUtils::copyString(initMessage->getElement(0)->getSymbol());
-  } else {
-    name = NULL;
-  }
+MessageSend::MessageSend(PdMessage *initMessage, PdGraph *graph) :
+    MessageObject((initMessage->getNumElements() == 0) ? 2 : 1, 0, graph) {
+  name = StaticUtils::copyString(initMessage->isSymbol(0)
+      ? initMessage->getSymbol(0) : (char *) "zg_default_sendreceive_name");
 }
 
 MessageSend::~MessageSend() {
@@ -44,5 +42,20 @@ ObjectType MessageSend::getObjectType() {
 }
 
 void MessageSend::processMessage(int inletIndex, PdMessage *message) {
-  graph->dispatchMessageToNamedReceivers(name, message);
+  switch (inletIndex) {
+    case 0: {
+      graph->dispatchMessageToNamedReceivers(name, message);
+      break;
+    }
+    case 1: {
+      if (message->isSymbol(0)) {
+        free(name);
+        name = StaticUtils::copyString(message->getSymbol(0));
+      }
+      break;
+    }
+    default: {
+      break;
+    }
+  }
 }

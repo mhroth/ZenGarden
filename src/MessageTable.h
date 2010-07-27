@@ -35,7 +35,12 @@ class MessageTable : public MessageObject {
     const char *getObjectLabel();
   
     char *getName();
+  
+    /** Get a pointer to the table's buffer. */
     float *getBuffer(int *bufferLength);
+  
+    /** Resize the table's buffer to the given buffer length. A pointer to the new buffer is returned. */
+    float *resizeBuffer(int bufferLength);
   
   private:
     char *name;

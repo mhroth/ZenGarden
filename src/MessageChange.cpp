@@ -23,12 +23,7 @@
 #include "MessageChange.h"
 
 MessageChange::MessageChange(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
-  if (initMessage->getNumElements() > 0 &&
-      initMessage->getElement(0)->getType() == FLOAT) {
-    prevValue = initMessage->getElement(0)->getFloat();
-  } else {
-    prevValue = 0.0f;
-  }
+   prevValue = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
 }
 
 MessageChange::~MessageChange() {
@@ -42,15 +37,14 @@ const char *MessageChange::getObjectLabel() {
 void MessageChange::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
-      MessageElement *messageElement = message->getElement(0);
-      switch (messageElement->getType()) {
+      switch (message->getType(0)) {
         case FLOAT: {
           // output only if input is different than what is already there
-            if (messageElement->getFloat() != prevValue) {
+            if (message->getFloat(0) != prevValue) {
               PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-              outgoingMessage->getElement(0)->setFloat(messageElement->getFloat());
+              outgoingMessage->getElement(0)->setFloat(message->getFloat(0));
               outgoingMessage->setTimestamp(message->getTimestamp());
-              prevValue = messageElement->getFloat();
+              prevValue = message->getFloat(0);
               sendMessage(0, outgoingMessage);
             }
             break;
@@ -64,14 +58,9 @@ void MessageChange::processMessage(int inletIndex, PdMessage *message) {
           break;
         }
         case SYMBOL: {
-          if (strcmp(messageElement->getSymbol(), "set") == 0) {
-            MessageElement *messageElement1 = message->getElement(1);
-            if (messageElement1 != NULL && messageElement1->getType() == FLOAT) {
-              setValue = messageElement1->getFloat();
-              PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-              outgoingMessage->getElement(0)->setFloat(setValue);
-              outgoingMessage->setTimestamp(message->getTimestamp());
-              sendMessage(0, outgoingMessage);
+          if (strcmp(message->getSymbol(0), "set") == 0) {
+            if (message != NULL && message->getType(1) == FLOAT) {
+              prevValue = message->getFloat(1);
             }
           }
           break;

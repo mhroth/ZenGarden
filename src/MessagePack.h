@@ -38,6 +38,9 @@ class MessagePack : public MessageObject {
     void processMessage(int inletIndex, PdMessage *message);
     PdMessage *newCanonicalMessage(int outletIndex);
   
+    /** A helper function for processMessage(). */
+    void onBangAtLeftInlet(int inletIndex, double timestamp);
+  
     PdMessage *templateMessage;
     PdMessage *outgoingMessage;
 };

@@ -22,6 +22,8 @@
 
 #include <sndfile.h>
 #include "MessageSoundfiler.h"
+#include "MessageTable.h"
+#include "PdGraph.h"
 
 MessageSoundfiler::MessageSoundfiler(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
   // TODO(mhroth)
@@ -37,86 +39,91 @@ const char *MessageSoundfiler::getObjectLabel() {
 
 void MessageSoundfiler::processMessage(int inletIndex, PdMessage *message) {
   if (message->isSymbol(0) && strcmp(message->getSymbol(0), "read") == 0) {
-    
-  }
-  
-  /*
-  if (inletIndex == 0) {
-    int currentElementIndex = 0;
-    bool shouldResizeTable = false;
-    MessageElement *messageElement = message->getElement(currentElementIndex++);
-    if (messageElement != NULL && 
-        messageElement->getType() == SYMBOL &&
-        strcmp(messageElement->getSymbol(), "read") == 0) {
-      while ((messageElement = message->getElement(currentElementIndex++)) != NULL) {
-        if (messageElement->getType() == SYMBOL) {
-          // only the -resize flag is supported for now
-          if (strcmp(messageElement->getSymbol(), "-resize") == 0) {
-            shouldResizeTable = true;
-          } else {
-            // all of the flags should have been seen now and now we expect the last two parameters,
-            // which are file location and destination table name
-            MessageElement *tableNameElement = message->getElement(currentElementIndex++);
-            if (messageElement != NULL && messageElement->getType() == SYMBOL &&
-                tableNameElement != NULL && tableNameElement->getType() == SYMBOL) {
+	  int currentElementIndex = 1;
+	  bool shouldResizeTable = false;
+	  
+	  while (currentElementIndex < message->getNumElements()) {
+		  MessageElement *messageElement = message->getElement(currentElementIndex++);
+			if (messageElement->getType() == SYMBOL) {
+			  // only the -resize flag is supported for now
+			  if (strcmp(messageElement->getSymbol(), "-resize") == 0) {
+				  shouldResizeTable = true;
+			  } else {
+				  // all of the flags should have been seen now and now we expect the last two parameters,
+				  // which are file location and destination table name
+				  MessageElement *tableNameElement = message->getElement(currentElementIndex++);
+				  if (messageElement != NULL && messageElement->getType() == SYMBOL &&
+					    tableNameElement != NULL && tableNameElement->getType() == SYMBOL) {
+            MessageTable *table = graph->getTable(tableNameElement->getSymbol());
+            if (table != NULL) {
               // use libsndfile to load and read the file (also converting the samples to [-1,1] float)
               SF_INFO sfInfo;
-              char *filename = StaticUtils::joinPaths(pdGraph->getDirectory(), messageElement->getSymbol());
+              
+              char *directory = (char *) graph->getDeclareList()->get(0);
+              char *filename = StaticUtils::joinPaths(directory, messageElement->getSymbol());
               SNDFILE *sndFile = sf_open(filename, SFM_READ, &sfInfo);
-              free(filename);
+              
               if (sndFile == NULL) {
+                graph->printErr("soundfiler can't open %s.", filename);
+                free(filename);
                 return; // there was an error reading the file. Move on with life.
-              } else if (!((sfInfo.format & 0x00FF0000) == SF_FORMAT_WAV ||
-                         (sfInfo.format & 0x00FF0000) == SF_FORMAT_AIFF)) {
-                // we only support WAV and AIFF files (somewhat artificially
-                // because libsndfile can easily load other formats)
-                return;
-              }
+              } 
+              free(filename);
+              
               // It is assumed that the channels are interleaved.
               int samplesPerChannel = sfInfo.frames;
               int bufferLength = samplesPerChannel * sfInfo.channels;
-              float *buffer = (float *) malloc(bufferLength * sizeof(float)); // create a buffer in memory for the file data
+              // create a buffer in memory for the file data
+              float *buffer = (float *) malloc(bufferLength * sizeof(float));
               sf_read_float(sndFile, buffer, bufferLength); // read the whole file into memory
               sf_close(sndFile); // release the handle to the file
               
               if (sfInfo.channels > 0) { // sanity check
-                // extract the first channel
-                float *channelBuffer = (float *) malloc(samplesPerChannel * sizeof(float));
-                for (int i = 0, j = 0; i < bufferLength; i+=sfInfo.channels, j++) {
-                  channelBuffer[j] = buffer[i];
+                // get the table's buffer. Resize the buffer if necessary.
+                int tableLength = samplesPerChannel;
+                float *tableBuffer = shouldResizeTable ? table->resizeBuffer(samplesPerChannel) :
+                    table->getBuffer(&tableLength);
+                if (tableLength > samplesPerChannel) {
+                  // avoid trying to read more into the table buffer than is available
+                  tableLength = samplesPerChannel;
                 }
-                DspTable *table = pdGraph->getTable(tableNameElement->getSymbol());
-                if (table != NULL) {
-                  // copy the buffer to the table
-                  table->setBuffer(channelBuffer, samplesPerChannel, shouldResizeTable);
-                  
-                  PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-                  outgoingMessage->setBlockIndex(message->getBlockIndex());
-                  outgoingMessage->getElement(0)->setFloat((float) samplesPerChannel);
+                
+                // extract the first channel
+                for (int i = 0, j = 0; i < bufferLength; i+=sfInfo.channels, j++) {
+                  tableBuffer[j] = buffer[i];
                 }
                 
                 // extract the second channel (if it exists and if there is a table to write it to)
                 if (sfInfo.channels > 1 &&
                     (tableNameElement = message->getElement(currentElementIndex++)) != NULL &&
                     tableNameElement->getType() == SYMBOL &&
-                    (table = pdGraph->getTable(tableNameElement->getSymbol())) != NULL) {
-                  for (int i = 1, j = 0; i < bufferLength; i+=sfInfo.channels, j++) {
-                    channelBuffer[j] = buffer[i];
+                    (table = graph->getTable(tableNameElement->getSymbol())) != NULL) {
+                  tableLength = samplesPerChannel;
+                  tableBuffer = shouldResizeTable ? table->resizeBuffer(samplesPerChannel) :
+                      table->getBuffer(&tableLength);
+                  if (tableLength > samplesPerChannel) {
+                    // avoid trying to read more into the table buffer than is available
+                    tableLength = samplesPerChannel;
                   }
-                  table->setBuffer(channelBuffer, samplesPerChannel, shouldResizeTable);
+                  for (int i = 1, j = 0; i < bufferLength; i+=sfInfo.channels, j++) {
+                    tableBuffer[j] = buffer[i];
+                  }
                 }
-                free(channelBuffer);
               }
               free(buffer);
+              
+              // send message with sample length when all tables have been filled
+              PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+              outgoingMessage->setFloat(0, (float) samplesPerChannel);
+              outgoingMessage->setTimestamp(message->getTimestamp());
+              sendMessage(0, outgoingMessage);
             }
           }
-        }
-      }
-    } else if (messageElement != NULL && 
-        messageElement->getType() == SYMBOL &&
-        strcmp(messageElement->getSymbol(), "write") == 0) {
-      // TODO(mhroth): not supported yet
-    }
-  }
-  */
+			  }
+		  }
+		}
+  } else if (message->isSymbol(0) && strcmp(message->getSymbol(0), "write") == 0) {
+		// TODO(mhroth): not supported yet
+    graph->printErr("The \"write\" command to soundfiler is not supported.");
+	}
 }

@@ -8,14 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		8DD76F6A0486A84900D96B5E /* ZenGardenNp.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6859E8B029090EE04C91782 /* ZenGardenNp.1 */; };
-		9029266711EE9BB90025CD4B /* ObjectType.h in Headers */ = {isa = PBXBuildFile; fileRef = 9029266611EE9BB90025CD4B /* ObjectType.h */; };
-		9029266811EE9BB90025CD4B /* ObjectType.h in Headers */ = {isa = PBXBuildFile; fileRef = 9029266611EE9BB90025CD4B /* ObjectType.h */; };
-		902BFE5F11D36F0A00D4E401 /* PdContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 902BFE5E11D36F0A00D4E401 /* PdContext.cpp */; };
-		902BFE6011D36F0A00D4E401 /* PdContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 902BFE5D11D36F0A00D4E401 /* PdContext.h */; };
-		902BFE6111D36F0A00D4E401 /* PdContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 902BFE5E11D36F0A00D4E401 /* PdContext.cpp */; };
-		902BFE6211D36F0A00D4E401 /* PdContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 902BFE5D11D36F0A00D4E401 /* PdContext.h */; };
-		902BFE6311D36F0A00D4E401 /* PdContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 902BFE5E11D36F0A00D4E401 /* PdContext.cpp */; };
-		903374F411D0D34D009FCC01 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 903374F311D0D34D009FCC01 /* Accelerate.framework */; };
+		9017567511DFDD4B00A22517 /* DspTablePlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9017567311DFDD4B00A22517 /* DspTablePlay.cpp */; };
+		9017567611DFDD4B00A22517 /* DspTablePlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9017567311DFDD4B00A22517 /* DspTablePlay.cpp */; };
+		9017567711DFDD4B00A22517 /* DspTablePlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 9017567411DFDD4B00A22517 /* DspTablePlay.h */; };
+		9017567811DFDD4B00A22517 /* DspTablePlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9017567311DFDD4B00A22517 /* DspTablePlay.cpp */; };
+		9017567911DFDD4B00A22517 /* DspTablePlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 9017567411DFDD4B00A22517 /* DspTablePlay.h */; };
 		90337C5D11D0D847009FCC01 /* ArrayArithmetic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B4911D0D847009FCC01 /* ArrayArithmetic.cpp */; };
 		90337C5E11D0D847009FCC01 /* DelayReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B4C11D0D847009FCC01 /* DelayReceiver.cpp */; };
 		90337C5F11D0D847009FCC01 /* DspAdc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B4E11D0D847009FCC01 /* DspAdc.cpp */; };
@@ -201,7 +198,6 @@
 		90337D2611D0D847009FCC01 /* DspWrap.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337B9111D0D847009FCC01 /* DspWrap.h */; };
 		90337D2711D0D847009FCC01 /* List.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B9211D0D847009FCC01 /* List.cpp */; };
 		90337D2811D0D847009FCC01 /* List.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337B9311D0D847009FCC01 /* List.h */; };
-		90337D2911D0D847009FCC01 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B9411D0D847009FCC01 /* main.cpp */; };
 		90337D3211D0D847009FCC01 /* MersenneTwister.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337BA811D0D847009FCC01 /* MersenneTwister.h */; };
 		90337D3311D0D847009FCC01 /* MessageAbsoluteValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337BA911D0D847009FCC01 /* MessageAbsoluteValue.cpp */; };
 		90337D3411D0D847009FCC01 /* MessageAbsoluteValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337BAA11D0D847009FCC01 /* MessageAbsoluteValue.h */; };
@@ -606,6 +602,26 @@
 		90337EE311D0D847009FCC01 /* ZGCallbackFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C5A11D0D847009FCC01 /* ZGCallbackFunction.h */; };
 		90337EE411D0D847009FCC01 /* ZGLinkedList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C5B11D0D847009FCC01 /* ZGLinkedList.cpp */; };
 		90337EE511D0D847009FCC01 /* ZGLinkedList.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C5C11D0D847009FCC01 /* ZGLinkedList.h */; };
+		9069DFD211D17BD600889A5B /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9069DFD111D17BD600889A5B /* Accelerate.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		9069DFD311D17BF100889A5B /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9069DFD111D17BD600889A5B /* Accelerate.framework */; };
+		90AF7F7511FE67BE006F88E6 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9069DFD111D17BD600889A5B /* Accelerate.framework */; };
+		90B1873411FDB167009B45AB /* DspMinimum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90B1873311FDB167009B45AB /* DspMinimum.cpp */; };
+		90B1873511FDB167009B45AB /* DspMinimum.h in Headers */ = {isa = PBXBuildFile; fileRef = 90B1873211FDB167009B45AB /* DspMinimum.h */; };
+		90B1873611FDB167009B45AB /* DspMinimum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90B1873311FDB167009B45AB /* DspMinimum.cpp */; };
+		90B1873711FDB167009B45AB /* DspMinimum.h in Headers */ = {isa = PBXBuildFile; fileRef = 90B1873211FDB167009B45AB /* DspMinimum.h */; };
+		90B1873811FDB167009B45AB /* DspMinimum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90B1873311FDB167009B45AB /* DspMinimum.cpp */; };
+		90BB31CB11FE3F62008A0628 /* PdContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90BB31C911FE3F62008A0628 /* PdContext.cpp */; };
+		90BB31CC11FE3F62008A0628 /* ObjectType.h in Headers */ = {isa = PBXBuildFile; fileRef = 90BB31C811FE3F62008A0628 /* ObjectType.h */; };
+		90BB31CD11FE3F62008A0628 /* PdContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90BB31C911FE3F62008A0628 /* PdContext.cpp */; };
+		90BB31CE11FE3F62008A0628 /* PdContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 90BB31CA11FE3F62008A0628 /* PdContext.h */; };
+		90BB31CF11FE3F62008A0628 /* ObjectType.h in Headers */ = {isa = PBXBuildFile; fileRef = 90BB31C811FE3F62008A0628 /* ObjectType.h */; };
+		90BB31D011FE3F62008A0628 /* PdContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90BB31C911FE3F62008A0628 /* PdContext.cpp */; };
+		90BB31D111FE3F62008A0628 /* PdContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 90BB31CA11FE3F62008A0628 /* PdContext.h */; };
+		E4A3DD0211D93E8D007FE6FC /* MessageSoundfiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A3DD0011D93E8D007FE6FC /* MessageSoundfiler.cpp */; };
+		E4A3DD0311D93E8D007FE6FC /* MessageSoundfiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A3DD0011D93E8D007FE6FC /* MessageSoundfiler.cpp */; };
+		E4A3DD0411D93E8D007FE6FC /* MessageSoundfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = E4A3DD0111D93E8D007FE6FC /* MessageSoundfiler.h */; };
+		E4A3DD0511D93E8D007FE6FC /* MessageSoundfiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A3DD0011D93E8D007FE6FC /* MessageSoundfiler.cpp */; };
+		E4A3DD0611D93E8D007FE6FC /* MessageSoundfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = E4A3DD0111D93E8D007FE6FC /* MessageSoundfiler.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -623,12 +639,10 @@
 
 /* Begin PBXFileReference section */
 		8DD76F6C0486A84900D96B5E /* ZenGarden */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ZenGarden; sourceTree = BUILT_PRODUCTS_DIR; };
-		9029266611EE9BB90025CD4B /* ObjectType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ObjectType.h; path = ../src/ObjectType.h; sourceTree = SOURCE_ROOT; };
-		902BFE5D11D36F0A00D4E401 /* PdContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PdContext.h; path = ../src/PdContext.h; sourceTree = SOURCE_ROOT; };
-		902BFE5E11D36F0A00D4E401 /* PdContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PdContext.cpp; path = ../src/PdContext.cpp; sourceTree = SOURCE_ROOT; };
+		9017567311DFDD4B00A22517 /* DspTablePlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspTablePlay.cpp; path = ../src/DspTablePlay.cpp; sourceTree = SOURCE_ROOT; };
+		9017567411DFDD4B00A22517 /* DspTablePlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspTablePlay.h; path = ../src/DspTablePlay.h; sourceTree = SOURCE_ROOT; };
 		9033711811D0CF07009FCC01 /* libzengarden.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libzengarden.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		9033712011D0CF2B009FCC01 /* libzengarden.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libzengarden.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		903374F311D0D34D009FCC01 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		90337B4911D0D847009FCC01 /* ArrayArithmetic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ArrayArithmetic.cpp; path = ../src/ArrayArithmetic.cpp; sourceTree = SOURCE_ROOT; };
 		90337B4A11D0D847009FCC01 /* ArrayArithmetic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArrayArithmetic.h; path = ../src/ArrayArithmetic.h; sourceTree = SOURCE_ROOT; };
 		90337B4B11D0D847009FCC01 /* ConnectionType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConnectionType.h; path = ../src/ConnectionType.h; sourceTree = SOURCE_ROOT; };
@@ -867,7 +881,15 @@
 		90337C5A11D0D847009FCC01 /* ZGCallbackFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZGCallbackFunction.h; path = ../src/ZGCallbackFunction.h; sourceTree = SOURCE_ROOT; };
 		90337C5B11D0D847009FCC01 /* ZGLinkedList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ZGLinkedList.cpp; path = ../src/ZGLinkedList.cpp; sourceTree = SOURCE_ROOT; };
 		90337C5C11D0D847009FCC01 /* ZGLinkedList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZGLinkedList.h; path = ../src/ZGLinkedList.h; sourceTree = SOURCE_ROOT; };
+		9069DFD111D17BD600889A5B /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
+		90B1873211FDB167009B45AB /* DspMinimum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspMinimum.h; path = ../src/DspMinimum.h; sourceTree = SOURCE_ROOT; };
+		90B1873311FDB167009B45AB /* DspMinimum.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspMinimum.cpp; path = ../src/DspMinimum.cpp; sourceTree = SOURCE_ROOT; };
+		90BB31C811FE3F62008A0628 /* ObjectType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ObjectType.h; path = ../src/ObjectType.h; sourceTree = SOURCE_ROOT; };
+		90BB31C911FE3F62008A0628 /* PdContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PdContext.cpp; path = ../src/PdContext.cpp; sourceTree = SOURCE_ROOT; };
+		90BB31CA11FE3F62008A0628 /* PdContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PdContext.h; path = ../src/PdContext.h; sourceTree = SOURCE_ROOT; };
 		C6859E8B029090EE04C91782 /* ZenGardenNp.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ZenGardenNp.1; sourceTree = "<group>"; };
+		E4A3DD0011D93E8D007FE6FC /* MessageSoundfiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageSoundfiler.cpp; path = ../src/MessageSoundfiler.cpp; sourceTree = SOURCE_ROOT; };
+		E4A3DD0111D93E8D007FE6FC /* MessageSoundfiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageSoundfiler.h; path = ../src/MessageSoundfiler.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -875,7 +897,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				903374F411D0D34D009FCC01 /* Accelerate.framework in Frameworks */,
+				90AF7F7511FE67BE006F88E6 /* Accelerate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -883,6 +905,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9069DFD211D17BD600889A5B /* Accelerate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -890,6 +913,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9069DFD311D17BF100889A5B /* Accelerate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -902,7 +926,7 @@
 				08FB7795FE84155DC02AAC07 /* Source */,
 				C6859E8C029090F304C91782 /* Documentation */,
 				1AB674ADFE9D54B511CA2CBB /* Products */,
-				903374F311D0D34D009FCC01 /* Accelerate.framework */,
+				9069DFD111D17BD600889A5B /* Accelerate.framework */,
 			);
 			name = ZenGardenNp;
 			sourceTree = "<group>";
@@ -949,6 +973,8 @@
 				90337B6D11D0D847009FCC01 /* DspLowpassFilter.cpp */,
 				90337B6E11D0D847009FCC01 /* DspLowpassFilter.h */,
 				90337B6F11D0D847009FCC01 /* DspMessagePresedence.h */,
+				90B1873311FDB167009B45AB /* DspMinimum.cpp */,
+				90B1873211FDB167009B45AB /* DspMinimum.h */,
 				90337B7011D0D847009FCC01 /* DspMultiply.cpp */,
 				90337B7111D0D847009FCC01 /* DspMultiply.h */,
 				90337B7211D0D847009FCC01 /* DspNoise.cpp */,
@@ -971,6 +997,8 @@
 				90337B8311D0D847009FCC01 /* DspSnapshot.h */,
 				90337B8411D0D847009FCC01 /* DspSubtract.cpp */,
 				90337B8511D0D847009FCC01 /* DspSubtract.h */,
+				9017567311DFDD4B00A22517 /* DspTablePlay.cpp */,
+				9017567411DFDD4B00A22517 /* DspTablePlay.h */,
 				90337B8811D0D847009FCC01 /* DspTableRead.cpp */,
 				90337B8911D0D847009FCC01 /* DspTableRead.h */,
 				90337B8A11D0D847009FCC01 /* DspThrow.cpp */,
@@ -1098,6 +1126,8 @@
 				90337C1F11D0D847009FCC01 /* MessageSendController.h */,
 				90337C2011D0D847009FCC01 /* MessageSine.cpp */,
 				90337C2111D0D847009FCC01 /* MessageSine.h */,
+				E4A3DD0011D93E8D007FE6FC /* MessageSoundfiler.cpp */,
+				E4A3DD0111D93E8D007FE6FC /* MessageSoundfiler.h */,
 				90337C2411D0D847009FCC01 /* MessageSpigot.cpp */,
 				90337C2511D0D847009FCC01 /* MessageSpigot.h */,
 				90337C2611D0D847009FCC01 /* MessageSqrt.cpp */,
@@ -1129,11 +1159,11 @@
 				90337C4011D0D847009FCC01 /* MessageWrap.cpp */,
 				90337C4111D0D847009FCC01 /* MessageWrap.h */,
 				90337C4211D0D847009FCC01 /* ObjectLetPair.h */,
-				9029266611EE9BB90025CD4B /* ObjectType.h */,
+				90BB31C811FE3F62008A0628 /* ObjectType.h */,
 				90337C4311D0D847009FCC01 /* OrderedMessageQueue.cpp */,
 				90337C4411D0D847009FCC01 /* OrderedMessageQueue.h */,
-				902BFE5E11D36F0A00D4E401 /* PdContext.cpp */,
-				902BFE5D11D36F0A00D4E401 /* PdContext.h */,
+				90BB31C911FE3F62008A0628 /* PdContext.cpp */,
+				90BB31CA11FE3F62008A0628 /* PdContext.h */,
 				90337C4511D0D847009FCC01 /* PdFileParser.cpp */,
 				90337C4611D0D847009FCC01 /* PdFileParser.h */,
 				90337C4711D0D847009FCC01 /* PdGraph.cpp */,
@@ -1304,8 +1334,11 @@
 				90337DDC11D0D847009FCC01 /* ZenGarden.h in Headers */,
 				90337DDF11D0D847009FCC01 /* ZGCallbackFunction.h in Headers */,
 				90337DE111D0D847009FCC01 /* ZGLinkedList.h in Headers */,
-				902BFE6011D36F0A00D4E401 /* PdContext.h in Headers */,
-				9029266711EE9BB90025CD4B /* ObjectType.h in Headers */,
+				E4A3DD0411D93E8D007FE6FC /* MessageSoundfiler.h in Headers */,
+				9017567711DFDD4B00A22517 /* DspTablePlay.h in Headers */,
+				90B1873511FDB167009B45AB /* DspMinimum.h in Headers */,
+				90BB31CC11FE3F62008A0628 /* ObjectType.h in Headers */,
+				90BB31CE11FE3F62008A0628 /* PdContext.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1437,8 +1470,11 @@
 				90337EE011D0D847009FCC01 /* ZenGarden.h in Headers */,
 				90337EE311D0D847009FCC01 /* ZGCallbackFunction.h in Headers */,
 				90337EE511D0D847009FCC01 /* ZGLinkedList.h in Headers */,
-				902BFE6211D36F0A00D4E401 /* PdContext.h in Headers */,
-				9029266811EE9BB90025CD4B /* ObjectType.h in Headers */,
+				E4A3DD0611D93E8D007FE6FC /* MessageSoundfiler.h in Headers */,
+				9017567911DFDD4B00A22517 /* DspTablePlay.h in Headers */,
+				90B1873711FDB167009B45AB /* DspMinimum.h in Headers */,
+				90BB31CF11FE3F62008A0628 /* ObjectType.h in Headers */,
+				90BB31D111FE3F62008A0628 /* PdContext.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1635,7 +1671,10 @@
 				90337CD911D0D847009FCC01 /* TableReceiver.cpp in Sources */,
 				90337CDA11D0D847009FCC01 /* ZenGarden.cpp in Sources */,
 				90337CDD11D0D847009FCC01 /* ZGLinkedList.cpp in Sources */,
-				902BFE5F11D36F0A00D4E401 /* PdContext.cpp in Sources */,
+				E4A3DD0211D93E8D007FE6FC /* MessageSoundfiler.cpp in Sources */,
+				9017567511DFDD4B00A22517 /* DspTablePlay.cpp in Sources */,
+				90B1873411FDB167009B45AB /* DspMinimum.cpp in Sources */,
+				90BB31CB11FE3F62008A0628 /* PdContext.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1677,7 +1716,6 @@
 				90337D2111D0D847009FCC01 /* DspVariableDelay.cpp in Sources */,
 				90337D2511D0D847009FCC01 /* DspWrap.cpp in Sources */,
 				90337D2711D0D847009FCC01 /* List.cpp in Sources */,
-				90337D2911D0D847009FCC01 /* main.cpp in Sources */,
 				90337D3311D0D847009FCC01 /* MessageAbsoluteValue.cpp in Sources */,
 				90337D3511D0D847009FCC01 /* MessageAdd.cpp in Sources */,
 				90337D3711D0D847009FCC01 /* MessageArcTangent.cpp in Sources */,
@@ -1757,7 +1795,10 @@
 				90337DD911D0D847009FCC01 /* TableReceiver.cpp in Sources */,
 				90337DDB11D0D847009FCC01 /* ZenGarden.cpp in Sources */,
 				90337DE011D0D847009FCC01 /* ZGLinkedList.cpp in Sources */,
-				902BFE6111D36F0A00D4E401 /* PdContext.cpp in Sources */,
+				E4A3DD0311D93E8D007FE6FC /* MessageSoundfiler.cpp in Sources */,
+				9017567611DFDD4B00A22517 /* DspTablePlay.cpp in Sources */,
+				90B1873611FDB167009B45AB /* DspMinimum.cpp in Sources */,
+				90BB31CD11FE3F62008A0628 /* PdContext.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1879,7 +1920,10 @@
 				90337EDD11D0D847009FCC01 /* TableReceiver.cpp in Sources */,
 				90337EDF11D0D847009FCC01 /* ZenGarden.cpp in Sources */,
 				90337EE411D0D847009FCC01 /* ZGLinkedList.cpp in Sources */,
-				902BFE6311D36F0A00D4E401 /* PdContext.cpp in Sources */,
+				E4A3DD0511D93E8D007FE6FC /* MessageSoundfiler.cpp in Sources */,
+				9017567811DFDD4B00A22517 /* DspTablePlay.cpp in Sources */,
+				90B1873811FDB167009B45AB /* DspMinimum.cpp in Sources */,
+				90BB31D011FE3F62008A0628 /* PdContext.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1890,6 +1934,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -1898,9 +1943,11 @@
 				GCC_VERSION = 4.2;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				INSTALL_PATH = /usr/local/bin;
-				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../libs/Darwin/";
 				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "-lsndfilezg";
 				PRODUCT_NAME = ZenGarden;
+				VALID_ARCHS = "i386 x86_64";
 			};
 			name = Debug;
 		};
@@ -1908,6 +1955,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
@@ -1916,10 +1964,12 @@
 				GCC_VERSION = 4.2;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				INSTALL_PATH = /usr/local/bin;
-				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../libs/Darwin/";
 				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "-lsndfilezg";
 				PRODUCT_NAME = ZenGarden;
 				STRIP_INSTALLED_PRODUCT = YES;
+				VALID_ARCHS = "i386 x86_64";
 			};
 			name = Release;
 		};
@@ -1957,8 +2007,11 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
+				HEADER_SEARCH_PATHS = /usr/local/include;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../libs/iOS";
 				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = "-lsndfile";
 				PREBINDING = NO;
 				PRODUCT_NAME = zengarden;
 				SDKROOT = iphoneos4.0;
@@ -1972,13 +2025,22 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				HEADER_SEARCH_PATHS = /usr/local/include;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../libs/iOS";
+				OTHER_LDFLAGS = "-lsndfile";
 				PREBINDING = NO;
 				PRODUCT_NAME = zengarden;
 				SDKROOT = iphoneos4.0;
+				SEPARATE_STRIP = NO;
+				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
 				STRIP_INSTALLED_PRODUCT = YES;
 				STRIP_STYLE = all;
 				ZERO_LINK = NO;
@@ -1996,7 +2058,8 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				INSTALL_PATH = /usr/local/lib;
-				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../libs/Darwin-i386/";
+				OTHER_LDFLAGS = "-lsndfilezg";
 				PREBINDING = NO;
 				PRODUCT_NAME = zengarden;
 			};
@@ -2014,10 +2077,12 @@
 				GCC_OPTIMIZATION_LEVEL = 3;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				INSTALL_PATH = /usr/local/lib;
-				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../libs/Darwin-i386/";
+				OTHER_LDFLAGS = "-lsndfilezg";
 				PREBINDING = NO;
 				PRODUCT_NAME = zengarden;
 				STRIP_INSTALLED_PRODUCT = YES;
+				VALID_ARCHS = "i386 x86_64";
 				ZERO_LINK = NO;
 			};
 			name = Release;

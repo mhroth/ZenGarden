@@ -24,8 +24,15 @@
 #include "PdGraph.h"
 
 MessageUnpack::MessageUnpack(PdMessage *initMessage, PdGraph *graph) :
-    MessageObject(1, initMessage->getNumElements(), graph) {
-  templateMessage = initMessage->copy();
+    MessageObject(1, (initMessage->getNumElements() < 2) ? 2 : initMessage->getNumElements(), graph) {
+  if (initMessage->getNumElements() < 2) {
+    // if unpack is not initialised with anything, assume two "anything" outputs
+    templateMessage = new PdMessage();
+    templateMessage->addElement(new MessageElement((char *) "a"));
+    templateMessage->addElement(new MessageElement((char *) "a"));
+  } else {
+    templateMessage = initMessage->copy();
+  }
   templateMessage->resolveSymbolsToType();
 }
 
@@ -42,10 +49,10 @@ void MessageUnpack::processMessage(int inletIndex, PdMessage *message) {
   if (templateMessage->getNumElements() < message->getNumElements()) {
     numElements = templateMessage->getNumElements();
   }
-  for (int i = numElements-1; i >=0; i--) {
-    if (templateMessage->getType(i) == message->getType(i) ||
-        templateMessage->getType(i) == ANYTHING) {
-      switch (templateMessage->getType(i)) {
+  for (int i = numElements-1; i >= 0; i--) {
+    MessageElementType elementType = templateMessage->getType(i);
+    if (elementType == message->getType(i) || elementType == ANYTHING) {
+      switch (elementType) {
         case FLOAT: {
           PdMessage *outgoingMessage = getNextOutgoingMessage(i);
           outgoingMessage->setFloat(0, message->getFloat(i));
@@ -59,7 +66,8 @@ void MessageUnpack::processMessage(int inletIndex, PdMessage *message) {
           outgoingMessage->setTimestamp(message->getTimestamp());
           sendMessage(i, outgoingMessage);
           break;
-        } case ANYTHING: {
+        }
+        case ANYTHING: {
           PdMessage *outgoingMessage = getNextOutgoingMessage(i);
           switch (message->getType(i)) {
             case FLOAT: {
@@ -82,10 +90,9 @@ void MessageUnpack::processMessage(int inletIndex, PdMessage *message) {
         }
       }
     } else {
-        graph->printErr("unpack: type mismatch: %s expected but got %s.\n",
-            StaticUtils::messageElementTypeToString(templateMessage->getElement(i)->getType()),
-            StaticUtils::messageElementTypeToString(message->getElement(i)->getType()));
+      graph->printErr("unpack: type mismatch: %s expected but got %s.",
+          StaticUtils::messageElementTypeToString(elementType),
+          StaticUtils::messageElementTypeToString(message->getType(i)));
     }
   }
 }
-

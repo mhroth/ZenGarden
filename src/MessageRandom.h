@@ -2,7 +2,7 @@
  *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
- * 
+ *
  *  This file is part of ZenGarden.
  *
  *  ZenGarden is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU Lesser General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with ZenGarden.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -30,17 +30,19 @@ class PdGraph;
 
 /** [random], [random float] */
 class MessageRandom : public MessageObject {
-  
+
   public:
     MessageRandom(PdMessage *initMessage, PdGraph *graph);
     MessageRandom(int N, PdGraph *graph);
     ~MessageRandom();
-  
+
     const char *getObjectLabel();
-    
+
+    bool shouldDistributeMessageToInlets();
+
   protected:
     void processMessage(int inletIndex, PdMessage *message);
-    
+
   private:
     int max_inc; // random output is in range [0, max_inc]
     MTRand *twister;

@@ -2,7 +2,7 @@
  *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
- * 
+ *
  *  This file is part of ZenGarden.
  *
  *  ZenGarden is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU Lesser General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with ZenGarden.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -24,15 +24,8 @@
 #include "PdGraph.h"
 
 MessagePrint::MessagePrint(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 0, graph) {
-  if (initMessage->getNumElements() > 0) {
-    MessageElement *messageElement = initMessage->getElement(0);
-    if (messageElement->getType() == SYMBOL) {
-      if (strcmp(messageElement->getSymbol(), "-n") == 0) {
-        name = NULL;
-      } else {
-        name = StaticUtils::copyString(messageElement->getSymbol());
-      }
-    }
+  if (initMessage->isSymbol(0)) {
+    name = initMessage->isSymbol(0, "-n") ? NULL : StaticUtils::copyString(initMessage->getSymbol(0));
   } else {
     name = StaticUtils::copyString((char *) "print");
   }

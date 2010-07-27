@@ -17,6 +17,7 @@ LOCAL_SRC_FILES := \
 ./DspLine.cpp \
 ./DspLog.cpp \
 ./DspLowpassFilter.cpp \
+./DspMinimum.cpp \
 ./DspMultiply.cpp \
 ./DspNoise.cpp \
 ./DspObject.cpp \
@@ -28,6 +29,7 @@ LOCAL_SRC_FILES := \
 ./DspSig.cpp \
 ./DspSnapshot.cpp \
 ./DspSubtract.cpp \
+./DspTablePlay.cpp \
 ./DspTableRead.cpp \
 ./DspThrow.cpp \
 ./DspVariableDelay.cpp \
@@ -87,6 +89,7 @@ LOCAL_SRC_FILES := \
 ./MessageSend.cpp \
 ./MessageSendController.cpp \
 ./MessageSine.cpp \
+./MessageSoundfiler.cpp \
 ./MessageSpigot.cpp \
 ./MessageSqrt.cpp \
 ./MessageSubtract.cpp \

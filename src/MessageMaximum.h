@@ -31,7 +31,6 @@ class MessageMaximum : public MessageObject {
 
   public:
     MessageMaximum(PdMessage *initMessage, PdGraph *graph);
-    MessageMaximum(float constant, PdGraph *graph);
     ~MessageMaximum();
 
     const char *getObjectLabel();
@@ -41,6 +40,7 @@ class MessageMaximum : public MessageObject {
     void processMessage(int inletIndex, PdMessage *message);
 
     float constant;
+    float lastOutput;
 };
 
 #endif // _MESSAGE_MAXIMUM_H_

@@ -84,6 +84,21 @@ public class PdObjectTest implements ZenGardenListener {
   }
 
   @Test
+  public void testMessageBang() {
+    genericMessageTest("MessageBang.pd");
+  }
+
+  @Test
+  public void testMessageChange() {
+    genericMessageTest("MessageChange.pd");
+  }
+
+  @Test
+  public void testMessageClip() {
+    genericMessageTest("MessageClip.pd");
+  }
+
+  @Test
   public void testMessageCosine() {
     genericMessageTest("MessageCosine.pd");
   }
@@ -101,6 +116,11 @@ public class PdObjectTest implements ZenGardenListener {
   @Test
   public void testMessageDbToRms() {
     genericMessageTest("MessageDbToRms.pd");
+  }
+
+  @Test
+  public void testMessageDelay() {
+    genericMessageTest("MessageDelay.pd", 2000.0f);
   }
 
   @Test
@@ -155,12 +175,42 @@ public class PdObjectTest implements ZenGardenListener {
   }
 
   @Test
+  public void testMessageLoadbang() {
+    genericMessageTest("MessageLoadbang.pd");
+  }
+
+  @Test
   public void testMessageLog() {
     genericMessageTest("MessageLog.pd");
   }
 
   @Test
-  public void testMessageMultiply() {
+  public void testMessageMaximum() {
+    genericMessageTest("MessageMaximum.pd");
+  }  
+
+  @Test
+  public void testMessageMetro() {
+    genericMessageTest("MessageMetro.pd", 11000.0f);
+  } 
+
+  @Test
+  public void testMessageMinimum() {
+    genericMessageTest("MessageMinimum.pd");
+  }  
+
+  @Test
+  public void testMessageModulus() {
+    genericMessageTest("MessageModulus.pd");
+  }
+
+  @Test
+  public void testMessageMoses() {
+    genericMessageTest("MessageMoses.pd");
+  }
+
+  @Test
+  public void testMessageMultiply() { 
     genericMessageTest("MessageMultiply.pd");
   }
 
@@ -180,6 +230,21 @@ public class PdObjectTest implements ZenGardenListener {
   }
   
   @Test
+  public void testMessagePrint() {
+    genericMessageTest("MessagePrint.pd");
+  }
+
+  @Test
+  public void testMessageRandom() {
+    genericMessageTest("MessageRandom.pd");
+  }
+  
+  @Test
+  public void testMessageReceive() {
+	genericMessageTest("MessageReceive.pd");
+  }
+	
+  @Test
   public void testMessageReminder() {
     genericMessageTest("MessageRemainder.pd");
   }
@@ -193,6 +258,11 @@ public class PdObjectTest implements ZenGardenListener {
   public void testMessageSine() {
     genericMessageTest("MessageSine.pd");
   }
+
+  @Test
+  public void testMessageSend() {
+    genericMessageTest("MessageSend.pd");
+  }	
 
   @Test
   public void testMessageSubtract() {
@@ -209,12 +279,11 @@ public class PdObjectTest implements ZenGardenListener {
     genericMessageTest("MessageUnpack.pd");
   }
   */
+  
   /**
-   * Encompasses a generic test for message objects. It processes the graph once and compares the
-   * standard output to the golden file, and ensures that the error output is empty.
-   * @param testFilename
+   * Executes the generic message test for at least the given minimum runtime (in milliseconds).
    */
-  private void genericMessageTest(String testFilename) {
+  private void genericMessageTest(String testFilename, float minmumRuntimeMs) {
     ZenGarden graph = null;
     try {
       graph = new ZenGarden(new File(TEST_PATHNAME, testFilename),
@@ -224,7 +293,11 @@ public class PdObjectTest implements ZenGardenListener {
     }
     graph.addListener(this);
     
-    graph.process(INPUT_BUFFER, OUTPUT_BUFFER);
+    // process at least as many blocks as necessary to cover the givenruntime
+    int numBlocksToProcess = (int) (Math.floor(((minmumRuntimeMs/1000.0f)*SAMPLE_RATE)/BLOCK_SIZE)+1);
+    for (int i = 0; i < numBlocksToProcess; i++) {
+      graph.process(INPUT_BUFFER, OUTPUT_BUFFER);
+    }
     
     String messageStdOutput = stringBuilderStd.toString();
     String messageErrOutput = stringBuilderErr.toString();
@@ -238,6 +311,15 @@ public class PdObjectTest implements ZenGardenListener {
     assertEquals(messageErrOutput, "");
     
     graph.unloadNativeComponentIfStillLoaded();
+  }
+  
+  /**
+   * Encompasses a generic test for message objects. It processes the graph once and compares the
+   * standard output to the golden file, and ensures that the error output is empty.
+   * @param testFilename
+   */
+  private void genericMessageTest(String testFilename) {
+    genericMessageTest(testFilename, 0.0f);
   }
   
   private String readTextFile(File file) {
