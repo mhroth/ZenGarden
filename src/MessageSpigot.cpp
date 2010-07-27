@@ -23,25 +23,11 @@
 #include "MessageSpigot.h"
 
 MessageSpigot::MessageSpigot(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
-  if (initMessage->getNumElements() > 0 &&
-      initMessage->getElement(0)->getType() == FLOAT) {
-    init(initMessage->getElement(0)->getFloat());
-  } else {
-    init(0.0f);
-  }
-}
-
-MessageSpigot::MessageSpigot(float constant, PdGraph *graph) : MessageObject(2, 1, graph) {
-  init(constant);
+  constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
 }
 
 MessageSpigot::~MessageSpigot() {
   // nothing to do
-}
-
-void MessageSpigot::init(float constant) {
-  constant = (constant == 0.0f) ? 0.0f : 1.0f;
-  this->constant = constant;
 }
 
 const char *MessageSpigot::getObjectLabel() {
@@ -51,27 +37,42 @@ const char *MessageSpigot::getObjectLabel() {
 void MessageSpigot::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
-      MessageElement *messageElement = message->getElement(0);
-      if (messageElement->getType() == FLOAT) {
-        if (constant != 0) {
-          PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-          outgoingMessage->getElement(0)->setFloat(messageElement-> getFloat());
-          outgoingMessage->setTimestamp(message->getTimestamp());
-          sendMessage(0, outgoingMessage); // send a message from outlet 0
-        }
+      if (constant != 0.0f) {
+		switch (message->getType(0)) {
+		  case BANG: {
+			PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+		    outgoingMessage->setTimestamp(message->getTimestamp());
+			sendMessage(0, outgoingMessage);
+			break;
+	      }
+		  case FLOAT: {
+			PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+			outgoingMessage->setFloat(0, message->getFloat(0));
+			outgoingMessage->setTimestamp(message->getTimestamp());
+			sendMessage(0, outgoingMessage);
+			break;
+		  }
+		  case SYMBOL: {
+			PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+			outgoingMessage->setSymbol(0, message->getSymbol(0));
+			outgoingMessage->setTimestamp(message->getTimestamp());
+			sendMessage(0, outgoingMessage);
+			break;
+		  }
+		  default: {
+			break;
+		  }
+		}
       }
-      break;
-    }
-    case 1: {
-      MessageElement *messageElement = message->getElement(0);
-      if (messageElement != NULL && messageElement->getType() == FLOAT) {
-        constant = messageElement->getFloat();
-        constant = messageElement->getFloat();
-      }
-      break;
-    }
-    default: {
-      break;
-    }
+	  case 1: {
+		if (message->isFloat(0)) {
+		  constant = message->getFloat(0);
+		}
+		break;
+	  }
+	  default: {
+		break;
+	  }
+	}
   }
 }
