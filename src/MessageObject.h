@@ -100,7 +100,11 @@ class MessageObject {
     /** Returns an ordered list of all parent objects of this object. */
     virtual List *getProcessOrder();
   
-    // TODO(mhroth): one day there will have to be a recusive function to reset the isOrdered flag.
+    /**
+     * Reset the <code>isOrdered</code> flag to <code>false</code>. This is necessary in order to
+     * recompute the process order.
+     */
+    void resetOrderedFlag();
     
   protected:
     /** Returns a message that can be sent from the given outlet. */

@@ -29,6 +29,7 @@ ZGLinkedList::ZGLinkedList() {
   tail = NULL;
   emptyHead = NULL;
   emptyTail = NULL;
+  iteratorNode = NULL;
 }
 
 ZGLinkedList::~ZGLinkedList() {
@@ -171,11 +172,13 @@ void ZGLinkedList::remove(void *element) {
 void ZGLinkedList::clear() {
   if (numEmptyElements == 0) {
     emptyHead = head;
-    emptyTail = head;
+    emptyTail = tail;
   } else if (numEmptyElements > 0) {
     emptyTail->next = head;
+    emptyTail = tail;
   }
   head = NULL;
+  tail = NULL;
   numEmptyElements += numElements;
   numElements = 0;
 }

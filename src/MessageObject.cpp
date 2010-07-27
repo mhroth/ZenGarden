@@ -238,3 +238,7 @@ List *MessageObject::getProcessOrder() {
     return processList;
   }
 }
+
+void MessageObject::resetOrderedFlag() {
+  isOrdered = false;
+}

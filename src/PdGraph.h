@@ -118,8 +118,8 @@ class PdGraph : public DspObject {
     /** A convenience function to determine when in a block a message occurs. */
     float getBlockIndex(PdMessage *message);
   
-    /** (Re-)Computes the tree and node processing ordering for dsp nodes. */
-    void computeDspProcessOrder();
+    /** (Re-)Computes the local tree and node processing ordering for dsp nodes. */
+    void computeLocalDspProcessOrder();
   
     /**
      * Sends the given message to all [receive] objects with the given <code>name</code>.

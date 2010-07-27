@@ -139,7 +139,7 @@ void PdGraph::addConnection(MessageObject *fromObject, int outletIndex, MessageO
   toObject->addConnectionFromObjectToInlet(fromObject, outletIndex, inletIndex);
   fromObject->addConnectionToObjectFromOutlet(toObject, inletIndex, outletIndex);
   // NOTE(mhroth): very heavy handed approach. Always recompute the process when adding connections
-  computeDspProcessOrder(); 
+  computeLocalDspProcessOrder(); 
   unlockContextIfAttached();
 }
 
@@ -295,29 +295,22 @@ void PdGraph::processDspToIndex(float blockIndex) {
   }
 }
 
-void PdGraph::computeDspProcessOrder() {
+void PdGraph::computeLocalDspProcessOrder() {
   lockContextIfAttached();
-
+  
   /* clear/reset dspNodeList
    * Find all leaf nodes in nodeList. this includes PdGraphs as they are objects as well.
-   * For each leaf node, generate an ordering for all of the nodes in the current graph
-   * the basic idea is to compute the full process order in each subgraph. The problem is that
-   * some objects have connections that take you out of the graph, such as receive/~, catch~. And
-   * some objects should be considered leaves, through they are not, such as send/~ and throw~.
-   * Special cases/allowances must be made for these nodes. inlet/~ and outlet/~ nodes need not
-   * be specially handled as they do not link to outside of the graph. They are handled internally.
+   * For each leaf node, generate an ordering for all of the nodes in the current graph.
+   * the basic idea is to compute the full process order in each subgraph.
    * Finally, all non-dsp nodes must be removed from this list in order to derive the dsp process order.
    */
-
-  // compute process order for local graph
 
   // generate the leafnode list
   List *leafNodeList = new List();
   MessageObject *object = NULL;
-  for (int i = 0; i < nodeList->size(); i++) {
-    object = (MessageObject *) nodeList->get(i);
-    // TODO(mhroth): clear ordered flag
-    // generate leaf node list
+  nodeList->resetIterator();
+  while ((object = (MessageObject *) nodeList->getNext()) != NULL) {
+    object->resetOrderedFlag(); // reset the ordered flag on all local objects
     if (object->isLeafNode()) { // isLeafNode() takes into account send/~ and throw~ objects
       leafNodeList->add(object);
     }
@@ -348,10 +341,10 @@ void PdGraph::computeDspProcessOrder() {
 
   if (dspNodeList->size() > 0) {
     // print dsp evaluation order for debugging, but only if there are any nodes to list
-    printStd("--- ordered evaluation list ---\n");
+    printStd("--- ordered evaluation list ---");
     for (int i = 0; i < dspNodeList->size(); i++) {
       MessageObject *messageObject = (MessageObject *) dspNodeList->get(i);
-      printStd("%s\n", messageObject->getObjectLabel());
+      printStd(messageObject->getObjectLabel());
     }
   }
   
