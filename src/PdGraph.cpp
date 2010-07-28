@@ -115,10 +115,12 @@ void PdGraph::addObject(MessageObject *messageObject) {
   nodeList->add(messageObject); // all nodes are added to the node list regardless
   
   switch (messageObject->getObjectType()) {
+    case DSP_INLET:
     case MESSAGE_INLET: {
       inletList->add(messageObject);
       break;
     }
+    case DSP_OUTLET:
     case MESSAGE_OUTLET: {
       outletList->add(messageObject);
       break;
