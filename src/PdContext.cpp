@@ -338,6 +338,7 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
         // A new graph is defined inline. No arguments are passed (from this line)
         // the graphId is not incremented as this is a subpatch, not an abstraction
         PdGraph *newGraph = new PdGraph(graph->getArguments(), graph, this, getCurrentGraphId());
+        graph->addObject(newGraph); // add the new graph to the current one as an object
         
         // the new graph is pushed onto the stack
         graph = newGraph;
@@ -398,9 +399,8 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
       } else if (strcmp(objectType, "symbolatom") == 0) {
         graph->addObject(new MessageSymbol("", graph)); // defines a symbol box
       } else if (strcmp(objectType, "restore") == 0) {
-        // the graph is finished being defined, pop the graph stack to the parent graph
-        graph = graph->getParentGraph();
-        break; // finished reading a subpatch. Return the graph.
+        // the graph is finished being defined
+        graph = graph->getParentGraph(); // pop the graph stack to the parent graph
       } else if (strcmp(objectType, "text") == 0) {
         strtok(NULL, " "); // read the first canvas coordinate
         strtok(NULL, " "); // read the second canvas coordinate
