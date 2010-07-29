@@ -26,8 +26,6 @@
 #include <stdio.h>
 #include "DspObject.h"
 #include "OrderedMessageQueue.h"
-#include "PdFileParser.h"
-#include "ZGCallbackFunction.h"
 
 class DelayReceiver;
 class DspCatch;
@@ -42,18 +40,14 @@ class MessageSendController;
 class MessageTable;
 class TableReceiver;
 
+class PdContext;
+
 class PdGraph : public DspObject {
   
   public:
-    static PdGraph *newInstance(char *directory, char *filename, int blockSize,
-        int numInputChannels, int numOutputChannels, float sampleRate, PdGraph *parentGraph);
+    /** Instantiate an empty graph. */
+    PdGraph(PdMessage *initMessage, PdGraph *graph, PdContext *context, int graphId);
     ~PdGraph();
-  
-    /**
-     * Register the callback function which will be used to programmetically communicate with
-     * the outside world.
-     */
-    void registerCallback(void (*function)(ZGCallbackFunction, void *, void *), void *userData);
     
     /**
      * Schedules a <code>PdMessage</code> to be sent by the <code>MessageObject</code> from the
@@ -70,18 +64,13 @@ class PdGraph : public DspObject {
      */
     void receiveMessage(int inletIndex, PdMessage *message);
   
-    /** Receives and processes messages sent to the Pd system by sending to "pd". */
-    void receiveSystemMessage(PdMessage *message);
-  
     void processMessage(int inletIndex, PdMessage *message);
     
     /* This functions implements the sub-graph's audio loop. */
     void processDspToIndex(float blockIndex);
-    
-    /**  */
-    void process(float *inputBuffers, float *outputBuffers);
   
     const char *getObjectLabel();
+    ObjectType getObjectType();
   
     ConnectionType getConnectionType(int outletIndex);
   
@@ -98,16 +87,17 @@ class PdGraph : public DspObject {
     
     /** Get the current block size of this subgraph. */
     int getBlockSize();
-    
+  
     /** Returns <code>true</code> of this graph has no parents, code>false</code> otherwise. */
     bool isRootGraph();
+  
+    /** Returns this graph's parent graph. Returns <code>NULL</code> if this graph is a top-level graph. */
+    PdGraph *getParentGraph();
     
     /** Prints the given message to error output. */
-    void printErr(char *msg);
     void printErr(const char *msg, ...);
     
     /** Prints the given message to standard output. */
-    void printStd(char *msg);
     void printStd(const char *msg, ...);
     
     /** Get the argument list in the form of a <code>PdMessage</code> from the graph. */
@@ -122,17 +112,14 @@ class PdGraph : public DspObject {
     /** Returns the global dsp buffer at the given outlet. Exclusively used by <code>DspDac</code>. */
     float *getGlobalDspBufferAtOutlet(int outletIndex);
   
-    /** Returns the timestamp of the beginning of the current block. */
-    double getBlockStartTimestamp();
-  
-    /** Returns the duration in milliseconds of one block. */
-    double getBlockDuration();
-  
     int getNumInputChannels();
     int getNumOutputChannels();
   
-    /** (Re-)Computes the tree and node processing ordering for dsp nodes. */
-    void computeDspProcessOrder();
+    /** A convenience function to determine when in a block a message occurs. */
+    float getBlockIndex(PdMessage *message);
+  
+    /** (Re-)Computes the local tree and node processing ordering for dsp nodes. */
+    void computeLocalDspProcessOrder();
   
     /**
      * Sends the given message to all [receive] objects with the given <code>name</code>.
@@ -142,163 +129,70 @@ class PdGraph : public DspObject {
      */
     void dispatchMessageToNamedReceivers(char *name, PdMessage *message);
   
-    /**
-     * Schedules a message to be sent to all receivers at the start of the next block.
-     * @returns The <code>PdMessage</code> which will be send. It is intended that the programmer
-     * will set the values of the message with a call to <code>setMessage()</code>.
-     */
-    PdMessage *scheduleExternalMessage(char *receiverName);
-  
     /** Returns a list of directories which have neen delcared via a "declare" object. */
     List *getDeclareList();
   
     /** Gets the named (global) table object. */
     MessageTable *getTable(char *name);
   
-  private:
-    PdGraph(PdFileParser *fileParser, char *directory, int blockSize, int numInputChannels, 
-            int numOutputChannels, float sampleRate, PdGraph *parentGraph);
-  
-    /** Connect the given <code>MessageObject</code>s from the given outlet to the given inlet. */
-    void connect(int fromObjectIndex, int outletIndex, int toObjectIndex, int inletIndex);
-    void connect(MessageObject *fromObject, int outletIndex, MessageObject *toObject, int inletIndex);
-    
-    /** Create a new object based on its initialisation string. */
-    MessageObject *newObject(char *objectType, char *objectLabel, PdMessage *initMessage, PdGraph *graph);
-  
     /** Add an object to the graph, taking care of any special object registration. */
     void addObject(MessageObject *node);
   
-    /** Globally register a [receive~] object. Connect to registered [send~] objects with the same name. */
-    void registerDspReceive(DspReceive *dspReceive);
+    /** Connect the given <code>MessageObject</code>s from the given outlet to the given inlet. */
+    void addConnection(int fromObjectIndex, int outletIndex, int toObjectIndex, int inletIndex);
+    void addConnection(MessageObject *fromObject, int outletIndex, MessageObject *toObject, int inletIndex);
+  
+    void attachToContext(bool isAttached);
+  
+  private:
+    /** Create a new object based on its initialisation string. */
+    MessageObject *newObject(char *objectType, char *objectLabel, PdMessage *initMessage, PdGraph *graph);
+  
+    /** Locks the context if this graph is attached. */
+    void lockContextIfAttached();
     
-    /** Globally register a [send~] object. Connect to registered [receive~] objects with the same name. */
-    void registerDspSend(DspSend *dspSend);
+    /** Unlocks the context if this graph is attached. */
+    void unlockContextIfAttached();
   
-    /** Returns the named global <code>DspSend</code> object. */
-    DspSend *getDspSend(char *name);
+    /** Does not check if the object is already registered. */
+    void registerObjectIfRequiresRegistration(MessageObject *messageObject);
+    void unregisterObjectIfRequiresUnregistration(MessageObject *messageObject);
   
-    /** Returns the named global <code>DspCatch</code> object. */
-    DspCatch *getDspCatch(char *name);
-  
-    /**
-     * Globally register a [delwrite~] object. Registration is necessary such that they can
-     * be connected to [delread~] and [vd~] objects as are they are added to the graph.
-     */
-    void registerDelayline(DspDelayWrite *delayline);
-  
-    /** Returns the named global <code>DspDelayWrite</code> object. */
-    DspDelayWrite *getDelayline(char *name);
+    /** The <code>PdContext</code> to which this graph belongs. */
+    PdContext *context;
   
     /**
-     * Globally register a [delread~] or [vd~] object. Registration is necessary such that they can
-     * be connected to [delwrite~] objects are they are added to the graph.
+     * A boolean indicating if this graph is currently attached to a context. It is automatically
+     * updated when this graph or a super graph is added or removed from the context.
      */
-    void registerDelayReceiver(DelayReceiver *delayReceiver);
-  
-    void registerDspThrow(DspThrow *dspThrow);
-  
-    void registerDspCatch(DspCatch *dspCatch);
-  
-    void registerTable(MessageTable *table);
-  
-    void registerTableReceiver(TableReceiver *tableReceiver);
+    bool isAttachedToContext;
   
     /** The unique id for this subgraph. Defines "$0". */
     int graphId;
   
-    /** Keeps track of the current global graph id. */
-    static int globalGraphId;
-  
     /** The list of arguments to the graph. Stored as a <code>PdMessage</code> for simplicity. */
     PdMessage *graphArguments;
-    
-    /** The number of audio input channels. */
-    int numInputChannels;
-    
-    /** The number of audio output channels. */
-    int numOutputChannels;
-    
+
     /** True if the graph is switch on and should process audio. False otherwise. */
     bool switched;
     
     /** The parent graph. NULL if this graph is the root. */
     PdGraph *parentGraph;
-    
-    /** The global sample rate. */
-    float sampleRate;
-    
-    /** The DSP block size of this graph. */
-    int blockSize;
-    
+  
     /** A list of <i>all</i> <code>PdNode</code>s in this subgraph.  */
-    List *nodeList;
-  
-    /** A list of all inlet (message or audio) nodes in this subgraph. */
-    List *inletList;
-    
-    /** A list of all outlet (message or audio) nodes in this subgraph. */
-    List *outletList;
-  
-    /** A global list of all [send~] objects. */
-    List *dspSendList;
-  
-    /** A global list of all [receive~] objects. */
-    List *dspReceiveList;
-  
-    /** A global list of all [delwite~] objects. */
-    List *delaylineList;
-  
-    /** A global list of all [delread~] and [vd~] objects. */
-    List *delayReceiverList;
-  
-    /** A global list of all [throw~] objects. */
-    List *throwList;
-  
-    /** A global list of all [catch~] objects. */
-    List *catchList;
-  
-    /** A global list of all declared directories (-path and -stdpath) */
-    List *declareList;
-  
-    /** A global list of all [table] objects. */
-    List *tableList;
-  
-    /** A global list of all table receivers ([tabread4~] and [tabplay~]) */
-    List *tableReceiverList;
-  
-    /**
-     * The global <code>MessageSendController</code> which dispatches messages to named
-     * <code>MessageReceive</code>ers.
-     */
-    MessageSendController *sendController;
+    ZGLinkedList *nodeList;
     
     /**
      * A list of all <code>DspObject</code>s in this graph, in the order in which they should be
      * called in the <code>processDsp()</code> loop.
      */
-    List *dspNodeList;
-  
-    /** A message queue keeping track of all scheduled messages. */
-    OrderedMessageQueue *messageCallbackQueue;
-  
-    /** The start of the current block in milliseconds. */
-    double blockStartTimestamp;
-  
-    /** The duration of one block in milliseconds. */
-    double blockDurationMs;
-  
-    /** The registered callback function for sending data outside of the graph. */
-    void (*callbackFunction)(ZGCallbackFunction, void *, void *);
-  
-    /** User-provided data associated with the callback function. */
-    void *callbackUserData;
-  
-    int numBytesInInputBuffers;
-    int numBytesInOutputBuffers;
-  
-    float *globalDspInputBuffers;
-    float *globalDspOutputBuffers;
+    ZGLinkedList *dspNodeList;
+    
+    /** A list of all inlet (message or audio) nodes in this subgraph. */
+    ZGLinkedList *inletList;
+    
+    /** A list of all outlet (message or audio) nodes in this subgraph. */
+    ZGLinkedList *outletList;
 };
 
 #endif // _PD_GRAPH_H_

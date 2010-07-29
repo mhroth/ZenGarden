@@ -173,6 +173,10 @@ void MessageObject::addConnectionToObjectFromOutlet(MessageObject *messageObject
   }
 }
 
+ObjectType MessageObject::getObjectType() {
+  return OBJECT_UNKNOWN;
+}
+
 PdMessage *MessageObject::getNextOutgoingMessage(int outletIndex) {
   List *messageOutletPool = messageOutletPools[outletIndex];
   int numMessagesInPool = messageOutletPool->size();
@@ -233,4 +237,8 @@ List *MessageObject::getProcessOrder() {
     processList->add(this);
     return processList;
   }
+}
+
+void MessageObject::resetOrderedFlag() {
+  isOrdered = false;
 }

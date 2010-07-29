@@ -37,7 +37,7 @@ const char *DspSignal::getObjectLabel() {
 
 void DspSignal::processMessage(int inletIndex, PdMessage *message) {
   if (message->isFloat(0)) {
-    processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
+    processDspToIndex(graph->getBlockIndex(message));
     constant = message->getFloat(0);
   }
 }

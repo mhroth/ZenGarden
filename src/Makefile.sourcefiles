@@ -106,6 +106,7 @@ LOCAL_SRC_FILES := \
 ./MessageUnpack.cpp \
 ./MessageWrap.cpp \
 ./OrderedMessageQueue.cpp \
+./PdContext.cpp \
 ./PdFileParser.cpp \
 ./PdGraph.cpp \
 ./PdMessage.cpp \

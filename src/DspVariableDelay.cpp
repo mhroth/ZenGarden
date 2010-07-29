@@ -48,6 +48,10 @@ const char *DspVariableDelay::getObjectLabel() {
   return "vd~";
 }
 
+ObjectType DspVariableDelay::getObjectType() {
+  return DSP_VARIABLE_DELAY;
+}
+
 void DspVariableDelay::processDspToIndex(float newBlockIndex) {
   int headIndex;
   int bufferLength;

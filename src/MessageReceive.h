@@ -33,6 +33,7 @@ class MessageReceive : public RemoteMessageReceiver {
     ~MessageReceive();
     
     const char *getObjectLabel();
+    ObjectType getObjectType();
   
   private:
     void processMessage(int inletIndex, PdMessage *message);

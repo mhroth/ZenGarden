@@ -362,11 +362,14 @@ public class PdObjectTest implements ZenGardenListener {
   }
 
   public void onPrintErr(String message) {
+    // must append new line because message does not have it by default
     stringBuilderErr.append(message);
+    stringBuilderErr.append(System.getProperty("line.separator"));
   }
 
   public void onPrintStd(String message) {
     stringBuilderStd.append(message);
+    stringBuilderStd.append(System.getProperty("line.separator"));
   }
 
 }

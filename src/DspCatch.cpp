@@ -20,6 +20,7 @@
  *
  */
 
+#include "ArrayArithmetic.h"
 #include "DspCatch.h"
 #include "DspThrow.h"
 #include "PdGraph.h"
@@ -44,6 +45,10 @@ DspCatch::~DspCatch() {
 
 const char *DspCatch::getObjectLabel() {
   return "catch~";
+}
+
+ObjectType DspCatch::getObjectType() {
+  return DSP_CATCH;
 }
 
 char *DspCatch::getName() {
@@ -85,10 +90,8 @@ void DspCatch::processDsp() {
       
       for (int i = 1; i < numConnections; i++) {
         dspThrow = (DspThrow *) throwList->get(i);
-        float *remoteBuffer = dspThrow->getBuffer();
-        for (int j = 0; j < blockSizeInt; j++) {
-          originalOutputBuffer[j] += remoteBuffer[j];
-        }
+        ArrayArithmetic::add(originalOutputBuffer, dspThrow->getBuffer(), originalOutputBuffer,
+            0, blockSizeInt);
       }
       break;
     }

@@ -25,6 +25,7 @@
 
 #include "ConnectionType.h"
 #include "ObjectLetPair.h"
+#include "ObjectType.h"
 #include "PdMessage.h"
 #include "StaticUtils.h"
 
@@ -66,6 +67,8 @@ class MessageObject {
     /** Returns the label for this object. */
     virtual const char *getObjectLabel() = 0;
   
+    virtual ObjectType getObjectType();
+  
     /** Returns <code>true</code> if this object processes audio, <code>false</code> otherwise. */
     virtual bool doesProcessAudio();
   
@@ -97,7 +100,11 @@ class MessageObject {
     /** Returns an ordered list of all parent objects of this object. */
     virtual List *getProcessOrder();
   
-    // TODO(mhroth): one day there will have to be a recusive function to reset the isOrdered flag.
+    /**
+     * Reset the <code>isOrdered</code> flag to <code>false</code>. This is necessary in order to
+     * recompute the process order.
+     */
+    void resetOrderedFlag();
     
   protected:
     /** Returns a message that can be sent from the given outlet. */

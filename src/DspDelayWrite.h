@@ -32,6 +32,7 @@ class DspDelayWrite : public DspObject {
     ~DspDelayWrite();
   
     const char *getObjectLabel();
+    ObjectType getObjectType();
   
     char *getName();
   

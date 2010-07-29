@@ -58,10 +58,14 @@ const char *DspDelayRead::getObjectLabel() {
   return "delread~";
 }
 
+ObjectType DspDelayRead::getObjectType() {
+  return DSP_DELAY_READ;
+}
+
 void DspDelayRead::processMessage(int inletIndex, PdMessage *message) {
   if (message->getElement(0)->getType() == FLOAT) {
     // update the delay time
-    processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
+    processDspToIndex(graph->getBlockIndex(message));
     delayInSamples = StaticUtils::millisecondsToSamples(message->getElement(0)->getFloat(), graph->getSampleRate());
     delayInSamplesInt = (int) delayInSamples;
   }

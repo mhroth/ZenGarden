@@ -39,10 +39,9 @@ const char *DspTableRead::getObjectLabel() {
 void DspTableRead::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
-      if (message->isSymbol(0) && message->isSymbol(1) &&
-          strcmp(message->getSymbol(0), "set") == 0) {
+      if (message->isSymbol(0, "set") && message->isSymbol(1)) {
         // change the table from which this object reads
-        processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
+        processDspToIndex(graph->getBlockIndex(message));
         table = graph->getTable(message->getSymbol(1));
       }
       break;

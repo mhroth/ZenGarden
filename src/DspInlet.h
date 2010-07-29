@@ -39,6 +39,7 @@ class DspInlet : public DspObject {
     ~DspInlet();
   
     const char *getObjectLabel();
+    ObjectType getObjectType();
   
     /**
      * Set the parent-graph's inlet buffer. A double pointer is used because the graph's inlet buffer

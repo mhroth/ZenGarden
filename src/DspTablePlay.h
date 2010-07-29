@@ -44,9 +44,11 @@ class DspTablePlay : public TableReceiver {
   
     /**
      * Sets up outgoing message message and other conditions to play the table from the given start
-     * to end sample indicies. The entire sample is played if <code>endIndex</code> is -1.
+     * to end sample indicies. The entire sample is played if <code>duration</code> is -1.
+     * The <code>startTime</code> is the global time at which the message to begin playback was
+     * received.
      */
-    void playTable(int startIndex, int duration);
+    void playTable(int startIndex, int duration, double startTime);
   
     // the message which is scheduled to be issues when the sample finishes playing
     PdMessage *outgoingMessage;

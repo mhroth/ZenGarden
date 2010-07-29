@@ -13,7 +13,6 @@
 		9017567711DFDD4B00A22517 /* DspTablePlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 9017567411DFDD4B00A22517 /* DspTablePlay.h */; };
 		9017567811DFDD4B00A22517 /* DspTablePlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9017567311DFDD4B00A22517 /* DspTablePlay.cpp */; };
 		9017567911DFDD4B00A22517 /* DspTablePlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 9017567411DFDD4B00A22517 /* DspTablePlay.h */; };
-		903374F411D0D34D009FCC01 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 903374F311D0D34D009FCC01 /* Accelerate.framework */; };
 		90337C5D11D0D847009FCC01 /* ArrayArithmetic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B4911D0D847009FCC01 /* ArrayArithmetic.cpp */; };
 		90337C5E11D0D847009FCC01 /* DelayReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B4C11D0D847009FCC01 /* DelayReceiver.cpp */; };
 		90337C5F11D0D847009FCC01 /* DspAdc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B4E11D0D847009FCC01 /* DspAdc.cpp */; };
@@ -605,11 +604,19 @@
 		90337EE511D0D847009FCC01 /* ZGLinkedList.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C5C11D0D847009FCC01 /* ZGLinkedList.h */; };
 		9069DFD211D17BD600889A5B /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9069DFD111D17BD600889A5B /* Accelerate.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		9069DFD311D17BF100889A5B /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9069DFD111D17BD600889A5B /* Accelerate.framework */; };
+		90AF7F7511FE67BE006F88E6 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9069DFD111D17BD600889A5B /* Accelerate.framework */; };
 		90B1873411FDB167009B45AB /* DspMinimum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90B1873311FDB167009B45AB /* DspMinimum.cpp */; };
 		90B1873511FDB167009B45AB /* DspMinimum.h in Headers */ = {isa = PBXBuildFile; fileRef = 90B1873211FDB167009B45AB /* DspMinimum.h */; };
 		90B1873611FDB167009B45AB /* DspMinimum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90B1873311FDB167009B45AB /* DspMinimum.cpp */; };
 		90B1873711FDB167009B45AB /* DspMinimum.h in Headers */ = {isa = PBXBuildFile; fileRef = 90B1873211FDB167009B45AB /* DspMinimum.h */; };
 		90B1873811FDB167009B45AB /* DspMinimum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90B1873311FDB167009B45AB /* DspMinimum.cpp */; };
+		90BB31CB11FE3F62008A0628 /* PdContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90BB31C911FE3F62008A0628 /* PdContext.cpp */; };
+		90BB31CC11FE3F62008A0628 /* ObjectType.h in Headers */ = {isa = PBXBuildFile; fileRef = 90BB31C811FE3F62008A0628 /* ObjectType.h */; };
+		90BB31CD11FE3F62008A0628 /* PdContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90BB31C911FE3F62008A0628 /* PdContext.cpp */; };
+		90BB31CE11FE3F62008A0628 /* PdContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 90BB31CA11FE3F62008A0628 /* PdContext.h */; };
+		90BB31CF11FE3F62008A0628 /* ObjectType.h in Headers */ = {isa = PBXBuildFile; fileRef = 90BB31C811FE3F62008A0628 /* ObjectType.h */; };
+		90BB31D011FE3F62008A0628 /* PdContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90BB31C911FE3F62008A0628 /* PdContext.cpp */; };
+		90BB31D111FE3F62008A0628 /* PdContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 90BB31CA11FE3F62008A0628 /* PdContext.h */; };
 		E4A3DD0211D93E8D007FE6FC /* MessageSoundfiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A3DD0011D93E8D007FE6FC /* MessageSoundfiler.cpp */; };
 		E4A3DD0311D93E8D007FE6FC /* MessageSoundfiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A3DD0011D93E8D007FE6FC /* MessageSoundfiler.cpp */; };
 		E4A3DD0411D93E8D007FE6FC /* MessageSoundfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = E4A3DD0111D93E8D007FE6FC /* MessageSoundfiler.h */; };
@@ -636,7 +643,6 @@
 		9017567411DFDD4B00A22517 /* DspTablePlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspTablePlay.h; path = ../src/DspTablePlay.h; sourceTree = SOURCE_ROOT; };
 		9033711811D0CF07009FCC01 /* libzengarden.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libzengarden.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		9033712011D0CF2B009FCC01 /* libzengarden.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libzengarden.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		903374F311D0D34D009FCC01 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		90337B4911D0D847009FCC01 /* ArrayArithmetic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ArrayArithmetic.cpp; path = ../src/ArrayArithmetic.cpp; sourceTree = SOURCE_ROOT; };
 		90337B4A11D0D847009FCC01 /* ArrayArithmetic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArrayArithmetic.h; path = ../src/ArrayArithmetic.h; sourceTree = SOURCE_ROOT; };
 		90337B4B11D0D847009FCC01 /* ConnectionType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConnectionType.h; path = ../src/ConnectionType.h; sourceTree = SOURCE_ROOT; };
@@ -878,6 +884,9 @@
 		9069DFD111D17BD600889A5B /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		90B1873211FDB167009B45AB /* DspMinimum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspMinimum.h; path = ../src/DspMinimum.h; sourceTree = SOURCE_ROOT; };
 		90B1873311FDB167009B45AB /* DspMinimum.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspMinimum.cpp; path = ../src/DspMinimum.cpp; sourceTree = SOURCE_ROOT; };
+		90BB31C811FE3F62008A0628 /* ObjectType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ObjectType.h; path = ../src/ObjectType.h; sourceTree = SOURCE_ROOT; };
+		90BB31C911FE3F62008A0628 /* PdContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PdContext.cpp; path = ../src/PdContext.cpp; sourceTree = SOURCE_ROOT; };
+		90BB31CA11FE3F62008A0628 /* PdContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PdContext.h; path = ../src/PdContext.h; sourceTree = SOURCE_ROOT; };
 		C6859E8B029090EE04C91782 /* ZenGardenNp.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ZenGardenNp.1; sourceTree = "<group>"; };
 		E4A3DD0011D93E8D007FE6FC /* MessageSoundfiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageSoundfiler.cpp; path = ../src/MessageSoundfiler.cpp; sourceTree = SOURCE_ROOT; };
 		E4A3DD0111D93E8D007FE6FC /* MessageSoundfiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageSoundfiler.h; path = ../src/MessageSoundfiler.h; sourceTree = SOURCE_ROOT; };
@@ -888,7 +897,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				903374F411D0D34D009FCC01 /* Accelerate.framework in Frameworks */,
+				90AF7F7511FE67BE006F88E6 /* Accelerate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -917,7 +926,6 @@
 				08FB7795FE84155DC02AAC07 /* Source */,
 				C6859E8C029090F304C91782 /* Documentation */,
 				1AB674ADFE9D54B511CA2CBB /* Products */,
-				903374F311D0D34D009FCC01 /* Accelerate.framework */,
 				9069DFD111D17BD600889A5B /* Accelerate.framework */,
 			);
 			name = ZenGardenNp;
@@ -1151,8 +1159,11 @@
 				90337C4011D0D847009FCC01 /* MessageWrap.cpp */,
 				90337C4111D0D847009FCC01 /* MessageWrap.h */,
 				90337C4211D0D847009FCC01 /* ObjectLetPair.h */,
+				90BB31C811FE3F62008A0628 /* ObjectType.h */,
 				90337C4311D0D847009FCC01 /* OrderedMessageQueue.cpp */,
 				90337C4411D0D847009FCC01 /* OrderedMessageQueue.h */,
+				90BB31C911FE3F62008A0628 /* PdContext.cpp */,
+				90BB31CA11FE3F62008A0628 /* PdContext.h */,
 				90337C4511D0D847009FCC01 /* PdFileParser.cpp */,
 				90337C4611D0D847009FCC01 /* PdFileParser.h */,
 				90337C4711D0D847009FCC01 /* PdGraph.cpp */,
@@ -1326,6 +1337,8 @@
 				E4A3DD0411D93E8D007FE6FC /* MessageSoundfiler.h in Headers */,
 				9017567711DFDD4B00A22517 /* DspTablePlay.h in Headers */,
 				90B1873511FDB167009B45AB /* DspMinimum.h in Headers */,
+				90BB31CC11FE3F62008A0628 /* ObjectType.h in Headers */,
+				90BB31CE11FE3F62008A0628 /* PdContext.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1460,6 +1473,8 @@
 				E4A3DD0611D93E8D007FE6FC /* MessageSoundfiler.h in Headers */,
 				9017567911DFDD4B00A22517 /* DspTablePlay.h in Headers */,
 				90B1873711FDB167009B45AB /* DspMinimum.h in Headers */,
+				90BB31CF11FE3F62008A0628 /* ObjectType.h in Headers */,
+				90BB31D111FE3F62008A0628 /* PdContext.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1659,6 +1674,7 @@
 				E4A3DD0211D93E8D007FE6FC /* MessageSoundfiler.cpp in Sources */,
 				9017567511DFDD4B00A22517 /* DspTablePlay.cpp in Sources */,
 				90B1873411FDB167009B45AB /* DspMinimum.cpp in Sources */,
+				90BB31CB11FE3F62008A0628 /* PdContext.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1782,6 +1798,7 @@
 				E4A3DD0311D93E8D007FE6FC /* MessageSoundfiler.cpp in Sources */,
 				9017567611DFDD4B00A22517 /* DspTablePlay.cpp in Sources */,
 				90B1873611FDB167009B45AB /* DspMinimum.cpp in Sources */,
+				90BB31CD11FE3F62008A0628 /* PdContext.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1906,6 +1923,7 @@
 				E4A3DD0511D93E8D007FE6FC /* MessageSoundfiler.cpp in Sources */,
 				9017567811DFDD4B00A22517 /* DspTablePlay.cpp in Sources */,
 				90B1873811FDB167009B45AB /* DspMinimum.cpp in Sources */,
+				90BB31D011FE3F62008A0628 /* PdContext.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

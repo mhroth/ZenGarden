@@ -35,6 +35,10 @@ const char *DspOutlet::getObjectLabel() {
   return "outlet~";
 }
 
+ObjectType DspOutlet::getObjectType() {
+  return DSP_OUTLET;
+}
+
 void DspOutlet::setOutletIndex(int outletIndex) {
   this->outletIndex = outletIndex; // set the outlet index
 }

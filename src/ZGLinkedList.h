@@ -58,6 +58,9 @@ class ZGLinkedList {
     
     /** Get the data from the next node in the list according to the iterator. */
     void *getNext();
+  
+    /** The list is cleared. */
+    void clear();
 
   protected:
     LinkedListNode *getEmptyNode();

@@ -71,21 +71,11 @@ class PdMessage {
      */
     void resolveSymbolsToType();
   
-    /**
-     * Set the contents of the message. This function is especially useful when constructing messages
-     * using known amounts external data. This function is not meant to be used directly, but
-     * rather through the <code>zg_send_message()</code> function available from <code>ZenGarden.h</code>.
-     */
-    void setMessage(const char *messageFormat, va_list ap);
-  
     MessageElement *getElement(int index);
   
     void addElement(MessageElement *messageElement);
   
     int getNumElements();
-  
-    /** A convenience function to determine when in a block a message occurs. */
-    float getBlockIndex(double currentBlockTimestamp, float sampleRate);
   
     /** Get the global timestamp of this message (in milliseconds). */
     double getTimestamp();
@@ -105,6 +95,7 @@ class PdMessage {
      */
     //void clearAndCopyFrom(PdMessage *message, int startIndex);
   
+    /** Returns a copy of the message. */
     PdMessage *copy();
     
     /**

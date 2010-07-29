@@ -20,21 +20,35 @@
  *
  */
 
-package me.rjdj.zengarden;
+#ifndef _OBJECT_TYPE_H_
+#define _OBJECT_TYPE_H_
 
-/**
- * This class provides a default implementation of the <code>ZenGardenListener</code> interface.
- * 
- * @author mhroth (mhroth@rjdj.me)
- */
-public class ZenGardenAdapter implements ZenGardenListener {
+/** An enumeration all supported objects. */
+enum ObjectType {
+  DSP_ADC,
+  DSP_ADD,
+  DSP_BANDPASS_FILTER,
+  DSP_CATCH,
+  DSP_CLIP,
+  DSP_COSINE,
+  DSP_DAC,
+  DSP_DELAY_READ,
+  DSP_DELAY_WRITE,
+  DSP_INLET,
+  DSP_OUTLET,
+  DSP_RECEIVE,
+  DSP_SEND,
+  DSP_TABLE_READ,
+  DSP_THROW,
+  DSP_VARIABLE_DELAY,
+  MESSAGE_INLET,
+  MESSAGE_NOTEIN,
+  MESSAGE_OUTLET,
+  MESSAGE_RECEIVE,
+  MESSAGE_SEND,
+  MESSAGE_TABLE,
+  OBJECT_PD,
+  OBJECT_UNKNOWN // unknown or unimportant
+};
 
-  public void onPrintErr(String message) {
-    System.err.println(message);
-  }
-
-  public void onPrintStd(String message) {
-    System.out.println(message);
-  }
-
-}
+#endif // _OBJECT_TYPE_H_

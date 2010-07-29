@@ -29,7 +29,7 @@ MessageNotein::MessageNotein(PdMessage *initMessage, PdGraph *graph) :
       (initMessage->getFloat(0) >= 1.0f && initMessage->isFloat(0) <= 16.0f)) {
     // channel provided (Pd channels are indexed from 1, while ZG channels are indexed from 0)
     channel = (int) (initMessage->getFloat(0)-1.0f);
-    name = (char *) malloc(13 * sizeof(char));
+    name = (char *) calloc(13, sizeof(char));
     sprintf(name, "zg_notein_%i", channel);
   } else {
     // no channel provided, use omni
@@ -44,6 +44,10 @@ MessageNotein::~MessageNotein() {
 
 const char *MessageNotein::getObjectLabel() {
   return "notein";
+}
+
+ObjectType MessageNotein::getObjectType() {
+  return MESSAGE_NOTEIN;
 }
 
 int MessageNotein::getChannel() {

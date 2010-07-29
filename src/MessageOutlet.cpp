@@ -35,6 +35,10 @@ const char *MessageOutlet::getObjectLabel() {
   return "outlet";
 }
 
+ObjectType MessageOutlet::getObjectType() {
+  return MESSAGE_OUTLET;
+}
+
 void MessageOutlet::setOutletIndex(int outletIndex) {
   this->outletIndex = outletIndex;
 }

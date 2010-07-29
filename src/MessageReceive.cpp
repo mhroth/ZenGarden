@@ -37,6 +37,10 @@ const char *MessageReceive::getObjectLabel() {
   return "receive";
 }
 
+ObjectType MessageReceive::getObjectType() {
+  return MESSAGE_RECEIVE;
+}
+
 void MessageReceive::processMessage(int inletIndex, PdMessage *message) {
   sendMessage(0, message);
 }

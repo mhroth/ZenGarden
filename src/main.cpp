@@ -54,15 +54,15 @@ int main(int argc, char * const argv[]) {
   const float sampleRate = 22050.0f;
   
   // pass directory and filename of the patch to load
-  PdGraph *graph = zg_new_graph("/Users/mhroth/workspace/ZenGarden/test/", "MessageMessageBox.pd",
-      blockSize, numInputChannels, numOutputChannels, sampleRate);
-  
+  PdContext *context = zg_new_context(numInputChannels, numOutputChannels, blockSize, sampleRate,
+      callbackFunction, NULL);
+  PdGraph *graph = zg_new_graph(context, "/Users/mhroth/workspace/ZenGarden/test/", "MessageMessageBox.pd");
   if (graph == NULL) {
-    printf("graph is NULL. Is the given path correct?");
+    zg_delete_context(context);
     return 1;
   }
   
-  zg_register_callback(graph, callbackFunction, NULL);
+  zg_attach_graph(context, graph);
   
   float *inputBuffers = (float *) calloc(numInputChannels * blockSize, sizeof(float));
   float *outputBuffers = (float *) calloc(numOutputChannels * blockSize, sizeof(float));
@@ -70,7 +70,7 @@ int main(int argc, char * const argv[]) {
   timeval start, end;
   gettimeofday(&start, NULL);
   for (int i = 0; i < NUM_ITERATIONS; i++) {
-    zg_process(graph, inputBuffers, outputBuffers);
+    zg_process(context, inputBuffers, outputBuffers);
   }
   gettimeofday(&end, NULL);
   double elapsedTime = (end.tv_sec - start.tv_sec) * 1000.0; // sec to ms
@@ -80,7 +80,7 @@ int main(int argc, char * const argv[]) {
   double simulatedTime = ((double) blockSize / (double) sampleRate) * (double) NUM_ITERATIONS * 1000.0; // milliseconds
   printf("Runs in realtime: %s (x%.3f)\n", (simulatedTime >= elapsedTime) ? "YES" : "NO", simulatedTime/elapsedTime);
   
-  zg_delete_graph(graph);
+  zg_delete_context(context);
   free(inputBuffers);
   free(outputBuffers);
   

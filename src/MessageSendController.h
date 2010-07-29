@@ -26,6 +26,8 @@
 #include "MessageObject.h"
 #include "RemoteMessageReceiver.h"
 
+class PdContext;
+
 /**
  * Because of features such as external message injection and implicit message sending from message
  * boxes, it must be possible to [send] a message to associated [receive]ers without explicitly
@@ -45,7 +47,7 @@
 class MessageSendController : public MessageObject {
   
   public:
-    MessageSendController(PdGraph *graph);
+    MessageSendController(PdContext *context);
     ~MessageSendController();
   
     const char *getObjectLabel();
@@ -66,8 +68,10 @@ class MessageSendController : public MessageObject {
   private:
     void processMessage(int inletIndex, PdMessage *message);
   
-    List *nameList;
-    List *receiverLists;
+    PdContext *context;
+  
+    ZGLinkedList *nameList;
+    ZGLinkedList *receiverLists;
   
     // a special index for referencing the system "pd" receiver
     static const int SYSTEM_NAME_INDEX = 0x7FFFFFFF;

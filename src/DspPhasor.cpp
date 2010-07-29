@@ -66,7 +66,7 @@ void DspPhasor::processMessage(int inletIndex, PdMessage *message) {
     case 0: { // update the frequency
       MessageElement *messageElement = message->getElement(0);
       if (messageElement->getType() == FLOAT) {
-        processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
+        processDspToIndex(graph->getBlockIndex(message));
         frequency = messageElement->getFloat();
       }
       break;

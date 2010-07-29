@@ -56,21 +56,22 @@ void DspTablePlay::sendMessage(int outletIndex, PdMessage *message) {
 void DspTablePlay::processMessage(int inletIndex, PdMessage *message) {
   switch (message->getType(0)) {
     case FLOAT: {
-      processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
+      processDspToIndex(graph->getBlockIndex(message));
       playTable((int) message->getFloat(0),
-          message->isFloat(1) ? (int) message->getFloat(1) : -1);
+          message->isFloat(1) ? (int) message->getFloat(1) : -1,
+          message->getTimestamp());
       break;
     }
     case SYMBOL: {
       if (message->isSymbol(0, "set") && message->isSymbol(1)) {
-        processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
+        processDspToIndex(graph->getBlockIndex(message));
         table = graph->getTable(message->getSymbol(1));
       }
       break;
     }
     case BANG: {
-      processDspToIndex(message->getBlockIndex(graph->getBlockStartTimestamp(), graph->getSampleRate()));
-      playTable(0, -1);
+      processDspToIndex(graph->getBlockIndex(message));
+      playTable(0, -1, message->getTimestamp());
       break;
     }
     default: {
@@ -79,7 +80,7 @@ void DspTablePlay::processMessage(int inletIndex, PdMessage *message) {
   }
 }
 
-void DspTablePlay::playTable(int startIndex, int duration) {
+void DspTablePlay::playTable(int startIndex, int duration, double startTime) {
   if (startIndex >= 0 && duration >= -1) {
     if (outgoingMessage != NULL) {
       // if the table is currently playing and there is an outstanding scheduled message, cancel it
@@ -97,7 +98,7 @@ void DspTablePlay::playTable(int startIndex, int duration) {
       }
       outgoingMessage = getNextOutgoingMessage(1);
       double durationMs = 1000.0 * ((double) (endTableIndex-startIndex)) / (double) graph->getSampleRate();
-      outgoingMessage->setTimestamp(graph->getBlockStartTimestamp() + durationMs);
+      outgoingMessage->setTimestamp(startTime + durationMs);
       graph->scheduleMessage(this, 1, outgoingMessage);
     } else {
       currentTableIndex = bufferLength;

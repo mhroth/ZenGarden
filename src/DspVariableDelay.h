@@ -38,6 +38,7 @@ class DspVariableDelay : public DelayReceiver {
     ~DspVariableDelay();
   
     const char *getObjectLabel();
+    ObjectType getObjectType();
     
   private:
     // vd~ does not process any messages and thus does not implement processMessage()

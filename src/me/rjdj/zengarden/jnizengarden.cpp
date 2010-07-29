@@ -32,7 +32,7 @@ JavaVM *jvm = NULL; // global variable
 
 typedef struct {
   jobject zgObject;
-  PdGraph *pdGraph;
+  PdContext *context;
   float *finputBuffer;
   float *foutputBuffer;
   int blockSize;
@@ -96,23 +96,11 @@ JNIEXPORT jlong JNICALL Java_me_rjdj_zengarden_ZenGarden_loadPdPatch(
     JNIEnv *env, jobject jobj, jstring jdirectory, jstring jfilename, jint blockSize,
     jint numInputChannels, jint numOutputChannels, jfloat sampleRate) {
 
-  PdGraph *pdGraph = NULL;
-  char *cdirectory = (char *) env->GetStringUTFChars(jdirectory, NULL);
-  char *cfilename = (char *) env->GetStringUTFChars(jfilename, NULL);
-  pdGraph = zg_new_graph(cdirectory, cfilename, blockSize, numInputChannels, numOutputChannels,
-      sampleRate);
-  env->ReleaseStringUTFChars(jdirectory, cdirectory);
-  env->ReleaseStringUTFChars(jfilename, cfilename);
-  
-  if (pdGraph == NULL) {
-    env->ThrowNew(env->FindClass("me/rjdj/zengarden/NativeLoadException"),
-        "PdGraph is NULL. Is the filename correct? Does the file exist? Are all of the referenced objects implemented?");
-    return (jlong) 0;
-  }
-  
   // initialise the PureDataMobile native variables
   PureDataMobileNativeVars *pdmnv = (PureDataMobileNativeVars *) malloc(sizeof(PureDataMobileNativeVars));
-  pdmnv->pdGraph = pdGraph;
+  pdmnv->zgObject = env->NewGlobalRef(jobj);
+  pdmnv->context = zg_new_context(numInputChannels, numOutputChannels, blockSize, sampleRate,
+      java_callback, pdmnv->zgObject);
   pdmnv->finputBuffer = (float *) malloc(blockSize * numInputChannels * sizeof(float));
   pdmnv->foutputBuffer = (float *) malloc(blockSize * numOutputChannels * sizeof(float));
   pdmnv->blockSize = blockSize;
@@ -121,9 +109,20 @@ JNIEXPORT jlong JNICALL Java_me_rjdj_zengarden_ZenGarden_loadPdPatch(
   pdmnv->shortToFloatLookupTable = (float *) malloc(32768 * sizeof(float));
   pdmnv->numBytesInBlock = blockSize * sizeof(float);
   
-  // register the callback
-  pdmnv->zgObject = env->NewGlobalRef(jobj);
-  zg_register_callback(pdGraph, java_callback, pdmnv->zgObject);
+  
+  char *cdirectory = (char *) env->GetStringUTFChars(jdirectory, NULL);
+  char *cfilename = (char *) env->GetStringUTFChars(jfilename, NULL);
+  PdGraph *graph = zg_new_graph(pdmnv->context, cdirectory, cfilename);
+  env->ReleaseStringUTFChars(jdirectory, cdirectory);
+  env->ReleaseStringUTFChars(jfilename, cfilename);
+  if (graph == NULL) {
+    // an error has happened. Clean up and throw an exception.
+    Java_me_rjdj_zengarden_ZenGarden_unloadPdPatch(env, jobj, (jlong) pdmnv);
+    env->ThrowNew(env->FindClass("me/rjdj/zengarden/NativeLoadException"),
+        "Graph could not be created. Is the pd file properly formatted? Are all of the referenced objects implemented?");
+    return 0;
+  }
+  zg_attach_graph(pdmnv->context, graph);
   
   // define the input (microphone) waveshaper
   // linear
@@ -144,7 +143,7 @@ JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZenGarden_unloadPdPatch(
     free(pdmnv->finputBuffer);
     free(pdmnv->foutputBuffer);
     free(pdmnv->shortToFloatLookupTable);
-    zg_delete_graph(pdmnv->pdGraph);
+    zg_delete_context(pdmnv->context);
     free(pdmnv);
   }
 }
@@ -183,7 +182,7 @@ JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZenGarden_process(
   }
   env->ReleasePrimitiveArrayCritical(jinputBuffer, cinputBuffer, JNI_ABORT); // no need to copy back changes. release native buffer.
   
-  zg_process(pdmnv->pdGraph, pdmnv->finputBuffer, pdmnv->foutputBuffer);
+  zg_process(pdmnv->context, pdmnv->finputBuffer, pdmnv->foutputBuffer);
   
   // read back from the floating point output buffers
   // regarding use of lrintf, see http://www.mega-nerd.com/FPcast/
@@ -192,13 +191,9 @@ JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZenGarden_process(
     for (int k = 0, z = i; k < pdmnv->numOutputChannels; k++, j++, z+=pdmnv->blockSize) {
       // clip the output (like Pd does)
       float f = pdmnv->foutputBuffer[z];
-      if (f > 1.0f) {
-        coutputBuffer[j] = 32767;
-      } else if (f < -1.0f) {
-        coutputBuffer[j] = -32768;
-      } else {
-        coutputBuffer[j] = (short) lrintf(f * 32767.0f);
-      }
+      if (f > 1.0f) coutputBuffer[j] = 32767;
+      else if (f < -1.0f) coutputBuffer[j] = -32768;
+      else coutputBuffer[j] = (short) (f * 32767.0f);
       /*
        * WARNING: if pdmnv->foutputBuffer[z] == 1.0f, this method will result in -32768, not 32767
        * and cause a click in the output (i.e., there is overflow when converting to a short)
