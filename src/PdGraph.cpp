@@ -115,13 +115,19 @@ void PdGraph::addObject(MessageObject *messageObject) {
   nodeList->add(messageObject); // all nodes are added to the node list regardless
   
   switch (messageObject->getObjectType()) {
-    case DSP_INLET:
     case MESSAGE_INLET: {
       inletList->add(messageObject);
       break;
     }
-    case DSP_OUTLET:
-    case MESSAGE_OUTLET: {
+    case DSP_INLET: {
+      inletList->add(messageObject);
+      
+      //((DspInlet *) node)->setInletBuffer(localDspBufferAtInlet + inletList->size() - 1);
+      ((DspInlet *) messageObject)->setInletBuffer(&localDspBufferAtInlet[inletList->size()-1]);
+      break;
+    }
+    case MESSAGE_OUTLET:
+    case DSP_OUTLET:{
       outletList->add(messageObject);
       break;
     }
@@ -140,7 +146,7 @@ void PdGraph::addConnection(MessageObject *fromObject, int outletIndex, MessageO
   lockContextIfAttached();
   toObject->addConnectionFromObjectToInlet(fromObject, outletIndex, inletIndex);
   fromObject->addConnectionToObjectFromOutlet(toObject, inletIndex, outletIndex);
-  // NOTE(mhroth): very heavy handed approach. Always recompute the process when adding connections
+  // NOTE(mhroth): very heavy handed approach. Always recompute the process order when adding connections
   computeLocalDspProcessOrder(); 
   unlockContextIfAttached();
 }
@@ -194,17 +200,6 @@ void PdGraph::registerObjectIfRequiresRegistration(MessageObject *messageObject)
     }
     case DSP_DELAY_WRITE: {
       context->registerDelayline((DspDelayWrite *) messageObject);
-      break;
-    }
-    case DSP_INLET: {
-      inletList->add(messageObject);
-      //((DspInlet *) node)->setInletBuffer(localDspBufferAtInlet + inletList->size() - 1);
-      ((DspInlet *) messageObject)->setInletBuffer(&localDspBufferAtInlet[inletList->size()-1]);
-      inletList->add(messageObject);
-      break;
-    }
-    case DSP_OUTLET: {
-      outletList->add(messageObject);
       break;
     }
     case DSP_SEND: {
