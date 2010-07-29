@@ -23,25 +23,12 @@
 #include "MessageSwap.h"
 
 MessageSwap::MessageSwap(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 2, graph) {
-  if (initMessage->getNumElements() > 0 &&
-      initMessage->getElement(0)->getType() == FLOAT) {
-    init(initMessage->getElement(0)->getFloat(), 0.0f);
-  } else {
-    init(0.0f, 0.0f);
-  }
-}
-
-MessageSwap::MessageSwap(float left, float right, PdGraph *graph) : MessageObject(2, 2, graph) {
-  init(left,right);
+  left = 0.0f;
+  right = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
 }
 
 MessageSwap::~MessageSwap() {
   // nothing to do
-}
-
-void MessageSwap::init(float left, float right) {
-  this->left = left;
-  this->right = right;
 }
 
 const char *MessageSwap::getObjectLabel() {
@@ -51,32 +38,21 @@ const char *MessageSwap::getObjectLabel() {
 void MessageSwap::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
-      MessageElement *messageElement = message->getElement(0);
-      switch (messageElement->getType()) {
+      switch (message->getType(0)) {
         case FLOAT: {
-          left = messageElement->getFloat();
-
-          PdMessage *outgoingMessageRight = getNextOutgoingMessage(0);
-          outgoingMessageRight->getElement(0)->setFloat(left);
-          outgoingMessageRight->setTimestamp(message->getTimestamp());
-          sendMessage(1, outgoingMessageRight); // send a message from outlet 1
-
-          PdMessage *outgoingMessageLeft = getNextOutgoingMessage(1);
-          outgoingMessageLeft->getElement(0)->setFloat(right);
-          outgoingMessageLeft->setTimestamp(message->getTimestamp());
-          sendMessage(0, outgoingMessageLeft); // send a message from outlet 0
-          break;
+          left = message->getFloat(0);
+          // allow fallthrough
         }
         case BANG: {
-          PdMessage *outgoingMessageRight = getNextOutgoingMessage(0);
-          outgoingMessageRight->getElement(0)->setFloat(left);
+          PdMessage *outgoingMessageRight = getNextOutgoingMessage(1);
+          outgoingMessageRight->setFloat(0, left);
           outgoingMessageRight->setTimestamp(message->getTimestamp());
-          sendMessage(0, outgoingMessageRight); // send a message from outlet 1
-
-          PdMessage *outgoingMessageLeft = getNextOutgoingMessage(1);
-          outgoingMessageLeft->getElement(0)->setFloat(right);
+          sendMessage(1, outgoingMessageRight); // send a message from outlet 1
+          
+          PdMessage *outgoingMessageLeft = getNextOutgoingMessage(0);
+          outgoingMessageLeft->setFloat(0, right);
           outgoingMessageLeft->setTimestamp(message->getTimestamp());
-          sendMessage(1, outgoingMessageLeft); // send a message from outlet 0
+          sendMessage(0, outgoingMessageLeft); // send a message from outlet 0
           break;
         }
         default: {
@@ -86,9 +62,8 @@ void MessageSwap::processMessage(int inletIndex, PdMessage *message) {
       break;
     }
     case 1: {
-      MessageElement *messageElement = message->getElement(0);
-      if (messageElement->getType() == FLOAT) {
-        right = messageElement->getFloat();
+      if (message->isFloat(0)) {
+        right = message->getFloat(0);
       }
       break;
     }

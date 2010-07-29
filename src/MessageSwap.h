@@ -30,16 +30,15 @@ class MessageSwap : public MessageObject {
 
   public:
     MessageSwap(PdMessage *initMessage, PdGraph *graph);
-    MessageSwap(float left, float right, PdGraph *graph);
     ~MessageSwap();
 
     const char *getObjectLabel();
 
   private:
-    void init(float left, float right);
     void processMessage(int inletIndex, PdMessage *message);
 
-    float left, right;
+    float left;
+    float right;
 };
 
 #endif // _MESSAGE_SWAP_H_
