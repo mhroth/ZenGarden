@@ -25,7 +25,7 @@
 MessageSwap::MessageSwap(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 2, graph) {
   if (initMessage->getNumElements() > 0 &&
       initMessage->getElement(0)->getType() == FLOAT) {
-    init(0.0f, initMessage->getElement(0)->getFloat());
+    init(initMessage->getElement(0)->getFloat(), 0.0f);
   } else {
     init(0.0f, 0.0f);
   }
