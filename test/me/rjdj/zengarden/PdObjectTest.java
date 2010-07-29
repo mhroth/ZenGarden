@@ -286,7 +286,11 @@ public class PdObjectTest implements ZenGardenListener {
     genericMessageTest("MessageSubtract.pd");
   }
 
-
+  @Test
+  public void testMessageSwap() {
+	genericMessageTest("MessageSwap.pd");
+  }
+		
   /*
   @Test
   public void testMessageUnpack() {
