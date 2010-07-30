@@ -54,8 +54,10 @@ void DspMinimum::processDspToIndex(float blockIndex) {
     case DSP_DSP: {
       float *inputBuffer1 = localDspBufferAtInlet[1];
       if (ArrayArithmetic::hasAccelerate) {
+        #if __APPLE__
         vDSP_vmin(inputBuffer+startSampleIndex, 1, inputBuffer1+startSampleIndex, 1,
             outputBuffer+startSampleIndex, 1, endSampleIndex-startSampleIndex);
+        #endif
       } else {
         for (int i = startSampleIndex; i < endSampleIndex; i++) {
           if (inputBuffer[i] <= inputBuffer1[i]) {

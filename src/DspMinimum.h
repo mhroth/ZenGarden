@@ -27,17 +27,17 @@
 
 class DspMinimum : public DspObject {
   
-public:
-  DspMinimum(PdMessage *initMessage, PdGraph *graph);
-  ~DspMinimum();
-  
-  const char *getObjectLabel();
-  
-private:
-  void processMessage(int inletIndex, PdMessage *message);
-  void processDspToIndex(float blockIndex);
-  
-  float constant;
+  public:
+    DspMinimum(PdMessage *initMessage, PdGraph *graph);
+    ~DspMinimum();
+    
+    const char *getObjectLabel();
+    
+  private:
+    void processMessage(int inletIndex, PdMessage *message);
+    void processDspToIndex(float blockIndex);
+    
+    float constant;
 };
 
 #endif // _DSP_MINIMUM_H_
