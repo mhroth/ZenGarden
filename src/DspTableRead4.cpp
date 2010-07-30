@@ -26,6 +26,7 @@
 
 DspTableRead4::DspTableRead4(PdMessage *initMessage, PdGraph *graph) : TableReceiver(2, 1, 0, 1, graph) {
   name = initMessage->isSymbol(0) ? StaticUtils::copyString(initMessage->getSymbol(0)) : NULL;
+  offset = 0.0f;
 }
 
 DspTableRead4::~DspTableRead4() {
@@ -53,9 +54,9 @@ void DspTableRead4::processMessage(int inletIndex, PdMessage *message) {
       break;
     }
     case 1: {
-      // set onset into table
-      // TODO(mhroth): not exactly sure what this means
-      graph->printErr("tabread~ offset not yet supported.");
+      if (message->isFloat(0)) {
+        offset = message->getFloat(0); // set onset into table
+      }
       break;
     }
     default: {
@@ -79,12 +80,14 @@ void DspTableRead4::processDspToIndex(float blockIndex) {
       //vDSP_vclip(inputBuffer+startSampleIndex, 1, &zero, &bufferLengthFloat,
       //    inputBuffer+startSampleIndex, 1, endSampleIndex-startSampleIndex);
       // NOTE(mhroth): what is the clipping behaviour of vDSP_vlint when indicies are OOB?
+      vDSP_vsadd(inputBuffer+startSampleIndex, 1, &offset, outputBuffer+startSampleIndex, 1,
+          endSampleIndex-startSampleIndex);
       vDSP_vlint(buffer, inputBuffer+startSampleIndex, 1, outputBuffer+startSampleIndex, 1,
           endSampleIndex-startSampleIndex, bufferLength);
       #endif
     } else {
       for (int i = startSampleIndex; i < endSampleIndex; i++) {
-        int x = (int) inputBuffer[i];
+        int x = (int) (inputBuffer[i] + offset);
         if (x <= 0) {
           outputBuffer[i] = buffer[0];
         } else if (x >= bufferLength-1) {

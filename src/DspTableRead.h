@@ -41,6 +41,8 @@ class DspTableRead : public TableReceiver {
   private:
     void processMessage(int inletIndex, PdMessage *message);
     void processDspToIndex(float blockIndex);
+  
+    float offset;
 };
 
 #endif // _DSP_TABLE_READ_H_

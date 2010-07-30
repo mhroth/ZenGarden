@@ -26,6 +26,7 @@
 
 DspTableRead::DspTableRead(PdMessage *initMessage, PdGraph *graph) : TableReceiver(2, 1, 0, 1, graph) {
   name = initMessage->isSymbol(0) ? StaticUtils::copyString(initMessage->getSymbol(0)) : NULL;
+  offset = 0.0f;
 }
 
 DspTableRead::~DspTableRead() {
@@ -53,9 +54,9 @@ void DspTableRead::processMessage(int inletIndex, PdMessage *message) {
       break;
     }
     case 1: {
-      // set onset into table
-      // TODO(mhroth): not exactly sure what this means
-      graph->printErr("tabread~ offset not yet supported.");
+      if (message->isFloat(0)) {
+        offset = message->getFloat(0); // set onset into table
+      }
       break;
     }
     default: {
@@ -75,12 +76,14 @@ void DspTableRead::processDspToIndex(float blockIndex) {
     if (ArrayArithmetic::hasAccelerate) {
       #if __APPLE__
       // NOTE(mhroth): what is the clipping behaviour of vDSP_vindex when the indicies are OOB?
+      vDSP_vsadd(inputBuffer+startSampleIndex, 1, &offset, outputBuffer+startSampleIndex, 1,
+          endSampleIndex-startSampleIndex);
       vDSP_vindex(buffer, inputBuffer+startSampleIndex, 1, outputBuffer+startSampleIndex, 1,
           endSampleIndex-startSampleIndex);
       #endif
     } else {
       for (int i = startSampleIndex; i < endSampleIndex; i++) {
-        int x = (int) inputBuffer[i];
+        int x = (int) (inputBuffer[i] + offset);
         if (x <= 0) {
           outputBuffer[i] = buffer[0];
         } else if (x >= bufferLength-1) {
