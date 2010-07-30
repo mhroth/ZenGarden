@@ -39,7 +39,11 @@ class MessageTable : public MessageObject {
     /** Get a pointer to the table's buffer. */
     float *getBuffer(int *bufferLength);
   
-    /** Resize the table's buffer to the given buffer length. A pointer to the new buffer is returned. */
+    /**
+     * Resize the table's buffer to the given buffer length. A pointer to the new buffer is returned.
+     * If the size of the requested buffer is the same as the current size, then the current
+     * buffer is returned.
+     */
     float *resizeBuffer(int bufferLength);
   
   private:
