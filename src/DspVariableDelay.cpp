@@ -69,9 +69,6 @@ void DspVariableDelay::processDspToIndex(float newBlockIndex) {
     
     float zero = 0.0f;
     float one = 1.0f;
-    // TODO(mhroth): because vDSP_vtabi already does clipping to the buffer bounds, can the following
-    // steps be rearranged or optimised in order to provide the minimum necessary information to the
-    // tablel lookup. Let it do as much work as possible.
     vDSP_vclip(xArray, 1, &zero, &bufferLengthFloat, xArray, 1, blockSizeInt); // clip the delay between 0 and the buffer length
     vDSP_vramp(&targetIndexBase, &one, targetIndexBaseArray, 1, blockSizeInt);  // create targetIndexBaseArray
     vDSP_vsub(xArray, 1, targetIndexBaseArray, 1, xArray, 1, blockSizeInt); // targetIndexBaseArray - xArray (== targetSampleIndex)
@@ -85,7 +82,7 @@ void DspVariableDelay::processDspToIndex(float newBlockIndex) {
     }
     
     // do table lookup (in buffer) using xArray as indicies, with linear interpolation 
-    vDSP_vtabi(xArray, 1, &one, &zero, buffer, bufferLength+1, outputBuffer, 1, blockSizeInt);
+    vDSP_vlint(buffer, xArray, 1, outputBuffer, 1, blockSizeInt, bufferLength);
     #endif
   } else {
     for (int i = 0; i < blockSizeInt; i++, targetIndexBase+=1.0f) {
