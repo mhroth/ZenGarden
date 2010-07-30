@@ -496,7 +496,8 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
       return new MessageClip(initMessage, graph);
     } else if (strcmp(objectLabel, "declare") == 0) {
       return new MessageDeclare(initMessage, graph);
-    } else if (strcmp(objectLabel, "delay") == 0) {
+    } else if (strcmp(objectLabel, "delay") == 0 ||
+               strcmp(objectLabel, "del") == 0) {
       return new MessageDelay(initMessage, graph);
     } else if (strcmp(objectLabel, "exp") == 0) {
       return new MessageExp(initMessage, graph);
