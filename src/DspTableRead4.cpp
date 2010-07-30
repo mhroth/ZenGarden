@@ -46,7 +46,9 @@ void DspTableRead4::processMessage(int inletIndex, PdMessage *message) {
       if (message->isSymbol(0, "set") && message->isSymbol(1)) {
         // change the table from which this object reads
         processDspToIndex(graph->getBlockIndex(message));
-        table = graph->getTable(message->getSymbol(1));
+        free(name);
+        name = StaticUtils::copyString(message->getSymbol(1));
+        table = graph->getTable(name);
       }
       break;
     }
@@ -72,31 +74,28 @@ void DspTableRead4::processDspToIndex(float blockIndex) {
     int endSampleIndex = getEndSampleIndex(blockIndex);
     if (ArrayArithmetic::hasAccelerate) {
       #if __APPLE__
-      float zero = 0.0f;
-      float one = 1.0f;
-      vDSP_vtabi(inputBuffer+startSampleIndex, 1, &one, &zero, buffer, bufferLength,
-          outputBuffer+startSampleIndex, 1, endSampleIndex-startSampleIndex);
+      //float zero = 0.0f;
+      //float bufferLengthFloat = (float) (bufferLength-2);
+      //vDSP_vclip(inputBuffer+startSampleIndex, 1, &zero, &bufferLengthFloat,
+      //    inputBuffer+startSampleIndex, 1, endSampleIndex-startSampleIndex);
+      // NOTE(mhroth): what is the clipping behaviour of vDSP_vlint when indicies are OOB?
+      vDSP_vlint(buffer, inputBuffer+startSampleIndex, 1, outputBuffer+startSampleIndex, 1,
+          endSampleIndex-startSampleIndex, bufferLength);
       #endif
     } else {
-      // TODO(mhroth): this can be optimised, as has been done in DspVariableDelay
-      float bufferLengthFloat = (float) bufferLength;
       for (int i = startSampleIndex; i < endSampleIndex; i++) {
-        if (inputBuffer[i] < 0.0f) {
-          outputBuffer[i] = 0.0f;
-        } else if (inputBuffer[i] > (bufferLengthFloat-1.0f)) {
-          outputBuffer[i] = 0.0f;
+        int x = (int) inputBuffer[i];
+        if (x <= 0) {
+          outputBuffer[i] = buffer[0];
+        } else if (x >= bufferLength-1) {
+          outputBuffer[i] = buffer[bufferLength-1];
         } else {
-          float floorX = floorf(inputBuffer[i]);
-          float ceilX = ceilf(inputBuffer[i]);
-          if (floorX == ceilX) {
-            outputBuffer[i] = buffer[(int) floorX];
-          } else {
-            // 2-point linear interpolation
-            float y0 = buffer[(int) floorX];
-            float y1 = (ceilX >= bufferLengthFloat) ? 0.0f : buffer[(int) ceilX];
-            float slope = (y1 - y0) / (ceilX - floorX);
-            outputBuffer[i] = (slope * (inputBuffer[i] - floorX)) + y0;
-          }
+          // 2-point linear interpolation (basic and fast)
+          float dx = inputBuffer[i] - ((float) x);
+          float y0 = buffer[x];
+          float y1 = buffer[x+1];
+          float slope = (y1 - y0);
+          outputBuffer[i] = (slope * dx) + y0;
         }
       }
     }
