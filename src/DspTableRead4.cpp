@@ -36,6 +36,10 @@ const char *DspTableRead4::getObjectLabel() {
   return "tabread4~";
 }
 
+ObjectType DspTableRead4::getObjectType() {
+  return DSP_TABLE_READ4;
+}
+
 void DspTableRead4::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {

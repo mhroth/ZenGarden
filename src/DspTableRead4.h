@@ -25,7 +25,10 @@
 
 #include "TableReceiver.h"
 
-/** [tabread4~ name] */
+/**
+ * [tabread4~ name]
+ * This is a linear-interpolating table reader.
+ */
 class DspTableRead4 : public TableReceiver {
   
   public:
@@ -33,6 +36,7 @@ class DspTableRead4 : public TableReceiver {
     ~DspTableRead4();
   
     const char *getObjectLabel();
+    ObjectType getObjectType();
   
   private:
     void processMessage(int inletIndex, PdMessage *message);

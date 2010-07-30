@@ -210,6 +210,7 @@ void PdGraph::registerObjectIfRequiresRegistration(MessageObject *messageObject)
       context->registerDspReceive((DspReceive *) messageObject);
       break;
     }
+    case DSP_TABLE_READ4:
     case DSP_TABLE_READ: {
       context->registerTableReceiver((TableReceiver *) messageObject);
       break;
