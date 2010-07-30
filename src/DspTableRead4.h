@@ -20,17 +20,17 @@
  *
  */
 
-#ifndef _DSP_TABLE_READ_H_
-#define _DSP_TABLE_READ_H_
+#ifndef _DSP_TABLE_READ4_H_
+#define _DSP_TABLE_READ4_H_
 
 #include "TableReceiver.h"
 
 /** [tabread4~ name] */
-class DspTableRead : public TableReceiver {
+class DspTableRead4 : public TableReceiver {
   
   public:
-    DspTableRead(PdMessage *initMessage, PdGraph *graph);
-    ~DspTableRead();
+    DspTableRead4(PdMessage *initMessage, PdGraph *graph);
+    ~DspTableRead4();
   
     const char *getObjectLabel();
   
@@ -39,4 +39,4 @@ class DspTableRead : public TableReceiver {
     void processDspToIndex(float blockIndex);
 };
 
-#endif // _DSP_TABLE_READ_H_
+#endif // _DSP_TABLE_READ4_H_

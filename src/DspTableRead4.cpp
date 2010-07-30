@@ -21,22 +21,22 @@
  */
 
 #include "ArrayArithmetic.h"
-#include "DspTableRead.h"
+#include "DspTableRead4.h"
 #include "PdGraph.h"
 
-DspTableRead::DspTableRead(PdMessage *initMessage, PdGraph *graph) : TableReceiver(2, 1, 0, 1, graph) {
+DspTableRead4::DspTableRead4(PdMessage *initMessage, PdGraph *graph) : TableReceiver(2, 1, 0, 1, graph) {
   name = initMessage->isSymbol(0) ? StaticUtils::copyString(initMessage->getSymbol(0)) : NULL;
 }
 
-DspTableRead::~DspTableRead() {
+DspTableRead4::~DspTableRead4() {
   free(name);
 }
 
-const char *DspTableRead::getObjectLabel() {
+const char *DspTableRead4::getObjectLabel() {
   return "tabread4~";
 }
 
-void DspTableRead::processMessage(int inletIndex, PdMessage *message) {
+void DspTableRead4::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
       if (message->isSymbol(0, "set") && message->isSymbol(1)) {
@@ -58,7 +58,7 @@ void DspTableRead::processMessage(int inletIndex, PdMessage *message) {
   }
 }
 
-void DspTableRead::processDspToIndex(float blockIndex) {
+void DspTableRead4::processDspToIndex(float blockIndex) {
   if (table != NULL) { // ensure that there is a table to read from!
     int bufferLength;
     float *buffer = table->getBuffer(&bufferLength);
