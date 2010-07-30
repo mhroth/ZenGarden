@@ -80,7 +80,14 @@ void DspTableRead::processDspToIndex(float blockIndex) {
       #endif
     } else {
       for (int i = startSampleIndex; i < endSampleIndex; i++) {
-        outputBuffer[i] = buffer[(int) inputBuffer[i]];
+        int x = (int) inputBuffer[i];
+        if (x <= 0) {
+          outputBuffer[i] = buffer[0];
+        } else if (x >= bufferLength-1) {
+          outputBuffer[i] = buffer[bufferLength-1];
+        } else {
+          outputBuffer[i] = buffer[x];
+        }
       }
     }
   }
