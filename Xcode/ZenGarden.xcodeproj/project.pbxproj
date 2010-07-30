@@ -42,7 +42,7 @@
 		90337C7711D0D847009FCC01 /* DspSig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B8011D0D847009FCC01 /* DspSig.cpp */; };
 		90337C7811D0D847009FCC01 /* DspSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B8211D0D847009FCC01 /* DspSnapshot.cpp */; };
 		90337C7911D0D847009FCC01 /* DspSubtract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B8411D0D847009FCC01 /* DspSubtract.cpp */; };
-		90337C7B11D0D847009FCC01 /* DspTableRead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B8811D0D847009FCC01 /* DspTableRead.cpp */; };
+		90337C7B11D0D847009FCC01 /* DspTableRead4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B8811D0D847009FCC01 /* DspTableRead4.cpp */; };
 		90337C7C11D0D847009FCC01 /* DspThrow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B8A11D0D847009FCC01 /* DspThrow.cpp */; };
 		90337C7D11D0D847009FCC01 /* DspVariableDelay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B8C11D0D847009FCC01 /* DspVariableDelay.cpp */; };
 		90337C7F11D0D847009FCC01 /* DspWrap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B9011D0D847009FCC01 /* DspWrap.cpp */; };
@@ -188,8 +188,8 @@
 		90337D1811D0D847009FCC01 /* DspSnapshot.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337B8311D0D847009FCC01 /* DspSnapshot.h */; };
 		90337D1911D0D847009FCC01 /* DspSubtract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B8411D0D847009FCC01 /* DspSubtract.cpp */; };
 		90337D1A11D0D847009FCC01 /* DspSubtract.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337B8511D0D847009FCC01 /* DspSubtract.h */; };
-		90337D1D11D0D847009FCC01 /* DspTableRead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B8811D0D847009FCC01 /* DspTableRead.cpp */; };
-		90337D1E11D0D847009FCC01 /* DspTableRead.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337B8911D0D847009FCC01 /* DspTableRead.h */; };
+		90337D1D11D0D847009FCC01 /* DspTableRead4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B8811D0D847009FCC01 /* DspTableRead4.cpp */; };
+		90337D1E11D0D847009FCC01 /* DspTableRead4.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337B8911D0D847009FCC01 /* DspTableRead4.h */; };
 		90337D1F11D0D847009FCC01 /* DspThrow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B8A11D0D847009FCC01 /* DspThrow.cpp */; };
 		90337D2011D0D847009FCC01 /* DspThrow.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337B8B11D0D847009FCC01 /* DspThrow.h */; };
 		90337D2111D0D847009FCC01 /* DspVariableDelay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B8C11D0D847009FCC01 /* DspVariableDelay.cpp */; };
@@ -425,8 +425,8 @@
 		90337E1C11D0D847009FCC01 /* DspSnapshot.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337B8311D0D847009FCC01 /* DspSnapshot.h */; };
 		90337E1D11D0D847009FCC01 /* DspSubtract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B8411D0D847009FCC01 /* DspSubtract.cpp */; };
 		90337E1E11D0D847009FCC01 /* DspSubtract.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337B8511D0D847009FCC01 /* DspSubtract.h */; };
-		90337E2111D0D847009FCC01 /* DspTableRead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B8811D0D847009FCC01 /* DspTableRead.cpp */; };
-		90337E2211D0D847009FCC01 /* DspTableRead.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337B8911D0D847009FCC01 /* DspTableRead.h */; };
+		90337E2111D0D847009FCC01 /* DspTableRead4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B8811D0D847009FCC01 /* DspTableRead4.cpp */; };
+		90337E2211D0D847009FCC01 /* DspTableRead4.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337B8911D0D847009FCC01 /* DspTableRead4.h */; };
 		90337E2311D0D847009FCC01 /* DspThrow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B8A11D0D847009FCC01 /* DspThrow.cpp */; };
 		90337E2411D0D847009FCC01 /* DspThrow.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337B8B11D0D847009FCC01 /* DspThrow.h */; };
 		90337E2511D0D847009FCC01 /* DspVariableDelay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B8C11D0D847009FCC01 /* DspVariableDelay.cpp */; };
@@ -602,6 +602,11 @@
 		90337EE311D0D847009FCC01 /* ZGCallbackFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C5A11D0D847009FCC01 /* ZGCallbackFunction.h */; };
 		90337EE411D0D847009FCC01 /* ZGLinkedList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C5B11D0D847009FCC01 /* ZGLinkedList.cpp */; };
 		90337EE511D0D847009FCC01 /* ZGLinkedList.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C5C11D0D847009FCC01 /* ZGLinkedList.h */; };
+		9038F48C12035DCC006AB117 /* DspTableRead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9038F48B12035DCC006AB117 /* DspTableRead.cpp */; };
+		9038F48D12035DCC006AB117 /* DspTableRead.h in Headers */ = {isa = PBXBuildFile; fileRef = 9038F48A12035DCC006AB117 /* DspTableRead.h */; };
+		9038F48E12035DCC006AB117 /* DspTableRead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9038F48B12035DCC006AB117 /* DspTableRead.cpp */; };
+		9038F48F12035DCC006AB117 /* DspTableRead.h in Headers */ = {isa = PBXBuildFile; fileRef = 9038F48A12035DCC006AB117 /* DspTableRead.h */; };
+		9038F49012035DCC006AB117 /* DspTableRead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9038F48B12035DCC006AB117 /* DspTableRead.cpp */; };
 		9069DFD211D17BD600889A5B /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9069DFD111D17BD600889A5B /* Accelerate.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		9069DFD311D17BF100889A5B /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9069DFD111D17BD600889A5B /* Accelerate.framework */; };
 		90AF7F7511FE67BE006F88E6 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9069DFD111D17BD600889A5B /* Accelerate.framework */; };
@@ -704,8 +709,8 @@
 		90337B8311D0D847009FCC01 /* DspSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspSnapshot.h; path = ../src/DspSnapshot.h; sourceTree = SOURCE_ROOT; };
 		90337B8411D0D847009FCC01 /* DspSubtract.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspSubtract.cpp; path = ../src/DspSubtract.cpp; sourceTree = SOURCE_ROOT; };
 		90337B8511D0D847009FCC01 /* DspSubtract.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspSubtract.h; path = ../src/DspSubtract.h; sourceTree = SOURCE_ROOT; };
-		90337B8811D0D847009FCC01 /* DspTableRead.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspTableRead.cpp; path = ../src/DspTableRead.cpp; sourceTree = SOURCE_ROOT; };
-		90337B8911D0D847009FCC01 /* DspTableRead.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspTableRead.h; path = ../src/DspTableRead.h; sourceTree = SOURCE_ROOT; };
+		90337B8811D0D847009FCC01 /* DspTableRead4.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspTableRead4.cpp; path = ../src/DspTableRead4.cpp; sourceTree = SOURCE_ROOT; };
+		90337B8911D0D847009FCC01 /* DspTableRead4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspTableRead4.h; path = ../src/DspTableRead4.h; sourceTree = SOURCE_ROOT; };
 		90337B8A11D0D847009FCC01 /* DspThrow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspThrow.cpp; path = ../src/DspThrow.cpp; sourceTree = SOURCE_ROOT; };
 		90337B8B11D0D847009FCC01 /* DspThrow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspThrow.h; path = ../src/DspThrow.h; sourceTree = SOURCE_ROOT; };
 		90337B8C11D0D847009FCC01 /* DspVariableDelay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspVariableDelay.cpp; path = ../src/DspVariableDelay.cpp; sourceTree = SOURCE_ROOT; };
@@ -881,6 +886,8 @@
 		90337C5A11D0D847009FCC01 /* ZGCallbackFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZGCallbackFunction.h; path = ../src/ZGCallbackFunction.h; sourceTree = SOURCE_ROOT; };
 		90337C5B11D0D847009FCC01 /* ZGLinkedList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ZGLinkedList.cpp; path = ../src/ZGLinkedList.cpp; sourceTree = SOURCE_ROOT; };
 		90337C5C11D0D847009FCC01 /* ZGLinkedList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZGLinkedList.h; path = ../src/ZGLinkedList.h; sourceTree = SOURCE_ROOT; };
+		9038F48A12035DCC006AB117 /* DspTableRead.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspTableRead.h; path = ../src/DspTableRead.h; sourceTree = SOURCE_ROOT; };
+		9038F48B12035DCC006AB117 /* DspTableRead.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspTableRead.cpp; path = ../src/DspTableRead.cpp; sourceTree = SOURCE_ROOT; };
 		9069DFD111D17BD600889A5B /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		90B1873211FDB167009B45AB /* DspMinimum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspMinimum.h; path = ../src/DspMinimum.h; sourceTree = SOURCE_ROOT; };
 		90B1873311FDB167009B45AB /* DspMinimum.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspMinimum.cpp; path = ../src/DspMinimum.cpp; sourceTree = SOURCE_ROOT; };
@@ -999,8 +1006,10 @@
 				90337B8511D0D847009FCC01 /* DspSubtract.h */,
 				9017567311DFDD4B00A22517 /* DspTablePlay.cpp */,
 				9017567411DFDD4B00A22517 /* DspTablePlay.h */,
-				90337B8811D0D847009FCC01 /* DspTableRead.cpp */,
-				90337B8911D0D847009FCC01 /* DspTableRead.h */,
+				9038F48B12035DCC006AB117 /* DspTableRead.cpp */,
+				9038F48A12035DCC006AB117 /* DspTableRead.h */,
+				90337B8811D0D847009FCC01 /* DspTableRead4.cpp */,
+				90337B8911D0D847009FCC01 /* DspTableRead4.h */,
 				90337B8A11D0D847009FCC01 /* DspThrow.cpp */,
 				90337B8B11D0D847009FCC01 /* DspThrow.h */,
 				90337B8C11D0D847009FCC01 /* DspVariableDelay.cpp */,
@@ -1242,7 +1251,7 @@
 				90337D1611D0D847009FCC01 /* DspSig.h in Headers */,
 				90337D1811D0D847009FCC01 /* DspSnapshot.h in Headers */,
 				90337D1A11D0D847009FCC01 /* DspSubtract.h in Headers */,
-				90337D1E11D0D847009FCC01 /* DspTableRead.h in Headers */,
+				90337D1E11D0D847009FCC01 /* DspTableRead4.h in Headers */,
 				90337D2011D0D847009FCC01 /* DspThrow.h in Headers */,
 				90337D2211D0D847009FCC01 /* DspVariableDelay.h in Headers */,
 				90337D2611D0D847009FCC01 /* DspWrap.h in Headers */,
@@ -1339,6 +1348,7 @@
 				90B1873511FDB167009B45AB /* DspMinimum.h in Headers */,
 				90BB31CC11FE3F62008A0628 /* ObjectType.h in Headers */,
 				90BB31CE11FE3F62008A0628 /* PdContext.h in Headers */,
+				9038F48D12035DCC006AB117 /* DspTableRead.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1378,7 +1388,7 @@
 				90337E1A11D0D847009FCC01 /* DspSig.h in Headers */,
 				90337E1C11D0D847009FCC01 /* DspSnapshot.h in Headers */,
 				90337E1E11D0D847009FCC01 /* DspSubtract.h in Headers */,
-				90337E2211D0D847009FCC01 /* DspTableRead.h in Headers */,
+				90337E2211D0D847009FCC01 /* DspTableRead4.h in Headers */,
 				90337E2411D0D847009FCC01 /* DspThrow.h in Headers */,
 				90337E2611D0D847009FCC01 /* DspVariableDelay.h in Headers */,
 				90337E2A11D0D847009FCC01 /* DspWrap.h in Headers */,
@@ -1475,6 +1485,7 @@
 				90B1873711FDB167009B45AB /* DspMinimum.h in Headers */,
 				90BB31CF11FE3F62008A0628 /* ObjectType.h in Headers */,
 				90BB31D111FE3F62008A0628 /* PdContext.h in Headers */,
+				9038F48F12035DCC006AB117 /* DspTableRead.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1586,7 +1597,7 @@
 				90337C7711D0D847009FCC01 /* DspSig.cpp in Sources */,
 				90337C7811D0D847009FCC01 /* DspSnapshot.cpp in Sources */,
 				90337C7911D0D847009FCC01 /* DspSubtract.cpp in Sources */,
-				90337C7B11D0D847009FCC01 /* DspTableRead.cpp in Sources */,
+				90337C7B11D0D847009FCC01 /* DspTableRead4.cpp in Sources */,
 				90337C7C11D0D847009FCC01 /* DspThrow.cpp in Sources */,
 				90337C7D11D0D847009FCC01 /* DspVariableDelay.cpp in Sources */,
 				90337C7F11D0D847009FCC01 /* DspWrap.cpp in Sources */,
@@ -1675,6 +1686,7 @@
 				9017567511DFDD4B00A22517 /* DspTablePlay.cpp in Sources */,
 				90B1873411FDB167009B45AB /* DspMinimum.cpp in Sources */,
 				90BB31CB11FE3F62008A0628 /* PdContext.cpp in Sources */,
+				9038F48C12035DCC006AB117 /* DspTableRead.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1711,7 +1723,7 @@
 				90337D1511D0D847009FCC01 /* DspSig.cpp in Sources */,
 				90337D1711D0D847009FCC01 /* DspSnapshot.cpp in Sources */,
 				90337D1911D0D847009FCC01 /* DspSubtract.cpp in Sources */,
-				90337D1D11D0D847009FCC01 /* DspTableRead.cpp in Sources */,
+				90337D1D11D0D847009FCC01 /* DspTableRead4.cpp in Sources */,
 				90337D1F11D0D847009FCC01 /* DspThrow.cpp in Sources */,
 				90337D2111D0D847009FCC01 /* DspVariableDelay.cpp in Sources */,
 				90337D2511D0D847009FCC01 /* DspWrap.cpp in Sources */,
@@ -1799,6 +1811,7 @@
 				9017567611DFDD4B00A22517 /* DspTablePlay.cpp in Sources */,
 				90B1873611FDB167009B45AB /* DspMinimum.cpp in Sources */,
 				90BB31CD11FE3F62008A0628 /* PdContext.cpp in Sources */,
+				9038F48E12035DCC006AB117 /* DspTableRead.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1835,7 +1848,7 @@
 				90337E1911D0D847009FCC01 /* DspSig.cpp in Sources */,
 				90337E1B11D0D847009FCC01 /* DspSnapshot.cpp in Sources */,
 				90337E1D11D0D847009FCC01 /* DspSubtract.cpp in Sources */,
-				90337E2111D0D847009FCC01 /* DspTableRead.cpp in Sources */,
+				90337E2111D0D847009FCC01 /* DspTableRead4.cpp in Sources */,
 				90337E2311D0D847009FCC01 /* DspThrow.cpp in Sources */,
 				90337E2511D0D847009FCC01 /* DspVariableDelay.cpp in Sources */,
 				90337E2911D0D847009FCC01 /* DspWrap.cpp in Sources */,
@@ -1924,6 +1937,7 @@
 				9017567811DFDD4B00A22517 /* DspTablePlay.cpp in Sources */,
 				90B1873811FDB167009B45AB /* DspMinimum.cpp in Sources */,
 				90BB31D011FE3F62008A0628 /* PdContext.cpp in Sources */,
+				9038F49012035DCC006AB117 /* DspTableRead.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

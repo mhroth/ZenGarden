@@ -114,6 +114,7 @@
 #include "DspSig.h"
 #include "DspSnapshot.h"
 #include "DspSubtract.h"
+#include "DspTableRead.h"
 #include "DspTableRead4.h"
 #include "DspThrow.h"
 #include "DspVariableDelay.h"
@@ -655,6 +656,8 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
       return new DspSnapshot(initMessage, graph);
     } else if (strcmp(objectLabel, "switch~") == 0) {
       return new MessageSwitch(initMessage, graph);
+    } else if (strcmp(objectLabel, "tabread~") == 0) {
+      return new DspTableRead(initMessage, graph);
     } else if (strcmp(objectLabel, "tabread4~") == 0) {
       return new DspTableRead4(initMessage, graph);
     } else if (strcmp(objectLabel, "throw~") == 0) {

@@ -20,36 +20,27 @@
  *
  */
 
-#ifndef _OBJECT_TYPE_H_
-#define _OBJECT_TYPE_H_
+#ifndef _DSP_TABLE_READ_H_
+#define _DSP_TABLE_READ_H_
 
-/** An enumeration all supported objects. */
-enum ObjectType {
-  DSP_ADC,
-  DSP_ADD,
-  DSP_BANDPASS_FILTER,
-  DSP_CATCH,
-  DSP_CLIP,
-  DSP_COSINE,
-  DSP_DAC,
-  DSP_DELAY_READ,
-  DSP_DELAY_WRITE,
-  DSP_INLET,
-  DSP_OUTLET,
-  DSP_RECEIVE,
-  DSP_SEND,
-  DSP_TABLE_READ,
-  DSP_TABLE_READ4,
-  DSP_THROW,
-  DSP_VARIABLE_DELAY,
-  MESSAGE_INLET,
-  MESSAGE_NOTEIN,
-  MESSAGE_OUTLET,
-  MESSAGE_RECEIVE,
-  MESSAGE_SEND,
-  MESSAGE_TABLE,
-  OBJECT_PD,
-  OBJECT_UNKNOWN // unknown or unimportant
+#include "TableReceiver.h"
+
+/**
+ * [tabread~ name]
+ * This is a non-interpolating table reader.
+ */
+class DspTableRead : public TableReceiver {
+  
+  public:
+    DspTableRead(PdMessage *initMessage, PdGraph *graph);
+    ~DspTableRead();
+    
+    const char *getObjectLabel();
+    ObjectType getObjectType();
+    
+  private:
+    void processMessage(int inletIndex, PdMessage *message);
+    void processDspToIndex(float blockIndex);
 };
 
-#endif // _OBJECT_TYPE_H_
+#endif // _DSP_TABLE_READ_H_
