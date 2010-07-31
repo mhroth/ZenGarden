@@ -75,9 +75,17 @@ void DspTableRead::processDspToIndex(float blockIndex) {
     int endSampleIndex = getEndSampleIndex(blockIndex);
     if (ArrayArithmetic::hasAccelerate) {
       #if __APPLE__
-      // NOTE(mhroth): what is the clipping behaviour of vDSP_vindex when the indicies are OOB?
+      // add the offset
       vDSP_vsadd(inputBuffer+startSampleIndex, 1, &offset, outputBuffer+startSampleIndex, 1,
           endSampleIndex-startSampleIndex);
+      
+      // clip to the bounds of the table
+      float lowThresh = 0;
+      float highThresh = (float) (bufferLength-1);
+      vDSP_vclip(inputBuffer+startSampleIndex, 1, &lowThresh, &highThresh,
+          outputBuffer+startSampleIndex, 1, endSampleIndex-startSampleIndex);
+      
+      // select the indicies
       vDSP_vindex(buffer, inputBuffer+startSampleIndex, 1, outputBuffer+startSampleIndex, 1,
           endSampleIndex-startSampleIndex);
       #endif
