@@ -56,6 +56,7 @@
 #include "MessageMultiply.h"
 #include "MessageNotEquals.h"
 #include "MessageNotein.h"
+#include "MessageOpenPanel.h"
 #include "MessageOutlet.h"
 #include "MessagePack.h"
 #include "MessagePipe.h"
@@ -555,6 +556,8 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
       return new MessagePipe(initMessage, graph);
     } else if (strcmp(objectLabel, "print") == 0) {
       return new MessagePrint(initMessage, graph);
+    } else if (strcmp(objectLabel, "openpanel") == 0) {
+      return new MessageOpenPanel(initMessage, graph);
     } else if (strcmp(objectLabel, "outlet") == 0) {
       return new MessageOutlet(graph);
     } else if (strcmp(objectLabel, "random") == 0) {

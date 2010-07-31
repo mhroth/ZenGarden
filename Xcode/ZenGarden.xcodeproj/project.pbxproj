@@ -13,6 +13,11 @@
 		9017567711DFDD4B00A22517 /* DspTablePlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 9017567411DFDD4B00A22517 /* DspTablePlay.h */; };
 		9017567811DFDD4B00A22517 /* DspTablePlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9017567311DFDD4B00A22517 /* DspTablePlay.cpp */; };
 		9017567911DFDD4B00A22517 /* DspTablePlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 9017567411DFDD4B00A22517 /* DspTablePlay.h */; };
+		90251D3A12042F38000EAF40 /* MessageOpenPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90251D3912042F38000EAF40 /* MessageOpenPanel.cpp */; };
+		90251D3B12042F38000EAF40 /* MessageOpenPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 90251D3812042F38000EAF40 /* MessageOpenPanel.h */; };
+		90251D3C12042F38000EAF40 /* MessageOpenPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90251D3912042F38000EAF40 /* MessageOpenPanel.cpp */; };
+		90251D3D12042F38000EAF40 /* MessageOpenPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 90251D3812042F38000EAF40 /* MessageOpenPanel.h */; };
+		90251D3E12042F38000EAF40 /* MessageOpenPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90251D3912042F38000EAF40 /* MessageOpenPanel.cpp */; };
 		90337C5D11D0D847009FCC01 /* ArrayArithmetic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B4911D0D847009FCC01 /* ArrayArithmetic.cpp */; };
 		90337C5E11D0D847009FCC01 /* DelayReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B4C11D0D847009FCC01 /* DelayReceiver.cpp */; };
 		90337C5F11D0D847009FCC01 /* DspAdc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B4E11D0D847009FCC01 /* DspAdc.cpp */; };
@@ -646,6 +651,8 @@
 		8DD76F6C0486A84900D96B5E /* ZenGarden */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ZenGarden; sourceTree = BUILT_PRODUCTS_DIR; };
 		9017567311DFDD4B00A22517 /* DspTablePlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspTablePlay.cpp; path = ../src/DspTablePlay.cpp; sourceTree = SOURCE_ROOT; };
 		9017567411DFDD4B00A22517 /* DspTablePlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspTablePlay.h; path = ../src/DspTablePlay.h; sourceTree = SOURCE_ROOT; };
+		90251D3812042F38000EAF40 /* MessageOpenPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageOpenPanel.h; path = ../src/MessageOpenPanel.h; sourceTree = SOURCE_ROOT; };
+		90251D3912042F38000EAF40 /* MessageOpenPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageOpenPanel.cpp; path = ../src/MessageOpenPanel.cpp; sourceTree = SOURCE_ROOT; };
 		9033711811D0CF07009FCC01 /* libzengarden.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libzengarden.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		9033712011D0CF2B009FCC01 /* libzengarden.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libzengarden.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		90337B4911D0D847009FCC01 /* ArrayArithmetic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ArrayArithmetic.cpp; path = ../src/ArrayArithmetic.cpp; sourceTree = SOURCE_ROOT; };
@@ -1103,6 +1110,8 @@
 				90337BFD11D0D847009FCC01 /* MessageNotEquals.h */,
 				90337BFE11D0D847009FCC01 /* MessageObject.cpp */,
 				90337BFF11D0D847009FCC01 /* MessageObject.h */,
+				90251D3912042F38000EAF40 /* MessageOpenPanel.cpp */,
+				90251D3812042F38000EAF40 /* MessageOpenPanel.h */,
 				90337C0011D0D847009FCC01 /* MessageOutlet.cpp */,
 				90337C0111D0D847009FCC01 /* MessageOutlet.h */,
 				90337C0211D0D847009FCC01 /* MessagePack.cpp */,
@@ -1349,6 +1358,7 @@
 				90BB31CC11FE3F62008A0628 /* ObjectType.h in Headers */,
 				90BB31CE11FE3F62008A0628 /* PdContext.h in Headers */,
 				9038F48D12035DCC006AB117 /* DspTableRead.h in Headers */,
+				90251D3D12042F38000EAF40 /* MessageOpenPanel.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1486,6 +1496,7 @@
 				90BB31CF11FE3F62008A0628 /* ObjectType.h in Headers */,
 				90BB31D111FE3F62008A0628 /* PdContext.h in Headers */,
 				9038F48F12035DCC006AB117 /* DspTableRead.h in Headers */,
+				90251D3B12042F38000EAF40 /* MessageOpenPanel.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1687,6 +1698,7 @@
 				90B1873411FDB167009B45AB /* DspMinimum.cpp in Sources */,
 				90BB31CB11FE3F62008A0628 /* PdContext.cpp in Sources */,
 				9038F48C12035DCC006AB117 /* DspTableRead.cpp in Sources */,
+				90251D3A12042F38000EAF40 /* MessageOpenPanel.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1812,6 +1824,7 @@
 				90B1873611FDB167009B45AB /* DspMinimum.cpp in Sources */,
 				90BB31CD11FE3F62008A0628 /* PdContext.cpp in Sources */,
 				9038F48E12035DCC006AB117 /* DspTableRead.cpp in Sources */,
+				90251D3E12042F38000EAF40 /* MessageOpenPanel.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1938,6 +1951,7 @@
 				90B1873811FDB167009B45AB /* DspMinimum.cpp in Sources */,
 				90BB31D011FE3F62008A0628 /* PdContext.cpp in Sources */,
 				9038F49012035DCC006AB117 /* DspTableRead.cpp in Sources */,
+				90251D3C12042F38000EAF40 /* MessageOpenPanel.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
