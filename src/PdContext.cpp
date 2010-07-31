@@ -413,16 +413,13 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
         // set environment for loading patch
         char *objectInitString = strtok(NULL, ";"); // get the arguments to declare
         PdMessage *initMessage = new PdMessage(objectInitString); // parse them
-        if (initMessage->isSymbol(0)) {
-          if (strcmp(initMessage->getSymbol(0), "-path") == 0 ||
-              strcmp(initMessage->getSymbol(0), "-stdpath") == 0) {
-            if (initMessage->isSymbol(1)) {
-              // add symbol to declare directories
-              declareList->add(StaticUtils::copyString(initMessage->getSymbol(1)));
-            }
-          } else {
-            printErr("declare \"%s\" flag is not supported.", initMessage->getSymbol(0));
+        if (initMessage->isSymbol(0, "-path")) {
+          if (initMessage->isSymbol(1)) {
+            // add symbol to declare directories
+            declareList->add(StaticUtils::copyString(initMessage->getSymbol(1)));
           }
+        } else {
+          printErr("declare \"%s\" flag is not supported.", initMessage->getSymbol(0));
         }
         delete initMessage;
       } else {
@@ -548,6 +545,9 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
       return new MessageMoses(initMessage, graph);
     } else if (strcmp(objectLabel, "mod") == 0) {
       return new MessageModulus(initMessage, graph);
+    } else if (strcmp(objectLabel, "nbx") == 0) {
+      // gui number boxes are represented as float objects
+      return new MessageFloat(initMessage, graph);
     } else if (strcmp(objectLabel, "notein") == 0) {
       return new MessageNotein(initMessage, graph);
     } else if (strcmp(objectLabel, "pack") == 0) {
