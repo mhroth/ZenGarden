@@ -112,7 +112,7 @@
 #include "DspPhasor.h"
 #include "DspReceive.h"
 #include "DspSend.h"
-#include "DspSig.h"
+#include "DspSignal.h"
 #include "DspSnapshot.h"
 #include "DspSubtract.h"
 #include "DspTableRead.h"

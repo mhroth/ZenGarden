@@ -21,7 +21,7 @@
  */
 
 #include "ArrayArithmetic.h"
-#include "DspSig.h"
+#include "DspSignal.h"
 #include "PdGraph.h"
 
 DspSignal::DspSignal(PdMessage *initMessage, PdGraph *graph) : DspObject(1, 0, 0, 1, graph) {
