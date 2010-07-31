@@ -422,6 +422,31 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
           printErr("declare \"%s\" flag is not supported.", initMessage->getSymbol(0));
         }
         delete initMessage;
+      } else if (strcmp(objectType, "array") == 0) {
+        // creates a new table
+        // objectInitString should contain both name and buffer length
+        char *objectInitString = strtok(NULL, ";"); // get the object initialisation string
+        PdMessage *initMessage = new PdMessage(objectInitString, graph->getArguments());
+        MessageTable *table = new MessageTable(initMessage, graph);
+        int bufferLength = 0;
+        float *buffer = table->getBuffer(&bufferLength);
+        delete initMessage;
+        graph->addObject(table);
+        
+        // next many lines should be elements of that array
+        // while the next line begins with #A
+        while (strcmp(strtok(line = fileParser->nextMessage(), " ;"), "#A") == 0) {
+          int index = atoi(strtok(NULL, " ;"));
+          char *nextNumber = NULL;
+          while ((nextNumber = strtok(NULL, " ;")) != NULL) {
+            if (index >= bufferLength) {
+              break; // ensure that file does not attempt to write more than stated numbers
+            } else {
+              buffer[index++] = atof(nextNumber);
+            }
+          }
+        }
+        // ignore the #X coords line
       } else {
         printErr("Unrecognised #X object type on line: \"%s\"", line);
       }
