@@ -33,6 +33,7 @@ class MessageTable : public MessageObject {
     ~MessageTable();
   
     const char *getObjectLabel();
+    ObjectType getObjectType();
   
     char *getName();
   

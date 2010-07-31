@@ -46,6 +46,10 @@ const char *MessageTable::getObjectLabel() {
   return "table";
 }
 
+ObjectType MessageTable::getObjectType() {
+  return MESSAGE_TABLE;
+}
+
 char *MessageTable::getName() {
   return name;
 }
