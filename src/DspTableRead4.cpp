@@ -79,19 +79,21 @@ void DspTableRead4::processDspToIndex(float blockIndex) {
       //float bufferLengthFloat = (float) (bufferLength-2);
       //vDSP_vclip(inputBuffer+startSampleIndex, 1, &zero, &bufferLengthFloat,
       //    inputBuffer+startSampleIndex, 1, endSampleIndex-startSampleIndex);
-      // NOTE(mhroth): what is the clipping behaviour of vDSP_vlint when indicies are OOB?
+      // NOTE(mhroth): is isn't clear what the clipping behaviour of vDSP_vlint is, but I
+      // *think* that it is doing the right thing (i.e., clipping OOB indicies)
       vDSP_vsadd(inputBuffer+startSampleIndex, 1, &offset, outputBuffer+startSampleIndex, 1,
           endSampleIndex-startSampleIndex);
       vDSP_vlint(buffer, inputBuffer+startSampleIndex, 1, outputBuffer+startSampleIndex, 1,
           endSampleIndex-startSampleIndex, bufferLength);
       #endif
     } else {
+      int maxIndex = bufferLength-1;
       for (int i = startSampleIndex; i < endSampleIndex; i++) {
         int x = (int) (inputBuffer[i] + offset);
         if (x <= 0) {
           outputBuffer[i] = buffer[0];
-        } else if (x >= bufferLength-1) {
-          outputBuffer[i] = buffer[bufferLength-1];
+        } else if (x >= maxIndex) {
+          outputBuffer[i] = buffer[maxIndex];
         } else {
           // 2-point linear interpolation (basic and fast)
           float dx = inputBuffer[i] - ((float) x);
