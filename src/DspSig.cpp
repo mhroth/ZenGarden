@@ -20,6 +20,7 @@
  *
  */
 
+#include "ArrayArithmetic.h"
 #include "DspSig.h"
 #include "PdGraph.h"
 
@@ -44,9 +45,16 @@ void DspSignal::processMessage(int inletIndex, PdMessage *message) {
 
 void DspSignal::processDspToIndex(float blockIndex) {
   float *outputBuffer = localDspBufferAtOutlet[0];
+  int startSampleIndex = getStartSampleIndex();
   int endSampleIndex = getEndSampleIndex(blockIndex);
-  for (int i = getStartSampleIndex(); i < endSampleIndex; i++) {
-    outputBuffer[i] = constant;
+  if (ArrayArithmetic::hasAccelerate) {
+    #if __APPLE__
+    vDSP_vfill(&constant, outputBuffer+startSampleIndex, 1, endSampleIndex-startSampleIndex);
+    #endif
+  } else {
+    for (int i = getStartSampleIndex(); i < endSampleIndex; i++) {
+      outputBuffer[i] = constant;
+    }
   }
   blockIndexOfLastMessage = blockIndex;
 }
