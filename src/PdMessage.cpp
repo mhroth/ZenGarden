@@ -96,8 +96,10 @@ void PdMessage::initWithString(char *initString) {
 
 PdMessage::~PdMessage() {
   // delete the element list
-  for (int i = 0; i < elementList->size(); i++) {
-    delete (MessageElement *) elementList->get(i);
+  MessageElement *messageElement = NULL;
+  int i = 0;
+  while ((messageElement = (MessageElement *) elementList->getFromBackingArray(i++)) != NULL) {
+    delete messageElement;
   }
   delete elementList;
   
@@ -221,9 +223,8 @@ double PdMessage::getTimestamp() {
   return timestamp;
 }
 
-bool PdMessage::isReserved() {
-  return (reservedList->size() > 0);
-}
+#pragma mark -
+#pragma mark isElement
 
 bool PdMessage::isFloat(int index) {
   if (index >= 0 && index < elementList->size()) {
@@ -270,6 +271,9 @@ MessageElementType PdMessage::getType(int index) {
   }
 }
 
+#pragma mark -
+#pragma mark get/setElement
+
 float PdMessage::getFloat(int index) {
   return getElement(index)->getFloat();
 }
@@ -286,14 +290,23 @@ void PdMessage::setSymbol(int index, char *symbol) {
   getElement(index)->setSymbol(symbol);
 }
 
+#pragma mark -
+#pragma mark reserve/unreserve
+
 void PdMessage::reserve(MessageObject *messageObject) {
-  void **data = reservedList->add();
-  *data = messageObject;
+  reservedList->add(messageObject);
 }
 
 void PdMessage::unreserve(MessageObject *messageObject) {
   reservedList->remove(messageObject);
 }
+
+bool PdMessage::isReserved() {
+  return (reservedList->size() > 0);
+}
+
+#pragma mark -
+#pragma mark copy/clear
 
 PdMessage *PdMessage::copy() {
   PdMessage *messageCopy = new PdMessage();
@@ -303,23 +316,14 @@ PdMessage *PdMessage::copy() {
   }
   return messageCopy;
 }
-/*
+
 void PdMessage::clear() {
-  for (int i = 0; i < elementList->size(); i++) {
-    delete (MessageElement *) elementList->get(i);
-  }
   elementList->clear();
-  timestamp = 0.0;
 }
 
-void PdMessage::clearAndCopyFrom(PdMessage *message, int startIndex) {
-  clear();
-  for (int i = startIndex; i < message->getNumElements(); i++) {
-    addElement(message->getElement(i)->copy());
-  }
-  timestamp = message->getTimestamp();
-}
-*/
+#pragma mark -
+#pragma mark toString
+
 char *PdMessage::toString() {
   // http://stackoverflow.com/questions/295013/using-sprintf-without-a-manually-allocated-buffer
   int listlen = elementList->size();
@@ -383,4 +387,40 @@ char *PdMessage::toString() {
     pos += lengths[i];
   }
   return finalString;
+}
+
+#pragma mark -
+#pragma mark addElement
+
+void PdMessage::addElement(float f) {
+  int numElements = elementList->size();
+  MessageElement *messageElement = (MessageElement *) elementList->getFromBackingArray(numElements);
+  if (messageElement == NULL) {
+    messageElement = new MessageElement(f);
+  } else {
+    messageElement->setFloat(f);
+  }
+  elementList->add(messageElement);
+}
+
+void PdMessage::addElement(char *symbol) {
+  int numElements = elementList->size();
+  MessageElement *messageElement = (MessageElement *) elementList->getFromBackingArray(numElements);
+  if (messageElement == NULL) {
+    messageElement = new MessageElement(symbol);
+  } else {
+    messageElement->setSymbol(symbol);
+  }
+  elementList->add(messageElement);
+}
+
+void PdMessage::addElement() {
+  int numElements = elementList->size();
+  MessageElement *messageElement = (MessageElement *) elementList->getFromBackingArray(numElements);
+  if (messageElement == NULL) {
+    messageElement = new MessageElement();
+  } else {
+    messageElement->setBang();
+  }
+  elementList->add(messageElement);
 }

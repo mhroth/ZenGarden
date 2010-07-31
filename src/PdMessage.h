@@ -87,16 +87,11 @@ class PdMessage {
     void reserve(MessageObject *messageObject);
     void unreserve(MessageObject *messageObject);
   
-    //void clear();
-  
-    /**
-     * Replaces the contents of <code>this</code> message with that of the given one, starting
-     * with the <code>MessageElement<code> at <code>startIndex</code>.
-     */
-    //void clearAndCopyFrom(PdMessage *message, int startIndex);
-  
     /** Returns a copy of the message. */
     PdMessage *copy();
+  
+    /** The message is cleared of all MessageElements. Its length is 0. */
+    void clear();
     
     /**
      * Create a string representation of the message. Suitable for use by the print object.
@@ -128,6 +123,10 @@ class PdMessage {
      */
     void setFloat(int index, float value);
     void setSymbol(int index, char *symbol);
+  
+    void addElement(float f);
+    void addElement(char *symbol);
+    void addElement(); // bang
 
   private:
     /**

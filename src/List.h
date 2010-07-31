@@ -49,7 +49,13 @@ class List {
     void *toArray();
   
     /** Returns the indexed element in the list. */
-    inline void *get(int index) { return arrayList[index]; }
+    void *get(int index);
+  
+    /**
+     * Returns the index element from the backing array, regardless of how many elements there
+     * are in the list.
+     */
+    void *getFromBackingArray(int index);
   
     void *remove(int index);
   
@@ -62,12 +68,7 @@ class List {
      * Resets the number of elements to zero.
      */
     void clear();
-  
-    /**
-     * The list is returned to the same state as if it had just been created.
-     */
-    void revertToNewState();
-  
+
   private:
     void growArrayList();
   

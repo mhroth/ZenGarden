@@ -44,6 +44,7 @@
 #include "MessageLessThan.h"
 #include "MessageLessThanOrEqualTo.h"
 #include "MessageListLength.h"
+#include "MessageListSplit.h"
 #include "MessageLoadbang.h"
 #include "MessageLog.h"
 #include "MessageMaximum.h"
@@ -547,7 +548,7 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
         } else if (strcmp(qualifier, "prepend") == 0) {
           // TODO(mhroth): return new ListPrepend(initMessage, graph);
         } else if (strcmp(qualifier, "split") == 0) {
-          // TODO(mhroth): return new ListSplit(initMessage, graph);
+          return new MessageListSplit(initMessage, graph);
         } else if (strcmp(qualifier, "trim") == 0) {
           // TODO(mhroth): return new ListTrim(initMessage, graph);
         } else if (strcmp(qualifier, "length") == 0) {
@@ -914,7 +915,6 @@ void PdContext::dispatchMessageToNamedReceivers(char *name, PdMessage *message) 
 
 void PdContext::scheduleExternalMessageV(const char *receiverName, double timestamp,
     const char *messageFormat, va_list ap) {
-  /*
   lock(); // NOTE(mhroth): can reduce size of critical section?
   int receiverNameIndex = sendController->getNameIndex((char *) receiverName);
   if (receiverNameIndex >= 0) { // if the receiver exists
@@ -922,27 +922,20 @@ void PdContext::scheduleExternalMessageV(const char *receiverName, double timest
     message->setTimestamp(timestamp);
     
     // format message
-    message->clear(); // removes (but does not destroy) all elements from the message
+    message->clear();
     int numElements = strlen(messageFormat);
-    MessageElement *messageElement = NULL;
     for (int i = 0; i < numElements; i++) {
-      messageElement = message->getElement(i);
-      if (messageElement == NULL) {
-        // add extra elements as necessary
-        messageElement = new MessageElement();
-        message->addElement(messageElement);
-      }
       switch (messageFormat[i]) {
         case 'f': {
-          messageElement->setFloat((float) va_arg(ap, double));
+          message->addElement((float) va_arg(ap, double));
           break;
         }
         case 's': {
-          messageElement->setSymbol((char *) va_arg(ap, char *));
+          message->addElement((char *) va_arg(ap, char *));
           break;
         }
         case 'b': {
-          messageElement->setBang();
+          message->addElement();
           break;
         }
         default: {
@@ -950,15 +943,9 @@ void PdContext::scheduleExternalMessageV(const char *receiverName, double timest
         }
       }
     }
-    for (int i = numElements; i < message->getNumElements(); i++) {
-      // delete extra elements as necessary
-      messageElement = (MessageElement *) elementList->remove(numElements);
-      delete messageElement;
-    }
     
     scheduleMessage(sendController, receiverNameIndex, message);
   }
-  */
   unlock();
 }
 

@@ -70,13 +70,6 @@ void List::clear() {
   numElements = 0;
 }
 
-void List::revertToNewState() {
-  numElements = 0;
-  maxLength = DEFAULT_LENGTH;
-  free(arrayList);
-  arrayList = (void **) malloc(maxLength * sizeof(void *));
-}
-
 void List::growArrayList() {
   void **newArrayList = (void **) calloc(maxLength << 1, sizeof(void *));
   memcpy(newArrayList, arrayList, numElements * sizeof(void *));
@@ -90,7 +83,7 @@ void *List::toArray() {
   memcpy(array, arrayList, numElements * sizeof(void *));
   return array;
 }
-/*
+
 void *List::get(int index) {
   if (index < 0 || index >= numElements) {
     return NULL;
@@ -98,7 +91,15 @@ void *List::get(int index) {
     return arrayList[index];
   }
 }
-*/
+
+void *List::getFromBackingArray(int index) {
+  if (index < 0 || index >= maxLength) {
+    return NULL;
+  } else {
+    return arrayList[index];
+  }
+}
+
 void *List::replace(int index, void *newElement) {
   if (index < 0 || index >= numElements) {
     return NULL;
