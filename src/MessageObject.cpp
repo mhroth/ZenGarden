@@ -30,7 +30,7 @@ MessageObject::MessageObject(int numMessageInlets, int numMessageOutlets, PdGrap
   this->isOrdered = false;
 
   distributedMessage = new PdMessage();
-  distributedMessage->addElement(new MessageElement());
+  distributedMessage->addElement();
 
   // initialise incoming connections list
   incomingMessageConnectionsListAtInlet = (List **) malloc(numMessageInlets * sizeof(List *));
@@ -195,7 +195,7 @@ PdMessage *MessageObject::getNextOutgoingMessage(int outletIndex) {
 PdMessage *MessageObject::newCanonicalMessage(int outletIndex) {
   // default implementation returns a message with one element
   PdMessage *outgoingMessage = new PdMessage();
-  outgoingMessage->addElement(new MessageElement());
+  outgoingMessage->addElement();
   return outgoingMessage;
 }
 

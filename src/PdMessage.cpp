@@ -85,10 +85,10 @@ void PdMessage::initWithString(char *initString) {
   if (token != NULL) {
     do {
       if (StaticUtils::isNumeric(token)) {
-        addElement(new MessageElement(atof(token)));
+        addElement(atof(token));
       } else {
         // element is symbolic
-        addElement(new MessageElement(token));
+        addElement(token);
       }
     } while ((token = strtok(NULL, " ;")) != NULL);
   }
@@ -203,10 +203,6 @@ int PdMessage::getMessageId() {
   return messageId;
 }
 
-void PdMessage::addElement(MessageElement *messageElement) {
-  elementList->add(messageElement);
-}
-
 int PdMessage::getNumElements() {
   return elementList->size();
 }
@@ -312,7 +308,7 @@ PdMessage *PdMessage::copy() {
   PdMessage *messageCopy = new PdMessage();
   for (int i = 0; i < elementList->size(); i++) {
     MessageElement *messageElement = (MessageElement *) elementList->get(i);
-    messageCopy->addElement(messageElement->copy());
+    messageCopy->addElement(messageElement);
   }
   return messageCopy;
 }
@@ -423,4 +419,24 @@ void PdMessage::addElement() {
     messageElement->setBang();
   }
   elementList->add(messageElement);
+}
+
+void PdMessage::addElement(MessageElement *messageElement) {
+  switch (messageElement->getType()) {
+    case FLOAT: {
+      addElement(messageElement->getFloat());
+      break;
+    }
+    case SYMBOL: {
+      addElement(messageElement->getSymbol());
+      break;
+    }
+    case BANG: {
+      addElement();
+      break;
+    }
+    default: {
+      break;
+    }
+  }
 }

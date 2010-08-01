@@ -43,6 +43,7 @@
 #include "MessageInteger.h"
 #include "MessageLessThan.h"
 #include "MessageLessThanOrEqualTo.h"
+#include "MessageListAppend.h"
 #include "MessageListLength.h"
 #include "MessageListSplit.h"
 #include "MessageListTrim.h"
@@ -546,7 +547,7 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
       if (initMessage->isSymbol(0)) {
         char *qualifier = initMessage->getSymbol(0);
         if (strcmp(qualifier, "append") == 0) {
-          // TODO(mhroth): return new ListAppend(initMessage, graph);
+          return new MessageListAppend(initMessage, graph);
         } else if (strcmp(qualifier, "prepend") == 0) {
           // TODO(mhroth): return new ListPrepend(initMessage, graph);
         } else if (strcmp(qualifier, "split") == 0) {
@@ -556,10 +557,10 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
         } else if (strcmp(qualifier, "length") == 0) {
           return new MessageListLength(initMessage, graph);
         } else {
-          // TODO(mhroth): return new ListAppend(initMessage, graph);
+          return new MessageListAppend(initMessage, graph);
         }
       } else {
-        // TODO(mhroth): return new ListAppend(initMessage, graph);
+        return new MessageListAppend(initMessage, graph);
       }
     } else if (strcmp(objectLabel, "loadbang") == 0) {
       return new MessageLoadbang(graph);
@@ -962,7 +963,7 @@ PdMessage *PdContext::getNextExternalMessage() {
     }
   }
   PdMessage *message = new PdMessage();
-  message->addElement(new MessageElement());
+  message->addElement(); // add one element to the message
   externalMessagePool->add(message);
   return message;
 }

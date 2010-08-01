@@ -46,25 +46,9 @@ PdGraph::PdGraph(PdMessage *initMessage, PdGraph *parentGraph, PdContext *contex
   // initialise the graph arguments
   this->graphId = graphId;
   graphArguments = new PdMessage();
-  graphArguments->addElement(new MessageElement((float) graphId)); // $0
+  graphArguments->addElement((float) graphId); // $0
   for (int i = 0; i < initMessage->getNumElements(); i++) {
-    switch (initMessage->getType(i)) {
-      case FLOAT: {
-        graphArguments->addElement(new MessageElement(initMessage->getFloat(i)));
-        break;
-      }
-      case SYMBOL: {
-        graphArguments->addElement(new MessageElement(StaticUtils::copyString(initMessage->getSymbol(i))));
-        break;
-      }
-      case BANG: {
-        graphArguments->addElement(new MessageElement());
-        break;
-      }
-      default: {
-        break;
-      }
-    }
+    graphArguments->addElement(initMessage->getElement(i));
   }
 }
 

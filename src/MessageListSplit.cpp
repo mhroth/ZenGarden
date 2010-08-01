@@ -46,46 +46,14 @@ void MessageListSplit::processMessage(int inletIndex, PdMessage *message) {
         outgoingMessage0->setTimestamp(message->getTimestamp());
         outgoingMessage0->clear();
         for (int i = 0; i < splitIndex; i++) {
-          switch (message->getType(i)) {
-            case FLOAT: {
-              outgoingMessage0->addElement(message->getFloat(i));
-              break;
-            }
-            case SYMBOL: {
-              outgoingMessage0->addElement(message->getSymbol(i));
-              break;
-            }
-            case BANG: {
-              outgoingMessage0->addElement();
-              break;
-            }
-            default: {
-              break; // nothing to do
-            }
-          }
+          outgoingMessage0->addElement(message->getElement(i));
         }
         
         PdMessage *outgoingMessage1 = getNextOutgoingMessage(1);
         outgoingMessage1->setTimestamp(message->getTimestamp());
         outgoingMessage1->clear();
         for (int i = splitIndex; i < numElements; i++) {
-          switch (message->getType(i)) {
-            case FLOAT: {
-              outgoingMessage0->addElement(message->getFloat(i));
-              break;
-            }
-            case SYMBOL: {
-              outgoingMessage0->addElement(message->getSymbol(i));
-              break;
-            }
-            case BANG: {
-              outgoingMessage0->addElement();
-              break;
-            }
-            default: {
-              break; // nothing to do
-            }
-          }
+          outgoingMessage1->addElement(message->getElement(i));
         }
         
         sendMessage(1, outgoingMessage1);

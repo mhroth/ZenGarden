@@ -73,8 +73,6 @@ class PdMessage {
   
     MessageElement *getElement(int index);
   
-    void addElement(MessageElement *messageElement);
-  
     int getNumElements();
   
     /** Get the global timestamp of this message (in milliseconds). */
@@ -124,8 +122,16 @@ class PdMessage {
     void setFloat(int index, float value);
     void setSymbol(int index, char *symbol);
   
+    /** Add a new element to the message, making a copy of the value of the given element. */
+    void addElement(MessageElement *messageElement);
+  
+    /** Add a new float element. */
     void addElement(float f);
+  
+    /** Add a new symbol element. */
     void addElement(char *symbol);
+  
+    /** Add a new bang element. */
     void addElement(); // bang
 
   private:
