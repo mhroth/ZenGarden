@@ -45,6 +45,7 @@
 #include "MessageLessThanOrEqualTo.h"
 #include "MessageListLength.h"
 #include "MessageListSplit.h"
+#include "MessageListTrim.h"
 #include "MessageLoadbang.h"
 #include "MessageLog.h"
 #include "MessageMaximum.h"
@@ -551,7 +552,7 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
         } else if (strcmp(qualifier, "split") == 0) {
           return new MessageListSplit(initMessage, graph);
         } else if (strcmp(qualifier, "trim") == 0) {
-          // TODO(mhroth): return new ListTrim(initMessage, graph);
+          return new MessageListTrim(initMessage, graph);
         } else if (strcmp(qualifier, "length") == 0) {
           return new MessageListLength(initMessage, graph);
         } else {

@@ -39,6 +39,7 @@ void MessageRoute::processMessage(int inletIndex, PdMessage *message) {
   int numRouteChecks = routeMessage->getNumElements();
   MessageElementType routeType = message->getType(0);
   int outletIndex = numRouteChecks;
+  // find which indicator that message matches
   for (int i = 0; i < numRouteChecks; i++) {
     if (routeMessage->getType(i) == routeType) {
       switch (routeType) {
@@ -69,10 +70,12 @@ void MessageRoute::processMessage(int inletIndex, PdMessage *message) {
       }
     }
   }
+  
   if (outletIndex == numRouteChecks) {
     // no match found, forward on right oulet
     sendMessage(outletIndex, message);
   } else {
+    // construct a new message to send from the given outlet
     PdMessage *outgoingMessage = getNextOutgoingMessage(outletIndex);
     outgoingMessage->setTimestamp(message->getTimestamp());
     outgoingMessage->clear();
