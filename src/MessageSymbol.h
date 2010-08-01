@@ -29,18 +29,15 @@ class MessageSymbol : public MessageObject {
   
   public:
     MessageSymbol(PdMessage *initMessage, PdGraph *graph);
-    MessageSymbol(char *newSymbol, PdGraph *graph);
+    MessageSymbol(char *initSymbol, PdGraph *graph);
     ~MessageSymbol();
   
     const char *getObjectLabel();
     
-  protected:
-    void processMessage(int inletIndex, PdMessage *message);
-    
   private:
-    void setSymbol(char *newSymbol);
-  
-    char *symbol;
+    void processMessage(int inletIndex, PdMessage *message);
+
+    MessageElement *symbol;
 };
 
 #endif // _MESSAGE_SYMBOL_H_
