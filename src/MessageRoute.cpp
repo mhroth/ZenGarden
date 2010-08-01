@@ -37,37 +37,13 @@ const char *MessageRoute::getObjectLabel() {
 
 void MessageRoute::processMessage(int inletIndex, PdMessage *message) {
   int numRouteChecks = routeMessage->getNumElements();
-  MessageElementType routeType = message->getType(0);
+  MessageElement *messageElement = message->getElement(0);
   int outletIndex = numRouteChecks;
   // find which indicator that message matches
   for (int i = 0; i < numRouteChecks; i++) {
-    if (routeMessage->getType(i) == routeType) {
-      switch (routeType) {
-        case FLOAT: {
-          if (message->getFloat(0) == routeMessage->getFloat(i)) {
-            outletIndex = i;
-            break;
-          }
-          break;
-        }
-        case SYMBOL: {
-          if (strcmp(message->getSymbol(0), routeMessage->getSymbol(i)) == 0) {
-            outletIndex = i;
-            break;
-          }
-          break;
-        }
-        case BANG: {
-          if (routeMessage->isBang(i)) {
-            outletIndex = i;
-            break;
-          }
-          break;
-        }
-        default: {
-          break;
-        }
-      }
+    if (routeMessage->getElement(i)->equals(messageElement)) {
+      outletIndex = i;
+      break;
     }
   }
   
@@ -81,23 +57,7 @@ void MessageRoute::processMessage(int inletIndex, PdMessage *message) {
     outgoingMessage->clear();
     int numElements = message->getNumElements();
     for (int i = 1; i < numElements; i++) {
-      switch (message->getType(i)) {
-        case FLOAT: {
-          outgoingMessage->addElement(message->getFloat(i));
-          break;
-        }
-        case SYMBOL: {
-          outgoingMessage->addElement(message->getSymbol(i));
-          break;
-        }
-        case BANG: {
-          outgoingMessage->addElement();
-          break;
-        }
-        default: {
-          break;
-        }
-      }
+      outgoingMessage->addElement(message->getElement(i));
     }
     sendMessage(outletIndex, outgoingMessage);
   }
