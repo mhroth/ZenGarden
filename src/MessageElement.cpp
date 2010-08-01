@@ -135,23 +135,6 @@ MessageElement *MessageElement::copy() {
   }
 }
 
-List *MessageElement::toList(char *str) {
-  List *list = new List();
-  if (str != NULL) {
-    char *token = strtok(str, " ");
-    if (token != NULL) {
-      do {
-        if (StaticUtils::isNumeric(token)) {
-          list->add(new MessageElement((float) atof(token)));
-        } else {
-          list->add(new MessageElement(token));
-        }
-      } while ((token = strtok(NULL, " ")) != NULL);
-    }
-  }
-  return list;
-}
-
 bool MessageElement::equals(MessageElement *messageElement) {
   if (messageElement->getType() == currentType) {
     switch (currentType) {

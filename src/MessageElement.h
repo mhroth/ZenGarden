@@ -62,8 +62,6 @@ class MessageElement {
   
     MessageElement *copy();
   
-    static List *toList(char *str);
-  
     bool equals(MessageElement *messageElement);
     
   private:
