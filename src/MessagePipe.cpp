@@ -42,7 +42,7 @@ bool MessagePipe::shouldDistributeMessageToInlets() {
 }
 
 void MessagePipe::sendMessage(int outletIndex, PdMessage *message) {
-  // remove the scheduled message from the list before it is send
+  // remove the scheduled message from the list before it is sent
   scheduledMessagesList->remove(message);
   MessageObject::sendMessage(outletIndex, message);
 }
@@ -55,6 +55,7 @@ void MessagePipe::processMessage(int inletIndex, PdMessage *message) {
           if (message->isSymbol(0, "flush")) {
             // cancel all scheduled messages and send them immediately
             PdMessage *scheduledMessage = NULL;
+            scheduledMessagesList->resetIterator();
             while ((scheduledMessage = (PdMessage *) scheduledMessagesList->getNext()) != NULL) {
               graph->cancelMessage(this, 0, scheduledMessage);
               scheduledMessage->setTimestamp(message->getTimestamp());
@@ -64,6 +65,7 @@ void MessagePipe::processMessage(int inletIndex, PdMessage *message) {
           } else if (message->isSymbol(0, "clear")) {
             // cancel all scheduled messages
             PdMessage *scheduledMessage = NULL;
+            scheduledMessagesList->resetIterator();
             while ((scheduledMessage = (PdMessage *) scheduledMessagesList->getNext()) != NULL) {
               graph->cancelMessage(this, 0, scheduledMessage);
             }
