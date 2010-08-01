@@ -23,10 +23,12 @@
 #include "MessageSymbol.h"
 
 MessageSymbol::MessageSymbol(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
+  symbol = new MessageElement();
   symbol->setSymbol(initMessage->isSymbol(0) ? initMessage->getSymbol(0) : (char *) "");
 }
 
 MessageSymbol::MessageSymbol(char *initSymbol, PdGraph *graph) : MessageObject(2, 1, graph) {
+  symbol = new MessageElement();
   symbol->setSymbol((initSymbol != NULL) ? initSymbol : (char *) "");
 }
 
