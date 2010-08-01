@@ -22,45 +22,49 @@
 
 #include "MessageSymbol.h"
 
-MessageSymbol::MessageSymbol(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
-  symbol = NULL;
-  if (initMessage->getNumElements() > 0 &&
-      initMessage->getElement(0)->getType() == SYMBOL) {
-    setSymbol(initMessage->getElement(0)->getSymbol());
-  } else {
-    setSymbol("");
-  }
+MessageSymbol::MessageSymbol(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
+  symbol = new MessageElement();
+  symbol->setSymbol(initMessage->isSymbol(0) ? initMessage->getSymbol(0) : (char *) "");
 }
 
-MessageSymbol::MessageSymbol(char *newSymbol, PdGraph *graph) : MessageObject(1, 1, graph) {
-  symbol = NULL;
-  setSymbol(newSymbol);
+MessageSymbol::MessageSymbol(char *initSymbol, PdGraph *graph) : MessageObject(2, 1, graph) {
+  symbol = new MessageElement();
+  symbol->setSymbol((initSymbol != NULL) ? initSymbol : (char *) "");
 }
 
 MessageSymbol::~MessageSymbol() {
-  free(symbol);
+  delete symbol;
 }
 
 const char *MessageSymbol::getObjectLabel() {
   return "symbol";
 }
 
-void MessageSymbol::setSymbol(char *newSymbol) {
-  free(symbol);
-  symbol = StaticUtils::copyString(newSymbol);
-}
-
 void MessageSymbol::processMessage(int inletIndex, PdMessage *message) {
-  switch (message->getElement(0)->getType()) {
-    case SYMBOL: {
-      setSymbol(message->getElement(0)->getSymbol());
-      // allow fallthrough
+  switch (inletIndex) {
+    case 0: {
+      switch (message->getType(0)) {
+        case SYMBOL: {
+          symbol->setSymbol(message->getSymbol(0));
+          // allow fallthrough
+        }
+        case BANG: {
+          PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+          outgoingMessage->setTimestamp(message->getTimestamp());
+          outgoingMessage->setSymbol(0, symbol->getSymbol());
+          sendMessage(0, outgoingMessage);
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+      break;
     }
-    case BANG: {
-      PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-      outgoingMessage->setTimestamp(message->getTimestamp());
-      outgoingMessage->getElement(0)->setSymbol(symbol);
-      sendMessage(0, outgoingMessage);
+    case 1: {
+      if (message->isSymbol(0)) {
+        symbol->setSymbol(message->getSymbol(0));
+      }
       break;
     }
     default: {
