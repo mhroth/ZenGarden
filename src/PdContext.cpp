@@ -332,7 +332,6 @@ PdGraph *PdContext::newGraph(char *directory, char *filename, PdMessage *initMes
 }
 
 bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser *fileParser) {
-  // TODO(mhroth): increment global graph id. Graphs made through this function are never subgraphs.
   PdGraph *graph = emptyGraph;
 
   // configure the graph based on the messages

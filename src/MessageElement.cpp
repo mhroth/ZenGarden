@@ -98,7 +98,7 @@ void MessageElement::setSymbol(char *newSymbol) {
   if (strlen(newSymbol) < SYMBOL_BUFFER_LENGTH) {
     strcpy(symbol, newSymbol);
   } else {
-    // This should never happen.
+    // This should never ever ever happen.
     printf("A symbol added to a message exceeds the symbol buffer length: strlen(%s) > %i",
         newSymbol, SYMBOL_BUFFER_LENGTH);
   }
