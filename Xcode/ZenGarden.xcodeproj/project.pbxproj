@@ -13,6 +13,11 @@
 		9017567711DFDD4B00A22517 /* DspTablePlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 9017567411DFDD4B00A22517 /* DspTablePlay.h */; };
 		9017567811DFDD4B00A22517 /* DspTablePlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9017567311DFDD4B00A22517 /* DspTablePlay.cpp */; };
 		9017567911DFDD4B00A22517 /* DspTablePlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 9017567411DFDD4B00A22517 /* DspTablePlay.h */; };
+		9017BE681205E2CA0044C9B4 /* MessageListPrepend.h in Headers */ = {isa = PBXBuildFile; fileRef = 9017BE661205E2CA0044C9B4 /* MessageListPrepend.h */; };
+		9017BE691205E2CA0044C9B4 /* MessageListPrepend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9017BE671205E2CA0044C9B4 /* MessageListPrepend.cpp */; };
+		9017BE6A1205E2CA0044C9B4 /* MessageListPrepend.h in Headers */ = {isa = PBXBuildFile; fileRef = 9017BE661205E2CA0044C9B4 /* MessageListPrepend.h */; };
+		9017BE6B1205E2CA0044C9B4 /* MessageListPrepend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9017BE671205E2CA0044C9B4 /* MessageListPrepend.cpp */; };
+		9017BE6C1205E2CA0044C9B4 /* MessageListPrepend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9017BE671205E2CA0044C9B4 /* MessageListPrepend.cpp */; };
 		90251D3A12042F38000EAF40 /* MessageOpenPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90251D3912042F38000EAF40 /* MessageOpenPanel.cpp */; };
 		90251D3B12042F38000EAF40 /* MessageOpenPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 90251D3812042F38000EAF40 /* MessageOpenPanel.h */; };
 		90251D3C12042F38000EAF40 /* MessageOpenPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90251D3912042F38000EAF40 /* MessageOpenPanel.cpp */; };
@@ -671,6 +676,8 @@
 		8DD76F6C0486A84900D96B5E /* ZenGarden */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ZenGarden; sourceTree = BUILT_PRODUCTS_DIR; };
 		9017567311DFDD4B00A22517 /* DspTablePlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspTablePlay.cpp; path = ../src/DspTablePlay.cpp; sourceTree = SOURCE_ROOT; };
 		9017567411DFDD4B00A22517 /* DspTablePlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspTablePlay.h; path = ../src/DspTablePlay.h; sourceTree = SOURCE_ROOT; };
+		9017BE661205E2CA0044C9B4 /* MessageListPrepend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageListPrepend.h; path = ../src/MessageListPrepend.h; sourceTree = SOURCE_ROOT; };
+		9017BE671205E2CA0044C9B4 /* MessageListPrepend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageListPrepend.cpp; path = ../src/MessageListPrepend.cpp; sourceTree = SOURCE_ROOT; };
 		90251D3812042F38000EAF40 /* MessageOpenPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageOpenPanel.h; path = ../src/MessageOpenPanel.h; sourceTree = SOURCE_ROOT; };
 		90251D3912042F38000EAF40 /* MessageOpenPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageOpenPanel.cpp; path = ../src/MessageOpenPanel.cpp; sourceTree = SOURCE_ROOT; };
 		90251D5512043445000EAF40 /* DspSignal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspSignal.cpp; path = ../src/DspSignal.cpp; sourceTree = SOURCE_ROOT; };
@@ -1113,6 +1120,8 @@
 				905C40441205D274001B31A7 /* MessageListAppend.h */,
 				90337BDF11D0D847009FCC01 /* MessageListLength.cpp */,
 				90337BE011D0D847009FCC01 /* MessageListLength.h */,
+				9017BE671205E2CA0044C9B4 /* MessageListPrepend.cpp */,
+				9017BE661205E2CA0044C9B4 /* MessageListPrepend.h */,
 				90D031291204866300FEE5BB /* MessageListSplit.cpp */,
 				90D031281204866300FEE5BB /* MessageListSplit.h */,
 				905C402B1205CF52001B31A7 /* MessageListTrim.cpp */,
@@ -1399,6 +1408,7 @@
 				90E8511E1204EF4900300CF2 /* MessageRoute.h in Headers */,
 				905C402F1205CF52001B31A7 /* MessageListTrim.h in Headers */,
 				905C40461205D274001B31A7 /* MessageListAppend.h in Headers */,
+				9017BE681205E2CA0044C9B4 /* MessageListPrepend.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1541,6 +1551,7 @@
 				90E851201204EF4900300CF2 /* MessageRoute.h in Headers */,
 				905C402C1205CF52001B31A7 /* MessageListTrim.h in Headers */,
 				905C40491205D274001B31A7 /* MessageListAppend.h in Headers */,
+				9017BE6A1205E2CA0044C9B4 /* MessageListPrepend.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1747,6 +1758,7 @@
 				90E851211204EF4900300CF2 /* MessageRoute.cpp in Sources */,
 				905C402E1205CF52001B31A7 /* MessageListTrim.cpp in Sources */,
 				905C40481205D274001B31A7 /* MessageListAppend.cpp in Sources */,
+				9017BE6C1205E2CA0044C9B4 /* MessageListPrepend.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1877,6 +1889,7 @@
 				90E8511D1204EF4900300CF2 /* MessageRoute.cpp in Sources */,
 				905C40301205CF52001B31A7 /* MessageListTrim.cpp in Sources */,
 				905C40471205D274001B31A7 /* MessageListAppend.cpp in Sources */,
+				9017BE691205E2CA0044C9B4 /* MessageListPrepend.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2008,6 +2021,7 @@
 				90E8511F1204EF4900300CF2 /* MessageRoute.cpp in Sources */,
 				905C402D1205CF52001B31A7 /* MessageListTrim.cpp in Sources */,
 				905C404A1205D274001B31A7 /* MessageListAppend.cpp in Sources */,
+				9017BE6B1205E2CA0044C9B4 /* MessageListPrepend.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -62,6 +62,7 @@ LOCAL_SRC_FILES := \
 ./MessageLessThanOrEqualTo.cpp \
 ./MessageListAppend.cpp \
 ./MessageListLength.cpp \
+./MessageListPrepend.cpp \
 ./MessageListSplit.cpp \
 ./MessageListTrim.cpp \
 ./MessageLoadbang.cpp \

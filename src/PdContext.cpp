@@ -45,6 +45,7 @@
 #include "MessageLessThanOrEqualTo.h"
 #include "MessageListAppend.h"
 #include "MessageListLength.h"
+#include "MessageListPrepend.h"
 #include "MessageListSplit.h"
 #include "MessageListTrim.h"
 #include "MessageLoadbang.h"
@@ -549,7 +550,7 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
         if (strcmp(qualifier, "append") == 0) {
           return new MessageListAppend(initMessage, graph);
         } else if (strcmp(qualifier, "prepend") == 0) {
-          // TODO(mhroth): return new ListPrepend(initMessage, graph);
+          return new MessageListPrepend(initMessage, graph);
         } else if (strcmp(qualifier, "split") == 0) {
           return new MessageListSplit(initMessage, graph);
         } else if (strcmp(qualifier, "trim") == 0) {
