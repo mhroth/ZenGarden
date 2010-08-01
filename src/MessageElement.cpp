@@ -20,32 +20,33 @@
  *
  */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include "MessageElement.h"
 #include "StaticUtils.h"
 
+#define SYMBOL_BUFFER_LENGTH 64
+
 MessageElement::MessageElement() {
   constant = 0.0f;
-  symbol = NULL;
+  symbol = (char *) calloc(SYMBOL_BUFFER_LENGTH, sizeof(char));
   setBang();
 }
 
 MessageElement::MessageElement(float constant) {
-  symbol = NULL;
+  symbol = (char *) calloc(SYMBOL_BUFFER_LENGTH, sizeof(char));
   setFloat(constant);
 }
 
 MessageElement::MessageElement(char *newSymbol) {
   constant = 0.0f;
-  symbol = NULL;
+  symbol = (char *) calloc(SYMBOL_BUFFER_LENGTH, sizeof(char));
   setSymbol(newSymbol);
 }
 
 
 MessageElement::~MessageElement() {
-  if (symbol != NULL) {
-    free(symbol);
-  }
+  free(symbol);
 }
 
 MessageElementType MessageElement::getType() {
@@ -94,11 +95,13 @@ float MessageElement::getFloat() {
 }
 
 void MessageElement::setSymbol(char *newSymbol) {
-  if (symbol != NULL) {
-    free(symbol);
-    symbol = NULL;
+  if (strlen(newSymbol) < SYMBOL_BUFFER_LENGTH) {
+    strcpy(symbol, newSymbol);
+  } else {
+    // This should never happen.
+    printf("A symbol added to a message exceeds the symbol buffer length: strlen(%s) > %i",
+        newSymbol, SYMBOL_BUFFER_LENGTH);
   }
-  symbol = StaticUtils::copyString(newSymbol);
   currentType = SYMBOL;
 }
 
