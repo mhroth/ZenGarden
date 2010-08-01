@@ -87,6 +87,7 @@ LOCAL_SRC_FILES := \
 ./MessageReceive.cpp \
 ./MessageRemainder.cpp \
 ./MessageRmsToDb.cpp \
+./MessageRoute.cpp \
 ./MessageSamplerate.cpp \
 ./MessageSelect.cpp \
 ./MessageSend.cpp \

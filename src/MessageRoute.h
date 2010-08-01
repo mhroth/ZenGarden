@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,23 +23,21 @@
 #ifndef _MESSAGE_ROUTE_H_
 #define _MESSAGE_ROUTE_H_
 
-#include "MessageInputMessageOutputObject.h"
+#include "MessageObject.h"
 
-/**
- * route
- */
-class MessageRoute : public MessageInputMessageOutputObject {
+/** [route] */
+class MessageRoute : public MessageObject {
     
   public:
-    MessageRoute(List *routeString, char *initString);
+    MessageRoute(PdMessage *initMessage, PdGraph *graph);
     ~MessageRoute();
-    
-  protected:
-    void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage();
   
+    const char *getObjectLabel();
+    
   private:
-    List *routeList; // a list of MessageElements
+    void processMessage(int inletIndex, PdMessage *message);
+  
+    PdMessage *routeMessage;
 };
 
 #endif // _MESSAGE_ROUTE_H_

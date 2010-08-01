@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -22,44 +22,80 @@
 
 #include "MessageRoute.h"
 
-MessageRoute::MessageRoute(List *routeList, char *initString) : 
-    MessageInputMessageOutputObject(1, routeList->getNumElements() + 1, initString) {
-  this->routeList = routeList;
+MessageRoute::MessageRoute(PdMessage *initMessage, PdGraph *graph) : 
+    MessageObject(1, initMessage->getNumElements()+1, graph) {
+  routeMessage = initMessage->copy();
 }
 
 MessageRoute::~MessageRoute() {
-  // do not delete messages that do not belong to this object
-  messageOutletBuffers[routeList->getNumElements()]->clear();
-  
-  for (int i = 0; i < routeList->getNumElements(); i++) {
-    delete (MessageElement *) routeList->get(i);
-  }
-  delete routeList;
+  delete routeMessage;
+}
+
+const char *MessageRoute::getObjectLabel() {
+  return "route";
 }
 
 void MessageRoute::processMessage(int inletIndex, PdMessage *message) {
-  if (inletIndex == 0) {
-    MessageElement *messageElement = message->getElement(0);
-    for (int i = 0; i < routeList->getNumElements(); i++) {
-      MessageElement *routeElement = (MessageElement *) routeList->get(i);
-      if (messageElement->equals(routeElement)) {
-        PdMessage *outgoingMessage = getNextOutgoingMessage(i);
-        //outgoingMessage->clearAndCopyFrom(message);
-        // NOTE: this is exactly like clearAndCopyInto() except that it 
-        // starts with the 1st element and not the 0th.
-        outgoingMessage->clear();
-        for (int j = 1; j < message->getNumElements(); j++) {
-          outgoingMessage->addElement(message->getElement(j)->copy());
+  int numRouteChecks = routeMessage->getNumElements();
+  MessageElementType routeType = message->getType(0);
+  int outletIndex = numRouteChecks;
+  for (int i = 0; i < numRouteChecks; i++) {
+    if (routeMessage->getType(i) == routeType) {
+      switch (routeType) {
+        case FLOAT: {
+          if (message->getFloat(0) == routeMessage->getFloat(i)) {
+            outletIndex = i;
+            break;
+          }
+          break;
         }
-        outgoingMessage->setBlockIndex(message->getBlockIndex());
-        return;
+        case SYMBOL: {
+          if (strcmp(message->getSymbol(0), routeMessage->getSymbol(i)) == 0) {
+            outletIndex = i;
+            break;
+          }
+          break;
+        }
+        case BANG: {
+          if (routeMessage->isBang(i)) {
+            outletIndex = i;
+            break;
+          }
+          break;
+        }
+        default: {
+          break;
+        }
       }
     }
-    // if no match could be found copy the incoming message to the output
-    setNextOutgoingMessage(routeList->getNumElements(), message);
   }
-}
-
-PdMessage *MessageRoute::newCanonicalMessage() {
-  return new PdMessage();
+  if (outletIndex == numRouteChecks) {
+    // no match found, forward on right oulet
+    sendMessage(outletIndex, message);
+  } else {
+    PdMessage *outgoingMessage = getNextOutgoingMessage(outletIndex);
+    outgoingMessage->setTimestamp(message->getTimestamp());
+    outgoingMessage->clear();
+    int numElements = message->getNumElements();
+    for (int i = 1; i < numElements; i++) {
+      switch (message->getType(i)) {
+        case FLOAT: {
+          outgoingMessage->addElement(message->getFloat(i));
+          break;
+        }
+        case SYMBOL: {
+          outgoingMessage->addElement(message->getSymbol(i));
+          break;
+        }
+        case BANG: {
+          outgoingMessage->addElement();
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+    }
+    sendMessage(outletIndex, outgoingMessage);
+  }
 }

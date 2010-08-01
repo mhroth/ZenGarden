@@ -68,6 +68,7 @@
 #include "MessageReceive.h"
 #include "MessageRemainder.h"
 #include "MessageRmsToDb.h"
+#include "MessageRoute.h"
 #include "MessageSamplerate.h"
 #include "MessageSelect.h"
 #include "MessageSend.h"
@@ -591,6 +592,8 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
     } else if (strcmp(objectLabel, "receive") == 0 ||
                strcmp(objectLabel, "r") == 0) {
       return new MessageReceive(initMessage, graph);
+    } else if (strcmp(objectLabel, "route") == 0) {
+      return new MessageRoute(initMessage, graph);
     } else if (strcmp(objectLabel, "select") == 0 ||
                strcmp(objectLabel, "sel") == 0) {
       return new MessageSelect(initMessage, graph);
