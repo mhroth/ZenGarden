@@ -178,6 +178,11 @@ public class PdObjectTest implements ZenGardenListener {
   public void testMessageListAppend() {
     genericMessageTest("MessageListAppend.pd");
   }
+  
+  @Test
+  public void testMessageListLength() {
+    genericMessageTest("MessageListLength.pd");
+  }
 
   @Test
   public void testMessageLoadbang() {
