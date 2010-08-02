@@ -173,6 +173,11 @@ public class PdObjectTest implements ZenGardenListener {
   public void testMessageLessThanOrEqualTo() {
     genericMessageTest("MessageLessThanOrEqualTo.pd");
   }
+  
+  @Test
+  public void testMessageListAppend() {
+    genericMessageTest("MessageListAppend.pd");
+  }
 
   @Test
   public void testMessageLoadbang() {
