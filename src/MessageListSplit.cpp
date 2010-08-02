@@ -63,7 +63,8 @@ void MessageListSplit::processMessage(int inletIndex, PdMessage *message) {
     }
     case 1: {
       if (message->isFloat(0)) {
-        splitIndex = (int) message->isFloat(0);
+        // split index may not be negative
+        splitIndex = (message->getFloat(0) < 0.0f) ? 0 : (int) message->getFloat(0);
       }
       break;
     }
