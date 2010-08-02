@@ -61,6 +61,8 @@ void *List::remove(int index) {
   } else {
     void *object = arrayList[index];
     memmove(arrayList + index, arrayList + index + 1, (numElements-index-1) * sizeof(void *));
+    // the last element is set to NULL as it no longer exists in the array
+    arrayList[numElements-1] = NULL;
     numElements--;
     return object;
   }
