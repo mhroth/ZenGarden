@@ -50,6 +50,7 @@ class DspLowpassFilter : public DspObject {
     float *filterInputBuffer;
     float *filterOutputBuffer;
     float *coefficients;
+    float signalConstant;
 };
 
 #endif // _DSP_LOW_PASS_FILTER_H_

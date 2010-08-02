@@ -30,6 +30,7 @@ DspLowpassFilter::DspLowpassFilter(PdMessage *initMessage, PdGraph *graph) : Dsp
   filterInputBuffer = (float *) calloc(blockSizeInt+2, sizeof(float));
   filterOutputBuffer = (float *) calloc(blockSizeInt+2, sizeof(float));
   calculateFilterCoefficients(initMessage->isFloat(0) ? initMessage->getFloat(0) : graph->getSampleRate()/2.0f);
+  signalConstant = 0.0f;
 }
 
 DspLowpassFilter::~DspLowpassFilter() {
@@ -57,11 +58,24 @@ void DspLowpassFilter::calculateFilterCoefficients(float cutoffFrequency) {
 void DspLowpassFilter::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
-      if (message->isSymbol(0) && strcmp(message->getSymbol(0), "clear") == 0) {
-        processDspToIndex(graph->getBlockIndex(message));
-        tap_0 = 0.0f;
-        memset(filterInputBuffer, 0, (blockSizeInt+2) * sizeof(float));
-        memset(filterOutputBuffer, 0, (blockSizeInt+2) * sizeof(float));
+      switch (message->getType(0)) {
+        case FLOAT: {
+          processDspToIndex(graph->getBlockIndex(message));
+          signalConstant = message->getFloat(0);
+          break;
+        }
+        case SYMBOL: {
+          if (message->isSymbol(0, "clear")) {
+            processDspToIndex(graph->getBlockIndex(message));
+            tap_0 = 0.0f;
+            memset(filterInputBuffer, 0, (blockSizeInt+2) * sizeof(float));
+            memset(filterOutputBuffer, 0, (blockSizeInt+2) * sizeof(float));
+          }
+          break;
+        }
+        default: {
+          break;
+        }
       }
       break;
     }
@@ -83,26 +97,50 @@ void DspLowpassFilter::processDspToIndex(float blockIndex) {
   float *outputBuffer = localDspBufferAtOutlet[0];
   const int startSampleIndex = getStartSampleIndex();
   const int endSampleIndex = getEndSampleIndex(blockIndex);
-  if (ArrayArithmetic::hasAccelerate) {
-    #if __APPLE__
-    const int duration = endSampleIndex - startSampleIndex;
-    const int durationBytes = duration * sizeof(float);
-    memcpy(filterInputBuffer+2, inputBuffer+startSampleIndex, durationBytes);
-    // vDSP_deq22 =
-    // out[i] = coeff[0]*in[i] + coeff[1]*in[i-1] + coeff[2]*in[i-2] - coeff[3]*out[i-1] - coeff[4]*out[i-2]
-    vDSP_deq22(filterInputBuffer, 1, coefficients, filterOutputBuffer, 1, duration);
-    memcpy(outputBuffer+startSampleIndex, filterOutputBuffer+2, durationBytes);
-    // copy last two inputs and outputs to start of filter buffer arrays
-    memcpy(filterInputBuffer, filterInputBuffer+duration, 2 * sizeof(float));
-    memcpy(filterOutputBuffer, filterOutputBuffer+duration, 2 * sizeof(float));
-    #endif
-  } else {
-    ArrayArithmetic::multiply(inputBuffer, alpha, outputBuffer, startSampleIndex, endSampleIndex);
-    outputBuffer[startSampleIndex] += beta * tap_0;
-    for (int i = startSampleIndex+1; i < endSampleIndex; i++) {
-      outputBuffer[i] += beta * outputBuffer[i-1];
+  
+  switch (signalPrecedence) {
+    case MESSAGE_MESSAGE: {
+      if (ArrayArithmetic::hasAccelerate) {
+        #if __APPLE__
+        vDSP_vfill(&signalConstant, inputBuffer+startSampleIndex, 1, endSampleIndex-startSampleIndex);  
+        #endif
+      } else {
+        // NOTE(mhroth): there are definitely ways to speed this up with SIMD
+        for (int i = startSampleIndex; i < endSampleIndex; i++) {
+          inputBuffer[i] = signalConstant;
+        }
+      }
+      // allow fallthrough
     }
-    tap_0 = outputBuffer[endSampleIndex-1];
+    case DSP_MESSAGE: {
+      if (ArrayArithmetic::hasAccelerate) {
+        #if __APPLE__
+        const int duration = endSampleIndex - startSampleIndex;
+        const int durationBytes = duration * sizeof(float);
+        memcpy(filterInputBuffer+2, inputBuffer+startSampleIndex, durationBytes);
+        // vDSP_deq22 =
+        // out[i] = coeff[0]*in[i] + coeff[1]*in[i-1] + coeff[2]*in[i-2] - coeff[3]*out[i-1] - coeff[4]*out[i-2]
+        vDSP_deq22(filterInputBuffer, 1, coefficients, filterOutputBuffer, 1, duration);
+        memcpy(outputBuffer+startSampleIndex, filterOutputBuffer+2, durationBytes);
+        // copy last two inputs and outputs to start of filter buffer arrays
+        memcpy(filterInputBuffer, filterInputBuffer+duration, 2 * sizeof(float));
+        memcpy(filterOutputBuffer, filterOutputBuffer+duration, 2 * sizeof(float));
+        #endif
+      } else {
+        ArrayArithmetic::multiply(inputBuffer, alpha, outputBuffer, startSampleIndex, endSampleIndex);
+        outputBuffer[startSampleIndex] += beta * tap_0;
+        for (int i = startSampleIndex+1; i < endSampleIndex; i++) {
+          outputBuffer[i] += beta * outputBuffer[i-1];
+        }
+        tap_0 = outputBuffer[endSampleIndex-1];
+      }
+      break;
+    }
+    case MESSAGE_DSP:
+    case DSP_DSP:
+    default: {
+      break;
+    }
   }
   blockIndexOfLastMessage = blockIndex;
 }
