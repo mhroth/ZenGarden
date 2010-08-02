@@ -33,6 +33,8 @@ class MessageListAppend : public MessageObject {
     ~MessageListAppend();
     
     const char *getObjectLabel();
+  
+    bool shouldDistributeMessageToInlets();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);

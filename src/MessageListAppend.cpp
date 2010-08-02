@@ -34,28 +34,45 @@ const char *MessageListAppend::getObjectLabel() {
   return "list append";
 }
 
+bool MessageListAppend::shouldDistributeMessageToInlets() {
+  return false;
+}
+
 void MessageListAppend::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
       PdMessage *outgoingMessage = getNextOutgoingMessage(0);
       outgoingMessage->setTimestamp(message->getTimestamp());
       outgoingMessage->clear();
-      int numElements = message->getNumElements();
-      for (int i = 0; i < numElements; i++) {
-        outgoingMessage->addElement(message->getElement(i));
+      if (!message->isBang(0)) {
+        // if the incoming message is a bang, then it is considered to be a list of length zero
+        int numElements = message->getNumElements();
+        for (int i = 0; i < numElements; i++) {
+          outgoingMessage->addElement(message->getElement(i));
+        }
       }
-      numElements = appendMessage->getNumElements();
+      int numElements = appendMessage->getNumElements();
       for (int i = 0; i < numElements; i++) {
         outgoingMessage->addElement(appendMessage->getElement(i));
+      }
+      if (outgoingMessage->getNumElements() == 0) {
+        // this is how Pd works... if both the pre and append messages are bang (zero-length)
+        // then the output must have at least a bang
+        outgoingMessage->addElement();
       }
       sendMessage(0, outgoingMessage);
       break;
     }
     case 1: {
-      // NOTE(mhroth): would be faster to copy in place rather than destroying and creating memory
-      // can change if it becomes a problem
-      delete appendMessage;
-      appendMessage = message->copy();
+      if (message->isBang(0)) {
+        // bangs are considered a list of size zero
+        appendMessage->clear();
+      } else {
+        // NOTE(mhroth): would be faster to copy in place rather than destroying and creating memory
+        // can change if it becomes a problem
+        delete appendMessage;
+        appendMessage = message->copy();
+      }
       break;
     }
     default: {

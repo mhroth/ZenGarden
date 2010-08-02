@@ -514,7 +514,8 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
     } else if (strcmp(objectLabel, "atan2") == 0) {
       return new MessageArcTangent2(initMessage, graph);
     } else if (strcmp(objectLabel, "bang") == 0 ||
-               strcmp(objectLabel, "bng") == 0) {
+               strcmp(objectLabel, "bng") == 0 ||
+               strcmp(objectLabel, "b") == 0) {
       return new MessageBang(graph);
     } else if (strcmp(objectLabel, "change") == 0) {
       return new MessageChange(initMessage, graph);
@@ -545,16 +546,27 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
       return new MessageInteger(initMessage, graph);
     } else if (strcmp(objectLabel, "list") == 0) {
       if (initMessage->isSymbol(0)) {
-        char *qualifier = initMessage->getSymbol(0);
-        if (strcmp(qualifier, "append") == 0) {
-          return new MessageListAppend(initMessage, graph);
-        } else if (strcmp(qualifier, "prepend") == 0) {
-          return new MessageListPrepend(initMessage, graph);
-        } else if (strcmp(qualifier, "split") == 0) {
-          return new MessageListSplit(initMessage, graph);
-        } else if (strcmp(qualifier, "trim") == 0) {
+        if (initMessage->isSymbol(0, "append") ||
+            initMessage->isSymbol(0, "prepend") ||
+            initMessage->isSymbol(0, "split")) {
+          PdMessage *newMessage = new PdMessage();
+          for (int i = 1; i < initMessage->getNumElements(); i++) {
+            newMessage->addElement(initMessage->getElement(i));
+          }
+          MessageObject *messageObject = NULL;
+          if (initMessage->isSymbol(0, "append")) {
+            messageObject = new MessageListAppend(newMessage, graph);
+          } else if (initMessage->isSymbol(0, "prepend")) {
+            messageObject = new MessageListPrepend(newMessage, graph);
+          } else if (initMessage->isSymbol(0, "split")) {
+            messageObject = new MessageListSplit(newMessage, graph);
+          }
+          delete newMessage;
+          return messageObject;
+        } else if (initMessage->isSymbol(0, "trim")) {
+          // trim and length do not act on the initMessage
           return new MessageListTrim(initMessage, graph);
-        } else if (strcmp(qualifier, "length") == 0) {
+        } else if (initMessage->isSymbol(0, "length")) {
           return new MessageListLength(initMessage, graph);
         } else {
           return new MessageListAppend(initMessage, graph);
