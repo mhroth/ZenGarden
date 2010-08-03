@@ -652,6 +652,11 @@
 		90E8511F1204EF4900300CF2 /* MessageRoute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90E8511B1204EF4900300CF2 /* MessageRoute.cpp */; };
 		90E851201204EF4900300CF2 /* MessageRoute.h in Headers */ = {isa = PBXBuildFile; fileRef = 90E8511C1204EF4900300CF2 /* MessageRoute.h */; };
 		90E851211204EF4900300CF2 /* MessageRoute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90E8511B1204EF4900300CF2 /* MessageRoute.cpp */; };
+		90FA78281208B8300043EBBA /* MessageTableRead.h in Headers */ = {isa = PBXBuildFile; fileRef = 90FA78261208B8300043EBBA /* MessageTableRead.h */; };
+		90FA78291208B8300043EBBA /* MessageTableRead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA78271208B8300043EBBA /* MessageTableRead.cpp */; };
+		90FA782A1208B8300043EBBA /* MessageTableRead.h in Headers */ = {isa = PBXBuildFile; fileRef = 90FA78261208B8300043EBBA /* MessageTableRead.h */; };
+		90FA782B1208B8300043EBBA /* MessageTableRead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA78271208B8300043EBBA /* MessageTableRead.cpp */; };
+		90FA782C1208B8300043EBBA /* MessageTableRead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA78271208B8300043EBBA /* MessageTableRead.cpp */; };
 		E4A3DD0211D93E8D007FE6FC /* MessageSoundfiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A3DD0011D93E8D007FE6FC /* MessageSoundfiler.cpp */; };
 		E4A3DD0311D93E8D007FE6FC /* MessageSoundfiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A3DD0011D93E8D007FE6FC /* MessageSoundfiler.cpp */; };
 		E4A3DD0411D93E8D007FE6FC /* MessageSoundfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = E4A3DD0111D93E8D007FE6FC /* MessageSoundfiler.h */; };
@@ -936,6 +941,8 @@
 		90D031291204866300FEE5BB /* MessageListSplit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageListSplit.cpp; path = ../src/MessageListSplit.cpp; sourceTree = SOURCE_ROOT; };
 		90E8511B1204EF4900300CF2 /* MessageRoute.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageRoute.cpp; path = ../src/MessageRoute.cpp; sourceTree = SOURCE_ROOT; };
 		90E8511C1204EF4900300CF2 /* MessageRoute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageRoute.h; path = ../src/MessageRoute.h; sourceTree = SOURCE_ROOT; };
+		90FA78261208B8300043EBBA /* MessageTableRead.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageTableRead.h; path = ../src/MessageTableRead.h; sourceTree = SOURCE_ROOT; };
+		90FA78271208B8300043EBBA /* MessageTableRead.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageTableRead.cpp; path = ../src/MessageTableRead.cpp; sourceTree = SOURCE_ROOT; };
 		C6859E8B029090EE04C91782 /* ZenGardenNp.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ZenGardenNp.1; sourceTree = "<group>"; };
 		E4A3DD0011D93E8D007FE6FC /* MessageSoundfiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageSoundfiler.cpp; path = ../src/MessageSoundfiler.cpp; sourceTree = SOURCE_ROOT; };
 		E4A3DD0111D93E8D007FE6FC /* MessageSoundfiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageSoundfiler.h; path = ../src/MessageSoundfiler.h; sourceTree = SOURCE_ROOT; };
@@ -1205,6 +1212,8 @@
 				90337C2F11D0D847009FCC01 /* MessageSymbol.h */,
 				90337C3011D0D847009FCC01 /* MessageTable.cpp */,
 				90337C3111D0D847009FCC01 /* MessageTable.h */,
+				90FA78271208B8300043EBBA /* MessageTableRead.cpp */,
+				90FA78261208B8300043EBBA /* MessageTableRead.h */,
 				90337C3211D0D847009FCC01 /* MessageTangent.cpp */,
 				90337C3311D0D847009FCC01 /* MessageTangent.h */,
 				90337C3411D0D847009FCC01 /* MessageText.cpp */,
@@ -1409,6 +1418,7 @@
 				905C402F1205CF52001B31A7 /* MessageListTrim.h in Headers */,
 				905C40461205D274001B31A7 /* MessageListAppend.h in Headers */,
 				9017BE681205E2CA0044C9B4 /* MessageListPrepend.h in Headers */,
+				90FA78281208B8300043EBBA /* MessageTableRead.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1552,6 +1562,7 @@
 				905C402C1205CF52001B31A7 /* MessageListTrim.h in Headers */,
 				905C40491205D274001B31A7 /* MessageListAppend.h in Headers */,
 				9017BE6A1205E2CA0044C9B4 /* MessageListPrepend.h in Headers */,
+				90FA782A1208B8300043EBBA /* MessageTableRead.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1759,6 +1770,7 @@
 				905C402E1205CF52001B31A7 /* MessageListTrim.cpp in Sources */,
 				905C40481205D274001B31A7 /* MessageListAppend.cpp in Sources */,
 				9017BE6C1205E2CA0044C9B4 /* MessageListPrepend.cpp in Sources */,
+				90FA782C1208B8300043EBBA /* MessageTableRead.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1890,6 +1902,7 @@
 				905C40301205CF52001B31A7 /* MessageListTrim.cpp in Sources */,
 				905C40471205D274001B31A7 /* MessageListAppend.cpp in Sources */,
 				9017BE691205E2CA0044C9B4 /* MessageListPrepend.cpp in Sources */,
+				90FA78291208B8300043EBBA /* MessageTableRead.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2022,6 +2035,7 @@
 				905C402D1205CF52001B31A7 /* MessageListTrim.cpp in Sources */,
 				905C404A1205D274001B31A7 /* MessageListAppend.cpp in Sources */,
 				9017BE6B1205E2CA0044C9B4 /* MessageListPrepend.cpp in Sources */,
+				90FA782B1208B8300043EBBA /* MessageTableRead.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

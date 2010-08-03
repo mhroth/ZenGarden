@@ -20,37 +20,30 @@
  *
  */
 
-#ifndef _OBJECT_TYPE_H_
-#define _OBJECT_TYPE_H_
+#ifndef _MESSAGE_TABLE_READ_H_
+#define _MESSAGE_TABLE_READ_H_
 
-/** An enumeration all supported objects. */
-enum ObjectType {
-  DSP_ADC,
-  DSP_ADD,
-  DSP_BANDPASS_FILTER,
-  DSP_CATCH,
-  DSP_CLIP,
-  DSP_COSINE,
-  DSP_DAC,
-  DSP_DELAY_READ,
-  DSP_DELAY_WRITE,
-  DSP_INLET,
-  DSP_OUTLET,
-  DSP_RECEIVE,
-  DSP_SEND,
-  DSP_TABLE_READ,
-  DSP_TABLE_READ4,
-  DSP_THROW,
-  DSP_VARIABLE_DELAY,
-  MESSAGE_INLET,
-  MESSAGE_NOTEIN,
-  MESSAGE_OUTLET,
-  MESSAGE_RECEIVE,
-  MESSAGE_SEND,
-  MESSAGE_TABLE,
-  MESSAGE_TABLE_READ,
-  OBJECT_PD,
-  OBJECT_UNKNOWN // unknown or unimportant
+#include "MessageObject.h"
+
+class MessageTable;
+
+/** [tabread name] */
+class MessageTableRead : public MessageObject {
+  
+  public:
+    MessageTableRead(PdMessage *initMessage, PdGraph *graph);
+    ~MessageTableRead();
+    
+    const char *getObjectLabel();
+    ObjectType getObjectType();
+    
+    char *getName();
+    
+  private:
+    void processMessage(int inletIndex, PdMessage *message);
+  
+    char *name;
+    MessageTable *table;
 };
 
-#endif // _OBJECT_TYPE_H_
+#endif // _MESSAGE_TABLE_READ_H_

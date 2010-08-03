@@ -104,6 +104,7 @@ LOCAL_SRC_FILES := \
 ./MessageSwap.cpp \
 ./MessageSymbol.cpp \
 ./MessageTable.cpp \
+./MessageTableRead.cpp \
 ./MessageTangent.cpp \
 ./MessageText.cpp \
 ./MessageTimer.cpp \
