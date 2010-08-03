@@ -36,7 +36,7 @@ PdGraph::PdGraph(PdMessage *initMessage, PdGraph *parentGraph, PdContext *contex
   this->parentGraph = parentGraph; // == NULL if this is a root graph
   this->context = context;
   nodeList = new ZGLinkedList();
-  dspNodeList = new ZGLinkedList();
+  dspNodeList = new List();
   inletList = new ZGLinkedList();
   outletList = new ZGLinkedList();
   // all graphs start out unattached to any context, though they exist in a context

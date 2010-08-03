@@ -186,7 +186,7 @@ class PdGraph : public DspObject {
      * A list of all <code>DspObject</code>s in this graph, in the order in which they should be
      * called in the <code>processDsp()</code> loop.
      */
-    ZGLinkedList *dspNodeList;
+    List *dspNodeList;
     
     /** A list of all inlet (message or audio) nodes in this subgraph. */
     ZGLinkedList *inletList;
