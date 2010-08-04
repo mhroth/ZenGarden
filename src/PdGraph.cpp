@@ -28,6 +28,7 @@
 #include "MessageInlet.h"
 #include "MessageOutlet.h"
 #include "MessageTableRead.h"
+#include "MessageTableWrite.h"
 #include "PdContext.h"
 #include "PdGraph.h"
 #include "StaticUtils.h"
@@ -177,6 +178,14 @@ void PdGraph::registerObjectIfRequiresRegistration(MessageObject *messageObject)
       context->registerTable((MessageTable *) messageObject);
       break;
     }
+    case MESSAGE_TABLE_READ: {
+      context->registerTableReceiver((MessageTableRead *) messageObject);
+      break;
+    }
+    case MESSAGE_TABLE_WRITE: {
+      context->registerTableReceiver((MessageTableWrite *) messageObject);
+      break;
+    }
     case DSP_CATCH: {
       context->registerDspCatch((DspCatch *) messageObject);
       break;
@@ -196,10 +205,6 @@ void PdGraph::registerObjectIfRequiresRegistration(MessageObject *messageObject)
     }
     case DSP_RECEIVE: {
       context->registerDspReceive((DspReceive *) messageObject);
-      break;
-    }
-    case MESSAGE_TABLE_READ: {
-      context->registerTableReceiver((MessageTableRead *) messageObject);
       break;
     }
     case DSP_TABLE_PLAY: {
