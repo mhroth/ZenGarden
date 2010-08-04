@@ -27,6 +27,7 @@
 #include "DspObject.h"
 #include "OrderedMessageQueue.h"
 
+class DeclareList;
 class DelayReceiver;
 class DspCatch;
 class DspDelayWrite;
@@ -143,6 +144,19 @@ class PdGraph : public DspObject {
   
     void attachToContext(bool isAttached);
   
+    /**
+     * Searches all declared paths to find an abstraction matching the given name.
+     * Returns the abstraction's directory, or NULL if nothing could be found.
+     * The returned string should NOT be free()ed by the caller. It belongs to to the DeclareList.
+     */
+    char *findAbstractionPath(char *filename);
+  
+    /**
+     * Adds a full or partial path to the declare list. If it is a relative path, then it will be
+     * resolved relative to the path of the abstraction.
+     */
+    void addDeclarePath(char *path);
+  
   private:
     /** Create a new object based on its initialisation string. */
     MessageObject *newObject(char *objectType, char *objectLabel, PdMessage *initMessage, PdGraph *graph);
@@ -192,6 +206,9 @@ class PdGraph : public DspObject {
     
     /** A list of all outlet (message or audio) nodes in this subgraph. */
     ZGLinkedList *outletList;
+  
+    /** A global list of all declared directories (-path and -stdpath) */
+    DeclareList *declareList;
 };
 
 #endif // _PD_GRAPH_H_

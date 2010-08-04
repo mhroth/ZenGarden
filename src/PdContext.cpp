@@ -166,7 +166,6 @@ PdContext::PdContext(int numInputChannels, int numOutputChannels, int blockSize,
   catchList = new ZGLinkedList();
   tableList = new ZGLinkedList();
   tableReceiverList = new ZGLinkedList();
-  declareList = new ZGLinkedList();
   
   // lock is recursive
   pthread_mutexattr_t mta;
@@ -199,11 +198,7 @@ PdContext::~PdContext() {
   delete catchList;
   delete tableList;
   delete tableReceiverList;
-  // delete all declare path strings
-  for (int i = 0; i < declareList->size(); i++) {
-    free(declareList->get(i));
-  }
-  delete declareList;
+
   pthread_mutex_destroy(&contextLock);
 }
 
@@ -317,7 +312,7 @@ PdGraph *PdContext::newGraph(char *directory, char *filename, PdMessage *initMes
   char *line = fileParser->nextMessage();
   if (strncmp(line, "#N canvas", strlen("#N canvas")) == 0) {
     graph = new PdGraph(initMessage, parentGraph, this, getNextGraphId());
-    declareList->add(StaticUtils::copyString(directory)); // TODO(mhroth): should be moved to a better location
+    graph->addDeclarePath(directory); // adds the root graph
     bool success = configureEmptyGraphWithParser(graph, fileParser);
     if (!success) {
       printErr("The file %s could not be correctly parsed. Probably an unimplemented object has been referenced, or an abstraction could not be found.", filePath);
@@ -363,32 +358,19 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
         PdMessage *initMessage = new PdMessage(objectInitString, graph->getArguments());
         MessageObject *messageObject = newObject(objectType, objectLabel, initMessage, graph);
         if (messageObject == NULL) {
-          // object could not be instantiated, probably because the object is unknown
-          // look for the object definition in an abstraction
-          // first look in the local directory (the same directory as the original file)...
           char *filename = StaticUtils::joinPaths(objectLabel, ".pd");
-          char *directory = (char *) declareList->get(0);
-          messageObject = newGraph(directory, filename, initMessage, graph);
-          if (messageObject == NULL) {
-            // ...and if that fails, look in the declared directories
-            int i = 0;
-            while (messageObject == NULL && i < declareList->size()) {
-              char *librarySubpath = (char *) declareList->get(i++);
-              char *fullPath = StaticUtils::joinPaths(directory, librarySubpath); 
-              messageObject = newGraph(directory, filename, initMessage, graph);
-              free(fullPath);
-            }
-            if (messageObject == NULL) {
-              free(filename);
-              delete initMessage;
-              printErr("Unknown object or abstraction \"%s\".", objectInitString);
-              return false;
-            }
-            // else fallthrough, free the filename, and add the object
+          char *directory = graph->findAbstractionPath(filename);
+          if (directory == NULL) {
+            free(filename);
+            delete initMessage;
+            printErr("Unknown object or abstraction \"%s\".", objectInitString);
+            return false;
           }
+          messageObject = newGraph(directory, filename, initMessage, graph);
           free(filename);
         }
         delete initMessage;
+
         // add the object to the local graph and make any necessary registrations
         graph->addObject(messageObject);
       } else if (strcmp(objectType, "msg") == 0) {
@@ -422,7 +404,7 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
         if (initMessage->isSymbol(0, "-path")) {
           if (initMessage->isSymbol(1)) {
             // add symbol to declare directories
-            declareList->add(StaticUtils::copyString(initMessage->getSymbol(1)));
+            graph->addDeclarePath(initMessage->getSymbol(1));
           }
         } else {
           printErr("declare \"%s\" flag is not supported.", initMessage->getSymbol(0));

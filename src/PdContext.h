@@ -229,9 +229,6 @@ class PdContext {
     /** A global list of all [catch~] objects. */
     ZGLinkedList *catchList;
     
-    /** A global list of all declared directories (-path and -stdpath) */
-    ZGLinkedList *declareList;
-    
     /** A global list of all [table] objects. */
     ZGLinkedList *tableList;
     

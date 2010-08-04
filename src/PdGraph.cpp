@@ -20,6 +20,7 @@
  *
  */
 
+#include "DeclareList.h"
 #include "DspInlet.h"
 #include "DspOutlet.h"
 #include "DspTablePlay.h"
@@ -44,6 +45,7 @@ PdGraph::PdGraph(PdMessage *initMessage, PdGraph *parentGraph, PdContext *contex
   dspNodeList = new List();
   inletList = new ZGLinkedList();
   outletList = new ZGLinkedList();
+  declareList = new DeclareList();
   // all graphs start out unattached to any context, though they exist in a context
   isAttachedToContext = false;
   switched = true; // graphs are switched on by default
@@ -62,6 +64,7 @@ PdGraph::~PdGraph() {
   delete inletList;
   delete outletList;
   delete graphArguments;
+  delete declareList;
 
   // delete all constituent nodes
   nodeList->resetIterator();
@@ -250,6 +253,25 @@ float *PdGraph::getGlobalDspBufferAtInlet(int inletIndex) {
 
 float *PdGraph::getGlobalDspBufferAtOutlet(int outletIndex) {
   return context->getGlobalDspBufferAtOutlet(outletIndex);
+}
+
+char *PdGraph::findAbstractionPath(char *filename) {
+  char *directory = NULL;
+  declareList->resetIterator();
+  while ((directory = (char *) declareList->getNext()) != NULL) {
+    char *fullPath = StaticUtils::joinPaths(directory, filename);
+    if (StaticUtils::fileExists(fullPath)) {
+      free(fullPath);
+      return directory;
+    } else {
+      free(fullPath);
+    }
+  }
+  return isRootGraph() ? NULL : parentGraph->findAbstractionPath(filename);
+}
+
+void PdGraph::addDeclarePath(char *path) {
+  declareList->addPath(path);
 }
 
 #pragma mark -
