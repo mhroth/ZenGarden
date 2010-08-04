@@ -312,7 +312,11 @@ public class PdObjectTest implements ZenGardenListener {
   public void testMessageSymbol() {
 	genericMessageTest("MessageSymbol.pd");
   }
-		
+	
+  @Test
+  public void testMessageTangent() {
+	genericMessageTest("MessageTangent.pd");
+  }
   /*
   @Test
   public void testMessageUnpack() {
