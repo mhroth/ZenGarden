@@ -59,16 +59,16 @@ void MessageSoundfiler::processMessage(int inletIndex, PdMessage *message) {
               // use libsndfile to load and read the file (also converting the samples to [-1,1] float)
               SF_INFO sfInfo;
               
-              char *directory = (char *) graph->getDeclareList()->get(0);
-              char *filename = StaticUtils::joinPaths(directory, messageElement->getSymbol());
-              SNDFILE *sndFile = sf_open(filename, SFM_READ, &sfInfo);
+              char *directory = graph->findFilePath(messageElement->getSymbol());
+              char *fullPath = StaticUtils::joinPaths(directory, messageElement->getSymbol());
+              SNDFILE *sndFile = sf_open(fullPath, SFM_READ, &sfInfo);
               
               if (sndFile == NULL) {
-                graph->printErr("soundfiler can't open %s.", filename);
-                free(filename);
+                graph->printErr("soundfiler can't open %s.", fullPath);
+                free(fullPath);
                 return; // there was an error reading the file. Move on with life.
               } 
-              free(filename);
+              free(fullPath);
               
               // It is assumed that the channels are interleaved.
               int samplesPerChannel = sfInfo.frames;

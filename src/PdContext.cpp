@@ -359,7 +359,7 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
         MessageObject *messageObject = newObject(objectType, objectLabel, initMessage, graph);
         if (messageObject == NULL) {
           char *filename = StaticUtils::joinPaths(objectLabel, ".pd");
-          char *directory = graph->findAbstractionPath(filename);
+          char *directory = graph->findFilePath(filename);
           if (directory == NULL) {
             free(filename);
             delete initMessage;

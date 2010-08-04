@@ -255,7 +255,7 @@ float *PdGraph::getGlobalDspBufferAtOutlet(int outletIndex) {
   return context->getGlobalDspBufferAtOutlet(outletIndex);
 }
 
-char *PdGraph::findAbstractionPath(char *filename) {
+char *PdGraph::findFilePath(char *filename) {
   char *directory = NULL;
   declareList->resetIterator();
   while ((directory = (char *) declareList->getNext()) != NULL) {
@@ -267,7 +267,7 @@ char *PdGraph::findAbstractionPath(char *filename) {
       free(fullPath);
     }
   }
-  return isRootGraph() ? NULL : parentGraph->findAbstractionPath(filename);
+  return isRootGraph() ? NULL : parentGraph->findFilePath(filename);
 }
 
 void PdGraph::addDeclarePath(char *path) {
@@ -421,11 +421,6 @@ int PdGraph::getBlockSize() {
 
 bool PdGraph::isRootGraph() {
   return (parentGraph == NULL);
-}
-
-List *PdGraph::getDeclareList() {
-  //return context->getDeclareList();
-  return NULL; // TODO(mhroth): temporary fix for compile
 }
 
 MessageTable *PdGraph::getTable(char *name) {

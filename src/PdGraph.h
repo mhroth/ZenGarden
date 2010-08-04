@@ -129,9 +129,6 @@ class PdGraph : public DspObject {
      */
     void dispatchMessageToNamedReceivers(char *name, PdMessage *message);
   
-    /** Returns a list of directories which have neen delcared via a "declare" object. */
-    List *getDeclareList();
-  
     /** Gets the named (global) table object. */
     MessageTable *getTable(char *name);
   
@@ -145,11 +142,12 @@ class PdGraph : public DspObject {
     void attachToContext(bool isAttached);
   
     /**
-     * Searches all declared paths to find an abstraction matching the given name.
-     * Returns the abstraction's directory, or NULL if nothing could be found.
+     * Searches all declared paths to find a file matching the given name. The given filename
+     * should be a relative path, NOT a full path.
+     * Returns the directory in which the file was found, or NULL if nothing could be found.
      * The returned string should NOT be free()ed by the caller. It belongs to to the DeclareList.
      */
-    char *findAbstractionPath(char *filename);
+    char *findFilePath(char *filename);
   
     /**
      * Adds a full or partial path to the declare list. If it is a relative path, then it will be
