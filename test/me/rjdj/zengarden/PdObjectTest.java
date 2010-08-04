@@ -317,6 +317,11 @@ public class PdObjectTest implements ZenGardenListener {
   public void testMessageTangent() {
 	genericMessageTest("MessageTangent.pd");
   }
+	
+  @Test
+  public void testMessageTimer() {
+	genericMessageTest("MessageTimer.pd", 1247.0f);
+  }
   /*
   @Test
   public void testMessageUnpack() {
