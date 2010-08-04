@@ -63,7 +63,7 @@ void MessageSymbol::processMessage(int inletIndex, PdMessage *message) {
     }
     case 1: {
       if (message->isSymbol(0)) {
-        symbol->setSymbol(message->getSymbol(0));
+        symbol->setSymbol(message->getSymbol(1));
       }
       break;
     }
