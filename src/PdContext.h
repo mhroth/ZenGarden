@@ -28,7 +28,6 @@
 #include "OrderedMessageQueue.h"
 #include "PdGraph.h"
 #include "ZGCallbackFunction.h"
-#include "ZGLinkedList.h"
 
 class DspCatch;
 class DelayReceiver;
@@ -39,7 +38,7 @@ class DspThrow;
 class MessageTable;
 class PdFileParser;
 class RemoteMessageReceiver;
-class TableReceiver;
+class TableReceiverInterface;
 
 /**
  * The <code>PdContext</code> is a container for a set of <code>PdGraph</code>s operating in
@@ -107,7 +106,7 @@ class PdContext {
     
     void registerTable(MessageTable *table);
     
-    void registerTableReceiver(TableReceiver *tableReceiver);
+    void registerTableReceiver(TableReceiverInterface *tableReceiver);
     
     MessageTable *getTable(char *name);
     

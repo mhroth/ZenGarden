@@ -24,11 +24,10 @@
 #define _MESSAGE_TABLE_READ_H_
 
 #include "MessageObject.h"
-
-class MessageTable;
+#include "TableReceiverInterface.h"
 
 /** [tabread name] */
-class MessageTableRead : public MessageObject {
+class MessageTableRead : public MessageObject, public TableReceiverInterface {
   
   public:
     MessageTableRead(PdMessage *initMessage, PdGraph *graph);
@@ -38,6 +37,7 @@ class MessageTableRead : public MessageObject {
     ObjectType getObjectType();
     
     char *getName();
+    void setTable(MessageTable *table);
     
   private:
     void processMessage(int inletIndex, PdMessage *message);

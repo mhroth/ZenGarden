@@ -24,7 +24,7 @@
 #include "MessageTable.h"
 #include "PdGraph.h"
 
-DspTablePlay::DspTablePlay(PdMessage *initMessage, PdGraph *graph) : TableReceiver(1, 0, 2, 1, graph) {
+DspTablePlay::DspTablePlay(PdMessage *initMessage, PdGraph *graph) : DspObject(1, 0, 2, 1, graph) {
   name = initMessage->isSymbol(0) ? StaticUtils::copyString(initMessage->getSymbol(0)) : NULL;
   table = NULL;
   outgoingMessage = NULL;
@@ -41,6 +41,18 @@ DspTablePlay::~DspTablePlay() {
 
 const char *DspTablePlay::getObjectLabel() {
   return "tabplay~";
+}
+
+ObjectType DspTablePlay::getObjectType() {
+  return DSP_TABLE_PLAY;
+}
+
+char *DspTablePlay::getName() {
+  return name;
+}
+
+void DspTablePlay::setTable(MessageTable *aTable) {
+  table = aTable;
 }
 
 ConnectionType DspTablePlay::getConnectionType(int outletIndex) {

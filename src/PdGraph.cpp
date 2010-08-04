@@ -22,8 +22,12 @@
 
 #include "DspInlet.h"
 #include "DspOutlet.h"
+#include "DspTablePlay.h"
+#include "DspTableRead.h"
+#include "DspTableRead4.h"
 #include "MessageInlet.h"
 #include "MessageOutlet.h"
+#include "MessageTableRead.h"
 #include "PdContext.h"
 #include "PdGraph.h"
 #include "StaticUtils.h"
@@ -194,9 +198,20 @@ void PdGraph::registerObjectIfRequiresRegistration(MessageObject *messageObject)
       context->registerDspReceive((DspReceive *) messageObject);
       break;
     }
-    case DSP_TABLE_READ4:
+    case MESSAGE_TABLE_READ: {
+      context->registerTableReceiver((MessageTableRead *) messageObject);
+      break;
+    }
+    case DSP_TABLE_PLAY: {
+      context->registerTableReceiver((DspTablePlay *) messageObject);
+      break;
+    }
+    case DSP_TABLE_READ4: {
+      context->registerTableReceiver((DspTableRead4 *) messageObject);
+      break;
+    }
     case DSP_TABLE_READ: {
-      context->registerTableReceiver((TableReceiver *) messageObject);
+      context->registerTableReceiver((DspTableRead *) messageObject);
       break;
     }
     case DSP_THROW: {

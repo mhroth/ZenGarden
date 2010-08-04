@@ -24,7 +24,7 @@
 #include "DspTableRead4.h"
 #include "PdGraph.h"
 
-DspTableRead4::DspTableRead4(PdMessage *initMessage, PdGraph *graph) : TableReceiver(2, 1, 0, 1, graph) {
+DspTableRead4::DspTableRead4(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 1, 0, 1, graph) {
   name = initMessage->isSymbol(0) ? StaticUtils::copyString(initMessage->getSymbol(0)) : NULL;
   offset = 0.0f;
 }
@@ -39,6 +39,14 @@ const char *DspTableRead4::getObjectLabel() {
 
 ObjectType DspTableRead4::getObjectType() {
   return DSP_TABLE_READ4;
+}
+
+char *DspTableRead4::getName() {
+  return name;
+}
+
+void DspTableRead4::setTable(MessageTable *aTable) {
+  table = aTable;
 }
 
 void DspTableRead4::processMessage(int inletIndex, PdMessage *message) {

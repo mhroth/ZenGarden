@@ -20,12 +20,12 @@
  *
  */
 
-#include "MessageTable.h"
 #include "MessageTableRead.h"
 #include "PdGraph.h"
 
 MessageTableRead::MessageTableRead(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
   name = initMessage->isSymbol(0) ? StaticUtils::copyString(initMessage->getSymbol(0)) : NULL;
+  table = NULL; // registration process will set the correct pointer
 }
 
 MessageTableRead::~MessageTableRead() {
@@ -38,6 +38,14 @@ const char *MessageTableRead::getObjectLabel() {
 
 ObjectType MessageTableRead::getObjectType() {
   return MESSAGE_TABLE_READ;
+}
+
+char *MessageTableRead::getName() {
+  return name;
+}
+
+void MessageTableRead::setTable(MessageTable *aTable) {
+  table = aTable;
 }
 
 void MessageTableRead::processMessage(int inletIndex, PdMessage *message) {

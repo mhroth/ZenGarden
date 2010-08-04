@@ -120,6 +120,5 @@ LOCAL_SRC_FILES := \
 ./PdMessage.cpp \
 ./RemoteMessageReceiver.cpp \
 ./StaticUtils.cpp \
-./TableReceiver.cpp \
 ./ZenGarden.cpp \
 ./ZGLinkedList.cpp 

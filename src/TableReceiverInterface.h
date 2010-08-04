@@ -20,28 +20,23 @@
  *
  */
 
-#ifndef _TABLE_RECEIVER_H_
-#define _TABLE_RECEIVER_H_
+#ifndef _TABLE_RECEIVER_INTERFACE_H_
+#define _TABLE_RECEIVER_INTERFACE_H_
 
-#include "DspObject.h"
 #include "MessageTable.h"
 
 /**
- * This class has a similar function to <code>DelayReceiver</code> in that it is a the superclass
- * of all objects which read from tables. This includes <code>DspTableRead</code> and
- * <code>DspTablePlay</code>.
+ * This class has a similar function to DelayReceiver in that it is an interface
+ * for all objects which interact with MessageTables. This includes DspTableRead, DspTablePlay,
+ * DspTableRead4, MessageTableRead, and MessageTableWrite.
  */
-class TableReceiver : public DspObject {
+class TableReceiverInterface {
   public:
-    TableReceiver(int numMessageInlets, int numDspInlets, int numMessageOutlets, int numDspOutlets, PdGraph *graph);
-    virtual ~TableReceiver();
+    virtual ~TableReceiverInterface() { /* nothing to do */ }
 
-    char *getName();
-    void setTable(MessageTable *table);
-
-  protected:
-    char *name;
-    MessageTable *table;
+    virtual char *getName() = 0;
+  
+    virtual void setTable(MessageTable *table) = 0;
 };
 
-#endif // _TABLE_RECEIVER_H_
+#endif // _TABLE_RECEIVER_INTERFACE_H_

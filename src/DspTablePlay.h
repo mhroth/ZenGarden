@@ -23,20 +23,25 @@
 #ifndef _DSP_TABLE_PLAY_H_
 #define _DSP_TABLE_PLAY_H_
 
-#include "TableReceiver.h"
+#include "DspObject.h"
+#include "TableReceiverInterface.h"
 
 /** [tabplay~] */
-class DspTablePlay : public TableReceiver {
+class DspTablePlay : public DspObject, public TableReceiverInterface {
   
   public:
     DspTablePlay(PdMessage *initMessage, PdGraph *graph);
     ~DspTablePlay();
   
     const char *getObjectLabel();
+    ObjectType getObjectType();
   
     ConnectionType getConnectionType(int outletIndex);
   
     void sendMessage(int outletIndex, PdMessage *message);
+  
+    char *getName();
+    void setTable(MessageTable *table);
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
@@ -55,6 +60,9 @@ class DspTablePlay : public TableReceiver {
     float *localDspBufferAtOutletReserved;
     int currentTableIndex; // the current index 
     int endTableIndex; // the index to play to
+  
+    char *name;
+    MessageTable *table;
 };
 
 #endif // _DSP_TABLE_PLAY_H_

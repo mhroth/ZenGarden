@@ -23,13 +23,14 @@
 #ifndef _DSP_TABLE_READ_H_
 #define _DSP_TABLE_READ_H_
 
-#include "TableReceiver.h"
+#include "DspObject.h"
+#include "TableReceiverInterface.h"
 
 /**
  * [tabread~ name]
  * This is a non-interpolating table reader.
  */
-class DspTableRead : public TableReceiver {
+class DspTableRead : public DspObject, public TableReceiverInterface {
   
   public:
     DspTableRead(PdMessage *initMessage, PdGraph *graph);
@@ -37,12 +38,17 @@ class DspTableRead : public TableReceiver {
     
     const char *getObjectLabel();
     ObjectType getObjectType();
+  
+    char *getName();
+    void setTable(MessageTable *table);
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
     void processDspToIndex(float blockIndex);
   
     float offset;
+    char *name;
+    MessageTable *table;
 };
 
 #endif // _DSP_TABLE_READ_H_

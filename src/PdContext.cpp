@@ -899,9 +899,9 @@ void PdContext::registerTable(MessageTable *table) {
   
   tableList->add(table);
   
-  TableReceiver *receiver = NULL;
+  TableReceiverInterface *receiver = NULL;
   tableReceiverList->resetIterator();
-  while ((receiver = (TableReceiver *) tableReceiverList->getNext()) != NULL) {
+  while ((receiver = (TableReceiverInterface *) tableReceiverList->getNext()) != NULL) {
     if (strcmp(receiver->getName(), table->getName()) == 0) {
       receiver->setTable(table);
     }
@@ -919,7 +919,7 @@ MessageTable *PdContext::getTable(char *name) {
   return NULL;
 }
 
-void PdContext::registerTableReceiver(TableReceiver *tableReceiver) {
+void PdContext::registerTableReceiver(TableReceiverInterface *tableReceiver) {
   tableReceiverList->add(tableReceiver); // add the new receiver
   
   MessageTable *table = getTable(tableReceiver->getName());

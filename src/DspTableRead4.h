@@ -23,13 +23,14 @@
 #ifndef _DSP_TABLE_READ4_H_
 #define _DSP_TABLE_READ4_H_
 
-#include "TableReceiver.h"
+#include "DspObject.h"
+#include "TableReceiverInterface.h"
 
 /**
  * [tabread4~ name]
  * This is a linear-interpolating table reader.
  */
-class DspTableRead4 : public TableReceiver {
+class DspTableRead4 : public DspObject, public TableReceiverInterface {
   
   public:
     DspTableRead4(PdMessage *initMessage, PdGraph *graph);
@@ -38,11 +39,16 @@ class DspTableRead4 : public TableReceiver {
     const char *getObjectLabel();
     ObjectType getObjectType();
   
+    char *getName();
+    void setTable(MessageTable *table);
+  
   private:
     void processMessage(int inletIndex, PdMessage *message);
     void processDspToIndex(float blockIndex);
   
     float offset;
+    char *name;
+    MessageTable *table;
 };
 
 #endif // _DSP_TABLE_READ4_H_

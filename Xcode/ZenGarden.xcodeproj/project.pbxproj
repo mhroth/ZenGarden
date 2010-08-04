@@ -138,7 +138,6 @@
 		90337CD611D0D847009FCC01 /* PdMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C4911D0D847009FCC01 /* PdMessage.cpp */; };
 		90337CD711D0D847009FCC01 /* RemoteMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C4D11D0D847009FCC01 /* RemoteMessageReceiver.cpp */; };
 		90337CD811D0D847009FCC01 /* StaticUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C4F11D0D847009FCC01 /* StaticUtils.cpp */; };
-		90337CD911D0D847009FCC01 /* TableReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C5111D0D847009FCC01 /* TableReceiver.cpp */; };
 		90337CDA11D0D847009FCC01 /* ZenGarden.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C5311D0D847009FCC01 /* ZenGarden.cpp */; };
 		90337CDD11D0D847009FCC01 /* ZGLinkedList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C5B11D0D847009FCC01 /* ZGLinkedList.cpp */; };
 		90337CDE11D0D847009FCC01 /* ArrayArithmetic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B4911D0D847009FCC01 /* ArrayArithmetic.cpp */; };
@@ -369,8 +368,6 @@
 		90337DD611D0D847009FCC01 /* RemoteMessageReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C4E11D0D847009FCC01 /* RemoteMessageReceiver.h */; };
 		90337DD711D0D847009FCC01 /* StaticUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C4F11D0D847009FCC01 /* StaticUtils.cpp */; };
 		90337DD811D0D847009FCC01 /* StaticUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C5011D0D847009FCC01 /* StaticUtils.h */; };
-		90337DD911D0D847009FCC01 /* TableReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C5111D0D847009FCC01 /* TableReceiver.cpp */; };
-		90337DDA11D0D847009FCC01 /* TableReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C5211D0D847009FCC01 /* TableReceiver.h */; };
 		90337DDB11D0D847009FCC01 /* ZenGarden.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C5311D0D847009FCC01 /* ZenGarden.cpp */; };
 		90337DDC11D0D847009FCC01 /* ZenGarden.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C5411D0D847009FCC01 /* ZenGarden.h */; };
 		90337DDF11D0D847009FCC01 /* ZGCallbackFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C5A11D0D847009FCC01 /* ZGCallbackFunction.h */; };
@@ -605,8 +602,6 @@
 		90337EDA11D0D847009FCC01 /* RemoteMessageReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C4E11D0D847009FCC01 /* RemoteMessageReceiver.h */; };
 		90337EDB11D0D847009FCC01 /* StaticUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C4F11D0D847009FCC01 /* StaticUtils.cpp */; };
 		90337EDC11D0D847009FCC01 /* StaticUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C5011D0D847009FCC01 /* StaticUtils.h */; };
-		90337EDD11D0D847009FCC01 /* TableReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C5111D0D847009FCC01 /* TableReceiver.cpp */; };
-		90337EDE11D0D847009FCC01 /* TableReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C5211D0D847009FCC01 /* TableReceiver.h */; };
 		90337EDF11D0D847009FCC01 /* ZenGarden.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C5311D0D847009FCC01 /* ZenGarden.cpp */; };
 		90337EE011D0D847009FCC01 /* ZenGarden.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C5411D0D847009FCC01 /* ZenGarden.h */; };
 		90337EE311D0D847009FCC01 /* ZGCallbackFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C5A11D0D847009FCC01 /* ZGCallbackFunction.h */; };
@@ -652,6 +647,8 @@
 		90E8511F1204EF4900300CF2 /* MessageRoute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90E8511B1204EF4900300CF2 /* MessageRoute.cpp */; };
 		90E851201204EF4900300CF2 /* MessageRoute.h in Headers */ = {isa = PBXBuildFile; fileRef = 90E8511C1204EF4900300CF2 /* MessageRoute.h */; };
 		90E851211204EF4900300CF2 /* MessageRoute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90E8511B1204EF4900300CF2 /* MessageRoute.cpp */; };
+		90E90A051208EF8600A48B72 /* TableReceiverInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 90E90A041208EF8600A48B72 /* TableReceiverInterface.h */; };
+		90E90A061208EF8600A48B72 /* TableReceiverInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 90E90A041208EF8600A48B72 /* TableReceiverInterface.h */; };
 		90FA78281208B8300043EBBA /* MessageTableRead.h in Headers */ = {isa = PBXBuildFile; fileRef = 90FA78261208B8300043EBBA /* MessageTableRead.h */; };
 		90FA78291208B8300043EBBA /* MessageTableRead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA78271208B8300043EBBA /* MessageTableRead.cpp */; };
 		90FA782A1208B8300043EBBA /* MessageTableRead.h in Headers */ = {isa = PBXBuildFile; fileRef = 90FA78261208B8300043EBBA /* MessageTableRead.h */; };
@@ -918,8 +915,6 @@
 		90337C4E11D0D847009FCC01 /* RemoteMessageReceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteMessageReceiver.h; path = ../src/RemoteMessageReceiver.h; sourceTree = SOURCE_ROOT; };
 		90337C4F11D0D847009FCC01 /* StaticUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StaticUtils.cpp; path = ../src/StaticUtils.cpp; sourceTree = SOURCE_ROOT; };
 		90337C5011D0D847009FCC01 /* StaticUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StaticUtils.h; path = ../src/StaticUtils.h; sourceTree = SOURCE_ROOT; };
-		90337C5111D0D847009FCC01 /* TableReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TableReceiver.cpp; path = ../src/TableReceiver.cpp; sourceTree = SOURCE_ROOT; };
-		90337C5211D0D847009FCC01 /* TableReceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TableReceiver.h; path = ../src/TableReceiver.h; sourceTree = SOURCE_ROOT; };
 		90337C5311D0D847009FCC01 /* ZenGarden.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ZenGarden.cpp; path = ../src/ZenGarden.cpp; sourceTree = SOURCE_ROOT; };
 		90337C5411D0D847009FCC01 /* ZenGarden.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZenGarden.h; path = ../src/ZenGarden.h; sourceTree = SOURCE_ROOT; };
 		90337C5A11D0D847009FCC01 /* ZGCallbackFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZGCallbackFunction.h; path = ../src/ZGCallbackFunction.h; sourceTree = SOURCE_ROOT; };
@@ -941,6 +936,7 @@
 		90D031291204866300FEE5BB /* MessageListSplit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageListSplit.cpp; path = ../src/MessageListSplit.cpp; sourceTree = SOURCE_ROOT; };
 		90E8511B1204EF4900300CF2 /* MessageRoute.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageRoute.cpp; path = ../src/MessageRoute.cpp; sourceTree = SOURCE_ROOT; };
 		90E8511C1204EF4900300CF2 /* MessageRoute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageRoute.h; path = ../src/MessageRoute.h; sourceTree = SOURCE_ROOT; };
+		90E90A041208EF8600A48B72 /* TableReceiverInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TableReceiverInterface.h; path = ../src/TableReceiverInterface.h; sourceTree = SOURCE_ROOT; };
 		90FA78261208B8300043EBBA /* MessageTableRead.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageTableRead.h; path = ../src/MessageTableRead.h; sourceTree = SOURCE_ROOT; };
 		90FA78271208B8300043EBBA /* MessageTableRead.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageTableRead.cpp; path = ../src/MessageTableRead.cpp; sourceTree = SOURCE_ROOT; };
 		C6859E8B029090EE04C91782 /* ZenGardenNp.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ZenGardenNp.1; sourceTree = "<group>"; };
@@ -1246,8 +1242,7 @@
 				90337C4E11D0D847009FCC01 /* RemoteMessageReceiver.h */,
 				90337C4F11D0D847009FCC01 /* StaticUtils.cpp */,
 				90337C5011D0D847009FCC01 /* StaticUtils.h */,
-				90337C5111D0D847009FCC01 /* TableReceiver.cpp */,
-				90337C5211D0D847009FCC01 /* TableReceiver.h */,
+				90E90A041208EF8600A48B72 /* TableReceiverInterface.h */,
 				90337C5311D0D847009FCC01 /* ZenGarden.cpp */,
 				90337C5411D0D847009FCC01 /* ZenGarden.h */,
 				90337C5A11D0D847009FCC01 /* ZGCallbackFunction.h */,
@@ -1401,7 +1396,6 @@
 				90337DD411D0D847009FCC01 /* PdMessage.h in Headers */,
 				90337DD611D0D847009FCC01 /* RemoteMessageReceiver.h in Headers */,
 				90337DD811D0D847009FCC01 /* StaticUtils.h in Headers */,
-				90337DDA11D0D847009FCC01 /* TableReceiver.h in Headers */,
 				90337DDC11D0D847009FCC01 /* ZenGarden.h in Headers */,
 				90337DDF11D0D847009FCC01 /* ZGCallbackFunction.h in Headers */,
 				90337DE111D0D847009FCC01 /* ZGLinkedList.h in Headers */,
@@ -1419,6 +1413,7 @@
 				905C40461205D274001B31A7 /* MessageListAppend.h in Headers */,
 				9017BE681205E2CA0044C9B4 /* MessageListPrepend.h in Headers */,
 				90FA78281208B8300043EBBA /* MessageTableRead.h in Headers */,
+				90E90A051208EF8600A48B72 /* TableReceiverInterface.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1545,7 +1540,6 @@
 				90337ED811D0D847009FCC01 /* PdMessage.h in Headers */,
 				90337EDA11D0D847009FCC01 /* RemoteMessageReceiver.h in Headers */,
 				90337EDC11D0D847009FCC01 /* StaticUtils.h in Headers */,
-				90337EDE11D0D847009FCC01 /* TableReceiver.h in Headers */,
 				90337EE011D0D847009FCC01 /* ZenGarden.h in Headers */,
 				90337EE311D0D847009FCC01 /* ZGCallbackFunction.h in Headers */,
 				90337EE511D0D847009FCC01 /* ZGLinkedList.h in Headers */,
@@ -1563,6 +1557,7 @@
 				905C40491205D274001B31A7 /* MessageListAppend.h in Headers */,
 				9017BE6A1205E2CA0044C9B4 /* MessageListPrepend.h in Headers */,
 				90FA782A1208B8300043EBBA /* MessageTableRead.h in Headers */,
+				90E90A061208EF8600A48B72 /* TableReceiverInterface.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1755,7 +1750,6 @@
 				90337CD611D0D847009FCC01 /* PdMessage.cpp in Sources */,
 				90337CD711D0D847009FCC01 /* RemoteMessageReceiver.cpp in Sources */,
 				90337CD811D0D847009FCC01 /* StaticUtils.cpp in Sources */,
-				90337CD911D0D847009FCC01 /* TableReceiver.cpp in Sources */,
 				90337CDA11D0D847009FCC01 /* ZenGarden.cpp in Sources */,
 				90337CDD11D0D847009FCC01 /* ZGLinkedList.cpp in Sources */,
 				E4A3DD0211D93E8D007FE6FC /* MessageSoundfiler.cpp in Sources */,
@@ -1887,7 +1881,6 @@
 				90337DD311D0D847009FCC01 /* PdMessage.cpp in Sources */,
 				90337DD511D0D847009FCC01 /* RemoteMessageReceiver.cpp in Sources */,
 				90337DD711D0D847009FCC01 /* StaticUtils.cpp in Sources */,
-				90337DD911D0D847009FCC01 /* TableReceiver.cpp in Sources */,
 				90337DDB11D0D847009FCC01 /* ZenGarden.cpp in Sources */,
 				90337DE011D0D847009FCC01 /* ZGLinkedList.cpp in Sources */,
 				E4A3DD0311D93E8D007FE6FC /* MessageSoundfiler.cpp in Sources */,
@@ -2020,7 +2013,6 @@
 				90337ED711D0D847009FCC01 /* PdMessage.cpp in Sources */,
 				90337ED911D0D847009FCC01 /* RemoteMessageReceiver.cpp in Sources */,
 				90337EDB11D0D847009FCC01 /* StaticUtils.cpp in Sources */,
-				90337EDD11D0D847009FCC01 /* TableReceiver.cpp in Sources */,
 				90337EDF11D0D847009FCC01 /* ZenGarden.cpp in Sources */,
 				90337EE411D0D847009FCC01 /* ZGLinkedList.cpp in Sources */,
 				E4A3DD0511D93E8D007FE6FC /* MessageSoundfiler.cpp in Sources */,
