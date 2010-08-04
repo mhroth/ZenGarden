@@ -20,39 +20,31 @@
  *
  */
 
-#ifndef _OBJECT_TYPE_H_
-#define _OBJECT_TYPE_H_
+#ifndef _MESSAGE_TABLE_WRITE_H_
+#define _MESSAGE_TABLE_WRITE_H_
 
-/** An enumeration all supported objects. */
-enum ObjectType {
-  DSP_ADC,
-  DSP_ADD,
-  DSP_BANDPASS_FILTER,
-  DSP_CATCH,
-  DSP_CLIP,
-  DSP_COSINE,
-  DSP_DAC,
-  DSP_TABLE_PLAY,
-  DSP_DELAY_READ,
-  DSP_DELAY_WRITE,
-  DSP_INLET,
-  DSP_OUTLET,
-  DSP_RECEIVE,
-  DSP_SEND,
-  DSP_TABLE_READ,
-  DSP_TABLE_READ4,
-  DSP_THROW,
-  DSP_VARIABLE_DELAY,
-  MESSAGE_INLET,
-  MESSAGE_NOTEIN,
-  MESSAGE_OUTLET,
-  MESSAGE_RECEIVE,
-  MESSAGE_SEND,
-  MESSAGE_TABLE,
-  MESSAGE_TABLE_READ,
-  MESSAGE_TABLE_WRITE,
-  OBJECT_PD,
-  OBJECT_UNKNOWN // unknown or unimportant
+#include "MessageObject.h"
+#include "TableReceiverInterface.h"
+
+/** [tabwrite name] */
+class MessageTableWrite : public MessageObject, public TableReceiverInterface {
+  
+  public:
+    MessageTableWrite(PdMessage *initMessage, PdGraph *graph);
+    ~MessageTableWrite();
+    
+    const char *getObjectLabel();
+    ObjectType getObjectType();
+    
+    char *getName();
+    void setTable(MessageTable *table);
+    
+  private:
+    void processMessage(int inletIndex, PdMessage *message);
+    
+    char *name;
+    MessageTable *table;
+    int index;
 };
 
-#endif // _OBJECT_TYPE_H_
+#endif // _MESSAGE_TABLE_WRITE_H_

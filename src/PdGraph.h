@@ -38,7 +38,6 @@ class MessageReceive;
 class MessageSend;
 class MessageSendController;
 class MessageTable;
-class TableReceiver;
 
 class PdContext;
 
