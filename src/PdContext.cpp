@@ -84,6 +84,7 @@
 #include "MessageSymbol.h"
 #include "MessageTable.h"
 #include "MessageTableRead.h"
+#include "MessageTableWrite.h"
 #include "MessageTangent.h"
 #include "MessageText.h"
 #include "MessageTimer.h"
@@ -627,6 +628,8 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
       return new MessageTable(initMessage, graph);
     } else if (strcmp(objectLabel, "tabread") == 0) {
       return new MessageTableRead(initMessage, graph);
+    } else if (strcmp(objectLabel, "tabwrite") == 0) {
+      return new MessageTableWrite(initMessage, graph);
     } else if (strcmp(objectLabel, "tan") == 0) {
       return new MessageTangent(initMessage, graph);
     } else if (strcmp(objectLabel, "timer") == 0) {
