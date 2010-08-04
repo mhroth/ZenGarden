@@ -75,7 +75,7 @@ bool StaticUtils::isNumeric(char *str) {
   return true;
 }
 
-char *StaticUtils::joinPaths(const char *path0, const char *path1) {
+char *StaticUtils::concatStrings(const char *path0, const char *path1) {
   if (path0 == NULL || path1 == NULL) {
     return NULL;
   } else {
@@ -94,19 +94,6 @@ float StaticUtils::sineApprox(float x) {
   // in order to avoid type-punning pointer warnings.
   //int y = *(int *)&x | 0x80000000;
   //return (1.273239544735163f * x) - (0.405284734569351f * x) * (*(float *)&y);
-}
-
-bool StaticUtils::isArgumentIndex(char *str) {
-  return (strncmp(str, "\\$", 2) == 0);
-}
-
-int StaticUtils::getArgumentIndex(char *str) {
-  if (StaticUtils::isArgumentIndex(str)) {
-    // assumes that the argument index is only one character ([0,9])
-    return atoi(str+2); // the first two characters are '\\$'
-  } else {
-    return -1;
-  }
 }
 
 List *StaticUtils::tokenizeString(char *str, const char *delim) {

@@ -259,7 +259,7 @@ char *PdGraph::findFilePath(char *filename) {
   char *directory = NULL;
   declareList->resetIterator();
   while ((directory = (char *) declareList->getNext()) != NULL) {
-    char *fullPath = StaticUtils::joinPaths(directory, filename);
+    char *fullPath = StaticUtils::concatStrings(directory, filename);
     if (StaticUtils::fileExists(fullPath)) {
       free(fullPath);
       return directory;

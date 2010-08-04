@@ -34,10 +34,8 @@ class StaticUtils {
     static inline float millisecondsToSamples(float delayInMs, float sampleRate) {
       return (delayInMs / 1000.0f) * sampleRate;
     };
-    static char *joinPaths(const char *path0, const char *path1);
+    static char *concatStrings(const char *path0, const char *path1);
     static float sineApprox(float x);
-    static bool isArgumentIndex(char *str);
-    static int getArgumentIndex(char *str);
     static List *tokenizeString(char *str, const char *delim);
     static void destroyTokenizedStringList(List *tokenList);
   

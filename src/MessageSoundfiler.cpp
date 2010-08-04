@@ -60,7 +60,7 @@ void MessageSoundfiler::processMessage(int inletIndex, PdMessage *message) {
               SF_INFO sfInfo;
               
               char *directory = graph->findFilePath(messageElement->getSymbol());
-              char *fullPath = StaticUtils::joinPaths(directory, messageElement->getSymbol());
+              char *fullPath = StaticUtils::concatStrings(directory, messageElement->getSymbol());
               SNDFILE *sndFile = sf_open(fullPath, SFM_READ, &sfInfo);
               
               if (sndFile == NULL) {

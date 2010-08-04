@@ -44,18 +44,18 @@ void DeclareList::addPath(char *path) {
       add(StaticUtils::copyString(path));
     } else {
       // if no trailing slash exists, then one must be added
-      char *newPath = StaticUtils::joinPaths(path, "/");
+      char *newPath = StaticUtils::concatStrings(path, "/");
       add(newPath);
     }
   } else {
     // if it is not a full path, then make it relative to the root path
     if (hasTrailingSlash(path)) {
-      char *newPath = StaticUtils::joinPaths(getRootPath(), path);
+      char *newPath = StaticUtils::concatStrings(getRootPath(), path);
       add(newPath);
     } else {
       // if no trailing slash exists, then one should be added
-      char *a = StaticUtils::joinPaths(path, "/");
-      char *newPath = StaticUtils::joinPaths(getRootPath(), a);
+      char *a = StaticUtils::concatStrings(path, "/");
+      char *newPath = StaticUtils::concatStrings(getRootPath(), a);
       free(a);
       add(newPath);
     }

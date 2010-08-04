@@ -296,7 +296,7 @@ void PdContext::process(float *inputBuffers, float *outputBuffers) {
 
 PdGraph *PdContext::newGraph(char *directory, char *filename, PdMessage *initMessage, PdGraph *parentGraph) {
   // create file path based on directory and filename. Parse the file.
-  char *filePath = StaticUtils::joinPaths(directory, filename);
+  char *filePath = StaticUtils::concatStrings(directory, filename);
   
   // if the file does not exist, return
   if (!StaticUtils::fileExists(filePath)) {
@@ -358,7 +358,7 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
         PdMessage *initMessage = new PdMessage(objectInitString, graph->getArguments());
         MessageObject *messageObject = newObject(objectType, objectLabel, initMessage, graph);
         if (messageObject == NULL) {
-          char *filename = StaticUtils::joinPaths(objectLabel, ".pd");
+          char *filename = StaticUtils::concatStrings(objectLabel, ".pd");
           char *directory = graph->findFilePath(filename);
           if (directory == NULL) {
             free(filename);

@@ -56,7 +56,7 @@ char *PdFileParser::nextMessage() {
            !(strncmp(line, "#X", 2) == 0 || strncmp(line, "#N", 2) == 0 || 
              strncmp(line, "#A", 2) == 0)) {
       char *temp = buffer;
-      buffer = StaticUtils::joinPaths(buffer, line);
+      buffer = StaticUtils::concatStrings(buffer, line);
       free(temp);
     }
     return buffer;
