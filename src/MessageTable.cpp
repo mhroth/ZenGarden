@@ -87,5 +87,12 @@ void MessageTable::processMessage(int inletIndex, PdMessage *message) {
         buffer[i] /= total;
       }
     }
+  } else if (message->isSymbol(0, "resize")) {
+    if (message->isFloat(1)) {
+      int newBufferLength = (int) message->getFloat(1);
+      if (newBufferLength > 0) {
+        resizeBuffer(newBufferLength);
+      }
+    }
   }
 }
