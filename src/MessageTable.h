@@ -23,10 +23,10 @@
 #ifndef _MESSAGE_TABLE_H_
 #define _MESSAGE_TABLE_H_
 
-#include "MessageObject.h"
+#include "RemoteMessageReceiver.h"
 
 /** [table name] */
-class MessageTable : public MessageObject {
+class MessageTable : public RemoteMessageReceiver {
   
   public:
     MessageTable(PdMessage *initMessage, PdGraph *graph);
@@ -34,8 +34,6 @@ class MessageTable : public MessageObject {
   
     const char *getObjectLabel();
     ObjectType getObjectType();
-  
-    char *getName();
   
     /** Get a pointer to the table's buffer. */
     float *getBuffer(int *bufferLength);
@@ -48,7 +46,9 @@ class MessageTable : public MessageObject {
     float *resizeBuffer(int bufferLength);
   
   private:
-    char *name;
+    // tables can receive sent messages
+    void processMessage(int inletIndex, PdMessage *message);
+  
     float *buffer;
     int bufferLength;
 };

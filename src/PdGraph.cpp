@@ -113,8 +113,6 @@ void PdGraph::addObject(MessageObject *messageObject) {
     }
     case DSP_INLET: {
       inletList->add(messageObject);
-      
-      //((DspInlet *) node)->setInletBuffer(localDspBufferAtInlet + inletList->size() - 1);
       ((DspInlet *) messageObject)->setInletBuffer(&localDspBufferAtInlet[inletList->size()-1]);
       break;
     }
@@ -178,6 +176,8 @@ void PdGraph::registerObjectIfRequiresRegistration(MessageObject *messageObject)
       break;
     }
     case MESSAGE_TABLE: {
+      // tables must be registered globally as a table, but can also receive remote messages
+      context->registerRemoteMessageReceiver((RemoteMessageReceiver *) messageObject);
       context->registerTable((MessageTable *) messageObject);
       break;
     }

@@ -23,11 +23,13 @@
 #include "MessageTable.h"
 #include "PdGraph.h"
 
-MessageTable::MessageTable(PdMessage *initMessage, PdGraph *graph) : MessageObject(0, 0, graph) {
+#define DEFAULT_BUFFER_LENGTH 1024
+
+MessageTable::MessageTable(PdMessage *initMessage, PdGraph *graph) : RemoteMessageReceiver(0, 0, graph) {
   if (initMessage->isSymbol(0)) {
     name = StaticUtils::copyString(initMessage->getSymbol(0));
     // by default, the buffer length is 1024. The buffer should never be NULL.
-    bufferLength = initMessage->isFloat(1) ? (int) initMessage->getFloat(1) : 1024;
+    bufferLength = initMessage->isFloat(1) ? (int) initMessage->getFloat(1) : DEFAULT_BUFFER_LENGTH;
     buffer = (float *) calloc(bufferLength, sizeof(float));
   } else {
     name = NULL;
@@ -50,10 +52,6 @@ ObjectType MessageTable::getObjectType() {
   return MESSAGE_TABLE;
 }
 
-char *MessageTable::getName() {
-  return name;
-}
-
 float *MessageTable::getBuffer(int *bufferLength) {
   *bufferLength = this->bufferLength;
   return buffer;
@@ -66,4 +64,28 @@ float *MessageTable::resizeBuffer(int bufferLength) {
     buffer = (float *) calloc(bufferLength, sizeof(float));
   }
   return buffer;
+}
+
+void MessageTable::processMessage(int inletIndex, PdMessage *message) {
+  // TODO(mhroth): process all of the commands which can be sent to tables
+  if (message->isSymbol(0, "read")) {
+    if (message->isSymbol(1))  {
+      // read the file and fill the table
+    }
+  } else if (message->isSymbol(0, "write")) {
+    // write the contents of the table to file
+  } else if (message->isSymbol(0, "normalize")) {
+    // normalise the contents of the table to the given value. Default to 1.
+    float total = 0.0f;
+    for (int i = 0; i < bufferLength; i++) {
+      total += buffer[i];
+    }
+    if (total != 0.0f) {
+      float normalisedTotal = message->isFloat(1) ? message->getFloat(1) : 1.0f;
+      total /= normalisedTotal;
+      for (int i = 0; i < bufferLength; i++) {
+        buffer[i] /= total;
+      }
+    }
+  }
 }
