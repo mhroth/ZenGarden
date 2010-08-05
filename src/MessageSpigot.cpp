@@ -38,41 +38,18 @@ void MessageSpigot::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
       if (constant != 0.0f) {
-		switch (message->getType(0)) {
-		  case BANG: {
-			PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-		    outgoingMessage->setTimestamp(message->getTimestamp());
-			sendMessage(0, outgoingMessage);
-			break;
-	      }
-		  case FLOAT: {
-			PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-			outgoingMessage->setFloat(0, message->getFloat(0));
-			outgoingMessage->setTimestamp(message->getTimestamp());
-			sendMessage(0, outgoingMessage);
-			break;
-		  }
-		  case SYMBOL: {
-			PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-			outgoingMessage->setSymbol(0, message->getSymbol(0));
-			outgoingMessage->setTimestamp(message->getTimestamp());
-			sendMessage(0, outgoingMessage);
-			break;
-		  }
-		  default: {
-			break;
-		  }
-		}
+        // if the spigot is on, pass on the message
+        sendMessage(0, message);
       }
-	  case 1: {
-		if (message->isFloat(0)) {
-		  constant = message->getFloat(0);
-		}
-		break;
-	  }
-	  default: {
-		break;
-	  }
-	}
+      case 1: {
+        if (message->isFloat(0)) {
+          constant = message->getFloat(0);
+        }
+        break;
+      }
+      default: {
+        break;
+      }
+    }
   }
 }
