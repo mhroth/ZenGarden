@@ -247,6 +247,10 @@ float PdGraph::getSampleRate() {
   return context->getSampleRate();
 }
 
+int PdGraph::getGraphId() {
+  return graphId;
+}
+
 float *PdGraph::getGlobalDspBufferAtInlet(int inletIndex) {
   return context->getGlobalDspBufferAtInlet(inletIndex);
 }
@@ -271,7 +275,17 @@ char *PdGraph::findFilePath(char *filename) {
 }
 
 void PdGraph::addDeclarePath(char *path) {
-  declareList->addPath(path);
+  if (isRootGraph()) {
+    declareList->addPath(path);
+  } else {
+    if (graphId == parentGraph->getGraphId()) {
+      // this graph is a subgraph (not an abstraction) of the parent graph
+      // so the parent should handle the declared path
+      parentGraph->addDeclarePath(path);
+    } else {
+      declareList->addPath(path);
+    }
+  }
 }
 
 #pragma mark -

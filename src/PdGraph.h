@@ -118,6 +118,9 @@ class PdGraph : public DspObject {
     /** A convenience function to determine when in a block a message occurs. */
     float getBlockIndex(PdMessage *message);
   
+    /** Returns the graphId of this graph. */
+    int getGraphId();
+  
     /** (Re-)Computes the local tree and node processing ordering for dsp nodes. */
     void computeLocalDspProcessOrder();
   
@@ -151,7 +154,8 @@ class PdGraph : public DspObject {
   
     /**
      * Adds a full or partial path to the declare list. If it is a relative path, then it will be
-     * resolved relative to the path of the abstraction.
+     * resolved relative to the path of the abstraction. If this graph is a subgraph (not an
+     * abstraction), then the path will be handed off to the parent graph to be handled.
      */
     void addDeclarePath(char *path);
   
