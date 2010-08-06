@@ -78,6 +78,7 @@
 #include "MessageSine.h"
 #include "MessageSpigot.h"
 #include "MessageSqrt.h"
+#include "MessageStripNote.h"
 #include "MessageSubtract.h"
 #include "MessageSwitch.h"
 #include "MessageSwap.h"
@@ -602,6 +603,8 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
       return new MessageSine(initMessage, graph);
     } else if (strcmp(objectLabel, "spigot") == 0) {
       return new MessageSpigot(initMessage, graph);
+    } else if (strcmp(objectLabel, "stripnote") == 0) {
+      return new MessageStripNote(initMessage, graph);
     } else if (strcmp(objectLabel, "swap") == 0) {
       return new MessageSwap(initMessage, graph);
     } else if (strcmp(objectLabel, "symbol") == 0) {

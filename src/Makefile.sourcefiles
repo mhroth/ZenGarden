@@ -100,6 +100,7 @@ LOCAL_SRC_FILES := \
 ./MessageSoundfiler.cpp \
 ./MessageSpigot.cpp \
 ./MessageSqrt.cpp \
+./MessageStripNote.cpp \
 ./MessageSubtract.cpp \
 ./MessageSwitch.cpp \
 ./MessageSwap.cpp \
