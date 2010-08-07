@@ -259,6 +259,15 @@ float *PdGraph::getGlobalDspBufferAtOutlet(int outletIndex) {
   return context->getGlobalDspBufferAtOutlet(outletIndex);
 }
 
+char *PdGraph::resolveFullPath(char *filename) {
+  if (DeclareList::isFullPath(filename)) {
+    return StaticUtils::fileExists(filename) ? StaticUtils::copyString(filename) : NULL;
+  } else {
+    char *directory = findFilePath(filename);
+    return (directory != NULL) ? StaticUtils::concatStrings(directory, filename) : NULL;
+  }
+}
+
 char *PdGraph::findFilePath(char *filename) {
   char *directory = NULL;
   declareList->resetIterator();

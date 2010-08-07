@@ -148,9 +148,16 @@ class PdGraph : public DspObject {
      * Searches all declared paths to find a file matching the given name. The given filename
      * should be a relative path, NOT a full path.
      * Returns the directory in which the file was found, or NULL if nothing could be found.
-     * The returned string should NOT be free()ed by the caller. It belongs to to the DeclareList.
+     * The returned string SHOULD NOT be free()ed by the caller. It belongs to the DeclareList.
      */
     char *findFilePath(char *filename);
+  
+    /**
+     * Resolves the full path of the given file. If the file is already fully specified then a copy
+     * of the string is returned. Otherwise all declared paths are searched and the full path is
+     * returned. The returned path SHOULD be freed by the caller.
+     */
+    char *resolveFullPath(char *filename);
   
     /**
      * Adds a full or partial path to the declare list. If it is a relative path, then it will be

@@ -58,9 +58,7 @@ void MessageSoundfiler::processMessage(int inletIndex, PdMessage *message) {
             if (table != NULL) {
               // use libsndfile to load and read the file (also converting the samples to [-1,1] float)
               SF_INFO sfInfo;
-              
-              char *directory = graph->findFilePath(messageElement->getSymbol());
-              char *fullPath = StaticUtils::concatStrings(directory, messageElement->getSymbol());
+              char *fullPath = graph->resolveFullPath(messageElement->getSymbol());
               SNDFILE *sndFile = sf_open(fullPath, SFM_READ, &sfInfo);
               
               if (sndFile == NULL) {

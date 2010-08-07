@@ -48,10 +48,11 @@ class DeclareList : public ZGLinkedList {
     /** A convenience function returning the first entryin the list. */
     char *getRootPath();
   
-  private:
-    bool isFullPath(char *path);
-    bool hasTrailingSlash(char *path);
+    /** Returns true if the given path defines a full path, from root. */
+    static bool isFullPath(char *path);
   
+    /** Returns true if the given path has a trailing slash (indicating that it is a directory). */
+    static bool hasTrailingSlash(char *path);  
 };
 
 #endif // _DECLARE_LIST_H_
