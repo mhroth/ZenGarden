@@ -632,7 +632,7 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
       return new MessageUnpack(initMessage,graph);
     } else if (strcmp(objectLabel, "value") == 0 ||
                strcmp(objectLabel, "v") == 0) {
-      new MessageValue(initMessage, graph);
+      return new MessageValue(initMessage, graph);
     } else if (strcmp(objectLabel, "vsl") == 0 ||
                strcmp(objectLabel, "hsl") == 0) {
       // gui sliders are represented as a float objects
