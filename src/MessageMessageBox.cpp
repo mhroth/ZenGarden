@@ -39,7 +39,7 @@
  * NOTE(mhroth): MessageBoxes can only support up to 32 total messages.
  */
 MessageMessageBox::MessageMessageBox(char *initString, PdGraph *graph) :
-    MessageObject(1, 32, graph) {
+    MessageObject(1, 128, graph) {
   // parse the entire initialisation string
   List *messageInitListAll = StaticUtils::tokenizeString(initString, "\\;");
   
@@ -48,8 +48,12 @@ MessageMessageBox::MessageMessageBox(char *initString, PdGraph *graph) :
   List *messageInitList = StaticUtils::tokenizeString((char *) messageInitListAll->get(0), "\\,");
   for (int i = 0; i < messageInitList->size(); i++) {
     char *initString = (char *) messageInitList->get(i);
-    PdMessage *message = new PdMessage(initString);
-    localMessageList->add(message);
+    // StaticUtils::tokenizeString does not remove the trailing ";" from the
+    // original string. We should not process it because it will result in an empty message. 
+    if (strcmp(initString, ";") != 0) {
+      PdMessage *message = new PdMessage(initString);
+      localMessageList->add(message);
+    }
   }
   StaticUtils::destroyTokenizedStringList(messageInitList);
   
@@ -57,8 +61,6 @@ MessageMessageBox::MessageMessageBox(char *initString, PdGraph *graph) :
   remoteMessageList = new List();
   for (int i = 1; i < messageInitListAll->size(); i++) {
     char *initString = (char *) messageInitListAll->get(i);
-    // HACK(mhroth): StaticUtils::tokenizeString does not remove the trailing ";" from the
-    // original string. We shouldn't process it.
     if (strcmp(initString, ";") != 0) {
       MessageNamedDestination *namedDestination =
           (MessageNamedDestination *) malloc(sizeof(MessageNamedDestination));
