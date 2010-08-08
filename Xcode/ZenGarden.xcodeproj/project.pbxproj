@@ -664,6 +664,9 @@
 		90E851211204EF4900300CF2 /* MessageRoute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90E8511B1204EF4900300CF2 /* MessageRoute.cpp */; };
 		90E90A051208EF8600A48B72 /* TableReceiverInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 90E90A041208EF8600A48B72 /* TableReceiverInterface.h */; };
 		90E90A061208EF8600A48B72 /* TableReceiverInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 90E90A041208EF8600A48B72 /* TableReceiverInterface.h */; };
+		90F84D7E120ECA560011407E /* libsndfilezg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 90F84D7D120ECA560011407E /* libsndfilezg.a */; };
+		90F84D7F120ECA560011407E /* libsndfilezg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 90F84D7D120ECA560011407E /* libsndfilezg.a */; };
+		90F84D91120ECDA40011407E /* libsndfile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 90F84D90120ECDA40011407E /* libsndfile.a */; };
 		90FA78281208B8300043EBBA /* MessageTableRead.h in Headers */ = {isa = PBXBuildFile; fileRef = 90FA78261208B8300043EBBA /* MessageTableRead.h */; };
 		90FA78291208B8300043EBBA /* MessageTableRead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA78271208B8300043EBBA /* MessageTableRead.cpp */; };
 		90FA782A1208B8300043EBBA /* MessageTableRead.h in Headers */ = {isa = PBXBuildFile; fileRef = 90FA78261208B8300043EBBA /* MessageTableRead.h */; };
@@ -699,8 +702,6 @@
 		90251D3912042F38000EAF40 /* MessageOpenPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageOpenPanel.cpp; path = ../src/MessageOpenPanel.cpp; sourceTree = SOURCE_ROOT; };
 		90251D5512043445000EAF40 /* DspSignal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspSignal.cpp; path = ../src/DspSignal.cpp; sourceTree = SOURCE_ROOT; };
 		90251D5612043445000EAF40 /* DspSignal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspSignal.h; path = ../src/DspSignal.h; sourceTree = SOURCE_ROOT; };
-		9033711811D0CF07009FCC01 /* libzengarden.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libzengarden.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		9033712011D0CF2B009FCC01 /* libzengarden.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libzengarden.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		90337B4911D0D847009FCC01 /* ArrayArithmetic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ArrayArithmetic.cpp; path = ../src/ArrayArithmetic.cpp; sourceTree = SOURCE_ROOT; };
 		90337B4A11D0D847009FCC01 /* ArrayArithmetic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArrayArithmetic.h; path = ../src/ArrayArithmetic.h; sourceTree = SOURCE_ROOT; };
 		90337B4B11D0D847009FCC01 /* ConnectionType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConnectionType.h; path = ../src/ConnectionType.h; sourceTree = SOURCE_ROOT; };
@@ -958,6 +959,10 @@
 		90E8511B1204EF4900300CF2 /* MessageRoute.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageRoute.cpp; path = ../src/MessageRoute.cpp; sourceTree = SOURCE_ROOT; };
 		90E8511C1204EF4900300CF2 /* MessageRoute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageRoute.h; path = ../src/MessageRoute.h; sourceTree = SOURCE_ROOT; };
 		90E90A041208EF8600A48B72 /* TableReceiverInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TableReceiverInterface.h; path = ../src/TableReceiverInterface.h; sourceTree = SOURCE_ROOT; };
+		90F84D49120EC9100011407E /* libzengarden.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libzengarden.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		90F84D4A120EC9100011407E /* libzengarden.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libzengarden.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		90F84D7D120ECA560011407E /* libsndfilezg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsndfilezg.a; path = ../libs/Darwin/libsndfilezg.a; sourceTree = SOURCE_ROOT; };
+		90F84D90120ECDA40011407E /* libsndfile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsndfile.a; path = ../libs/iOS/libsndfile.a; sourceTree = SOURCE_ROOT; };
 		90FA78261208B8300043EBBA /* MessageTableRead.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageTableRead.h; path = ../src/MessageTableRead.h; sourceTree = SOURCE_ROOT; };
 		90FA78271208B8300043EBBA /* MessageTableRead.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageTableRead.cpp; path = ../src/MessageTableRead.cpp; sourceTree = SOURCE_ROOT; };
 		C6859E8B029090EE04C91782 /* ZenGardenNp.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ZenGardenNp.1; sourceTree = "<group>"; };
@@ -971,6 +976,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				90AF7F7511FE67BE006F88E6 /* Accelerate.framework in Frameworks */,
+				90F84D7F120ECA560011407E /* libsndfilezg.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -979,6 +985,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9069DFD211D17BD600889A5B /* Accelerate.framework in Frameworks */,
+				90F84D91120ECDA40011407E /* libsndfile.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -987,6 +994,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9069DFD311D17BF100889A5B /* Accelerate.framework in Frameworks */,
+				90F84D7E120ECA560011407E /* libsndfilezg.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -999,7 +1007,7 @@
 				08FB7795FE84155DC02AAC07 /* Source */,
 				C6859E8C029090F304C91782 /* Documentation */,
 				1AB674ADFE9D54B511CA2CBB /* Products */,
-				9069DFD111D17BD600889A5B /* Accelerate.framework */,
+				90F84D98120ECDEC0011407E /* Frameworks & Libraries */,
 			);
 			name = ZenGardenNp;
 			sourceTree = "<group>";
@@ -1283,10 +1291,20 @@
 			isa = PBXGroup;
 			children = (
 				8DD76F6C0486A84900D96B5E /* ZenGarden */,
-				9033711811D0CF07009FCC01 /* libzengarden.a */,
-				9033712011D0CF2B009FCC01 /* libzengarden.a */,
+				90F84D49120EC9100011407E /* libzengarden.a */,
+				90F84D4A120EC9100011407E /* libzengarden.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		90F84D98120ECDEC0011407E /* Frameworks & Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				90F84D90120ECDA40011407E /* libsndfile.a */,
+				90F84D7D120ECA560011407E /* libsndfilezg.a */,
+				9069DFD111D17BD600889A5B /* Accelerate.framework */,
+			);
+			name = "Frameworks & Libraries";
 			sourceTree = "<group>";
 		};
 		C6859E8C029090F304C91782 /* Documentation */ = {
@@ -1629,7 +1647,7 @@
 			);
 			name = "iOS Library";
 			productName = "iOS Library";
-			productReference = 9033711811D0CF07009FCC01 /* libzengarden.a */;
+			productReference = 90F84D49120EC9100011407E /* libzengarden.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		9033711F11D0CF2B009FCC01 /* OSX Library */ = {
@@ -1646,7 +1664,7 @@
 			);
 			name = "OSX Library";
 			productName = "OSX Library";
-			productReference = 9033712011D0CF2B009FCC01 /* libzengarden.a */;
+			productReference = 90F84D4A120EC9100011407E /* libzengarden.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -2089,9 +2107,12 @@
 				GCC_VERSION = 4.2;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				INSTALL_PATH = /usr/local/bin;
-				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../libs/Darwin/";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../libs/Darwin\"",
+				);
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "-lsndfilezg";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = ZenGarden;
 				VALID_ARCHS = "i386 x86_64";
 			};
@@ -2110,9 +2131,12 @@
 				GCC_VERSION = 4.2;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				INSTALL_PATH = /usr/local/bin;
-				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../libs/Darwin/";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../libs/Darwin\"",
+				);
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "-lsndfilezg";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = ZenGarden;
 				STRIP_INSTALLED_PRODUCT = YES;
 				VALID_ARCHS = "i386 x86_64";
@@ -2155,9 +2179,12 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
-				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../libs/iOS";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../libs/iOS\"",
+				);
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_LDFLAGS = "-lsndfile";
+				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = zengarden;
 				SDKROOT = iphoneos4.0;
@@ -2180,8 +2207,11 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
-				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../libs/iOS";
-				OTHER_LDFLAGS = "-lsndfile";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../libs/iOS\"",
+				);
+				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = zengarden;
 				SDKROOT = iphoneos4.0;
@@ -2204,7 +2234,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				INSTALL_PATH = /usr/local/lib;
-				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../libs/Darwin-i386/";
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../libs/Darwin/";
 				OTHER_LDFLAGS = "-lsndfilezg";
 				PREBINDING = NO;
 				PRODUCT_NAME = zengarden;
@@ -2217,14 +2247,19 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				INSTALL_PATH = /usr/local/lib;
-				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../libs/Darwin-i386/";
-				OTHER_LDFLAGS = "-lsndfilezg";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../libs/Darwin\"",
+				);
+				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = zengarden;
 				STRIP_INSTALLED_PRODUCT = YES;
