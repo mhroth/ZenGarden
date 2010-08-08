@@ -43,6 +43,10 @@ const char *DspReceive::getObjectLabel() {
   return "receive~";
 }
 
+ObjectType DspReceive::getObjectType() {
+  return DSP_RECEIVE;
+}
+
 char *DspReceive::getName() {
   return name;
 }
@@ -54,5 +58,7 @@ void DspReceive::setBuffer(float **buffer) {
 
 void DspReceive::processDsp() {
   // replace the local outlet buffer with a pointer to the input buffer of the associated send~
-  localDspBufferAtOutlet[0] = *sendBuffer;
+  if (sendBuffer != NULL) { // sendBuffer may be null if there is no related send~
+    localDspBufferAtOutlet[0] = *sendBuffer;
+  }
 }

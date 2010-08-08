@@ -40,6 +40,10 @@ const char *DspSend::getObjectLabel() {
   return "send~";
 }
 
+ObjectType DspSend::getObjectType() {
+  return DSP_SEND;
+}
+
 char *DspSend::getName() {
   return name;
 }

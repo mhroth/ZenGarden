@@ -36,6 +36,8 @@ class DspReceive : public DspObject {
     void setBuffer(float **buffer);
     char *getName();
     const char *getObjectLabel();
+    ObjectType getObjectType();
+  
     void processDsp();
   
   private:
