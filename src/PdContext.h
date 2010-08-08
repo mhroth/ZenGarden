@@ -164,6 +164,10 @@ class PdContext {
     static int getNextGraphId();
     static int getCurrentGraphId();
   
+    /** Used with MessageValue for keeping track of global variables. */
+    void setValueForName(char *name, float constant);
+    float getValueForName(char *name);
+  
   private:
     /** Returns <code>true</code> if the graph was successfully configured. <code>false</code> otherwise. */
     bool configureEmptyGraphWithParser(PdGraph *graph, PdFileParser *fileParser);

@@ -93,6 +93,7 @@
 #include "MessageTrigger.h"
 #include "MessageUntil.h"
 #include "MessageUnpack.h"
+#include "MessageValue.h"
 #include "MessageWrap.h"
 
 #include "MessageSendController.h"
@@ -364,7 +365,7 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
           if (directory == NULL) {
             free(filename);
             delete initMessage;
-            printErr("Unknown object or abstraction \"%s\".", objectInitString);
+            printErr("Unknown object or abstraction \"%s\".", objectLabel);
             return false;
           }
           messageObject = newGraph(directory, filename, initMessage, graph);
@@ -629,6 +630,9 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
       return new MessageUntil(graph);
     } else if (strcmp(objectLabel, "unpack") == 0) {
       return new MessageUnpack(initMessage,graph);
+    } else if (strcmp(objectLabel, "value") == 0 ||
+               strcmp(objectLabel, "v") == 0) {
+      new MessageValue(initMessage, graph);
     } else if (strcmp(objectLabel, "vsl") == 0 ||
                strcmp(objectLabel, "hsl") == 0) {
       // gui sliders are represented as a float objects
@@ -912,6 +916,15 @@ void PdContext::registerTableReceiver(TableReceiverInterface *tableReceiver) {
   
   MessageTable *table = getTable(tableReceiver->getName());
   tableReceiver->setTable(table); // set table whether it is NULL or not
+}
+
+void PdContext::setValueForName(char *name, float constant) {
+  // TODO(mhroth): requires implementation!
+}
+
+float PdContext::getValueForName(char *name) {
+  // TODO(mhroth): requires implementation!
+  return 0.0f;
 }
 
 #pragma mark -

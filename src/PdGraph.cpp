@@ -484,3 +484,11 @@ void PdGraph::setSwitch(bool switched) {
 bool PdGraph::isSwitchedOn() {
   return switched;
 }
+
+void PdGraph::setValueForName(char *name, float constant) {
+  context->setValueForName(name, constant);
+}
+
+float PdGraph::getValueForName(char *name) {
+  return context->getValueForName(name);
+}

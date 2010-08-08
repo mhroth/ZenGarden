@@ -166,6 +166,10 @@ class PdGraph : public DspObject {
      */
     void addDeclarePath(char *path);
   
+    /** Used with MessageValue for keeping track of global variables. */
+    void setValueForName(char *name, float constant);
+    float getValueForName(char *name);
+  
   private:
     /** Create a new object based on its initialisation string. */
     MessageObject *newObject(char *objectType, char *objectLabel, PdMessage *initMessage, PdGraph *graph);

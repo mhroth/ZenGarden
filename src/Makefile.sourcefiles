@@ -115,6 +115,7 @@ LOCAL_SRC_FILES := \
 ./MessageTrigger.cpp \
 ./MessageUntil.cpp \
 ./MessageUnpack.cpp \
+./MessageValue.cpp \
 ./MessageWrap.cpp \
 ./OrderedMessageQueue.cpp \
 ./PdContext.cpp \
