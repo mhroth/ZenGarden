@@ -241,7 +241,7 @@ double PdContext::getBlockDuration() {
 }
 
 int PdContext::getNextGraphId() {
-  return globalGraphId++;
+  return ++globalGraphId;
 }
 
 int PdContext::getCurrentGraphId() {
