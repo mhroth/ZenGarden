@@ -53,9 +53,13 @@ char *PdFileParser::nextMessage() {
     free(buffer);
     buffer = StaticUtils::copyString(line); // copy line to buffer 
     while (nextLine() != NULL &&
-           !(strncmp(line, "#X", 2) == 0 || strncmp(line, "#N", 2) == 0 || 
-             strncmp(line, "#A", 2) == 0)) {
+        !(strncmp(line, "#X", 2) == 0 || strncmp(line, "#N", 2) == 0 || 
+        strncmp(line, "#A", 2) == 0)) {
       char *temp = buffer;
+      // there is an implied space between lines
+      buffer = StaticUtils::concatStrings(buffer, " ");
+      free(temp);
+      temp = buffer;
       buffer = StaticUtils::concatStrings(buffer, line);
       free(temp);
     }
