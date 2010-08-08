@@ -133,9 +133,12 @@ char *PdMessage::resolveString(char *initString, PdMessage *arguments, int offse
   } else {
     int numArguments = arguments->getNumElements();
     while ((argPos = strstr(initString + initPos, "\\$")) != NULL) {
-      memcpy(buffer + bufferPos, initString + initPos, argPos - initString - initPos);
-      initPos += 3;
-      int argumentIndex;
+      int numCharsRead = argPos - initString + initPos;
+      memcpy(buffer + bufferPos, initString + initPos, numCharsRead);
+      bufferPos += numCharsRead;
+      initPos += numCharsRead + 3;
+      //int argumentIndex = argPos[2] - '0';
+      int argumentIndex = 0;
       switch (argPos[2]) {
         case '0': { argumentIndex = 0; break; }
         case '1': { argumentIndex = 1; break; }
