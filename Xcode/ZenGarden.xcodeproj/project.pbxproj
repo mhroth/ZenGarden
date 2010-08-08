@@ -28,6 +28,9 @@
 		90251D5912043445000EAF40 /* DspSignal.h in Headers */ = {isa = PBXBuildFile; fileRef = 90251D5612043445000EAF40 /* DspSignal.h */; };
 		90251D5A12043445000EAF40 /* DspSignal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90251D5512043445000EAF40 /* DspSignal.cpp */; };
 		90251D5B12043445000EAF40 /* DspSignal.h in Headers */ = {isa = PBXBuildFile; fileRef = 90251D5612043445000EAF40 /* DspSignal.h */; };
+		9025F824120ECFF700129300 /* libsndfile_x86.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9025F823120ECFF700129300 /* libsndfile_x86.a */; };
+		9025F825120ECFF700129300 /* libsndfile_x86.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9025F823120ECFF700129300 /* libsndfile_x86.a */; };
+		9025F82F120ED04400129300 /* libsndfile_iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9025F82E120ED04400129300 /* libsndfile_iOS.a */; };
 		90337C5D11D0D847009FCC01 /* ArrayArithmetic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B4911D0D847009FCC01 /* ArrayArithmetic.cpp */; };
 		90337C5E11D0D847009FCC01 /* DelayReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B4C11D0D847009FCC01 /* DelayReceiver.cpp */; };
 		90337C5F11D0D847009FCC01 /* DspAdc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B4E11D0D847009FCC01 /* DspAdc.cpp */; };
@@ -664,9 +667,6 @@
 		90E851211204EF4900300CF2 /* MessageRoute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90E8511B1204EF4900300CF2 /* MessageRoute.cpp */; };
 		90E90A051208EF8600A48B72 /* TableReceiverInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 90E90A041208EF8600A48B72 /* TableReceiverInterface.h */; };
 		90E90A061208EF8600A48B72 /* TableReceiverInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 90E90A041208EF8600A48B72 /* TableReceiverInterface.h */; };
-		90F84D7E120ECA560011407E /* libsndfilezg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 90F84D7D120ECA560011407E /* libsndfilezg.a */; };
-		90F84D7F120ECA560011407E /* libsndfilezg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 90F84D7D120ECA560011407E /* libsndfilezg.a */; };
-		90F84D91120ECDA40011407E /* libsndfile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 90F84D90120ECDA40011407E /* libsndfile.a */; };
 		90FA78281208B8300043EBBA /* MessageTableRead.h in Headers */ = {isa = PBXBuildFile; fileRef = 90FA78261208B8300043EBBA /* MessageTableRead.h */; };
 		90FA78291208B8300043EBBA /* MessageTableRead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA78271208B8300043EBBA /* MessageTableRead.cpp */; };
 		90FA782A1208B8300043EBBA /* MessageTableRead.h in Headers */ = {isa = PBXBuildFile; fileRef = 90FA78261208B8300043EBBA /* MessageTableRead.h */; };
@@ -702,6 +702,8 @@
 		90251D3912042F38000EAF40 /* MessageOpenPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageOpenPanel.cpp; path = ../src/MessageOpenPanel.cpp; sourceTree = SOURCE_ROOT; };
 		90251D5512043445000EAF40 /* DspSignal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspSignal.cpp; path = ../src/DspSignal.cpp; sourceTree = SOURCE_ROOT; };
 		90251D5612043445000EAF40 /* DspSignal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspSignal.h; path = ../src/DspSignal.h; sourceTree = SOURCE_ROOT; };
+		9025F823120ECFF700129300 /* libsndfile_x86.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsndfile_x86.a; path = ../libs/Darwin/libsndfile_x86.a; sourceTree = SOURCE_ROOT; };
+		9025F82E120ED04400129300 /* libsndfile_iOS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsndfile_iOS.a; path = ../libs/iOS/libsndfile_iOS.a; sourceTree = SOURCE_ROOT; };
 		90337B4911D0D847009FCC01 /* ArrayArithmetic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ArrayArithmetic.cpp; path = ../src/ArrayArithmetic.cpp; sourceTree = SOURCE_ROOT; };
 		90337B4A11D0D847009FCC01 /* ArrayArithmetic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArrayArithmetic.h; path = ../src/ArrayArithmetic.h; sourceTree = SOURCE_ROOT; };
 		90337B4B11D0D847009FCC01 /* ConnectionType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConnectionType.h; path = ../src/ConnectionType.h; sourceTree = SOURCE_ROOT; };
@@ -961,8 +963,6 @@
 		90E90A041208EF8600A48B72 /* TableReceiverInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TableReceiverInterface.h; path = ../src/TableReceiverInterface.h; sourceTree = SOURCE_ROOT; };
 		90F84D49120EC9100011407E /* libzengarden.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libzengarden.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		90F84D4A120EC9100011407E /* libzengarden.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libzengarden.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		90F84D7D120ECA560011407E /* libsndfilezg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsndfilezg.a; path = ../libs/Darwin/libsndfilezg.a; sourceTree = SOURCE_ROOT; };
-		90F84D90120ECDA40011407E /* libsndfile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsndfile.a; path = ../libs/iOS/libsndfile.a; sourceTree = SOURCE_ROOT; };
 		90FA78261208B8300043EBBA /* MessageTableRead.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageTableRead.h; path = ../src/MessageTableRead.h; sourceTree = SOURCE_ROOT; };
 		90FA78271208B8300043EBBA /* MessageTableRead.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageTableRead.cpp; path = ../src/MessageTableRead.cpp; sourceTree = SOURCE_ROOT; };
 		C6859E8B029090EE04C91782 /* ZenGardenNp.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ZenGardenNp.1; sourceTree = "<group>"; };
@@ -976,7 +976,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				90AF7F7511FE67BE006F88E6 /* Accelerate.framework in Frameworks */,
-				90F84D7F120ECA560011407E /* libsndfilezg.a in Frameworks */,
+				9025F824120ECFF700129300 /* libsndfile_x86.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -985,7 +985,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9069DFD211D17BD600889A5B /* Accelerate.framework in Frameworks */,
-				90F84D91120ECDA40011407E /* libsndfile.a in Frameworks */,
+				9025F82F120ED04400129300 /* libsndfile_iOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -994,7 +994,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9069DFD311D17BF100889A5B /* Accelerate.framework in Frameworks */,
-				90F84D7E120ECA560011407E /* libsndfilezg.a in Frameworks */,
+				9025F825120ECFF700129300 /* libsndfile_x86.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1300,8 +1300,8 @@
 		90F84D98120ECDEC0011407E /* Frameworks & Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				90F84D90120ECDA40011407E /* libsndfile.a */,
-				90F84D7D120ECA560011407E /* libsndfilezg.a */,
+				9025F823120ECFF700129300 /* libsndfile_x86.a */,
+				9025F82E120ED04400129300 /* libsndfile_iOS.a */,
 				9069DFD111D17BD600889A5B /* Accelerate.framework */,
 			);
 			name = "Frameworks & Libraries";
