@@ -385,7 +385,8 @@ void PdGraph::computeLocalDspProcessOrder() {
   }
 
   delete processList;
-
+  
+  /* print out process order of local dsp objects (for debugging)
   if (dspNodeList->size() > 0) {
     // print dsp evaluation order for debugging, but only if there are any nodes to list
     printStd("--- ordered evaluation list ---");
@@ -394,7 +395,7 @@ void PdGraph::computeLocalDspProcessOrder() {
       printStd(messageObject->getObjectLabel());
     }
   }
-  
+  */
   unlockContextIfAttached();
 }
 
