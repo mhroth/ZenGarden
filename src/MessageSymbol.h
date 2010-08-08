@@ -37,6 +37,9 @@ class MessageSymbol : public MessageObject {
   private:
     void processMessage(int inletIndex, PdMessage *message);
 
+    // a MessageElement is used to store the symbol instead of a normal char array because MessageElement
+    // will easily (and slightly more efficiently because it does not reallocate any buffers) store
+    // a char array. It is mainly a matter of preference.
     MessageElement *symbol;
 };
 
