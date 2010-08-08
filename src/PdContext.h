@@ -161,8 +161,8 @@ class PdContext {
     void printStd(char *msg);
     void printStd(const char *msg, ...);
   
+    /** Returns the next globally unique graph id. */
     static int getNextGraphId();
-    static int getCurrentGraphId();
   
     /** Used with MessageValue for keeping track of global variables. */
     void setValueForName(char *name, float constant);

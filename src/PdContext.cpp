@@ -244,10 +244,6 @@ int PdContext::getNextGraphId() {
   return ++globalGraphId;
 }
 
-int PdContext::getCurrentGraphId() {
-  return globalGraphId;
-}
-
 #pragma mark -
 #pragma mark process
 
@@ -343,7 +339,7 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
       if (strcmp(objectType, "canvas") == 0) {
         // A new graph is defined inline. No arguments are passed (from this line)
         // the graphId is not incremented as this is a subpatch, not an abstraction
-        PdGraph *newGraph = new PdGraph(graph->getArguments(), graph, this, getCurrentGraphId());
+        PdGraph *newGraph = new PdGraph(graph->getArguments(), graph, this, graph->getGraphId());
         graph->addObject(newGraph); // add the new graph to the current one as an object
         
         // the new graph is pushed onto the stack

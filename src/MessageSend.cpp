@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -51,6 +51,7 @@ void MessageSend::processMessage(int inletIndex, PdMessage *message) {
       if (message->isSymbol(0)) {
         free(name);
         name = StaticUtils::copyString(message->getSymbol(0));
+        // TODO(mhroth): unregister this object from previous name, and reregister with current name
       }
       break;
     }
