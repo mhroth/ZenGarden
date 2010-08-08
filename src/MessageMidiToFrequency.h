@@ -23,7 +23,6 @@
 #ifndef _MESSAGE_MIDITOFREQUENCY_H_
 #define _MESSAGE_MIDITOFREQUENCY_H_
 
-#include <math.h>
 #include "MessageObject.h"
 
 /** [mtof] */

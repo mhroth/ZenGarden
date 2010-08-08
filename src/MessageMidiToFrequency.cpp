@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009, 2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -20,6 +20,7 @@
  *
  */
 
+#include <math.h>
 #include "MessageMidiToFrequency.h"
 
 MessageMidiToFrequency::MessageMidiToFrequency(PdGraph *graph) : MessageObject(1, 1, graph) {
@@ -35,10 +36,10 @@ const char *MessageMidiToFrequency::getObjectLabel() {
 }
 
 void MessageMidiToFrequency::processMessage(int inletIndex, PdMessage *message) {
-  if (message->getElement(0)->getType() == FLOAT) {
+  if (message->isFloat(0)) {
     PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-    outgoingMessage->getElement(0)->setFloat(440.0f * powf(2.0f, (message->getElement(0)->getFloat() - 69.0f) / 12.0f));
+    outgoingMessage->setFloat(0, 440.0f * powf(2.0f, (message->getFloat(0) - 69.0f) / 12.0f));
     outgoingMessage->setTimestamp(message->getTimestamp());
-    sendMessage(0, outgoingMessage); // send a message from outlet 0
+    sendMessage(0, outgoingMessage);
   }
 }
