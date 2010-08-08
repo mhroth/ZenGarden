@@ -114,6 +114,7 @@
 #include "DspLine.h"
 #include "DspLog.h"
 #include "DspLowpassFilter.h"
+#include "DspMinimum.h"
 #include "DspMultiply.h"
 #include "DspNoise.h"
 #include "DspOsc.h"
@@ -675,6 +676,8 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
       return new DspLog(initMessage, graph);
     } else if (strcmp(objectLabel, "lop~") == 0) {
       return new DspLowpassFilter(initMessage, graph);
+    } else if (strcmp(objectLabel, "min~") == 0) {
+      return new DspMinimum(initMessage, graph);
     } else if (strcmp(objectLabel, "noise~") == 0) {
       return new DspNoise(graph);
     } else if (strcmp(objectLabel, "osc~") == 0) {
