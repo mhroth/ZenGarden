@@ -37,6 +37,7 @@ class DspMultiply : public DspObject {
     void processMessage(int inletIndex, PdMessage *message);
     void processDspToIndex(float blockIndex);
     
+    float inputConstant;
     float constant;
 };
 

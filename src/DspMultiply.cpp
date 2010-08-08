@@ -26,6 +26,7 @@
 
 DspMultiply::DspMultiply(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
   constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
+  inputConstant = 0.0f;
 }
 
 DspMultiply::~DspMultiply() {
@@ -38,6 +39,13 @@ const char *DspMultiply::getObjectLabel() {
 
 void DspMultiply::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
+    case 0: {
+      if (message->isFloat(0)) {
+        processDspToIndex(graph->getBlockIndex(message));
+        inputConstant = message->getFloat(0);
+      }
+      break;
+    }
     case 1: {
       if (message->isFloat(0)) {
         processDspToIndex(graph->getBlockIndex(message));
@@ -52,19 +60,33 @@ void DspMultiply::processMessage(int inletIndex, PdMessage *message) {
 }
 
 void DspMultiply::processDspToIndex(float blockIndex) {
+  float *inputBuffer = localDspBufferAtInlet[0];
+  float *outputBuffer = localDspBufferAtOutlet[0];
+  int startSampleIndex = getStartSampleIndex();
+  int endSampleIndex = getEndSampleIndex(blockIndex);
   switch (signalPrecedence) {
+    case MESSAGE_DSP: {
+      for (int i = startSampleIndex; i < endSampleIndex; i++) {
+        inputBuffer[i] = inputConstant;
+      }
+      // allow fallthrough
+      break;
+    }
     case DSP_DSP: {
       ArrayArithmetic::multiply(localDspBufferAtInlet[0], localDspBufferAtInlet[1], 
           localDspBufferAtOutlet[0], 0, blockSizeInt);
       break;
     }
+    case MESSAGE_MESSAGE: {
+      for (int i = startSampleIndex; i < endSampleIndex; i++) {
+        inputBuffer[i] = inputConstant;
+      }
+      // allow fallthrough
+    }
     case DSP_MESSAGE: {
-      ArrayArithmetic::multiply(localDspBufferAtInlet[0], constant, localDspBufferAtOutlet[0],
-          getStartSampleIndex(), getEndSampleIndex(blockIndex));
+      ArrayArithmetic::multiply(inputBuffer, constant, outputBuffer, startSampleIndex, endSampleIndex);
       break;
     }
-    case MESSAGE_DSP:
-    case MESSAGE_MESSAGE:
     default: {
       break; // nothing to do
     }
