@@ -38,7 +38,7 @@ const char *MessageRoute::getObjectLabel() {
 void MessageRoute::processMessage(int inletIndex, PdMessage *message) {
   int numRouteChecks = routeMessage->getNumElements();
   MessageElement *messageElement = message->getElement(0);
-  int outletIndex = numRouteChecks;
+  int outletIndex = numRouteChecks; // by default, send the message out of the right outlet
   // find which indicator that message matches
   for (int i = 0; i < numRouteChecks; i++) {
     if (routeMessage->getElement(i)->equals(messageElement)) {
