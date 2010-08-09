@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -35,7 +35,7 @@ class List {
     virtual ~List();
   
     /** The number of elements currently in the list. */
-    inline int size() { return numElements; }
+    int size();
   
     /** Add the element onto the end of the list */
     List *add(void *element);
@@ -45,9 +45,7 @@ class List {
      * The original List (i.e., this) is returned.
      */
     List *add(List *list);
-  
-    void *toArray();
-  
+
     /** Returns the indexed element in the list. */
     void *get(int index);
   
@@ -58,11 +56,6 @@ class List {
     void *getFromBackingArray(int index);
   
     void *remove(int index);
-  
-    void *replace(int index, void *newElement);
-  
-    /** Returns <code>true</code> if the given element exists in the list. <code>false</code> otherwise. */
-    bool exists(void *element);
 
     /**
      * Resets the number of elements to zero.
@@ -72,7 +65,6 @@ class List {
   private:
     void growArrayList();
   
-    const static int DEFAULT_LENGTH = 1;
     int maxLength;
     void **arrayList;
     int numElements;

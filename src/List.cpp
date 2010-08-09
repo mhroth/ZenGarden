@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -25,7 +25,7 @@
 #include "List.h"
 
 List::List() {
-  maxLength = DEFAULT_LENGTH;
+  maxLength = 1; // initial length of 1
   numElements = 0;
   arrayList = (void **) calloc(maxLength, sizeof(void *));
 }
@@ -33,11 +33,11 @@ List::List() {
 List::~List() {
   free(arrayList);
 }
-/*
+
 int List::size() {
   return numElements;
 }
-*/
+
 List *List::add(void *element) {
   if (numElements + 1 > maxLength) {
     growArrayList();
@@ -80,12 +80,6 @@ void List::growArrayList() {
   arrayList = newArrayList;
 }
 
-void *List::toArray() {
-  void **array = (void **) malloc(numElements * sizeof(void *));
-  memcpy(array, arrayList, numElements * sizeof(void *));
-  return array;
-}
-
 void *List::get(int index) {
   if (index < 0 || index >= numElements) {
     return NULL;
@@ -100,23 +94,4 @@ void *List::getFromBackingArray(int index) {
   } else {
     return arrayList[index];
   }
-}
-
-void *List::replace(int index, void *newElement) {
-  if (index < 0 || index >= numElements) {
-    return NULL;
-  } else {
-    void *oldElement = arrayList[index];
-    arrayList[index] = newElement;
-    return oldElement;
-  }
-}
-
-bool List::exists(void *element) {
-  for (int i = 0; i < numElements; i++) {
-    if (arrayList[i] == element) {
-      return true;
-    }
-  }
-  return false;
 }
