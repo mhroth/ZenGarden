@@ -55,7 +55,7 @@ const char *DspCosine::getObjectLabel() {
 void DspCosine::processDspToIndex(float blockIndex) {
   float *inputBuffer = localDspBufferAtInlet[0];
   float *outputBuffer = localDspBufferAtOutlet[0];
-  #if TARGET_OS_MAC || TARGET_OS_IPHONE
+  #if __APPLE__
   vDSP_vabs(inputBuffer, 1, inputBuffer, 1, blockSizeInt); // abs(x)
   vDSP_vfrac(inputBuffer, 1, inputBuffer, 1, blockSizeInt); // get the fractional part of x
   vDSP_vsmul(inputBuffer, 1, &sampleRate, inputBuffer, 1, blockSizeInt); // * sampleRate
