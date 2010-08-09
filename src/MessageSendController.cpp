@@ -23,15 +23,6 @@
 #include "MessageSendController.h"
 #include "PdContext.h"
 
-/*
- * DISCUSSION(mhroth): Ideally it would be nice to add the root PdGraph as the designated
- * receiver for the name "pd". This would fit very nicely into the existing infrastructure.
- * The problem is that messages dispatched by the Controller are done so by calling
- * receiveMessage() on the receiver. But PdGraph uses this method to forward messages to its
- * message inlets. Thus, special cases are made for recognising "pd" and assigning it a given
- * name index. No message receiver is listed in the receiver list for "pd". 
- */
-
 // it might nice if this class were implemented using a hashtable with receiver name as the key
 // and Lists as the value.
 MessageSendController::MessageSendController(PdContext *aContext) : MessageObject(0, 0, NULL) {
