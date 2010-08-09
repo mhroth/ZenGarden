@@ -33,7 +33,7 @@ PdMessage::PdMessage() {
   elementList = new List();
   messageId = globalMessageId++;
   timestamp = 0.0;
-  reservedList = new ZGLinkedList();
+  reservationCount = 0;
   
   retainResBuffer();
 }
@@ -42,7 +42,7 @@ PdMessage::PdMessage(char *initString) {
   elementList = new List();
   messageId = globalMessageId++;
   timestamp = 0.0;
-  reservedList = new ZGLinkedList();
+  reservationCount = 0;
   
   retainResBuffer();
   
@@ -54,7 +54,7 @@ PdMessage::PdMessage(char *initString, PdMessage *arguments) {
   elementList = new List();
   messageId = globalMessageId++;
   timestamp = 0.0;
-  reservedList = new ZGLinkedList();
+  reservationCount = 0;
   
   retainResBuffer();
   
@@ -102,9 +102,6 @@ PdMessage::~PdMessage() {
     delete messageElement;
   }
   delete elementList;
-  
-  // delete the reserved list
-  delete reservedList;
   
   releaseResBuffer();
 }
@@ -292,16 +289,16 @@ void PdMessage::setSymbol(int index, char *symbol) {
 #pragma mark -
 #pragma mark reserve/unreserve
 
-void PdMessage::reserve(MessageObject *messageObject) {
-  reservedList->add(messageObject);
+void PdMessage::reserve() {
+  reservationCount++;
 }
 
-void PdMessage::unreserve(MessageObject *messageObject) {
-  reservedList->remove(messageObject);
+void PdMessage::unreserve() {
+  reservationCount--;
 }
 
 bool PdMessage::isReserved() {
-  return (reservedList->size() > 0);
+  return (reservationCount > 0);
 }
 
 #pragma mark -

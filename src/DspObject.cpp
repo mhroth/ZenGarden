@@ -154,7 +154,7 @@ void DspObject::receiveMessage(int inletIndex, PdMessage *message) {
   if (graph->isSwitchedOn()) {
     // reserve the message so that it won't be reused by the issuing object.
     // The message is released once it is consumed in processDsp().
-    message->reserve(this);
+    message->reserve();
     messageQueue->add(inletIndex, message);
   }
 }
@@ -184,7 +184,7 @@ void DspObject::processDsp() {
   MessageLetPair *messageLetPair = NULL;
   while ((messageLetPair = (MessageLetPair *) messageQueue->remove(0)) != NULL) {
     processMessage(messageLetPair->index, messageLetPair->message);
-    messageLetPair->message->unreserve(this); // unreserve the message so that it can be reused by the issuing object
+    messageLetPair->message->unreserve(); // unreserve the message so that it can be reused by the issuing object
   }
   
   // process remainder of block

@@ -262,7 +262,6 @@ void PdContext::process(float *inputBuffers, float *outputBuffers) {
   while ((destination = (MessageDestination *) messageCallbackQueue->get(0)) != NULL &&
          destination->message->getTimestamp() < nextBlockStartTimestamp) {
     messageCallbackQueue->remove(0); // remove the message from the queue
-    destination->message->unreserve(destination->object);
     if (destination->message->getTimestamp() < blockStartTimestamp) {
       // messages injected into the system with a timestamp behind the current block are automatically
       // rescheduled for the beginning of the current block. This is done in order to normalise
@@ -270,10 +269,13 @@ void PdContext::process(float *inputBuffers, float *outputBuffers) {
       // in subgraphs with different block sizes.
       destination->message->setTimestamp(blockStartTimestamp);
     }
-    // TODO(mhroth): unreserve() should probably come after sendScheduledMessage() in order
-    // to prevent the message from being resused in the case the reserving object is retriggered
-    // during the execution of sendScheduledMessage()
     destination->object->sendMessage(destination->index, destination->message);
+    
+    // unreserve() is called after sendMessage() in order to prevent the message from being resused
+    // in the case the reserving object is retriggered during the execution of sendMessage()
+    // However, also, sendMessage reserves the message anyway. But this unreserve is needed
+    // in any case in order to balance the reserve() called in scheduleMessage()
+    destination->message->unreserve();
   }
   
   PdGraph *graph = NULL;
@@ -929,6 +931,7 @@ float PdContext::getValueForName(char *name) {
 #pragma mark -
 #pragma mark Manage Messages
 
+// TODO(mhroth): rename to sendMessageToNamedReceivers
 void PdContext::dispatchMessageToNamedReceivers(char *name, PdMessage *message) {
   sendController->receiveMessage(name, message);
 }
@@ -984,13 +987,13 @@ PdMessage *PdContext::getNextExternalMessage() {
 }
 
 void PdContext::scheduleMessage(MessageObject *messageObject, int outletIndex, PdMessage *message) {
-  message->reserve(messageObject);
+  message->reserve();
   messageCallbackQueue->insertMessage(messageObject, outletIndex, message);
 }
 
 void PdContext::cancelMessage(MessageObject *messageObject, int outletIndex, PdMessage *message) {
-  message->unreserve(messageObject);
   messageCallbackQueue->removeMessage(messageObject, outletIndex, message);
+  message->unreserve();
 }
 
 void PdContext::receiveSystemMessage(PdMessage *message) {

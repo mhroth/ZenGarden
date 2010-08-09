@@ -81,7 +81,7 @@ void MessageMetro::sendMessage(int outletIndex, PdMessage *message) {
   // reserve and unreserve this object such that this message is not used as the pending message
   // this reserveration is done in addition to the automatic reservation that
   // MessageObject::sendMessage() does.
-  message->reserve(this);
+  message->reserve();
   
   // schedule the pending message before the current one is sent so that if a stop message
   // arrives at this object while in this function, then the next message can be cancelled
@@ -90,7 +90,7 @@ void MessageMetro::sendMessage(int outletIndex, PdMessage *message) {
   graph->scheduleMessage(this, 0, pendingMessage);
   
   MessageObject::sendMessage(outletIndex, message);
-  message->unreserve(this);
+  message->unreserve();
 }
 
 void MessageMetro::startMetro(double timestamp) {

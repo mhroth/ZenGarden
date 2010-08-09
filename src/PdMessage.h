@@ -82,8 +82,8 @@ class PdMessage {
     void setTimestamp(double timestamp);
   
     bool isReserved();
-    void reserve(MessageObject *messageObject);
-    void unreserve(MessageObject *messageObject);
+    void reserve();
+    void unreserve();
   
     /** Returns a copy of the message. */
     PdMessage *copy();
@@ -166,7 +166,7 @@ class PdMessage {
   
     int messageId;
     double timestamp;
-    ZGLinkedList *reservedList;
+    int reservationCount;
     List *elementList;
 };
 
