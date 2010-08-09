@@ -308,8 +308,8 @@ void PdGraph::cancelMessage(MessageObject *messageObject, int outletIndex, PdMes
   context->cancelMessage(messageObject, outletIndex, message);
 }
 
-void PdGraph::dispatchMessageToNamedReceivers(char *name, PdMessage *message) {
-  context->dispatchMessageToNamedReceivers(name, message);
+void PdGraph::sendMessageToNamedReceivers(char *name, PdMessage *message) {
+  context->sendMessageToNamedReceivers(name, message);
 }
 
 #pragma mark -

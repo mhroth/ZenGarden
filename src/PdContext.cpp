@@ -931,8 +931,7 @@ float PdContext::getValueForName(char *name) {
 #pragma mark -
 #pragma mark Manage Messages
 
-// TODO(mhroth): rename to sendMessageToNamedReceivers
-void PdContext::dispatchMessageToNamedReceivers(char *name, PdMessage *message) {
+void PdContext::sendMessageToNamedReceivers(char *name, PdMessage *message) {
   sendController->receiveMessage(name, message);
 }
 

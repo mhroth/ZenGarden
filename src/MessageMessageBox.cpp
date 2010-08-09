@@ -114,7 +114,7 @@ void MessageMessageBox::processMessage(int inletIndex, PdMessage *message) {
     PdMessage *outgoingMessage = getNextResolvedMessage(objMessageIndex,
         namedDestination->message, message);
     char *resolvedName = PdMessage::resolveString(namedDestination->name, message, 1);
-    graph->dispatchMessageToNamedReceivers(resolvedName, outgoingMessage);
+    graph->sendMessageToNamedReceivers(resolvedName, outgoingMessage);
   }
 }
 

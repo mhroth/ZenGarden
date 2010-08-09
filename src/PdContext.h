@@ -119,7 +119,7 @@ class PdContext {
      * ;
      * name message;
      */
-    void dispatchMessageToNamedReceivers(char *name, PdMessage *message);
+    void sendMessageToNamedReceivers(char *name, PdMessage *message);
   
     /**
      * Schedules a message to be sent to all receivers at the start of the next block.

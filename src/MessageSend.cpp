@@ -44,7 +44,7 @@ ObjectType MessageSend::getObjectType() {
 void MessageSend::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
-      graph->dispatchMessageToNamedReceivers(name, message);
+      graph->sendMessageToNamedReceivers(name, message);
       break;
     }
     case 1: {

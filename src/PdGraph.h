@@ -130,7 +130,7 @@ class PdGraph : public DspObject {
      * ;
      * name message;
      */
-    void dispatchMessageToNamedReceivers(char *name, PdMessage *message);
+    void sendMessageToNamedReceivers(char *name, PdMessage *message);
   
     /** Gets the named (global) table object. */
     MessageTable *getTable(char *name);
