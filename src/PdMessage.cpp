@@ -25,6 +25,8 @@
 #include "PdMessage.h"
 #include "StaticUtils.h"
 
+#define RES_BUFFER_LENGTH 1024
+
 char *PdMessage::resolutionBuffer = NULL;
 int PdMessage::resBufferRefCount = 0;
 int PdMessage::globalMessageId = 0;
@@ -68,7 +70,7 @@ PdMessage::PdMessage(char *initString, PdMessage *arguments) {
 void PdMessage::retainResBuffer() {
   PdMessage::resBufferRefCount++;
   if (PdMessage::resolutionBuffer == NULL) {
-    PdMessage::resolutionBuffer = (char *) calloc(1024, sizeof(char));
+    PdMessage::resolutionBuffer = (char *) calloc(RES_BUFFER_LENGTH, sizeof(char));
   }
 }
 
@@ -153,13 +155,21 @@ char *PdMessage::resolveString(char *initString, PdMessage *arguments, int offse
       if (argumentIndex >= 0 && argumentIndex < numArguments) {
         switch (arguments->getType(argumentIndex)) {
           case FLOAT: {
-            numCharsWritten = sprintf(buffer + bufferPos, "%g", arguments->getFloat(argumentIndex));
+            numCharsWritten = snprintf(buffer + bufferPos, RES_BUFFER_LENGTH - bufferPos,
+                "%g", arguments->getFloat(argumentIndex));
             bufferPos += numCharsWritten;
+            if (bufferPos >= 1023) {
+              printf("WTF: %s", buffer);
+            }
             break;
           }
           case SYMBOL: {
-            numCharsWritten = sprintf(buffer + bufferPos, "%s", arguments->getSymbol(argumentIndex));
+            numCharsWritten = snprintf(buffer + bufferPos, RES_BUFFER_LENGTH - bufferPos,
+                "%s", arguments->getSymbol(argumentIndex));
             bufferPos += numCharsWritten;
+            if (bufferPos >= 1023) {
+              printf("WTF: %s", buffer);
+            }
             break;
           }
           default: {
