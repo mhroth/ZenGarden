@@ -42,15 +42,12 @@ void MessageMetro::processMessage(int inletIndex, PdMessage *message) {
     case 0: {
       switch (message->getType(0)) {
         case FLOAT: {
-          if (message->getFloat(0) == 0.0f) {
-            stopMetro();
-          } else { // should be == 1, but we allow any non-zero float to start the metro
-            startMetro(message->getTimestamp());
-          }
+          // any non-zero float may start the metro
+          (message->getFloat(0) == 0.0f) ? stopMetro() : startMetro(message->getTimestamp());
           break;
         }
         case SYMBOL: {
-          if (strcmp(message->getSymbol(0), "stop") == 0) {
+          if (message->isSymbol(0, "stop")) {
             stopMetro();
           }
           break;
@@ -78,11 +75,6 @@ void MessageMetro::processMessage(int inletIndex, PdMessage *message) {
 }
 
 void MessageMetro::sendMessage(int outletIndex, PdMessage *message) {
-  // reserve and unreserve this object such that this message is not used as the pending message
-  // this reserveration is done in addition to the automatic reservation that
-  // MessageObject::sendMessage() does.
-  message->reserve();
-  
   // schedule the pending message before the current one is sent so that if a stop message
   // arrives at this object while in this function, then the next message can be cancelled
   pendingMessage = getNextOutgoingMessage(0);
@@ -90,7 +82,6 @@ void MessageMetro::sendMessage(int outletIndex, PdMessage *message) {
   graph->scheduleMessage(this, 0, pendingMessage);
   
   MessageObject::sendMessage(outletIndex, message);
-  message->unreserve();
 }
 
 void MessageMetro::startMetro(double timestamp) {
@@ -101,7 +92,11 @@ void MessageMetro::startMetro(double timestamp) {
   
   PdMessage *outgoingMessage = getNextOutgoingMessage(0);
   outgoingMessage->setTimestamp(timestamp);
+  // reserve and unreserve the outgoing message such that this message is not used as the pending
+  // message which is scheduled in MessageMetro::sendMessage()
+  outgoingMessage->reserve();
   sendMessage(0, outgoingMessage);
+  outgoingMessage->unreserve();
 }
 
 void MessageMetro::stopMetro() {
