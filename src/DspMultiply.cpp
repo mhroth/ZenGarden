@@ -70,7 +70,6 @@ void DspMultiply::processDspToIndex(float blockIndex) {
         inputBuffer[i] = inputConstant;
       }
       // allow fallthrough
-      break;
     }
     case DSP_DSP: {
       ArrayArithmetic::multiply(localDspBufferAtInlet[0], localDspBufferAtInlet[1], 
