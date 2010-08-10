@@ -31,7 +31,7 @@ DeclareList::DeclareList() : ZGLinkedList() {
 DeclareList::~DeclareList() {
   resetIterator();
   char *path = NULL;
-  while ((path = (char *) getNext()) == NULL) {
+  while ((path = (char *) getNext()) != NULL) {
     free(path);
   }
 }
