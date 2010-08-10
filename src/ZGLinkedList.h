@@ -43,7 +43,14 @@ class ZGLinkedList {
     /** Removes the given element from the list. */
     void remove(void *element);
 
+    /** Remove the item at the given index from the list. */
     void *remove(int index);
+  
+    /** Remove the head of the list. The data contained in the head is returned. */
+    void *pop();
+  
+    /** Returns the data contained at the head of the list. */
+    void *peek();
 
     virtual bool isDataEqualTo(void *dataA, void *dataB) { return (dataA == dataB); }
 

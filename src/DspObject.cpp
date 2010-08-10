@@ -182,7 +182,7 @@ void DspObject::processDsp() {
   
   // process all pending messages in this block
   MessageLetPair *messageLetPair = NULL;
-  while ((messageLetPair = (MessageLetPair *) messageQueue->remove(0)) != NULL) {
+  while ((messageLetPair = (MessageLetPair *) messageQueue->pop()) != NULL) {
     processMessage(messageLetPair->index, messageLetPair->message);
     messageLetPair->message->unreserve(); // unreserve the message so that it can be reused by the issuing object
   }

@@ -112,7 +112,8 @@ LinkedListNode *ZGLinkedList::getEmptyNode() {
 
 void *ZGLinkedList::remove(LinkedListNode *node) {
   // remove the current node from the list
-  if (head == tail && node == head && numElements == 1) {
+  //if (head == tail && node == head && numElements == 1) {
+  if (numElements == 1) {
     // if there is only one node in the list and this node is it
     head = NULL;
     tail = NULL;
@@ -155,6 +156,14 @@ void *ZGLinkedList::remove(int index) {
     }
     return remove(node);
   }
+}
+
+void *ZGLinkedList::pop() {
+  return (numElements > 0) ? remove(head) : NULL;
+}
+
+void *ZGLinkedList::peek() {
+  return (numElements > 0) ? head->data : NULL;
 }
 
 void ZGLinkedList::remove(void *element) {

@@ -259,9 +259,9 @@ void PdContext::process(float *inputBuffers, float *outputBuffers) {
   // Send all messages for this block
   MessageDestination *destination = NULL;
   double nextBlockStartTimestamp = blockStartTimestamp + blockDurationMs;
-  while ((destination = (MessageDestination *) messageCallbackQueue->get(0)) != NULL &&
+  while ((destination = (MessageDestination *) messageCallbackQueue->peek()) != NULL &&
          destination->message->getTimestamp() < nextBlockStartTimestamp) {
-    messageCallbackQueue->remove(0); // remove the message from the queue
+    messageCallbackQueue->pop(); // remove the message from the queue
     if (destination->message->getTimestamp() < blockStartTimestamp) {
       // messages injected into the system with a timestamp behind the current block are automatically
       // rescheduled for the beginning of the current block. This is done in order to normalise
