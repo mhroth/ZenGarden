@@ -27,7 +27,20 @@ MessageQueue::MessageQueue() : ZGLinkedList() {
 }
 
 MessageQueue::~MessageQueue() {
-  // nothing to do
+  LinkedListNode* node = head;
+  
+  // delete the primary list data
+  while (node != NULL) {
+    deleteDataHolder(node->data);
+    node = node->next;
+  }
+  
+  // delete the pool list data
+  node = emptyHead;
+  while (node != NULL) {
+    deleteDataHolder(node->data);
+    node = node->next;
+  }
 }
 
 void MessageQueue::add(int inletIndex, PdMessage *message) {
@@ -42,5 +55,5 @@ void *MessageQueue::newDataHolder() {
 }
 
 void MessageQueue::deleteDataHolder(void *data) {
-  free((MessageQueue *) data);
+  free((MessageLetPair *) data);
 }

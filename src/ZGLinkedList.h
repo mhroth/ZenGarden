@@ -34,7 +34,7 @@ struct LinkedListNode {
 class ZGLinkedList {
   public:
     ZGLinkedList();
-    ~ZGLinkedList();
+    virtual ~ZGLinkedList();
 
     /** Adds a new node to the list. Returns a pointer to the data pointer of the new node.*/
     void **add();

@@ -27,7 +27,20 @@ OrderedMessageQueue::OrderedMessageQueue() : ZGLinkedList() {
 }
 
 OrderedMessageQueue::~OrderedMessageQueue() {
-  // nothing to do
+  LinkedListNode* node = head;
+  
+  // delete the primary list data
+  while (node != NULL) {
+    deleteDataHolder(node->data);
+    node = node->next;
+  }
+  
+  // delete the pool list data
+  node = emptyHead;
+  while (node != NULL) {
+    deleteDataHolder(node->data);
+    node = node->next;
+  }
 }
 
 void OrderedMessageQueue::insertMessage(MessageObject *messageObject, int outletIndex, PdMessage *message) {
