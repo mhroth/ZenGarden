@@ -44,6 +44,7 @@ MessageSendController::~MessageSendController() {
   while ((receiverList = (ZGLinkedList *) receiverLists->getNext()) != NULL) {
     delete receiverList;
   }
+  delete receiverLists;
 }
 
 const char *MessageSendController::getObjectLabel() {
