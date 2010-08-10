@@ -181,6 +181,7 @@ PdContext::~PdContext() {
   free(globalDspOutputBuffers);
   
   delete messageCallbackQueue;
+  delete sendController;
   
   PdGraph *graph = NULL;
   graphList->resetIterator();
