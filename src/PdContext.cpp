@@ -270,13 +270,16 @@ void PdContext::process(float *inputBuffers, float *outputBuffers) {
       // in subgraphs with different block sizes.
       destination->message->setTimestamp(blockStartTimestamp);
     }
-    destination->object->sendMessage(destination->index, destination->message);
+    // save this pointer because destination->message may be reused as a consequence of sending the
+    // message (e.g., when a new message is scheduled).
+    PdMessage *message = destination->message;
+    destination->object->sendMessage(destination->index, message);
     
     // unreserve() is called after sendMessage() in order to prevent the message from being resused
     // in the case the reserving object is retriggered during the execution of sendMessage()
     // However, also, sendMessage reserves the message anyway. But this unreserve is needed
     // in any case in order to balance the reserve() called in scheduleMessage()
-    destination->message->unreserve();
+    message->unreserve();
   }
   
   PdGraph *graph = NULL;
