@@ -73,11 +73,9 @@ void List::clear() {
 }
 
 void List::growArrayList() {
-  void **newArrayList = (void **) calloc(maxLength << 1, sizeof(void *));
-  memcpy(newArrayList, arrayList, numElements * sizeof(void *));
   maxLength <<= 1;
-  free(arrayList);
-  arrayList = newArrayList;
+  arrayList = (void **) realloc(arrayList, maxLength * sizeof(void *));
+  memset(arrayList + numElements, 0, (maxLength - numElements) * sizeof(void *));
 }
 
 void *List::get(int index) {
