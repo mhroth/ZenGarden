@@ -35,6 +35,7 @@ class DspDelayWrite;
 class DspReceive;
 class DspSend;
 class DspThrow;
+class MessageSendController;
 class MessageTable;
 class PdFileParser;
 class RemoteMessageReceiver;

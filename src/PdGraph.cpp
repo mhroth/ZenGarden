@@ -38,7 +38,7 @@
 #pragma mark Constructor/Deconstructor
 
 PdGraph::PdGraph(PdMessage *initMessage, PdGraph *parentGraph, PdContext *context, int graphId) :
-    DspObject(16, 16, 16, 16, (parentGraph == NULL) ? context->getBlockSize() : parentGraph->getBlockSize(), parentGraph) {
+    DspObject(8, 4, 8, 2, (parentGraph == NULL) ? context->getBlockSize() : parentGraph->getBlockSize(), parentGraph) {
   this->parentGraph = parentGraph; // == NULL if this is a root graph
   this->context = context;
   nodeList = new ZGLinkedList();

@@ -37,7 +37,6 @@ class DspThrow;
 class MessageObject;
 class MessageReceive;
 class MessageSend;
-class MessageSendController;
 class MessageTable;
 
 class PdContext;
