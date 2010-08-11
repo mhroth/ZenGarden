@@ -204,7 +204,7 @@ class PdGraph : public DspObject {
     /** The parent graph. NULL if this graph is the root. */
     PdGraph *parentGraph;
   
-    /** A list of <i>all</i> <code>PdNode</code>s in this subgraph.  */
+    /** A list of <i>all</i> <code>MessageObject</code>s in this subgraph.  */
     ZGLinkedList *nodeList;
     
     /**

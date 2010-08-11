@@ -45,27 +45,32 @@ void DspObject::init(int numDspInlets, int numDspOutlets, int blockSize) {
   messageQueue = new MessageQueue();
   
   // initialise the incoming dsp connections list
-  incomingDspConnectionsListAtInlet = (List **) malloc(numDspInlets * sizeof(List *));
+  incomingDspConnectionsListAtInlet =
+      (numDspInlets > 0) ? (List **) malloc(numDspInlets * sizeof(List *)) : NULL;
   for (int i = 0; i < numDspInlets; i++) {
     incomingDspConnectionsListAtInlet[i] = new List();
   }
   
   // initialise the outgoing dsp connections list
-  outgoingDspConnectionsListAtOutlet = (List **) malloc(numDspOutlets * sizeof(List *));
+  outgoingDspConnectionsListAtOutlet =
+      (numDspOutlets > 0) ? (List **) malloc(numDspOutlets * sizeof(List *)) : NULL;
   for (int i = 0; i < numDspOutlets; i++) {
     outgoingDspConnectionsListAtOutlet[i] = new List();
   }
   
   // initialise the local input audio buffers
-  localDspBufferAtInlet = (float **) malloc(numDspInlets * sizeof(float *));
-  localDspBufferAtInletReserved = (float **) malloc(numDspInlets * sizeof(float *));
+  localDspBufferAtInlet =
+      (numDspInlets > 0) ? (float **) malloc(numDspInlets * sizeof(float *)) : NULL;
+  localDspBufferAtInletReserved =
+      (numDspInlets > 0) ? (float **) malloc(numDspInlets * sizeof(float *)) : NULL;
   for (int i = 0; i < numDspInlets; i++) {
     localDspBufferAtInletReserved[i] = (float *) calloc(blockSizeInt, sizeof(float));
     localDspBufferAtInlet[i] = localDspBufferAtInletReserved[i];
   }
   
   // initialise the local output audio buffers
-  localDspBufferAtOutlet = (float **) malloc(numDspOutlets * sizeof(float *));
+  localDspBufferAtOutlet =
+      (numDspOutlets > 0) ? (float **) malloc(numDspOutlets * sizeof(float *)) : NULL;
   for (int i = 0; i < numDspOutlets; i++) {
     localDspBufferAtOutlet[i] = (float *) calloc(blockSizeInt, sizeof(float));
   }

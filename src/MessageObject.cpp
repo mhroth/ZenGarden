@@ -33,19 +33,24 @@ MessageObject::MessageObject(int numMessageInlets, int numMessageOutlets, PdGrap
   distributedMessage->addElement();
 
   // initialise incoming connections list
-  incomingMessageConnectionsListAtInlet = (List **) malloc(numMessageInlets * sizeof(List *));
+  // while malloc(0) does work well with free(), it also seems to use some small amount of memory.
+  // thus numMessageInlets is manually checked for zero and a NULL pointer is returned.
+  incomingMessageConnectionsListAtInlet =
+      (numMessageInlets > 0) ? (List **) malloc(numMessageInlets * sizeof(List *)) : NULL;
   for (int i = 0; i < numMessageInlets; i++) {
     incomingMessageConnectionsListAtInlet[i] = new List();
   }
 
   // initialise outgoing connections list
-  outgoingMessageConnectionsListAtOutlet = (List **) malloc(numMessageOutlets * sizeof(List *));
+  outgoingMessageConnectionsListAtOutlet =
+      (numMessageOutlets > 0) ? (List **) malloc(numMessageOutlets * sizeof(List *)) : NULL;
   for (int i = 0; i < numMessageOutlets; i++) {
     outgoingMessageConnectionsListAtOutlet[i] = new List();
   }
 
   // initialise outgoing message pool
-  messageOutletPools = (List **) malloc(numMessageOutlets * sizeof(List *));
+  messageOutletPools =
+      (numMessageOutlets > 0) ? (List **) malloc(numMessageOutlets * sizeof(List *)) : NULL;
   for (int i = 0; i < numMessageOutlets; i++) {
     messageOutletPools[i] = new List();
   }
