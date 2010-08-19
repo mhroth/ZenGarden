@@ -21,6 +21,7 @@
  */
 
 #include "MessageTrigger.h"
+#include "PdGraph.h"
 
 MessageTrigger::MessageTrigger(PdMessage *initMessage, PdGraph *graph) :
     MessageObject(1, initMessage->getNumElements(), graph) {
@@ -47,18 +48,26 @@ void MessageTrigger::processMessage(int inletIndex, PdMessage *message) {
           case ANYTHING:
           case FLOAT: {
             outgoingMessage->getElement(0)->setFloat(message->getElement(0)->getFloat());
+            outgoingMessage->setTimestamp(message->getTimestamp());
+            sendMessage(i, outgoingMessage);
             break;
           }
           case SYMBOL: {
             outgoingMessage->getElement(0)->setSymbol("float");
+            outgoingMessage->setTimestamp(message->getTimestamp());
+            sendMessage(i, outgoingMessage);
             break;
           }
           case BANG: {
             outgoingMessage->getElement(0)->setBang();
+            outgoingMessage->setTimestamp(message->getTimestamp());
+            sendMessage(i, outgoingMessage);
             break;
           } default: {
             // send bang
             outgoingMessage->getElement(0)->setBang();
+            outgoingMessage->setTimestamp(message->getTimestamp());
+            sendMessage(i, outgoingMessage);
             break;
           }
         }
@@ -67,21 +76,30 @@ void MessageTrigger::processMessage(int inletIndex, PdMessage *message) {
       case SYMBOL: {
         switch (castMessage->getType(i)) {
           case FLOAT: {
-            outgoingMessage->getElement(0)->setFloat(0.0f);
+            graph->printErr("error : trigger: can only convert 's' to 'b' or 'a'");
             break;
           }
-          case ANYTHING:
-          case SYMBOL: {
+          case ANYTHING: {
             outgoingMessage->getElement(0)->setSymbol(message->getElement(0)->getSymbol());
+            outgoingMessage->setTimestamp(message->getTimestamp());
+            sendMessage(i, outgoingMessage);
+            break;
+          }
+          case SYMBOL: {
+            graph->printErr("error : trigger: can only convert 's' to 'b' or 'a'");
             break;
           }
           case BANG: {
             outgoingMessage->getElement(0)->setBang();
+            outgoingMessage->setTimestamp(message->getTimestamp());
+            sendMessage(i, outgoingMessage);
             break;
           }
           default: {
             // send bang
             outgoingMessage->getElement(0)->setBang();
+            outgoingMessage->setTimestamp(message->getTimestamp());
+            sendMessage(i, outgoingMessage);
             break;
           }
         }
@@ -91,20 +109,28 @@ void MessageTrigger::processMessage(int inletIndex, PdMessage *message) {
         switch (castMessage->getType(i)) {
           case FLOAT: {
             outgoingMessage->getElement(0)->setFloat(0.0f);
+            outgoingMessage->setTimestamp(message->getTimestamp());
+            sendMessage(i, outgoingMessage);
             break;
           }
           case SYMBOL: {
-            outgoingMessage->getElement(0)->setSymbol("bang");
+            outgoingMessage->getElement(0)->setSymbol("symbol");
+            outgoingMessage->setTimestamp(message->getTimestamp());
+            sendMessage(i, outgoingMessage);
             break;
           }
           case ANYTHING:
           case BANG: {
             outgoingMessage->getElement(0)->setBang();
+            outgoingMessage->setTimestamp(message->getTimestamp());
+            sendMessage(i, outgoingMessage);
             break;
           }
           default: {
             // send bang, error
             outgoingMessage->getElement(0)->setBang();
+            outgoingMessage->setTimestamp(message->getTimestamp());
+            sendMessage(i, outgoingMessage);
             break;
           }
         }
@@ -113,11 +139,10 @@ void MessageTrigger::processMessage(int inletIndex, PdMessage *message) {
       default: {
         // produce a bang if the input type is unknown (error)
         outgoingMessage->getElement(0)->setBang();
+        outgoingMessage->setTimestamp(message->getTimestamp());
+        sendMessage(i, outgoingMessage);
         break;
       }
     }
-    
-    outgoingMessage->setTimestamp(message->getTimestamp());
-    sendMessage(i, outgoingMessage);
   }
 }
