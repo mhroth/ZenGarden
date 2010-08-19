@@ -1,0 +1,12 @@
+[@ 0.000ms] print: 23
+[@ 0.000ms] print: float
+[@ 0.000ms] print: bang
+[@ 0.000ms] print: 23
+[@ 0.000ms] print: cat
+error : trigger: can only convert 's' to 'b' or 'a'
+[@ 0.000ms] print: bang
+error : trigger: can only convert 's' to 'b' or 'a'
+[@ 0.000ms] print: bang
+[@ 0.000ms] print: symbol
+[@ 0.000ms] print: bang
+[@ 0.000ms] print: 0
