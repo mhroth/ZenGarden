@@ -36,16 +36,15 @@ const char *MessageToggle::getObjectLabel() {
 }
 
 void MessageToggle::processMessage(int inletIndex, PdMessage *message) {
-  MessageElement *messageElement = message->getElement(0);
-  switch (messageElement->getType()) {
+  switch (message->getType(0)) {
     case FLOAT: {
-      isOn = (messageElement->getFloat() != 0.0f);
-	  if (messageElement->getFloat() != 0.0f) {
-	    lastOutput = messageElement->getFloat();
-	  }
+      isOn = (message->getFloat(0) != 0.0f);
+      if (isOn) {
+        lastOutput = message->getFloat(0);
+      }
       PdMessage *outgoingMessage = getNextOutgoingMessage(0);
       outgoingMessage->setTimestamp(message->getTimestamp());
-      outgoingMessage->getElement(0)->setFloat(isOn ? messageElement->getFloat() : 0.0f);
+      outgoingMessage->setFloat(0, isOn ? message->getFloat(0) : 0.0f);
       sendMessage(0, outgoingMessage);
       break;
     }
@@ -53,13 +52,13 @@ void MessageToggle::processMessage(int inletIndex, PdMessage *message) {
       isOn = !isOn;
       PdMessage *outgoingMessage = getNextOutgoingMessage(0);
       outgoingMessage->setTimestamp(message->getTimestamp());
-      outgoingMessage->getElement(0)->setFloat(isOn ? lastOutput : 0.0f);
+      outgoingMessage->setFloat(0, isOn ? lastOutput : 0.0f);
       sendMessage(0, outgoingMessage);
       break;
     }
     case SYMBOL: {
-      if (strcmp(messageElement->getSymbol(), "set") == 0) {
-		lastOutput = 1.0f;
+      if (message->isSymbol(0, "set")) {
+        lastOutput = 1.0f;
         if (message->isFloat(1)) {
           isOn = (message->getFloat(1) != 0.0f);
         }

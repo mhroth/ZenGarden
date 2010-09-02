@@ -38,8 +38,7 @@ class MessageToggle : public MessageObject {
     void processMessage(int inletIndex, PdMessage *message);
   
     bool isOn;
-	float lastOutput;
-	
+    float lastOutput;
 };
 
 #endif // _MESSAGE_TOGGLE_H_
