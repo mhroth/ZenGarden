@@ -42,18 +42,18 @@ void MessageTrigger::processMessage(int inletIndex, PdMessage *message) {
     PdMessage *outgoingMessage = getNextOutgoingMessage(i);
     
     // TODO(mhroth): There is currently no support for converting to a LIST type
-    switch (message->getElement(0)->getType()) { // converting from...
+    switch (message->getType(0)) { // converting from...
       case FLOAT: {
         switch (castMessage->getType(i)) { // converting to...
           case ANYTHING:
           case FLOAT: {
-            outgoingMessage->getElement(0)->setFloat(message->getElement(0)->getFloat());
+            outgoingMessage->setFloat(0, message->getFloat(0));
             outgoingMessage->setTimestamp(message->getTimestamp());
             sendMessage(i, outgoingMessage);
             break;
           }
           case SYMBOL: {
-            outgoingMessage->getElement(0)->setSymbol("float");
+            outgoingMessage->setSymbol(0, "float");
             outgoingMessage->setTimestamp(message->getTimestamp());
             sendMessage(i, outgoingMessage);
             break;
@@ -80,7 +80,7 @@ void MessageTrigger::processMessage(int inletIndex, PdMessage *message) {
             break;
           }
           case ANYTHING: {
-            outgoingMessage->getElement(0)->setSymbol(message->getElement(0)->getSymbol());
+            outgoingMessage->setSymbol(0, message->getSymbol(0));
             outgoingMessage->setTimestamp(message->getTimestamp());
             sendMessage(i, outgoingMessage);
             break;
@@ -108,13 +108,13 @@ void MessageTrigger::processMessage(int inletIndex, PdMessage *message) {
       case BANG: {
         switch (castMessage->getType(i)) {
           case FLOAT: {
-            outgoingMessage->getElement(0)->setFloat(0.0f);
+            outgoingMessage->setFloat(0, 0.0f);
             outgoingMessage->setTimestamp(message->getTimestamp());
             sendMessage(i, outgoingMessage);
             break;
           }
           case SYMBOL: {
-            outgoingMessage->getElement(0)->setSymbol("symbol");
+            outgoingMessage->setSymbol(0, "symbol");
             outgoingMessage->setTimestamp(message->getTimestamp());
             sendMessage(i, outgoingMessage);
             break;
