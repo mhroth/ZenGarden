@@ -174,6 +174,7 @@ PdContext::PdContext(int numInputChannels, int numOutputChannels, int blockSize,
   
   // lock is recursive
   pthread_mutexattr_t mta;
+  pthread_mutexattr_init(&mta);
   pthread_mutexattr_settype(&mta, PTHREAD_MUTEX_RECURSIVE);
   pthread_mutex_init(&contextLock, &mta); 
 }
