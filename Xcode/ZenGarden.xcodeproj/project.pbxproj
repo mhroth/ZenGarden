@@ -672,6 +672,16 @@
 		90EC947E120EDF2A00F65F49 /* MessageValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90EC947B120EDF2A00F65F49 /* MessageValue.cpp */; };
 		90EC947F120EDF2A00F65F49 /* MessageValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 90EC947A120EDF2A00F65F49 /* MessageValue.h */; };
 		90EC9480120EDF2A00F65F49 /* MessageValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90EC947B120EDF2A00F65F49 /* MessageValue.cpp */; };
+		90F4C18D12328AC1001182CF /* MessageLogicalAnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90F4C18B12328AC1001182CF /* MessageLogicalAnd.cpp */; };
+		90F4C18E12328AC1001182CF /* MessageLogicalAnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90F4C18B12328AC1001182CF /* MessageLogicalAnd.cpp */; };
+		90F4C18F12328AC1001182CF /* MessageLogicalAnd.h in Headers */ = {isa = PBXBuildFile; fileRef = 90F4C18C12328AC1001182CF /* MessageLogicalAnd.h */; };
+		90F4C19012328AC1001182CF /* MessageLogicalAnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90F4C18B12328AC1001182CF /* MessageLogicalAnd.cpp */; };
+		90F4C19112328AC1001182CF /* MessageLogicalAnd.h in Headers */ = {isa = PBXBuildFile; fileRef = 90F4C18C12328AC1001182CF /* MessageLogicalAnd.h */; };
+		90F4C19A12328CFC001182CF /* MessageLogicalOr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90F4C19812328CFC001182CF /* MessageLogicalOr.cpp */; };
+		90F4C19B12328CFC001182CF /* MessageLogicalOr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90F4C19812328CFC001182CF /* MessageLogicalOr.cpp */; };
+		90F4C19C12328CFC001182CF /* MessageLogicalOr.h in Headers */ = {isa = PBXBuildFile; fileRef = 90F4C19912328CFC001182CF /* MessageLogicalOr.h */; };
+		90F4C19D12328CFC001182CF /* MessageLogicalOr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90F4C19812328CFC001182CF /* MessageLogicalOr.cpp */; };
+		90F4C19E12328CFC001182CF /* MessageLogicalOr.h in Headers */ = {isa = PBXBuildFile; fileRef = 90F4C19912328CFC001182CF /* MessageLogicalOr.h */; };
 		90FA78281208B8300043EBBA /* MessageTableRead.h in Headers */ = {isa = PBXBuildFile; fileRef = 90FA78261208B8300043EBBA /* MessageTableRead.h */; };
 		90FA78291208B8300043EBBA /* MessageTableRead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA78271208B8300043EBBA /* MessageTableRead.cpp */; };
 		90FA782A1208B8300043EBBA /* MessageTableRead.h in Headers */ = {isa = PBXBuildFile; fileRef = 90FA78261208B8300043EBBA /* MessageTableRead.h */; };
@@ -968,6 +978,10 @@
 		90E90A041208EF8600A48B72 /* TableReceiverInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TableReceiverInterface.h; path = ../src/TableReceiverInterface.h; sourceTree = SOURCE_ROOT; };
 		90EC947A120EDF2A00F65F49 /* MessageValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageValue.h; path = ../src/MessageValue.h; sourceTree = SOURCE_ROOT; };
 		90EC947B120EDF2A00F65F49 /* MessageValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageValue.cpp; path = ../src/MessageValue.cpp; sourceTree = SOURCE_ROOT; };
+		90F4C18B12328AC1001182CF /* MessageLogicalAnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageLogicalAnd.cpp; path = ../src/MessageLogicalAnd.cpp; sourceTree = SOURCE_ROOT; };
+		90F4C18C12328AC1001182CF /* MessageLogicalAnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageLogicalAnd.h; path = ../src/MessageLogicalAnd.h; sourceTree = SOURCE_ROOT; };
+		90F4C19812328CFC001182CF /* MessageLogicalOr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageLogicalOr.cpp; path = ../src/MessageLogicalOr.cpp; sourceTree = SOURCE_ROOT; };
+		90F4C19912328CFC001182CF /* MessageLogicalOr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageLogicalOr.h; path = ../src/MessageLogicalOr.h; sourceTree = SOURCE_ROOT; };
 		90F84D49120EC9100011407E /* libzengarden.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libzengarden.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		90F84D4A120EC9100011407E /* libzengarden.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libzengarden.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		90FA78261208B8300043EBBA /* MessageTableRead.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageTableRead.h; path = ../src/MessageTableRead.h; sourceTree = SOURCE_ROOT; };
@@ -1171,6 +1185,10 @@
 				90337BE211D0D847009FCC01 /* MessageLoadbang.h */,
 				90337BE311D0D847009FCC01 /* MessageLog.cpp */,
 				90337BE411D0D847009FCC01 /* MessageLog.h */,
+				90F4C18B12328AC1001182CF /* MessageLogicalAnd.cpp */,
+				90F4C18C12328AC1001182CF /* MessageLogicalAnd.h */,
+				90F4C19812328CFC001182CF /* MessageLogicalOr.cpp */,
+				90F4C19912328CFC001182CF /* MessageLogicalOr.h */,
 				90337BE911D0D847009FCC01 /* MessageMaximum.cpp */,
 				90337BEA11D0D847009FCC01 /* MessageMaximum.h */,
 				90337BEB11D0D847009FCC01 /* MessageMessageBox.cpp */,
@@ -1472,6 +1490,8 @@
 				90D76584120A208B0047C019 /* DeclareList.h in Headers */,
 				909608DE120B8A1C00135B03 /* MessageStripNote.h in Headers */,
 				90EC947C120EDF2A00F65F49 /* MessageValue.h in Headers */,
+				90F4C18F12328AC1001182CF /* MessageLogicalAnd.h in Headers */,
+				90F4C19C12328CFC001182CF /* MessageLogicalOr.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1620,6 +1640,8 @@
 				90D76585120A208B0047C019 /* DeclareList.h in Headers */,
 				909608E0120B8A1C00135B03 /* MessageStripNote.h in Headers */,
 				90EC947F120EDF2A00F65F49 /* MessageValue.h in Headers */,
+				90F4C19112328AC1001182CF /* MessageLogicalAnd.h in Headers */,
+				90F4C19E12328CFC001182CF /* MessageLogicalOr.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1831,6 +1853,8 @@
 				90DA52A4120A1F2100D00917 /* DeclareList.cpp in Sources */,
 				909608E2120B8A1C00135B03 /* MessageStripNote.cpp in Sources */,
 				90EC947E120EDF2A00F65F49 /* MessageValue.cpp in Sources */,
+				90F4C18D12328AC1001182CF /* MessageLogicalAnd.cpp in Sources */,
+				90F4C19A12328CFC001182CF /* MessageLogicalOr.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1966,6 +1990,8 @@
 				90DA52A2120A1F2100D00917 /* DeclareList.cpp in Sources */,
 				909608DF120B8A1C00135B03 /* MessageStripNote.cpp in Sources */,
 				90EC947D120EDF2A00F65F49 /* MessageValue.cpp in Sources */,
+				90F4C18E12328AC1001182CF /* MessageLogicalAnd.cpp in Sources */,
+				90F4C19B12328CFC001182CF /* MessageLogicalOr.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2102,6 +2128,8 @@
 				90DA52A3120A1F2100D00917 /* DeclareList.cpp in Sources */,
 				909608E1120B8A1C00135B03 /* MessageStripNote.cpp in Sources */,
 				90EC9480120EDF2A00F65F49 /* MessageValue.cpp in Sources */,
+				90F4C19012328AC1001182CF /* MessageLogicalAnd.cpp in Sources */,
+				90F4C19D12328CFC001182CF /* MessageLogicalOr.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
