@@ -76,15 +76,17 @@ void DspLine::processDspToIndex(float blockIndex) {
   int endSampleIndex = getEndSampleIndex(blockIndex);
   float *outputBuffer = localDspBufferAtOutlet[0];
   if (numSamplesToTarget <= 0.0f) { // if we have already reached the target
-    #if TARGET_OS_MAC || TARGET_OS_IPHONE
-    vDSP_vfill(&target, outputBuffer+startSampleIndex, 1, endSampleIndex-startSampleIndex);
-    #else
-    // TODO(mhroth): can this be replaced with memset() or something similar?
-    // can this be made faster?
-    for (int i = startSampleIndex; i < endSampleIndex; i++) {
-      outputBuffer[i] = target; // stay at the target
+    if (ArrayArithmetic::hasAccelerate) {
+      #if __APPLE__
+      vDSP_vfill(&target, outputBuffer+startSampleIndex, 1, endSampleIndex-startSampleIndex);
+      #endif
+    } else {
+      // TODO(mhroth): can this be replaced with memset() or something similar?
+      // can this be made faster?
+      for (int i = startSampleIndex; i < endSampleIndex; i++) {
+        outputBuffer[i] = target; // stay at the target
+      }
     }
-    #endif
     lastOutputSample = target;
   } else {
     // the number of samples to be processed this iteration
@@ -93,34 +95,38 @@ void DspLine::processDspToIndex(float blockIndex) {
       // if there is anything to process at all (several messages may be received at once)
       if (numSamplesToTarget < processLength) {
         int targetIndexInt = getEndSampleIndex(blockIndexOfLastMessage + numSamplesToTarget);
-        #if TARGET_OS_MAC || TARGET_OS_IPHONE
-        vDSP_vramp(&lastOutputSample, &slope, outputBuffer+startSampleIndex, 1, targetIndexInt-startSampleIndex);
-        vDSP_vfill(&target, outputBuffer+targetIndexInt, 1, endSampleIndex-targetIndexInt);
-        #else
-        // if we will process more samples than we have remaining to the target
-        // i.e., if we will arrive at the target while processing
-        outputBuffer[getStartSampleIndex()] = lastOutputSample + slope;
-        for (int i = getStartSampleIndex()+1; i < targetIndexInt; i++) {
-          outputBuffer[i] = outputBuffer[i-1] + slope;
+        if (ArrayArithmetic::hasAccelerate) {
+          #if __APPLE__
+          vDSP_vramp(&lastOutputSample, &slope, outputBuffer+startSampleIndex, 1, targetIndexInt-startSampleIndex);
+          vDSP_vfill(&target, outputBuffer+targetIndexInt, 1, endSampleIndex-targetIndexInt);
+          #endif
+        } else {
+          // if we will process more samples than we have remaining to the target
+          // i.e., if we will arrive at the target while processing
+          outputBuffer[getStartSampleIndex()] = lastOutputSample + slope;
+          for (int i = getStartSampleIndex()+1; i < targetIndexInt; i++) {
+            outputBuffer[i] = outputBuffer[i-1] + slope;
+          }
+          int blockIndexInt = getEndSampleIndex(blockIndex);
+          for (int i = targetIndexInt; i < blockIndexInt; i++) {
+            outputBuffer[i] = target;
+          }
         }
-        int blockIndexInt = getEndSampleIndex(blockIndex);
-        for (int i = targetIndexInt; i < blockIndexInt; i++) {
-          outputBuffer[i] = target;
-        }
-        #endif
         lastOutputSample = target;
         numSamplesToTarget = 0;
       } else {
         // if the target is far off
         int blockIndexInt = getEndSampleIndex(blockIndex);
-        #if TARGET_OS_MAC || TARGET_OS_IPHONE
-        vDSP_vramp(&lastOutputSample, &slope, outputBuffer+startSampleIndex, 1, endSampleIndex-startSampleIndex);
-        #else
-        outputBuffer[getStartSampleIndex()] = lastOutputSample + slope;
-        for (int i = getStartSampleIndex()+1; i < blockIndexInt; i++) {
-          outputBuffer[i] = outputBuffer[i-1] + slope;
+        if (ArrayArithmetic::hasAccelerate) {
+          #if __APPLE__
+          vDSP_vramp(&lastOutputSample, &slope, outputBuffer+startSampleIndex, 1, endSampleIndex-startSampleIndex);
+          #endif
+        } else {
+          outputBuffer[getStartSampleIndex()] = lastOutputSample + slope;
+          for (int i = getStartSampleIndex()+1; i < blockIndexInt; i++) {
+            outputBuffer[i] = outputBuffer[i-1] + slope;
+          }
         }
-        #endif
         lastOutputSample = outputBuffer[blockIndexInt-1];  
         numSamplesToTarget -= processLength;
       }
