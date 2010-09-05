@@ -57,7 +57,7 @@ extern "C" {
   void zg_attach_graph(ZGContext *context, ZGGraph *graph);
   
   /** Remove the graph from the context. */
-  void zg_remove_graph(ZGContext *context, ZGGraph *graph);
+  //void zg_remove_graph(ZGContext *context, ZGGraph *graph);
   
   /**
    * Delete the given context. All attached graphs are also deleted. Unattached graphs are not
