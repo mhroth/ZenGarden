@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,20 +23,22 @@
 #ifndef _MESSAGE_LOGICAL_AND_H_
 #define _MESSAGE_LOGICAL_AND_H_
 
-#include "MessageBinaryOperationObject.h"
+#include "MessageObject.h"
 
-/**
- * &&
- */
-class MessageLogicalAnd : public MessageBinaryOperationObject {
+/** [&&] */
+class MessageLogicalAnd : public MessageObject {
   
   public:
-    MessageLogicalAnd(char *initString);
-    MessageLogicalAnd(float constant, char *initString);
+    MessageLogicalAnd(PdMessage *initMessage, PdGraph *graph);
     ~MessageLogicalAnd();
+  
+    const char *getObjectLabel();
     
-  protected:
-    inline float performBinaryOperation(float left, float right);
+  private:
+    void processMessage(int inletIndex, PdMessage *message);
+  
+    float left;
+    float right;
 };
 
 #endif // _MESSAGE_LOGICAL_AND_H_

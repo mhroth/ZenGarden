@@ -50,6 +50,8 @@
 #include "MessageListTrim.h"
 #include "MessageLoadbang.h"
 #include "MessageLog.h"
+#include "MessageLogicalAnd.h"
+#include "MessageLogicalOr.h"
 #include "MessageMaximum.h"
 #include "MessageMessageBox.h"
 #include "MessageMetro.h"
@@ -501,6 +503,10 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
       return new MessageEqualsEquals(initMessage, graph);
     } else if (strcmp(objectLabel, "!=") == 0) {
       return new MessageNotEquals(initMessage, graph);
+    } else if (strcmp(objectLabel, "||") == 0) {
+      return new MessageLogicalOr(initMessage, graph);
+    } else if (strcmp(objectLabel, "&&") == 0) {
+      return new MessageLogicalAnd(initMessage, graph);
     } else if (strcmp(objectLabel, "abs") == 0) {
       return new MessageAbsoluteValue(initMessage, graph);
     } else if (strcmp(objectLabel, "atan") == 0) {

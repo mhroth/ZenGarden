@@ -49,13 +49,11 @@ public class PdObjectTest implements ZenGardenListener {
   private static final short[] OUTPUT_BUFFER = new short[BLOCK_SIZE * NUM_OUTPUT_CHANNELS];
   private static final String TEST_PATHNAME = "./test";
   
-  private StringBuilder stringBuilderStd;
-  private StringBuilder stringBuilderErr;
+  private StringBuilder printBuffer;
 
   @Before
   public void setUp() throws Exception {
-    stringBuilderStd = new StringBuilder();
-    stringBuilderErr = new StringBuilder();
+    printBuffer = new StringBuilder();
   }
 
   @After
@@ -322,6 +320,17 @@ public class PdObjectTest implements ZenGardenListener {
   public void testMessageTimer() {
 	genericMessageTest("MessageTimer.pd", 1247.0f);
   }
+
+  @Test
+  public void testMessageToggle() {
+    genericMessageTest("MessageToggle.pd");
+  }
+  
+  
+  @Test
+  public void testMessageTrigger() {
+    genericMessageTest("MessageTrigger.pd");
+  }
   /*
   @Test
   public void testMessageUnpack() {
@@ -348,16 +357,11 @@ public class PdObjectTest implements ZenGardenListener {
       graph.process(INPUT_BUFFER, OUTPUT_BUFFER);
     }
     
-    String messageStdOutput = stringBuilderStd.toString();
-    String messageErrOutput = stringBuilderErr.toString();
     String goldenOutput = readTextFile(new File(TEST_PATHNAME,
         testFilename.split("\\.")[0] + ".golden"));
     
     // ensure that message standard output is same as golden file
-    assertEquals(messageStdOutput, goldenOutput);
-    
-    // ensure that message error output is empty
-    assertEquals(messageErrOutput, "");
+    assertEquals(printBuffer.toString(), goldenOutput);
     
     graph.unloadNativeComponentIfStillLoaded();
   }
@@ -394,13 +398,13 @@ public class PdObjectTest implements ZenGardenListener {
 
   public void onPrintErr(String message) {
     // must append new line because message does not have it by default
-    stringBuilderErr.append(message);
-    stringBuilderErr.append(System.getProperty("line.separator"));
+    printBuffer.append(message);
+    printBuffer.append(System.getProperty("line.separator"));
   }
 
   public void onPrintStd(String message) {
-    stringBuilderStd.append(message);
-    stringBuilderStd.append(System.getProperty("line.separator"));
+    printBuffer.append(message);
+    printBuffer.append(System.getProperty("line.separator"));
   }
 
 }

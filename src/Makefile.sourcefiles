@@ -68,6 +68,8 @@ LOCAL_SRC_FILES := \
 ./MessageListTrim.cpp \
 ./MessageLoadbang.cpp \
 ./MessageLog.cpp \
+./MessageLogicalAnd.cpp \
+./MessageLogicalOr.cpp \
 ./MessageMaximum.cpp \
 ./MessageMessageBox.cpp \
 ./MessageMetro.cpp \
