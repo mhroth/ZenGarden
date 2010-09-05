@@ -78,6 +78,7 @@
 #include "MessageSelect.h"
 #include "MessageSend.h"
 #include "MessageSine.h"
+#include "MessageSoundfiler.h"
 #include "MessageSpigot.h"
 #include "MessageSqrt.h"
 #include "MessageStripNote.h"
@@ -127,6 +128,7 @@
 #include "DspSignal.h"
 #include "DspSnapshot.h"
 #include "DspSubtract.h"
+#include "DspTablePlay.h"
 #include "DspTableRead.h"
 #include "DspTableRead4.h"
 #include "DspThrow.h"
@@ -616,6 +618,8 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
       return new MessageSend(initMessage, graph);
     } else if (strcmp(objectLabel, "sin") == 0) {
       return new MessageSine(initMessage, graph);
+    } else if (strcmp(objectLabel, "soundfiler") == 0) {
+      return new MessageSoundfiler(initMessage, graph);
     } else if (strcmp(objectLabel, "spigot") == 0) {
       return new MessageSpigot(initMessage, graph);
     } else if (strcmp(objectLabel, "stripnote") == 0) {
@@ -713,6 +717,8 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
       return new DspSnapshot(initMessage, graph);
     } else if (strcmp(objectLabel, "switch~") == 0) {
       return new MessageSwitch(initMessage, graph);
+    } else if (strcmp(objectLabel, "tabplay~") == 0) {
+      return new DspTablePlay(initMessage, graph);
     } else if (strcmp(objectLabel, "tabread~") == 0) {
       return new DspTableRead(initMessage, graph);
     } else if (strcmp(objectLabel, "tabread4~") == 0) {
