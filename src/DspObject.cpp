@@ -117,6 +117,10 @@ ConnectionType DspObject::getConnectionType(int outletIndex) {
   return DSP;
 }
 
+float *DspObject::getDspBufferAtOutlet(int outletIndex) { 
+  return localDspBufferAtOutlet[outletIndex];
+}
+
 bool DspObject::doesProcessAudio() {
   return true;
 }
@@ -186,10 +190,12 @@ void DspObject::processDsp() {
   }
   
   // process all pending messages in this block
-  MessageLetPair *messageLetPair = NULL;
-  while ((messageLetPair = (MessageLetPair *) messageQueue->pop()) != NULL) {
-    processMessage(messageLetPair->index, messageLetPair->message);
-    messageLetPair->message->unreserve(); // unreserve the message so that it can be reused by the issuing object
+  if (messageQueue->numElements > 0) {
+    MessageLetPair *messageLetPair = NULL;
+    while ((messageLetPair = (MessageLetPair *) messageQueue->pop()) != NULL) {
+      processMessage(messageLetPair->index, messageLetPair->message);
+      messageLetPair->message->unreserve(); // unreserve the message so that it can be reused by the issuing object
+    }
   }
   
   // process remainder of block
@@ -199,14 +205,13 @@ void DspObject::processDsp() {
 
 void DspObject::resolveInputBuffersAtInlet(int inletIndex) {
   List *incomingDspConnectionsList = incomingDspConnectionsListAtInlet[inletIndex];
-  int numConnections = incomingDspConnectionsList->size();
   
-  switch (numConnections) {
+  switch (incomingDspConnectionsList->numElements) {
     case 0: {
       break; // nothing to do
     }
     case 1: {
-      ObjectLetPair *objectLetPair = (ObjectLetPair *) incomingDspConnectionsList->get(0);
+      ObjectLetPair *objectLetPair = (ObjectLetPair *) incomingDspConnectionsList->arrayList[0];
       DspObject *remoteObject = (DspObject *) objectLetPair->object;
       localDspBufferAtInlet[inletIndex] = remoteObject->getDspBufferAtOutlet(objectLetPair->index);
       break;
@@ -221,6 +226,7 @@ void DspObject::resolveInputBuffersAtInlet(int inletIndex) {
       memcpy(localInputBuffer, remoteOutputBuffer, numBytesInBlock);
       
       // add the remaining output buffers to the input buffer
+      int numConnections = incomingDspConnectionsList->numElements;
       for (int j = 1; j < numConnections; j++) {
         objectLetPair = (ObjectLetPair *) incomingDspConnectionsList->get(j);
         remoteOutputBuffer = ((DspObject *) objectLetPair->object)->getDspBufferAtOutlet(objectLetPair->index);
@@ -233,19 +239,6 @@ void DspObject::resolveInputBuffersAtInlet(int inletIndex) {
 
 void DspObject::processDspToIndex(float blockIndex) {
   // by default, this function does nothing
-}
-
-bool DspObject::isRootNode() {
-  if (!MessageObject::isRootNode()) {
-    return false;
-  } else {
-    for (int i = 0; i < numDspInlets; i++) {
-      if (incomingDspConnectionsListAtInlet[i]->size() > 0) {
-        return false;
-      }
-    }
-    return true;
-  }
 }
 
 bool DspObject::isLeafNode() {

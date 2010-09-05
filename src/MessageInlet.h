@@ -34,10 +34,16 @@ class MessageInlet : public MessageObject {
     
     const char *getObjectLabel();
     ObjectType getObjectType();
+  
+    List *getProcessOrderFromInlet();
+  
+    int getCanvasPosition();
+    void setCanvasPosition(int pos);
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
   
+    int canvasX;
 };
 
 #endif // _MESSAGE_INLET_H_

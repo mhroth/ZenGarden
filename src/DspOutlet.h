@@ -44,17 +44,18 @@ class DspOutlet : public DspObject {
     const char *getObjectLabel();
     ObjectType getObjectType();
   
-    /**
-     * Set the outlet index of this object in the parent-graph.
-     * This function should <b>always</b> be called after initialisation. The default outlet index
-     * is zero.
-     */
-    void setOutletIndex(int outletIndex);
+    int getCanvasPosition();
+    void setCanvasPosition(int pos);
+  
+    float *getDspBufferAtOutlet(int outletIndex);
   
   private:
-    void processDspToIndex(float blockIndex);
+    // it is not necessary to implement processDspToIndex because this object returns its inlet buffer
+    // as its output buffer. When the surrounding PdGraph is asked for its outlet buffer, this
+    // inlet buffer is returned. Thus, when the inlet buffer is resolved, so it automatically
+    // the PdGraphs outlet buffer
   
-    int outletIndex;
+    int canvasX;
 };
 
 #endif // _DSP_OUTLET_H_

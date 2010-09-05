@@ -61,18 +61,15 @@ class DspObject : public MessageObject {
     /** Returns the connection type of the given outlet. */
     virtual ConnectionType getConnectionType(int outletIndex);
 
-    inline float *getDspBufferAtOutlet(int outletIndex) { 
-      return localDspBufferAtOutlet[outletIndex];
-    }
+    virtual float *getDspBufferAtOutlet(int outletIndex);
   
-    void addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex);
+    virtual void addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex);
       
-    void addConnectionToObjectFromOutlet(MessageObject *messageObject, int inletIndex, int outletIndex);
+    virtual void addConnectionToObjectFromOutlet(MessageObject *messageObject, int inletIndex, int outletIndex);
   
     virtual bool doesProcessAudio();
   
-    bool isRootNode();
-    bool isLeafNode();
+    virtual bool isLeafNode();
     List *getProcessOrder();
     
   protected:  

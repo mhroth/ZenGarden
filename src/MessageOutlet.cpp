@@ -24,11 +24,12 @@
 #include "PdGraph.h"
 
 MessageOutlet::MessageOutlet(PdGraph *graph) : MessageObject(1, 1, graph) {
-  outletIndex = 0; // default value
+  numMessageOutlets = 0;
+  canvasX = 0;
 }
 
 MessageOutlet::~MessageOutlet() {
-  // nothing to do
+  numMessageOutlets = 1;
 }
 
 const char *MessageOutlet::getObjectLabel() {
@@ -39,10 +40,14 @@ ObjectType MessageOutlet::getObjectType() {
   return MESSAGE_OUTLET;
 }
 
-void MessageOutlet::setOutletIndex(int outletIndex) {
-  this->outletIndex = outletIndex;
+void MessageOutlet::processMessage(int inletIndex, PdMessage *message) {
+  sendMessage(0, message);
 }
 
-void MessageOutlet::processMessage(int inletIndex, PdMessage *message) {
-  graph->sendMessage(outletIndex, message);
+int MessageOutlet::getCanvasPosition() {
+  return canvasX;
+}
+
+void MessageOutlet::setCanvasPosition(int pos) {
+  canvasX = pos;
 }
