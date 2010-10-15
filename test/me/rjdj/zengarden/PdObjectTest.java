@@ -347,6 +347,11 @@ public class PdObjectTest implements ZenGardenListener {
     genericMessageTest("MessageUnpack.pd");
   }
   
+  @Test
+  public void testMessageUntil() {
+    genericMessageTest("MessageUntil.pd");
+  }
+  
   
   /**
    * Executes the generic message test for at least the given minimum runtime (in milliseconds).
