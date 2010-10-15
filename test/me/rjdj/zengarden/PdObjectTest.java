@@ -190,6 +190,16 @@ public class PdObjectTest implements ZenGardenListener {
   public void testMessageLog() {
     genericMessageTest("MessageLog.pd");
   }
+  
+  @Test
+  public void testMessageLogicalAnd() {
+    genericMessageTest("MessageLogicalAnd.pd");
+  }
+  
+  @Test
+  public void testMessageLogicalOr() {
+    genericMessageTest("MessageLogicalOr.pd");
+  }
 
   @Test
   public void testMessageMaximum() {
@@ -331,12 +341,12 @@ public class PdObjectTest implements ZenGardenListener {
   public void testMessageTrigger() {
     genericMessageTest("MessageTrigger.pd");
   }
-  /*
+  
   @Test
   public void testMessageUnpack() {
     genericMessageTest("MessageUnpack.pd");
   }
-  */
+  
   
   /**
    * Executes the generic message test for at least the given minimum runtime (in milliseconds).
@@ -398,8 +408,8 @@ public class PdObjectTest implements ZenGardenListener {
 
   public void onPrintErr(String message) {
     // must append new line because message does not have it by default
-    printBuffer.append(message);
-    printBuffer.append(System.getProperty("line.separator"));
+    //printBuffer.append(message);
+    //printBuffer.append(System.getProperty("line.separator"));
   }
 
   public void onPrintStd(String message) {
