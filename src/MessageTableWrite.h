@@ -38,6 +38,7 @@ class MessageTableWrite : public MessageObject, public TableReceiverInterface {
     
     char *getName();
     void setTable(MessageTable *table);
+    bool shouldDistributeMessageToInlets();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
