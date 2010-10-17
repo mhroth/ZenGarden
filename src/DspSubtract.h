@@ -35,7 +35,7 @@ class DspSubtract : public DspObject {
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
-    void processDspToIndex(float blockIndex);
+    void processDspWithIndex(int fromIndex, int toIndex);
 
     float constant;
 };

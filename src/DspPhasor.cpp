@@ -23,17 +23,22 @@
 #include "DspPhasor.h"
 #include "PdGraph.h"
 
+#define UNITBIT32 1572864.  /* 3*2^19; bit 32 has place value 1 */
+
 // initialise the static class variables
 float *DspPhasor::phasor_table = NULL;
 int DspPhasor::refCount = 0;
 
+union tabfudge {
+  double tf_d;
+  int tf_i[2];
+};
+
 DspPhasor::DspPhasor(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
-  if (initMessage->getNumElements() > 0 &&
-      initMessage->getElement(0)->getType() == FLOAT) {
-    frequency = initMessage->getElement(0)->getFloat();
-  } else {
-    frequency = 0.0f;
-  }
+  frequency = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
+  
+  step = 1.0f / graph->getSampleRate();
+  xphase = 0.0f;
 
   this->sampleRate = graph->getSampleRate();
   phase = 0.0f;
@@ -64,10 +69,9 @@ const char *DspPhasor::getObjectLabel() {
 void DspPhasor::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: { // update the frequency
-      MessageElement *messageElement = message->getElement(0);
-      if (messageElement->getType() == FLOAT) {
-        processDspToIndex(graph->getBlockIndex(message));
-        frequency = messageElement->getFloat();
+      if (message->isFloat(0)) {
+        processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
+        frequency = message->getFloat(0);
       }
       break;
     }
@@ -81,24 +85,40 @@ void DspPhasor::processMessage(int inletIndex, PdMessage *message) {
   }
 }
 
-void DspPhasor::processDspToIndex(float blockIndex) {
+void DspPhasor::processDspWithIndex(int fromIndex, int toIndex) {
   switch (signalPrecedence) {
     case DSP_DSP: {
       // TODO(mhroth)
       break;
     }
     case DSP_MESSAGE: {
-      int endSampleIndex = getEndSampleIndex(blockIndex);
-      float *inputBuffer = localDspBufferAtInlet[0];
-      float *outputBuffer = localDspBufferAtOutlet[0];
-      for (int i = getStartSampleIndex(); i < endSampleIndex; index += inputBuffer[i++]) {
+      for (int i = fromIndex; i < toIndex; index += dspBufferAtInlet0[i++]) {
         if (index < 0.0f) {
           index += sampleRate; // account for negative frequencies
         } else if (index >= sampleRate) {
           index -= sampleRate;
         }
-        outputBuffer[i] = phasor_table[(int) index];
+        dspBufferAtOutlet0[i] = phasor_table[(int) index];
       }
+
+      /*
+      double dphase = xphase + (double) UNITBIT32;
+      
+      union tabfudge tf;
+      tf.tf_d = UNITBIT32;
+      int normhipart = tf.tf_i[1]; // HIOFFSET == 1
+      tf.tf_d = dphase;
+      
+      for (int i = getStartSampleIndex(); i < endSampleIndex; i++) {
+        tf.tf_i[1] = normhipart;
+        dphase += inputBuffer[i] * step;
+        outputBuffer[i] = tf.tf_d - UNITBIT32;
+        tf.tf_d = dphase;
+      }
+      
+      tf.tf_i[1] = normhipart;
+      xphase = tf.tf_d - UNITBIT32;
+      */
       break;
     }
     case MESSAGE_DSP: {
@@ -106,18 +126,15 @@ void DspPhasor::processDspToIndex(float blockIndex) {
       break;
     }
     case MESSAGE_MESSAGE: {
-      int endSampleIndex = getEndSampleIndex(blockIndex);
-      float *outputBuffer = localDspBufferAtOutlet[0];
-      for (int i = getStartSampleIndex(); i < endSampleIndex; i++, index += frequency) {
+      for (int i = fromIndex; i < toIndex; i++, index += frequency) {
         if (index < 0.0f) {
           index += sampleRate; // account for negative frequencies
         } else if (index >= sampleRate) {
           index -= sampleRate;
         }
-        outputBuffer[i] = phasor_table[(int) index];
+        dspBufferAtOutlet0[i] = phasor_table[(int) index];
       }
       break;
     }
   }
-  blockIndexOfLastMessage = blockIndex; // update the block index of the last message
 }

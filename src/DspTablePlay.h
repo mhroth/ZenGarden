@@ -45,7 +45,7 @@ class DspTablePlay : public DspObject, public TableReceiverInterface {
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
-    void processDspToIndex(float blockIndex);
+    void processDspWithIndex(int fromIndex, int toIndex);
   
     /**
      * Sets up outgoing message message and other conditions to play the table from the given start

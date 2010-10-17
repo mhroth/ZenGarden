@@ -48,7 +48,7 @@ void DspLine::processMessage(int inletIndex, PdMessage *message) {
       case 1: {
         // jump to value
         if (message->isFloat(0)) {
-          processDspToIndex(graph->getBlockIndex(message));
+          processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
           target = message->getFloat(0);
           slope = 0.0f;
           numSamplesToTarget = 0.0f;
@@ -58,7 +58,7 @@ void DspLine::processMessage(int inletIndex, PdMessage *message) {
       default: { // at least two inputs
         // new ramp
         if (message->isFloat(0) && message->isFloat(1)) {
-          processDspToIndex(graph->getBlockIndex(message));
+          processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
           target = message->getFloat(0);
           float timeToTargetMs = message->getFloat(1); // no negative time to targets!
           numSamplesToTarget = StaticUtils::millisecondsToSamples(
@@ -71,66 +71,56 @@ void DspLine::processMessage(int inletIndex, PdMessage *message) {
   }
 }
 
-void DspLine::processDspToIndex(float blockIndex) {
-  int startSampleIndex = getStartSampleIndex();
-  int endSampleIndex = getEndSampleIndex(blockIndex);
-  float *outputBuffer = localDspBufferAtOutlet[0];
+void DspLine::processDspWithIndex(int fromIndex, int toIndex) {
   if (numSamplesToTarget <= 0.0f) { // if we have already reached the target
     if (ArrayArithmetic::hasAccelerate) {
       #if __APPLE__
-      vDSP_vfill(&target, outputBuffer+startSampleIndex, 1, endSampleIndex-startSampleIndex);
+      vDSP_vfill(&target, dspBufferAtOutlet0+fromIndex, 1, toIndex-fromIndex);
       #endif
     } else {
-      // TODO(mhroth): can this be replaced with memset() or something similar?
-      // can this be made faster?
-      for (int i = startSampleIndex; i < endSampleIndex; i++) {
-        outputBuffer[i] = target; // stay at the target
-      }
+      memset_pattern4(dspBufferAtOutlet0+fromIndex, &target, (toIndex-fromIndex)*sizeof(float));
     }
     lastOutputSample = target;
   } else {
     // the number of samples to be processed this iteration
-    float processLength = blockIndex - blockIndexOfLastMessage;
+    float processLength = toIndex - fromIndex;
     if (processLength > 0.0f) {
       // if there is anything to process at all (several messages may be received at once)
       if (numSamplesToTarget < processLength) {
-        int targetIndexInt = getEndSampleIndex(blockIndexOfLastMessage + numSamplesToTarget);
+        int targetIndexInt = fromIndex + numSamplesToTarget;
         if (ArrayArithmetic::hasAccelerate) {
           #if __APPLE__
-          vDSP_vramp(&lastOutputSample, &slope, outputBuffer+startSampleIndex, 1, targetIndexInt-startSampleIndex);
-          vDSP_vfill(&target, outputBuffer+targetIndexInt, 1, endSampleIndex-targetIndexInt);
+          vDSP_vramp(&lastOutputSample, &slope, dspBufferAtOutlet0+fromIndex, 1, targetIndexInt-fromIndex);
+          vDSP_vfill(&target, dspBufferAtOutlet0+targetIndexInt, 1, toIndex-targetIndexInt);
           #endif
         } else {
           // if we will process more samples than we have remaining to the target
           // i.e., if we will arrive at the target while processing
-          outputBuffer[getStartSampleIndex()] = lastOutputSample + slope;
-          for (int i = getStartSampleIndex()+1; i < targetIndexInt; i++) {
-            outputBuffer[i] = outputBuffer[i-1] + slope;
+          dspBufferAtOutlet0[fromIndex] = lastOutputSample + slope;
+          for (int i = fromIndex+1; i < targetIndexInt; i++) {
+            dspBufferAtOutlet0[i] = dspBufferAtOutlet0[i-1] + slope;
           }
-          int blockIndexInt = getEndSampleIndex(blockIndex);
-          for (int i = targetIndexInt; i < blockIndexInt; i++) {
-            outputBuffer[i] = target;
+          for (int i = targetIndexInt; i < toIndex; i++) {
+            dspBufferAtOutlet0[i] = target;
           }
         }
         lastOutputSample = target;
         numSamplesToTarget = 0;
       } else {
         // if the target is far off
-        int blockIndexInt = getEndSampleIndex(blockIndex);
         if (ArrayArithmetic::hasAccelerate) {
           #if __APPLE__
-          vDSP_vramp(&lastOutputSample, &slope, outputBuffer+startSampleIndex, 1, endSampleIndex-startSampleIndex);
+          vDSP_vramp(&lastOutputSample, &slope, dspBufferAtOutlet0+fromIndex, 1, toIndex-fromIndex);
           #endif
         } else {
-          outputBuffer[getStartSampleIndex()] = lastOutputSample + slope;
-          for (int i = getStartSampleIndex()+1; i < blockIndexInt; i++) {
-            outputBuffer[i] = outputBuffer[i-1] + slope;
+          dspBufferAtOutlet0[fromIndex] = lastOutputSample + slope;
+          for (int i = fromIndex+1; i < toIndex; i++) {
+            dspBufferAtOutlet0[i] = dspBufferAtOutlet0[i-1] + slope;
           }
         }
-        lastOutputSample = outputBuffer[blockIndexInt-1];  
+        lastOutputSample = dspBufferAtOutlet0[toIndex-1];  
         numSamplesToTarget -= processLength;
       }
     }
   }
-  blockIndexOfLastMessage = blockIndex;
 }

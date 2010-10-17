@@ -64,8 +64,6 @@ class PdGraph : public DspObject {
      */
     void receiveMessage(int inletIndex, PdMessage *message);
   
-    void processDsp();
-  
     void addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex);
     void addConnectionToObjectFromOutlet(MessageObject *messageObject, int inletIndex, int outletIndex);
   
@@ -174,7 +172,9 @@ class PdGraph : public DspObject {
     void setValueForName(char *name, float constant);
     float getValueForName(char *name);
   
-    float *getDspBufferAtOutlet(int outletIndex);
+    float **getDspBufferRefAtOutlet(int outletIndex);
+  
+    void processDsp();
   
   private:
     /** Create a new object based on its initialisation string. */

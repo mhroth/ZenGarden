@@ -32,15 +32,13 @@ DspCatch::DspCatch(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 0, 0, 
   } else {
     name = NULL;
     throwList = NULL;
-    graph->printErr("send~ must be initialised with a name.\n");
+    graph->printErr("catch~ must be initialised with a name.");
   }
-  originalOutputBuffer = localDspBufferAtOutlet[0];
 }
 
 DspCatch::~DspCatch() {
   free(name);
   delete throwList;
-  localDspBufferAtOutlet[0] = originalOutputBuffer;
 }
 
 const char *DspCatch::getObjectLabel() {
@@ -75,22 +73,21 @@ void DspCatch::processDsp() {
   int numConnections = throwList->size();
   switch (numConnections) {
     case 0: {
+      memset(dspBufferAtOutlet0, 0, numBytesInBlock);
       break;
     }
     case 1: {
       DspThrow *dspThrow = (DspThrow *) throwList->get(0);
-      localDspBufferAtOutlet[0] = dspThrow->getBuffer();
+      memcpy(dspBufferAtOutlet0, dspThrow->getBuffer(), numBytesInBlock);
       break;
     }
-    default: { // > 1
-      localDspBufferAtOutlet[0] = originalOutputBuffer;
-      
+    default: {
       DspThrow *dspThrow = (DspThrow *) throwList->get(0);
-      memcpy(originalOutputBuffer, dspThrow->getBuffer(), numBytesInBlock);
+      memcpy(dspBufferAtOutlet0, dspThrow->getBuffer(), numBytesInBlock);
       
       for (int i = 1; i < numConnections; i++) {
         dspThrow = (DspThrow *) throwList->get(i);
-        ArrayArithmetic::add(originalOutputBuffer, dspThrow->getBuffer(), originalOutputBuffer,
+        ArrayArithmetic::add(dspBufferAtOutlet0, dspThrow->getBuffer(), dspBufferAtOutlet0,
             0, blockSizeInt);
       }
       break;

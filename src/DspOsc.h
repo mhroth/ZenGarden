@@ -36,7 +36,7 @@ class DspOsc : public DspObject {
     
   protected:
     void processMessage(int inletIndex, PdMessage *message);
-    void processDspToIndex(float blockIndex);
+    void processDspWithIndex(int fromIndex, int toIndex);
     
   private:    
     int sampleRate;

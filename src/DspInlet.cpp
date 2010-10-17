@@ -20,6 +20,7 @@
  *
  */
 
+#include "ArrayArithmetic.h"
 #include "DspInlet.h"
 #include "PdGraph.h"
 
@@ -37,10 +38,6 @@ const char *DspInlet::getObjectLabel() {
 
 ObjectType DspInlet::getObjectType() {
   return DSP_INLET;
-}
-
-float *DspInlet::getDspBufferAtOutlet(int outletIndex) {
-  return localDspBufferAtInlet[0];
 }
 
 int DspInlet::getCanvasPosition() {
@@ -70,4 +67,13 @@ List *DspInlet::getProcessOrderFromInlet() {
     delete parentProcessList;
   }
   return processList;
+}
+
+void DspInlet::processDspWithIndex(int fromIndex, int toIndex) {
+  if (numConnectionsToInlet0 > 1) {
+    dspBufferAtOutlet0 = localDspOutletBuffers;
+    memcpy(dspBufferAtOutlet0, dspBufferAtInlet0, numBytesInBlock);
+  } else {
+    dspBufferAtOutlet0 = dspBufferAtInlet0;
+  }
 }

@@ -181,9 +181,9 @@ void PdGraph::addLetObjectToLetList(MessageObject *inletObject, int newPosition,
   letList->add(inletObject);
 }
 
-float *PdGraph::getDspBufferAtOutlet(int outletIndex) {
+float **PdGraph::getDspBufferRefAtOutlet(int outletIndex) {
   DspObject *dspOutlet = (DspObject *) outletList->get(outletIndex);
-  return dspOutlet->getDspBufferAtOutlet(0);
+  return dspOutlet->getDspBufferRefAtOutlet(0);
 }
 
 void PdGraph::addConnection(MessageObject *fromObject, int outletIndex, MessageObject *toObject, int inletIndex) {
@@ -380,13 +380,13 @@ void PdGraph::processDsp() {
     
     // process all dsp objects
     // DSP processing elements are only executed if the graph is switched on
-    int numNodes = dspNodeList->size();
+    int numNodes = dspNodeList->numElements;
+    DspObject **dspNodeArray = (DspObject **) dspNodeList->arrayList;
     //for (int i = 0; i < 1; i++) { // TODO(mhroth): iterate depending on local blocksize relative to parent
     // execute all nodes which process audio
-    for (int j = 0; j < numNodes; j++) {
-      DspObject *dspObject = (DspObject *) dspNodeList->arrayList[j];
-      dspObject->processDsp();
-    }
+    while (numNodes--) {
+      (*dspNodeArray++)->processDsp();
+    }    
     //}
   }
 }
@@ -529,6 +529,7 @@ void PdGraph::computeLocalDspProcessOrder() {
   delete processList;
   
   /* print out process order of local dsp objects (for debugging) */
+  /*
   if (dspNodeList->size() > 0) {
     // print dsp evaluation order for debugging, but only if there are any nodes to list
     printStd("--- ordered evaluation list ---");
@@ -537,6 +538,7 @@ void PdGraph::computeLocalDspProcessOrder() {
       printStd(messageObject->getObjectLabel());
     }
   }
+  */
   
   unlockContextIfAttached();
 }

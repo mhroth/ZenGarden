@@ -43,7 +43,10 @@ class DspSend : public DspObject {
     ObjectType getObjectType();
     
   private:
+    void processDspWithIndex(int fromIndex, int toIndex);
+  
     char *name;
+    float *buffer;
 };
 
 #endif // _DSP_SEND_H_

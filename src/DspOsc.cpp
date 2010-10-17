@@ -28,12 +28,7 @@ float *DspOsc::cos_table = NULL;
 int DspOsc::refCount = 0;
 
 DspOsc::DspOsc(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
-  if (initMessage->getNumElements() > 0 &&
-      initMessage->getElement(0)->getType() == FLOAT) {
-    frequency = initMessage->getElement(0)->getFloat();
-  } else {
-    frequency = 0.0f;
-  }
+  frequency = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
   
   this->sampleRate = graph->getSampleRate();
   phase = 0.0f;
@@ -63,10 +58,9 @@ const char *DspOsc::getObjectLabel() {
 void DspOsc::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: { // update the frequency
-      MessageElement *messageElement = message->getElement(0);
-      if (messageElement->getType() == FLOAT) {
-        processDspToIndex(graph->getBlockIndex(message));
-        frequency = fabsf(messageElement->getFloat());
+      if (message->isFloat(0)) {
+        processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
+        frequency = fabsf(message->getFloat(0));
       }
       break;
     }
@@ -80,23 +74,20 @@ void DspOsc::processMessage(int inletIndex, PdMessage *message) {
   }
 }
 
-void DspOsc::processDspToIndex(float blockIndex) {
+void DspOsc::processDspWithIndex(int fromIndex, int toIndex) {
   switch (signalPrecedence) {
     case DSP_DSP: {
       // TODO(mhroth)
       break;
     }
     case DSP_MESSAGE: {
-      int endSampleIndex = getEndSampleIndex(blockIndex);
-      float *inputBuffer = localDspBufferAtInlet[0];
-      float *outputBuffer = localDspBufferAtOutlet[0];
-      for (int i = getStartSampleIndex(); i < endSampleIndex; index += inputBuffer[i++]) {
+      for (int i = fromIndex; i < toIndex; index += dspBufferAtInlet0[i++]) {
         if (index < 0.0f) {
           index += sampleRate;
         } else if (index >= sampleRate) {
           index -= sampleRate;
         }
-        outputBuffer[i] = cos_table[(int) index];
+        dspBufferAtOutlet0[i] = cos_table[(int) index];
       }
       break;
     }
@@ -105,21 +96,18 @@ void DspOsc::processDspToIndex(float blockIndex) {
       break;
     }
     case MESSAGE_MESSAGE: {
-      int endSampleIndex = getEndSampleIndex(blockIndex);
-      float *outputBuffer = localDspBufferAtOutlet[0];
-      for (int i = getStartSampleIndex(); i < endSampleIndex; i++, index += frequency) {
+      for (int i = fromIndex; i < toIndex; i++, index += frequency) {
         if (index < 0.0f) {
           // allow negative frequencies (read the wavetable backwards)
           index += sampleRate;
-        } if (index >= sampleRate) {
+        } else if (index >= sampleRate) {
           // TODO(mhroth): if the frequency is higher than the sample rate, the index will point
           // outside of the cos_table
           index -= sampleRate;
         }
-        outputBuffer[i] = cos_table[(int) index];
+        dspBufferAtOutlet0[i] = cos_table[(int) index];
       }
       break;
     }
   }
-  blockIndexOfLastMessage = blockIndex; // update the block index of the last message
 }

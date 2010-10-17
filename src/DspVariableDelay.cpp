@@ -29,19 +29,14 @@ DspVariableDelay::DspVariableDelay(PdMessage *initMessage, PdGraph *graph) : Del
   if (initMessage->isSymbol(0)) {
     name = StaticUtils::copyString(initMessage->getSymbol(0));
     sampleRate = graph->getSampleRate();
-    xArray = (float *) malloc(blockSizeInt * sizeof(float));
-    targetIndexBaseArray = (float *) malloc(blockSizeInt * sizeof(float));
   } else {
     graph->printErr("vd~ requires the name of a delayline. None given.");
     name = NULL;
-    xArray = NULL;
-    targetIndexBaseArray = NULL;
   }
 }
 
 DspVariableDelay::~DspVariableDelay() {
-  free(xArray);
-  free(targetIndexBaseArray);
+  // nothing to do
 }
 
 const char *DspVariableDelay::getObjectLabel() {
@@ -52,20 +47,20 @@ ObjectType DspVariableDelay::getObjectType() {
   return DSP_VARIABLE_DELAY;
 }
 
-void DspVariableDelay::processDspToIndex(float newBlockIndex) {
+void DspVariableDelay::processDspWithIndex(int fromIndex, int toIndex) {
   int headIndex;
   int bufferLength;
   float *buffer = delayline->getBuffer(&headIndex, &bufferLength);
   float bufferLengthFloat = (float) bufferLength;
-  float *inputBuffer = localDspBufferAtInlet[0];
-  float *outputBuffer = localDspBufferAtOutlet[0];
+  float xArray[blockSizeInt];
+  float targetIndexBaseArray[blockSizeInt];
   
   float targetIndexBase = (float) (headIndex - blockSizeInt);
   if (ArrayArithmetic::hasAccelerate) {
     #if __APPLE__
     // calculate delay in samples (vector version of StaticUtils::millisecondsToSamples)
     float samplesPerMillisecond = sampleRate / 1000.0f;
-    vDSP_vsmul(inputBuffer, 1, &samplesPerMillisecond, xArray, 1, blockSizeInt);
+    vDSP_vsmul(dspBufferAtInlet0, 1, &samplesPerMillisecond, xArray, 1, blockSizeInt);
     
     float zero = 0.0f;
     float one = 1.0f;
@@ -82,11 +77,11 @@ void DspVariableDelay::processDspToIndex(float newBlockIndex) {
     }
     
     // do table lookup (in buffer) using xArray as indicies, with linear interpolation 
-    vDSP_vlint(buffer, xArray, 1, outputBuffer, 1, blockSizeInt, bufferLength);
+    vDSP_vlint(buffer, xArray, 1, dspBufferAtOutlet0, 1, blockSizeInt, bufferLength);
     #endif
   } else {
     for (int i = 0; i < blockSizeInt; i++, targetIndexBase+=1.0f) {
-      float delayInSamples = StaticUtils::millisecondsToSamples(inputBuffer[i], sampleRate);
+      float delayInSamples = StaticUtils::millisecondsToSamples(dspBufferAtInlet0[i], sampleRate);
       if (delayInSamples < 0.0f) {
         delayInSamples = 0.0f;
       } else if (delayInSamples > bufferLengthFloat) {
@@ -104,7 +99,7 @@ void DspVariableDelay::processDspToIndex(float newBlockIndex) {
       float y0 = buffer[x0];
       float y1 = buffer[x0+1];
       float slope = (y1 - y0); // /(x1 - x0) == 1.0f!
-      outputBuffer[i] = (slope * dx) + y0;
+      dspBufferAtOutlet0[i] = (slope * dx) + y0;
     }
   }
 }

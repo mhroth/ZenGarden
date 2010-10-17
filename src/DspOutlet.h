@@ -47,13 +47,8 @@ class DspOutlet : public DspObject {
     int getCanvasPosition();
     void setCanvasPosition(int pos);
   
-    float *getDspBufferAtOutlet(int outletIndex);
-  
   private:
-    // it is not necessary to implement processDspToIndex because this object returns its inlet buffer
-    // as its output buffer. When the surrounding PdGraph is asked for its outlet buffer, this
-    // inlet buffer is returned. Thus, when the inlet buffer is resolved, so it automatically
-    // the PdGraphs outlet buffer
+    void processDspWithIndex(int fromIndex, int toIndex);
   
     int canvasX;
 };

@@ -40,7 +40,6 @@ class DspInlet : public DspObject {
   
     const char *getObjectLabel();
     ObjectType getObjectType();
-    float *getDspBufferAtOutlet(int outletIndex);
     
     void setCanvasPosition(int pos);
     int getCanvasPosition();
@@ -49,6 +48,8 @@ class DspInlet : public DspObject {
     List *getProcessOrderFromInlet();
   
   private:
+    void processDspWithIndex(int fromIndex, int toIndex);
+  
     int canvasX;
 };
 

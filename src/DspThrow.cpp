@@ -26,6 +26,10 @@
 DspThrow::DspThrow(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0, 0, graph) {
   if (initMessage->isSymbol(0)) {
     name = StaticUtils::copyString(initMessage->getSymbol(0));
+    buffer = (float *) calloc(blockSizeInt, sizeof(float));
+    // dspBufferAtOutlet0 is otherwise not used as throw~ has no outlets. It is used to hold a
+    // reference to the local buffer
+    dspBufferAtOutlet0 = buffer;
   } else {
     name = NULL;
     graph->printErr("throw~ may not be initialised without a name. \"set\" message not supported.\n");
@@ -34,6 +38,7 @@ DspThrow::DspThrow(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0, 
 
 DspThrow::~DspThrow() {
   free(name);
+  free(dspBufferAtOutlet0);
 }
 
 const char *DspThrow::getObjectLabel() {
@@ -51,5 +56,16 @@ void DspThrow::processMessage(int inletIndex, PdMessage *message) {
 }
 
 float *DspThrow::getBuffer() {
-  return localDspBufferAtInlet[0];
+  return buffer;
+}
+
+void DspThrow::processDspWithIndex(int fromIndex, int toIndex) {
+  if (numConnectionsToInlet0 > 1) {
+    // inlet has been resolved, and thus the input exists in a temporary array
+    buffer = dspBufferAtOutlet0;
+    memcpy(buffer, dspBufferAtInlet0, numBytesInBlock);
+  } else {
+    // inlet does not need to be resolved, and is thus a pointer to a permanent array
+    buffer = dspBufferAtInlet0;
+  }
 }

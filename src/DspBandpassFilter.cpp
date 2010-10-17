@@ -69,24 +69,22 @@ float DspBandpassFilter::sigbp_qcos(float f) {
 void DspBandpassFilter::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
-      if (message->isSymbol(0)) {
-        if (strcmp(message->getSymbol(0), "clear") == 0) {
-          tap_0 = 0.0f; // TODO(mhroth): how to handle filter resets?
-          tap_1 = 0.0f;
-        }
+      if (message->isSymbol(0, "clear")) {
+        tap_0 = 0.0f; // TODO(mhroth): how to handle filter resets?
+        tap_1 = 0.0f;
       }
       break;
     }
     case 1: {
       if (message->isFloat(0)) {
-        processDspToIndex(graph->getBlockIndex(message));
+        processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
         calculateFilterCoefficients(message->getFloat(0), q);
       }
       break;
     }
     case 2: {
       if (message->isFloat(0)) {
-        processDspToIndex(graph->getBlockIndex(message));
+        processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
         calculateFilterCoefficients(centerFrequency, message->getFloat(0));
       }
       break;
@@ -97,15 +95,11 @@ void DspBandpassFilter::processMessage(int inletIndex, PdMessage *message) {
   }
 }
 
-void DspBandpassFilter::processDspToIndex(float newBlockIndex) {
-  float *inputBuffer = localDspBufferAtInlet[0]; 
-  float *outputBuffer = localDspBufferAtOutlet[0];
-  int endSampleIndex = getEndSampleIndex(newBlockIndex);
-  for (int i = getStartSampleIndex(); i < endSampleIndex; i++) {
-    outputBuffer[i] =  inputBuffer[i] + (coef1 * tap_0) + (coef2 * tap_1);
+void DspBandpassFilter::processDspWithIndex(int fromIndex, int toIndex) {
+  for (int i = fromIndex; i < toIndex; i++) {
+    dspBufferAtOutlet0[i] = dspBufferAtInlet0[i] + (coef1 * tap_0) + (coef2 * tap_1);
     tap_1 = tap_0;
-    tap_0 = outputBuffer[i];
-    outputBuffer[i] *= gain;
+    tap_0 = dspBufferAtOutlet0[i];
+    dspBufferAtOutlet0[i] *= gain;
   }
-  blockIndexOfLastMessage = newBlockIndex;
 }

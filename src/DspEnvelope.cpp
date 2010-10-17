@@ -95,8 +95,8 @@ void DspEnvelope::initBuffers() {
   int numBlocksPerWindow = (windowSize % graph->getBlockSize() == 0) ? (windowSize/graph->getBlockSize()) : (windowSize/graph->getBlockSize()) + 1;
   int bufferSize = numBlocksPerWindow * graph->getBlockSize();
   signalBuffer = (float *) malloc(bufferSize * sizeof(float));
+  rmsBuffer = (float *) malloc(windowSize * sizeof(float));
   hanningCoefficients = (float *) malloc(bufferSize * sizeof(float));
-  rmsBuffer = (float *) malloc(bufferSize * sizeof(float));
   float N_1 = (float) (windowSize - 1); // (N == windowSize) - 1
   float hanningSum = 0.0f;
   for (int i = 0; i < windowSize; i++) {
@@ -111,9 +111,9 @@ void DspEnvelope::initBuffers() {
 }
 
 // windowSize and windowInterval are constrained to be multiples of the block size
-void DspEnvelope::processDspToIndex(float newBlockIndex) {
+void DspEnvelope::processDspWithIndex(int fromIndex, int toIndex) {
   // copy the input into the signal buffer
-  memcpy(signalBuffer + numSamplesReceived, localDspBufferAtInlet[0], numBytesInBlock);
+  memcpy(signalBuffer + numSamplesReceived, dspBufferAtInlet0, numBytesInBlock);
   numSamplesReceived += blockSizeInt;
   numSamplesReceivedSinceLastInterval += blockSizeInt;
   if (numSamplesReceived >= windowSize) {

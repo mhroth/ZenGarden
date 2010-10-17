@@ -39,14 +39,19 @@ ObjectType DspOutlet::getObjectType() {
   return DSP_OUTLET;
 }
 
-float *DspOutlet::getDspBufferAtOutlet(int outletIndex) {
-  return localDspBufferAtInlet[0];
-}
-
 int DspOutlet::getCanvasPosition() {
   return canvasX;
 }
 
 void DspOutlet::setCanvasPosition(int pos) {
   canvasX = pos;
+}
+
+void DspOutlet::processDspWithIndex(int fromIndex, int toIndex) {
+  if (numConnectionsToInlet0 > 1) {
+    dspBufferAtOutlet0 = localDspOutletBuffers;
+    memcpy(dspBufferAtOutlet0, dspBufferAtInlet0, numBytesInBlock);
+  } else {
+    dspBufferAtOutlet0 = dspBufferAtInlet0;
+  }
 }
