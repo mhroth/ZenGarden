@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009, 2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -58,10 +58,8 @@ void MessageChange::processMessage(int inletIndex, PdMessage *message) {
           break;
         }
         case SYMBOL: {
-          if (strcmp(message->getSymbol(0), "set") == 0) {
-            if (message != NULL && message->getType(1) == FLOAT) {
-              prevValue = message->getFloat(1);
-            }
+          if (message->isSymbol(0, "set") && message->isFloat(1)) {
+            prevValue = message->getFloat(1);
           }
           break;
         }
