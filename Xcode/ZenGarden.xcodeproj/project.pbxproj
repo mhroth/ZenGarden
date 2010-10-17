@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		8DD76F6A0486A84900D96B5E /* ZenGardenNp.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6859E8B029090EE04C91782 /* ZenGardenNp.1 */; };
-		9017567511DFDD4B00A22517 /* DspTablePlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9017567311DFDD4B00A22517 /* DspTablePlay.cpp */; };
 		9017567611DFDD4B00A22517 /* DspTablePlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9017567311DFDD4B00A22517 /* DspTablePlay.cpp */; };
 		9017567711DFDD4B00A22517 /* DspTablePlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 9017567411DFDD4B00A22517 /* DspTablePlay.h */; };
 		9017567811DFDD4B00A22517 /* DspTablePlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9017567311DFDD4B00A22517 /* DspTablePlay.cpp */; };
@@ -40,7 +39,6 @@
 		90337C6311D0D847009FCC01 /* DspClip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B5611D0D847009FCC01 /* DspClip.cpp */; };
 		90337C6411D0D847009FCC01 /* DspCosine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B5811D0D847009FCC01 /* DspCosine.cpp */; };
 		90337C6511D0D847009FCC01 /* DspDac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B5A11D0D847009FCC01 /* DspDac.cpp */; };
-		90337C6611D0D847009FCC01 /* DspDelayRead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B5C11D0D847009FCC01 /* DspDelayRead.cpp */; };
 		90337C6711D0D847009FCC01 /* DspDelayWrite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B5E11D0D847009FCC01 /* DspDelayWrite.cpp */; };
 		90337C6811D0D847009FCC01 /* DspDivide.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B6011D0D847009FCC01 /* DspDivide.cpp */; };
 		90337C6911D0D847009FCC01 /* DspEnvelope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B6211D0D847009FCC01 /* DspEnvelope.cpp */; };
@@ -55,7 +53,6 @@
 		90337C7211D0D847009FCC01 /* DspOsc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B7611D0D847009FCC01 /* DspOsc.cpp */; };
 		90337C7311D0D847009FCC01 /* DspOutlet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B7811D0D847009FCC01 /* DspOutlet.cpp */; };
 		90337C7411D0D847009FCC01 /* DspPhasor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B7A11D0D847009FCC01 /* DspPhasor.cpp */; };
-		90337C7511D0D847009FCC01 /* DspReceive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B7C11D0D847009FCC01 /* DspReceive.cpp */; };
 		90337C7611D0D847009FCC01 /* DspSend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B7E11D0D847009FCC01 /* DspSend.cpp */; };
 		90337C7811D0D847009FCC01 /* DspSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B8211D0D847009FCC01 /* DspSnapshot.cpp */; };
 		90337C7911D0D847009FCC01 /* DspSubtract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B8411D0D847009FCC01 /* DspSubtract.cpp */; };
@@ -610,7 +607,6 @@
 		90337EE311D0D847009FCC01 /* ZGCallbackFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C5A11D0D847009FCC01 /* ZGCallbackFunction.h */; };
 		90337EE411D0D847009FCC01 /* ZGLinkedList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C5B11D0D847009FCC01 /* ZGLinkedList.cpp */; };
 		90337EE511D0D847009FCC01 /* ZGLinkedList.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C5C11D0D847009FCC01 /* ZGLinkedList.h */; };
-		9038F48C12035DCC006AB117 /* DspTableRead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9038F48B12035DCC006AB117 /* DspTableRead.cpp */; };
 		9038F48D12035DCC006AB117 /* DspTableRead.h in Headers */ = {isa = PBXBuildFile; fileRef = 9038F48A12035DCC006AB117 /* DspTableRead.h */; };
 		9038F48E12035DCC006AB117 /* DspTableRead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9038F48B12035DCC006AB117 /* DspTableRead.cpp */; };
 		9038F48F12035DCC006AB117 /* DspTableRead.h in Headers */ = {isa = PBXBuildFile; fileRef = 9038F48A12035DCC006AB117 /* DspTableRead.h */; };
@@ -632,6 +628,10 @@
 		905C404A1205D274001B31A7 /* MessageListAppend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 905C40451205D274001B31A7 /* MessageListAppend.cpp */; };
 		9069DFD211D17BD600889A5B /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9069DFD111D17BD600889A5B /* Accelerate.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		9069DFD311D17BF100889A5B /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9069DFD111D17BD600889A5B /* Accelerate.framework */; };
+		9082C7FE126132920026725E /* DspTablePlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9017567311DFDD4B00A22517 /* DspTablePlay.cpp */; };
+		9082C801126132A20026725E /* DspDelayRead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B5C11D0D847009FCC01 /* DspDelayRead.cpp */; };
+		9082C802126132AD0026725E /* DspReceive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B7C11D0D847009FCC01 /* DspReceive.cpp */; };
+		9082C816126133160026725E /* DspTableRead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9038F48B12035DCC006AB117 /* DspTableRead.cpp */; };
 		909608DE120B8A1C00135B03 /* MessageStripNote.h in Headers */ = {isa = PBXBuildFile; fileRef = 909608DC120B8A1C00135B03 /* MessageStripNote.h */; };
 		909608DF120B8A1C00135B03 /* MessageStripNote.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 909608DD120B8A1C00135B03 /* MessageStripNote.cpp */; };
 		909608E0120B8A1C00135B03 /* MessageStripNote.h in Headers */ = {isa = PBXBuildFile; fileRef = 909608DC120B8A1C00135B03 /* MessageStripNote.h */; };
@@ -1707,7 +1707,14 @@
 			isa = PBXProject;
 			buildConfigurationList = 1DEB923508733DC60010E9CD /* Build configuration list for PBXProject "ZenGarden" */;
 			compatibilityVersion = "Xcode 3.1";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
 			mainGroup = 08FB7794FE84155DC02AAC07 /* ZenGardenNp */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -1733,7 +1740,6 @@
 				90337C6311D0D847009FCC01 /* DspClip.cpp in Sources */,
 				90337C6411D0D847009FCC01 /* DspCosine.cpp in Sources */,
 				90337C6511D0D847009FCC01 /* DspDac.cpp in Sources */,
-				90337C6611D0D847009FCC01 /* DspDelayRead.cpp in Sources */,
 				90337C6711D0D847009FCC01 /* DspDelayWrite.cpp in Sources */,
 				90337C6811D0D847009FCC01 /* DspDivide.cpp in Sources */,
 				90337C6911D0D847009FCC01 /* DspEnvelope.cpp in Sources */,
@@ -1748,7 +1754,6 @@
 				90337C7211D0D847009FCC01 /* DspOsc.cpp in Sources */,
 				90337C7311D0D847009FCC01 /* DspOutlet.cpp in Sources */,
 				90337C7411D0D847009FCC01 /* DspPhasor.cpp in Sources */,
-				90337C7511D0D847009FCC01 /* DspReceive.cpp in Sources */,
 				90337C7611D0D847009FCC01 /* DspSend.cpp in Sources */,
 				90337C7811D0D847009FCC01 /* DspSnapshot.cpp in Sources */,
 				90337C7911D0D847009FCC01 /* DspSubtract.cpp in Sources */,
@@ -1837,10 +1842,8 @@
 				90337CDA11D0D847009FCC01 /* ZenGarden.cpp in Sources */,
 				90337CDD11D0D847009FCC01 /* ZGLinkedList.cpp in Sources */,
 				E4A3DD0211D93E8D007FE6FC /* MessageSoundfiler.cpp in Sources */,
-				9017567511DFDD4B00A22517 /* DspTablePlay.cpp in Sources */,
 				90B1873411FDB167009B45AB /* DspMinimum.cpp in Sources */,
 				90BB31CB11FE3F62008A0628 /* PdContext.cpp in Sources */,
-				9038F48C12035DCC006AB117 /* DspTableRead.cpp in Sources */,
 				90251D3A12042F38000EAF40 /* MessageOpenPanel.cpp in Sources */,
 				90251D5712043445000EAF40 /* DspSignal.cpp in Sources */,
 				90D0312E1204866300FEE5BB /* MessageListSplit.cpp in Sources */,
@@ -1855,6 +1858,10 @@
 				90EC947E120EDF2A00F65F49 /* MessageValue.cpp in Sources */,
 				90F4C18D12328AC1001182CF /* MessageLogicalAnd.cpp in Sources */,
 				90F4C19A12328CFC001182CF /* MessageLogicalOr.cpp in Sources */,
+				9082C7FE126132920026725E /* DspTablePlay.cpp in Sources */,
+				9082C801126132A20026725E /* DspDelayRead.cpp in Sources */,
+				9082C802126132AD0026725E /* DspReceive.cpp in Sources */,
+				9082C816126133160026725E /* DspTableRead.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2146,7 +2153,7 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = 4.2;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				INSTALL_PATH = /usr/local/bin;
 				LIBRARY_SEARCH_PATHS = (
@@ -2168,9 +2175,9 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				GCC_VERSION = 4.2;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				INSTALL_PATH = /usr/local/bin;
 				LIBRARY_SEARCH_PATHS = (
@@ -2180,7 +2187,7 @@
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = ZenGarden;
-				STRIP_INSTALLED_PRODUCT = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
 				VALID_ARCHS = "i386 x86_64";
 			};
 			name = Release;
