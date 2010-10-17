@@ -456,6 +456,10 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
       printErr("Unrecognised hash type on line: \"%s\"", line);
     }
   }
+  
+  // force dsp ordering as the last step
+  // some graphs may not have any connections (only abstractions), and thus may appear to do nothing
+  graph->computeLocalDspProcessOrder();
 
   return true;
 }
