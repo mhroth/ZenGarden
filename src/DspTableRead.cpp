@@ -55,7 +55,7 @@ void DspTableRead::processMessage(int inletIndex, PdMessage *message) {
     case 0: {
       if (message->isSymbol(0, "set") && message->isSymbol(1)) {
         // change the table from which this object reads
-        processDspToIndex(graph->getBlockIndex(message));
+        processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
         free(name);
         name = StaticUtils::copyString(message->getSymbol(1));
         table = graph->getTable(name);
@@ -74,42 +74,37 @@ void DspTableRead::processMessage(int inletIndex, PdMessage *message) {
   }
 }
 
-void DspTableRead::processDspToIndex(float blockIndex) {
+void DspTableRead::processDspWithIndex(int fromIndex, int toIndex) {
   if (table != NULL) { // ensure that there is a table to read from!
     int bufferLength;
     float *buffer = table->getBuffer(&bufferLength);
-    float *inputBuffer = localDspBufferAtInlet[0];
-    float *outputBuffer = localDspBufferAtOutlet[0];
-    int startSampleIndex = getStartSampleIndex();
-    int endSampleIndex = getEndSampleIndex(blockIndex);
     if (ArrayArithmetic::hasAccelerate) {
       #if __APPLE__
       // add the offset
-      vDSP_vsadd(inputBuffer+startSampleIndex, 1, &offset, outputBuffer+startSampleIndex, 1,
-          endSampleIndex-startSampleIndex);
+      vDSP_vsadd(dspBufferAtInlet0+fromIndex, 1, &offset, dspBufferAtOutlet0+fromIndex, 1,
+          toIndex-fromIndex);
       
       // clip to the bounds of the table
       float lowThresh = 0;
       float highThresh = (float) (bufferLength-1);
-      vDSP_vclip(inputBuffer+startSampleIndex, 1, &lowThresh, &highThresh,
-          outputBuffer+startSampleIndex, 1, endSampleIndex-startSampleIndex);
+      vDSP_vclip(dspBufferAtInlet0+fromIndex, 1, &lowThresh, &highThresh,
+          dspBufferAtOutlet0+fromIndex, 1, toIndex-fromIndex);
       
       // select the indicies
-      vDSP_vindex(buffer, inputBuffer+startSampleIndex, 1, outputBuffer+startSampleIndex, 1,
-          endSampleIndex-startSampleIndex);
+      vDSP_vindex(buffer, dspBufferAtInlet0+fromIndex, 1, dspBufferAtOutlet0+fromIndex, 1,
+          toIndex-fromIndex);
       #endif
     } else {
-      for (int i = startSampleIndex; i < endSampleIndex; i++) {
-        int x = (int) (inputBuffer[i] + offset);
+      for (int i = fromIndex; i < toIndex; i++) {
+        int x = (int) (dspBufferAtInlet0[i] + offset);
         if (x <= 0) {
-          outputBuffer[i] = buffer[0];
+          dspBufferAtOutlet0[i] = buffer[0];
         } else if (x >= bufferLength-1) {
-          outputBuffer[i] = buffer[bufferLength-1];
+          dspBufferAtOutlet0[i] = buffer[bufferLength-1];
         } else {
-          outputBuffer[i] = buffer[x];
+          dspBufferAtOutlet0[i] = buffer[x];
         }
       }
     }
   }
-  blockIndexOfLastMessage = blockIndex;
 }

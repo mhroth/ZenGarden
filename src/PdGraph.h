@@ -34,6 +34,7 @@ class DspDelayWrite;
 class DspReceive;
 class DspSend;
 class DspThrow;
+class LetInterface;
 class MessageObject;
 class MessageReceive;
 class MessageSend;
@@ -63,10 +64,8 @@ class PdGraph : public DspObject {
      */
     void receiveMessage(int inletIndex, PdMessage *message);
   
-    void processMessage(int inletIndex, PdMessage *message);
-    
-    /* This functions implements the sub-graph's audio loop. */
-    void processDspToIndex(float blockIndex);
+    void addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex);
+    void addConnectionToObjectFromOutlet(MessageObject *messageObject, int inletIndex, int outletIndex);
   
     const char *getObjectLabel();
     ObjectType getObjectType();
@@ -123,6 +122,9 @@ class PdGraph : public DspObject {
     /** (Re-)Computes the local tree and node processing ordering for dsp nodes. */
     void computeLocalDspProcessOrder();
   
+    List *getProcessOrder();
+    bool isLeafNode();
+  
     /**
      * Sends the given message to all [receive] objects with the given <code>name</code>.
      * This function is used by message boxes to send messages described be the syntax:
@@ -135,7 +137,7 @@ class PdGraph : public DspObject {
     MessageTable *getTable(char *name);
   
     /** Add an object to the graph, taking care of any special object registration. */
-    void addObject(MessageObject *node);
+    void addObject(int canvasX, int canvasY, MessageObject *node);
   
     /** Connect the given <code>MessageObject</code>s from the given outlet to the given inlet. */
     void addConnection(int fromObjectIndex, int outletIndex, int toObjectIndex, int inletIndex);
@@ -166,8 +168,13 @@ class PdGraph : public DspObject {
     void addDeclarePath(char *path);
   
     /** Used with MessageValue for keeping track of global variables. */
+    // TODO(mhroth): these are not yet fully implemented
     void setValueForName(char *name, float constant);
     float getValueForName(char *name);
+  
+    float **getDspBufferRefAtOutlet(int outletIndex);
+  
+    void processDsp();
   
   private:
     /** Create a new object based on its initialisation string. */
@@ -182,6 +189,8 @@ class PdGraph : public DspObject {
     /** Does not check if the object is already registered. */
     void registerObjectIfRequiresRegistration(MessageObject *messageObject);
     void unregisterObjectIfRequiresUnregistration(MessageObject *messageObject);
+  
+    void addLetObjectToLetList(MessageObject *inletObject, int newPosition, ZGLinkedList *letList);
   
     /** The <code>PdContext</code> to which this graph belongs. */
     PdContext *context;

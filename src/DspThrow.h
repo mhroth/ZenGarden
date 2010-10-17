@@ -47,7 +47,10 @@ class DspThrow : public DspObject {
     void processMessage(int inletIndex, PdMessage *message);
     
   private:
+    void processDspWithIndex(int fromIndex, int toIndex);
+  
     char *name;
+    float *buffer;
 };
 
 #endif // _DSP_THROW_H_

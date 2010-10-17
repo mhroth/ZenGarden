@@ -25,34 +25,41 @@
 #include "PdGraph.h"
 
 DspDac::DspDac(PdGraph *graph) : DspObject(0, graph->getNumOutputChannels(), 0, 0, graph) {
-  for (int i = 0; i < numDspInlets; i++) {
-    // reuse/repurpose localDspBufferAtInlet to store pointers to the global output buffers
-    free(localDspBufferAtInlet[i]);
-    localDspBufferAtInlet[i] = graph->getGlobalDspBufferAtOutlet(i);
-  }
+  // nothing to do
 }
 
 DspDac::~DspDac() {
-  for (int i = 0; i < numDspInlets; i++) {
-    localDspBufferAtInlet[i] = NULL;
-    localDspBufferAtInletReserved[i] = NULL;
-  }
+  // nothing to do
 }
 
 const char *DspDac::getObjectLabel() {
   return "dac~";
 }
 
-void DspDac::processDsp() {
-  for (int i = 0; i < numDspInlets; i++) {
-    List *incomingDspConnectionsList = incomingDspConnectionsListAtInlet[i];
-    int numConnections = incomingDspConnectionsList->size();
-    float *globalOutputBuffer = localDspBufferAtInlet[i];
-    
-    for (int j = 0; j < numConnections; j++) {
-      ObjectLetPair *objectLetPair = (ObjectLetPair *) incomingDspConnectionsList->get(j);
-      float *remoteOutputBuffer = ((DspObject *) objectLetPair->object)->getDspBufferAtOutlet(objectLetPair->index);
-      ArrayArithmetic::add(globalOutputBuffer, remoteOutputBuffer, globalOutputBuffer, 0, blockSizeInt);
+void DspDac::processDspWithIndex(int fromIndex, int toIndex) {
+  float *globalOutputBuffer;
+  switch (numDspInlets) {
+    default: {
+      /* TODO(mhroth): fit this into the new buffer reference architecture
+      for (int i = 2; i < numDspInlets; i++) {
+        globalOutputBuffer = graph->getGlobalDspBufferAtOutlet(i);
+        ArrayArithmetic::add(globalOutputBuffer, localDspBufferAtInlet[i], globalOutputBuffer, 0, blockSizeInt);
+      }
+      */
+      // allow fallthrough
+    }
+    case 2: {
+      globalOutputBuffer = graph->getGlobalDspBufferAtOutlet(1);
+      ArrayArithmetic::add(globalOutputBuffer, dspBufferAtInlet1, globalOutputBuffer, 0, blockSizeInt);
+      // allow fallthrough
+    }
+    case 1: {
+      globalOutputBuffer = graph->getGlobalDspBufferAtOutlet(0);
+      ArrayArithmetic::add(globalOutputBuffer, dspBufferAtInlet0, globalOutputBuffer, 0, blockSizeInt);
+      // allow fallthrough
+    }
+    case 0: {
+      break;
     }
   }
 }

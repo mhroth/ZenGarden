@@ -34,8 +34,8 @@ class DspWrap : public DspObject {
 
     const char *getObjectLabel();
 
-  protected:
-    void processDspToIndex(float blockIndex);
+  private:
+    void processDspWithIndex(int fromIndex, int toIndex);
 };
 
 #endif // _DSP_WRAP_H_

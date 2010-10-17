@@ -27,15 +27,11 @@
 DspLowpassFilter::DspLowpassFilter(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 1, 0, 1, graph) {
   tap_0 = 0.0f;
   coefficients = (float *) calloc(5, sizeof(float));
-  filterInputBuffer = (float *) calloc(blockSizeInt+2, sizeof(float));
-  filterOutputBuffer = (float *) calloc(blockSizeInt+2, sizeof(float));
   calculateFilterCoefficients(initMessage->isFloat(0) ? initMessage->getFloat(0) : graph->getSampleRate()/2.0f);
   signalConstant = 0.0f;
 }
 
 DspLowpassFilter::~DspLowpassFilter() {
-  free(filterInputBuffer);
-  free(filterOutputBuffer);
   free(coefficients);
 }
 
@@ -52,7 +48,7 @@ void DspLowpassFilter::calculateFilterCoefficients(float cutoffFrequency) {
   }
   beta = 1.0f - alpha;
   coefficients[0] = alpha;
-  coefficients[3] = -1.0f * beta;
+  coefficients[3] = -beta;
 }
 
 void DspLowpassFilter::processMessage(int inletIndex, PdMessage *message) {
@@ -60,16 +56,14 @@ void DspLowpassFilter::processMessage(int inletIndex, PdMessage *message) {
     case 0: {
       switch (message->getType(0)) {
         case FLOAT: {
-          processDspToIndex(graph->getBlockIndex(message));
+          processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
           signalConstant = message->getFloat(0);
           break;
         }
         case SYMBOL: {
           if (message->isSymbol(0, "clear")) {
-            processDspToIndex(graph->getBlockIndex(message));
+            processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
             tap_0 = 0.0f;
-            memset(filterInputBuffer, 0, (blockSizeInt+2) * sizeof(float));
-            memset(filterOutputBuffer, 0, (blockSizeInt+2) * sizeof(float));
           }
           break;
         }
@@ -81,7 +75,7 @@ void DspLowpassFilter::processMessage(int inletIndex, PdMessage *message) {
     }
     case 1: {
       if (message->isFloat(0)) {
-        processDspToIndex(graph->getBlockIndex(message));
+        processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
         calculateFilterCoefficients(message->getFloat(0));
       }
       break;
@@ -92,47 +86,39 @@ void DspLowpassFilter::processMessage(int inletIndex, PdMessage *message) {
   }
 }
 
-void DspLowpassFilter::processDspToIndex(float blockIndex) {
-  float *inputBuffer = localDspBufferAtInlet[0]; 
-  float *outputBuffer = localDspBufferAtOutlet[0];
-  const int startSampleIndex = getStartSampleIndex();
-  const int endSampleIndex = getEndSampleIndex(blockIndex);
-  
+void DspLowpassFilter::processDspWithIndex(int fromIndex, int toIndex) {
   switch (signalPrecedence) {
     case MESSAGE_MESSAGE: {
       if (ArrayArithmetic::hasAccelerate) {
         #if __APPLE__
-        vDSP_vfill(&signalConstant, inputBuffer+startSampleIndex, 1, endSampleIndex-startSampleIndex);  
+        vDSP_vfill(&signalConstant, dspBufferAtOutlet0+fromIndex, 1, toIndex-fromIndex);  
         #endif
       } else {
-        // NOTE(mhroth): there are definitely ways to speed this up with SIMD
-        for (int i = startSampleIndex; i < endSampleIndex; i++) {
-          inputBuffer[i] = signalConstant;
-        }
+        memset_pattern4(dspBufferAtOutlet0+fromIndex, &signalConstant, (toIndex-fromIndex)*sizeof(float));
       }
       // allow fallthrough
     }
     case DSP_MESSAGE: {
       if (ArrayArithmetic::hasAccelerate) {
         #if __APPLE__
-        const int duration = endSampleIndex - startSampleIndex;
-        const int durationBytes = duration * sizeof(float);
-        memcpy(filterInputBuffer+2, inputBuffer+startSampleIndex, durationBytes);
+        const int duration = toIndex - fromIndex;
+        float filterOutputBuffer[duration+2];
+        filterOutputBuffer[1] = tap_0;
         // vDSP_deq22 =
         // out[i] = coeff[0]*in[i] + coeff[1]*in[i-1] + coeff[2]*in[i-2] - coeff[3]*out[i-1] - coeff[4]*out[i-2]
-        vDSP_deq22(filterInputBuffer, 1, coefficients, filterOutputBuffer, 1, duration);
-        memcpy(outputBuffer+startSampleIndex, filterOutputBuffer+2, durationBytes);
-        // copy last two inputs and outputs to start of filter buffer arrays
-        memcpy(filterInputBuffer, filterInputBuffer+duration, 2 * sizeof(float));
-        memcpy(filterOutputBuffer, filterOutputBuffer+duration, 2 * sizeof(float));
+        // use dspBufferAtInlet0 directly as in[i-1] and in[i-2] are not used (coeff[1] and coeff[2] are zero)
+        vDSP_deq22(dspBufferAtInlet0+fromIndex-2, 1, coefficients, filterOutputBuffer, 1, duration);
+        memcpy(dspBufferAtOutlet0+fromIndex, filterOutputBuffer+2, duration * sizeof(float));
+        // retain last output
+        tap_0 = dspBufferAtOutlet0[toIndex-1];
         #endif
       } else {
-        ArrayArithmetic::multiply(inputBuffer, alpha, outputBuffer, startSampleIndex, endSampleIndex);
-        outputBuffer[startSampleIndex] += beta * tap_0;
-        for (int i = startSampleIndex+1; i < endSampleIndex; i++) {
-          outputBuffer[i] += beta * outputBuffer[i-1];
+        ArrayArithmetic::multiply(dspBufferAtInlet0, alpha, dspBufferAtOutlet0, fromIndex, toIndex);
+        dspBufferAtOutlet0[fromIndex] += beta * tap_0;
+        for (int i = fromIndex+1; i < toIndex; i++) {
+          dspBufferAtOutlet0[i] += beta * dspBufferAtOutlet0[i-1];
         }
-        tap_0 = outputBuffer[endSampleIndex-1];
+        tap_0 = dspBufferAtOutlet0[toIndex-1];
       }
       break;
     }
@@ -142,5 +128,4 @@ void DspLowpassFilter::processDspToIndex(float blockIndex) {
       break;
     }
   }
-  blockIndexOfLastMessage = blockIndex;
 }

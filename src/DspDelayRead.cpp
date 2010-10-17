@@ -20,38 +20,24 @@
  *
  */
 
+#include "ArrayArithmetic.h"
 #include "DspDelayRead.h"
 #include "DspDelayWrite.h"
 #include "PdGraph.h"
 
 DspDelayRead::DspDelayRead(PdMessage *initMessage, PdGraph *graph) : DelayReceiver(1, 0, 0, 1, graph) {
-  if (initMessage->getNumElements() == 2 &&
-      initMessage->getElement(0)->getType() == SYMBOL &&
-      initMessage->getElement(1)->getType() == FLOAT) {
-    name = StaticUtils::copyString(initMessage->getElement(0)->getSymbol());
-    delayInSamples = StaticUtils::millisecondsToSamples(initMessage->getElement(1)->getFloat(), 
-        graph->getSampleRate());
+  if (initMessage->isSymbol(0) && initMessage->isFloat(1)) {
+    name = StaticUtils::copyString(initMessage->getSymbol(0));
+    delayInSamples = StaticUtils::millisecondsToSamples(initMessage->getFloat(1), graph->getSampleRate());
     delayInSamplesInt = (int) delayInSamples;
   } else {
     graph->printErr("delread~ must be initialised in the format [delread~ name delay].");
     delayInSamples = 0.0f;
   }
-  
-  /*
-   * In the most common case in which no messages are received by this object, 
-   * localDspBufferAtOutlet[0] points directly at the associated delwrite~'s buffer. This is an
-   * optimisation designed to eliminate a call to memcpy. However, if a message is received,
-   * then the original output buffer must be used because the audio result is composed of fragmented
-   * portions of delwrite~'s buffer. In the latter case, localDspBufferAtOutlet[0] points at
-   * the original output buffer.
-   */
-  originalOutputBuffer = localDspBufferAtOutlet[0];
 }
 
 DspDelayRead::~DspDelayRead() {
-  // The original value of localDspBufferAtOutlet[0] is restored such that the original output buffer
-  // is properly freed.
-  localDspBufferAtOutlet[0] = originalOutputBuffer;
+  // nothing to do
 }
 
 const char *DspDelayRead::getObjectLabel() {
@@ -63,19 +49,19 @@ ObjectType DspDelayRead::getObjectType() {
 }
 
 void DspDelayRead::processMessage(int inletIndex, PdMessage *message) {
-  if (message->getElement(0)->getType() == FLOAT) {
+  if (message->isFloat(0)) {
     // update the delay time
-    processDspToIndex(graph->getBlockIndex(message));
-    delayInSamples = StaticUtils::millisecondsToSamples(message->getElement(0)->getFloat(), graph->getSampleRate());
+    processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
+    delayInSamples = StaticUtils::millisecondsToSamples(message->getFloat(0), graph->getSampleRate());
     delayInSamplesInt = (int) delayInSamples;
   }
 }
 
-void DspDelayRead::processDspToIndex(float newBlockIndex) {
+void DspDelayRead::processDspWithIndex(int fromIndex, int toIndex) {
   int headIndex;
   int bufferLength;
   float *buffer = delayline->getBuffer(&headIndex, &bufferLength);
-  if (blockIndexOfLastMessage == 0.0f && newBlockIndex == blockSizeFloat) {
+  if (fromIndex == 0 && toIndex == blockSizeInt) {
     // this handles the most common case. Messages are rarely sent to delread~.
     int delayIndex = headIndex - blockSizeInt - delayInSamplesInt;
     if (delayIndex < 0) {
@@ -83,13 +69,14 @@ void DspDelayRead::processDspToIndex(float newBlockIndex) {
     }
     if (delayIndex > bufferLength - blockSizeInt) {
       int samplesInBuffer = bufferLength - delayIndex; // samples remaining in the buffer that belong in this block
-      memcpy(originalOutputBuffer, buffer + delayIndex, samplesInBuffer * sizeof(float));
-      memcpy(originalOutputBuffer + samplesInBuffer, buffer, (blockSizeInt - samplesInBuffer) * sizeof(float));
-      localDspBufferAtOutlet[0] = originalOutputBuffer;
+      dspBufferAtOutlet0 = localDspOutletBuffers;
+      memcpy(dspBufferAtOutlet0, buffer + delayIndex, samplesInBuffer * sizeof(float));
+      memcpy(dspBufferAtOutlet0 + samplesInBuffer, buffer, (blockSizeInt - samplesInBuffer) * sizeof(float));
     } else {
-      localDspBufferAtOutlet[0] = buffer + delayIndex;
+      dspBufferAtOutlet0 = buffer + delayIndex;
     }
   } else {
+    /*
     //float delayIndex = (float) headIndex - delayInSamples - ((float) graph->getBlockSize() - blockIndexOfLastMessage);
     int delayIndex = (headIndex-blockSizeInt) - (int) (delayInSamples+blockIndexOfLastMessage);
     if (delayIndex < 0) {
@@ -108,7 +95,6 @@ void DspDelayRead::processDspToIndex(float newBlockIndex) {
              (int) (newBlockIndex - blockIndexOfLastMessage) * sizeof(float));
     }
     */
-    localDspBufferAtOutlet[0] = originalOutputBuffer;
+    //localDspBufferAtOutlet[0] = originalOutputBuffer;
   }
-  blockIndexOfLastMessage = newBlockIndex;
 }

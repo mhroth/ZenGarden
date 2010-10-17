@@ -39,42 +39,47 @@ const char *DspMinimum::getObjectLabel() {
 void DspMinimum::processMessage(int inletIndex, PdMessage *message) {
   if (inletIndex == 1) {
     if (message->isFloat(0)) {
-      processDspToIndex(graph->getBlockIndex(message));
+      processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
       constant = message->getFloat(0);
     }
   }
 }
 
-void DspMinimum::processDspToIndex(float blockIndex) {
-  float *inputBuffer = localDspBufferAtInlet[0];
-  float *outputBuffer = localDspBufferAtOutlet[0];
-  int startSampleIndex = getStartSampleIndex();
-  int endSampleIndex = getEndSampleIndex(blockIndex);
+void DspMinimum::processDspWithIndex(int fromIndex, int toIndex) {
   switch (signalPrecedence) {
     case DSP_DSP: {
-      float *inputBuffer1 = localDspBufferAtInlet[1];
       if (ArrayArithmetic::hasAccelerate) {
         #if __APPLE__
-        vDSP_vmin(inputBuffer+startSampleIndex, 1, inputBuffer1+startSampleIndex, 1,
-            outputBuffer+startSampleIndex, 1, endSampleIndex-startSampleIndex);
+        vDSP_vmin(dspBufferAtInlet0+fromIndex, 1, dspBufferAtInlet1+fromIndex, 1,
+            dspBufferAtOutlet0+fromIndex, 1, toIndex-fromIndex);
         #endif
       } else {
-        for (int i = startSampleIndex; i < endSampleIndex; i++) {
-          if (inputBuffer[i] <= inputBuffer1[i]) {
-            outputBuffer[i] = inputBuffer[i];
+        for (int i = fromIndex; i < toIndex; i++) {
+          if (dspBufferAtInlet0[i] <= dspBufferAtInlet1[i]) {
+            dspBufferAtOutlet0[i] = dspBufferAtInlet0[i];
           } else {
-            outputBuffer[i] = inputBuffer1[i];
+            dspBufferAtOutlet0[i] = dspBufferAtInlet1[i];
           }
         }
       }
       break;
     }
     case DSP_MESSAGE: {
-      for (int i = startSampleIndex; i < endSampleIndex; i++) {
-        if (inputBuffer[i] <= constant) {
-          outputBuffer[i] = inputBuffer[i];
-        } else {
-          outputBuffer[i] = constant;
+      if (ArrayArithmetic::hasAccelerate) {
+        #if __APPLE__
+        int duration = toIndex - fromIndex;
+        float vconst[duration];
+        vDSP_vfill(&constant, vconst, 1, duration);
+        vDSP_vmin(dspBufferAtInlet0 + fromIndex, 1, vconst, 1, dspBufferAtOutlet0 + fromIndex, 1,
+            duration);
+        #endif
+      } else {
+        for (int i = fromIndex; i < toIndex; i++) {
+          if (dspBufferAtInlet0[i] <= constant) {
+            dspBufferAtOutlet0[i] = dspBufferAtInlet0[i];
+          } else {
+            dspBufferAtOutlet0[i] = constant;
+          }
         }
       }
       break;
@@ -85,5 +90,4 @@ void DspMinimum::processDspToIndex(float blockIndex) {
       break; // nothing to do
     }
   }
-  blockIndexOfLastMessage = blockIndex;
 }

@@ -35,17 +35,13 @@ class MessageOutlet : public MessageObject {
     const char *getObjectLabel();
     ObjectType getObjectType();
   
-    /**
-     * Set the outlet index of this object in the parent-graph.
-     * This function should <b>always</b> be called after initialisation. The default outlet index
-     * is zero.
-     */
-    void setOutletIndex(int outletIndex);
+    int getCanvasPosition();
+    void setCanvasPosition(int pos);
   
   private:
     void processMessage(int inletIndex, PdMessage *message);
   
-    int outletIndex;
+    int canvasX;
 };
 
 #endif // _MESSAGE_OUTLET_H_

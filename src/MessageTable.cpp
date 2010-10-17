@@ -57,12 +57,12 @@ float *MessageTable::getBuffer(int *bufferLength) {
   return buffer;
 }
 
-float *MessageTable::resizeBuffer(int bufferLength) {
-  if (this->bufferLength != bufferLength) {
-    free(buffer);
-    this->bufferLength = bufferLength;
-    buffer = (float *) calloc(bufferLength, sizeof(float));
+float *MessageTable::resizeBuffer(int newBufferLength) {
+  buffer = (float *) realloc(buffer, newBufferLength);
+  if (newBufferLength > bufferLength) {
+    memset(buffer+bufferLength, 0, (newBufferLength-bufferLength) * sizeof(float));
   }
+  bufferLength = newBufferLength;
   return buffer;
 }
 

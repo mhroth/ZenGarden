@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009, 2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -26,11 +26,6 @@ MessageCosine::MessageCosine(PdMessage *initMessage, PdGraph *graph) : MessageOb
   // nothing to do
 }
 
-
-MessageCosine::MessageCosine(PdGraph *graph) : MessageObject(1, 1, graph) {
-  // nothing to do
-}
-
 MessageCosine::~MessageCosine() {
   // nothing to do
 }
@@ -40,13 +35,10 @@ const char *MessageCosine::getObjectLabel() {
 }
 
 void MessageCosine::processMessage(int inletIndex, PdMessage *message) {
-  if (inletIndex == 0) {
-    MessageElement *messageElement = message->getElement(0);
-    if (messageElement->getType() == FLOAT) {
-      PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-      outgoingMessage->getElement(0)->setFloat(cosf(messageElement->getFloat()));
-      outgoingMessage->setTimestamp(message->getTimestamp());
-      sendMessage(0, outgoingMessage); // send a message from outlet 0
-    }
+  if (message->isFloat(0)) {
+    PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+    outgoingMessage->getElement(0)->setFloat(cosf(message->getFloat(0)));
+    outgoingMessage->setTimestamp(message->getTimestamp());
+    sendMessage(0, outgoingMessage); // send a message from outlet 0
   }
 }

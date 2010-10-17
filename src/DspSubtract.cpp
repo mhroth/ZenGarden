@@ -37,30 +37,23 @@ const char *DspSubtract::getObjectLabel() {
 }
 
 void DspSubtract::processMessage(int inletIndex, PdMessage *message) {
-  switch (inletIndex) {
-    case 1: {
-      if (message->isFloat(0)) {
-        processDspToIndex(graph->getBlockIndex(message));
-        constant = message->getFloat(0);
-      }
-      break;
-    }
-    default: {
-      break;
+  if (inletIndex == 1) {
+    if (message->isFloat(0)) {
+      processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
+      constant = message->getFloat(0);
     }
   }
 }
 
-void DspSubtract::processDspToIndex(float blockIndex) {
+void DspSubtract::processDspWithIndex(int fromIndex, int toIndex) {
   switch (signalPrecedence) {
     case DSP_DSP: {
-      ArrayArithmetic::subtract(localDspBufferAtInlet[0], localDspBufferAtInlet[1],
-          localDspBufferAtOutlet[0], getStartSampleIndex(), getEndSampleIndex(blockIndex));
+      ArrayArithmetic::subtract(dspBufferAtInlet0, dspBufferAtInlet1, dspBufferAtOutlet0,
+          fromIndex, toIndex);
       break;
     }
     case DSP_MESSAGE: {
-      ArrayArithmetic::subtract(localDspBufferAtInlet[0], constant, localDspBufferAtOutlet[0],
-          getStartSampleIndex(), getEndSampleIndex(blockIndex));
+      ArrayArithmetic::subtract(dspBufferAtInlet0, constant, dspBufferAtOutlet0, fromIndex, toIndex);
       break;
     }
     case MESSAGE_DSP:
@@ -69,5 +62,4 @@ void DspSubtract::processDspToIndex(float blockIndex) {
       break; // nothing to do
     }
   }
-  blockIndexOfLastMessage = blockIndex; // update the block index of the last message
 }

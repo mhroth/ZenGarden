@@ -40,7 +40,7 @@ const char *DspLog::getObjectLabel() {
 void DspLog::processMessage(int inletIndex, PdMessage *message) {
   if (inletIndex == 1) {
     if (message->isFloat(0)) {
-      processDspToIndex(graph->getBlockIndex(message));
+      processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
       if (message->getFloat(0) <= 0.0f) {
         graph->printErr("log~ base cannot be set to a non-positive number: %d\n", message->getFloat(0));
       } else {
@@ -50,31 +50,24 @@ void DspLog::processMessage(int inletIndex, PdMessage *message) {
   }
 }
 
-void DspLog::processDspToIndex(float blockIndex) {
+void DspLog::processDspWithIndex(int fromIndex, int toIndex) {
   switch (signalPrecedence) {
     case DSP_DSP: {
-      int blockIndexInt = getEndSampleIndex(blockIndex);
-      float *inputBuffer0 = localDspBufferAtInlet[0];
-      float *inputBuffer1 = localDspBufferAtInlet[1];
-      float *outputBuffer = localDspBufferAtOutlet[0];
-      for (int i = getStartSampleIndex(); i < blockIndexInt; i++) {
-        if (inputBuffer0[i] <= 0.0f || inputBuffer1[i] <= 0.0f) {
-          outputBuffer[i] = -1000.0f; // Pd's "error" float value
+      for (int i = fromIndex; i < toIndex; i++) {
+        if (dspBufferAtInlet0[i] <= 0.0f || dspBufferAtInlet1[i] <= 0.0f) {
+          dspBufferAtOutlet0[i] = -1000.0f; // Pd's "error" float value
         } else {
-          outputBuffer[i] = log2Approx(inputBuffer0[i]) / log2Approx(inputBuffer1[i]);
+          dspBufferAtOutlet0[i] = log2Approx(dspBufferAtInlet0[i]) / log2Approx(dspBufferAtInlet1[i]);
         }
       }
       break;
     }
     case DSP_MESSAGE: {
-      int blockIndexInt = getEndSampleIndex(blockIndex);
-      float *inputBuffer = localDspBufferAtInlet[0];
-      float *outputBuffer = localDspBufferAtOutlet[0];
-      for (int i = getStartSampleIndex(); i < blockIndexInt; i++) {
-        if (inputBuffer[i] <= 0.0f) {
-          outputBuffer[i] = -1000.0f;
+      for (int i = fromIndex; i < toIndex; i++) {
+        if (dspBufferAtInlet0[i] <= 0.0f) {
+          dspBufferAtOutlet0[i] = -1000.0f;
         } else {
-          outputBuffer[i] = log2Approx(inputBuffer[i]) / log2_base;
+          dspBufferAtOutlet0[i] = log2Approx(dspBufferAtInlet0[i]) / log2_base;
         }
       }
       break;
@@ -85,7 +78,6 @@ void DspLog::processDspToIndex(float blockIndex) {
       break; // nothing to do
     }
   }
-  blockIndexOfLastMessage = blockIndex;
 }
 
 // this implementation is reproduced from http://www.musicdsp.org/showone.php?id=91

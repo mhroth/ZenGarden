@@ -36,7 +36,7 @@ class DspLine : public DspObject {
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
-    void processDspToIndex(float newBlockIndex);
+    void processDspWithIndex(int fromIndex, int toIndex);
   
     float target;
     float slope;

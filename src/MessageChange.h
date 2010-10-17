@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009, 2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -30,7 +30,6 @@ class MessageChange : public MessageObject {
 
   public:
     MessageChange(PdMessage *initMessage, PdGraph *graph);
-    MessageChange(PdGraph *graph);
     ~MessageChange();
 
     const char *getObjectLabel();
@@ -38,7 +37,7 @@ class MessageChange : public MessageObject {
   private:
     void processMessage(int inletIndex, PdMessage *message);
 
-    float prevValue, setValue;
+    float prevValue;
 };
 
 #endif // _MESSAGE_CHANGE_H_

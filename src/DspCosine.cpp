@@ -52,23 +52,21 @@ const char *DspCosine::getObjectLabel() {
   return "cos~";
 }
 
-void DspCosine::processDspToIndex(float blockIndex) {
-  float *inputBuffer = localDspBufferAtInlet[0];
-  float *outputBuffer = localDspBufferAtOutlet[0];
+void DspCosine::processDspWithIndex(int fromIndex, int toIndex) {
   if (ArrayArithmetic::hasAccelerate) {
     #if __APPLE__
-    vDSP_vabs(inputBuffer, 1, inputBuffer, 1, blockSizeInt); // abs(x)
-    vDSP_vfrac(inputBuffer, 1, inputBuffer, 1, blockSizeInt); // get the fractional part of x
-    vDSP_vsmul(inputBuffer, 1, &sampleRate, inputBuffer, 1, blockSizeInt); // * sampleRate
-    vDSP_vindex(cos_table, inputBuffer, 1, outputBuffer, 1, blockSizeInt); // perform a table lookup
+    float tempBuffer[blockSizeInt];
+    vDSP_vabs(dspBufferAtInlet0, 1, tempBuffer, 1, blockSizeInt); // abs(x)
+    vDSP_vfrac(tempBuffer, 1, tempBuffer, 1, blockSizeInt); // get the fractional part of x
+    vDSP_vsmul(tempBuffer, 1, &sampleRate, tempBuffer, 1, blockSizeInt); // * sampleRate
+    vDSP_vindex(cos_table, tempBuffer, 1, dspBufferAtOutlet0, 1, blockSizeInt); // perform a table lookup
     #endif
   } else {
     for (int i = 0; i < blockSizeInt; i++) {
       // works because cosine is symmetric about zero
-      float f = fabsf(inputBuffer[i]);
+      float f = fabsf(dspBufferAtInlet0[i]);
       f -= floorf(f);
-      outputBuffer[i] = cos_table[(int) (f * sampleRate)];
+      dspBufferAtOutlet0[i] = cos_table[(int) (f * sampleRate)];
     }
   }
-  blockIndexOfLastMessage = blockIndex;
 }

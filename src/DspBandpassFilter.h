@@ -39,7 +39,7 @@ class DspBandpassFilter : public DspObject {
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
-    void processDspToIndex(float newBlockIndex);
+    void processDspWithIndex(int fromIndex, int toIndex);
   
     void calculateFilterCoefficients(float f, float q);
     inline float sigbp_qcos(float f); // not entirely sure what this is doing. From Pd.

@@ -20,15 +20,16 @@
  *
  */
 
+#include "ArrayArithmetic.h"
 #include "DspInlet.h"
+#include "PdGraph.h"
 
-DspInlet::DspInlet(PdGraph *graph) : DspObject(0, 0, 0, 1, graph) {
-  graphInletBuffer = NULL;
-  tempLocalDspBuffer = NULL;
+DspInlet::DspInlet(PdGraph *graph) : DspObject(0, 1, 0, 1, graph) {
+  canvasX = 0;
 }
 
 DspInlet::~DspInlet() {
-  localDspBufferAtOutlet[0] = tempLocalDspBuffer;
+  // nothing to do
 }
 
 const char *DspInlet::getObjectLabel() {
@@ -39,12 +40,40 @@ ObjectType DspInlet::getObjectType() {
   return DSP_INLET;
 }
 
-void DspInlet::setInletBuffer(float **graphInletBuffer) {
-  this->graphInletBuffer = graphInletBuffer;
-  tempLocalDspBuffer = localDspBufferAtOutlet[0];
+int DspInlet::getCanvasPosition() {
+  return canvasX;
 }
 
-void DspInlet::processDsp() {
-  // update the outlet buffer with the graph's (possibly new) inlet buffer
-  localDspBufferAtOutlet[0] = *graphInletBuffer;
+void DspInlet::setCanvasPosition(int pos) {
+  canvasX = pos;
+}
+
+List *DspInlet::getProcessOrder() {
+  List *processOrder = new List();
+  if (!isOrdered) {
+    isOrdered = true;
+    processOrder->add(this);
+  }
+  return processOrder;
+}
+
+List *DspInlet::getProcessOrderFromInlet() {
+  List *processList = new List();
+  List *incomingDspConnections = incomingDspConnectionsListAtInlet[0];
+  for (int i = 0; i < incomingDspConnections->size(); i++) {
+    ObjectLetPair *objectLetPair = (ObjectLetPair *) incomingDspConnections->get(i);
+    List *parentProcessList = objectLetPair->object->getProcessOrder();
+    processList->add(parentProcessList);
+    delete parentProcessList;
+  }
+  return processList;
+}
+
+void DspInlet::processDspWithIndex(int fromIndex, int toIndex) {
+  if (numConnectionsToInlet0 > 1) {
+    dspBufferAtOutlet0 = localDspOutletBuffers;
+    memcpy(dspBufferAtOutlet0, dspBufferAtInlet0, numBytesInBlock);
+  } else {
+    dspBufferAtOutlet0 = dspBufferAtInlet0;
+  }
 }

@@ -56,7 +56,7 @@ void zg_remove_graph(PdContext *context, PdGraph *graph) {
 }
 */
 void zg_add_object(PdGraph *graph, MessageObject *object) {
-  graph->addObject(object);
+  graph->addObject(0, 0, object);
 }
 /*
 void zg_remove_object(PdGraph *graph, MessageObject *object) {
@@ -71,6 +71,11 @@ void zg_delete_context(ZGContext *context) {
 
 void zg_delete_graph(ZGGraph *graph) {
   if (graph != NULL) {
+    /*
+    if (graph->isAttachedToContext()) {
+      context->removeGraph(graph);
+    }
+    */
     delete graph;
   }
 }

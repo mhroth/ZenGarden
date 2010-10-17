@@ -39,7 +39,7 @@ class DspDelayWrite : public DspObject {
     float *getBuffer(int *headIndex, int *bufferLength);
   
   private:
-    void processDspToIndex(float newBlockIndex);
+    void processDspWithIndex(int fromIndex, int toIndex);
   
     char *name;
     float *buffer;

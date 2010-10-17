@@ -41,14 +41,14 @@ void DspMultiply::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
       if (message->isFloat(0)) {
-        processDspToIndex(graph->getBlockIndex(message));
+        processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
         inputConstant = message->getFloat(0);
       }
       break;
     }
     case 1: {
       if (message->isFloat(0)) {
-        processDspToIndex(graph->getBlockIndex(message));
+        processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
         constant = message->getFloat(0);
       }
       break;
@@ -59,36 +59,24 @@ void DspMultiply::processMessage(int inletIndex, PdMessage *message) {
   }
 }
 
-void DspMultiply::processDspToIndex(float blockIndex) {
-  float *inputBuffer = localDspBufferAtInlet[0];
-  float *outputBuffer = localDspBufferAtOutlet[0];
-  int startSampleIndex = getStartSampleIndex();
-  int endSampleIndex = getEndSampleIndex(blockIndex);
+void DspMultiply::processDspWithIndex(int fromIndex, int toIndex) {
   switch (signalPrecedence) {
     case MESSAGE_DSP: {
-      for (int i = startSampleIndex; i < endSampleIndex; i++) {
-        inputBuffer[i] = inputConstant;
-      }
+      memset_pattern4(dspBufferAtInlet0+fromIndex, &inputConstant, (toIndex-fromIndex)*sizeof(float));
       // allow fallthrough
     }
     case DSP_DSP: {
-      ArrayArithmetic::multiply(localDspBufferAtInlet[0], localDspBufferAtInlet[1], 
-          localDspBufferAtOutlet[0], 0, blockSizeInt);
+      ArrayArithmetic::multiply(dspBufferAtInlet0, dspBufferAtInlet1, dspBufferAtOutlet0,
+          fromIndex, toIndex);
       break;
-    }
-    case MESSAGE_MESSAGE: {
-      for (int i = startSampleIndex; i < endSampleIndex; i++) {
-        inputBuffer[i] = inputConstant;
-      }
-      // allow fallthrough
     }
     case DSP_MESSAGE: {
-      ArrayArithmetic::multiply(inputBuffer, constant, outputBuffer, startSampleIndex, endSampleIndex);
+      ArrayArithmetic::multiply(dspBufferAtInlet0, constant, dspBufferAtOutlet0, fromIndex, toIndex);
       break;
     }
+    case MESSAGE_MESSAGE:
     default: {
       break; // nothing to do
     }
   }
-  blockIndexOfLastMessage = blockIndex; // update the block index of the last message
 }

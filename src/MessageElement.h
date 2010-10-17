@@ -26,6 +26,8 @@
 #include <string.h>
 #include "MessageElementType.h"
 
+#define SYMBOL_BUFFER_LENGTH 56
+
 /** Implements a Pd message element. */
 class MessageElement {
   
@@ -64,9 +66,9 @@ class MessageElement {
     bool equals(MessageElement *messageElement);
     
   private:
-    float constant;
-    char *symbol;
     MessageElementType currentType;
+    float constant;
+    char symbol[SYMBOL_BUFFER_LENGTH];
 };
 
 #endif // _PD_MESSAGE_ELEMENT_H_

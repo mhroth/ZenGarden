@@ -36,7 +36,7 @@ class DspClip : public DspObject {
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
-    void processDspToIndex(float newBlockIndex);
+    void processDspWithIndex(int fromIndex, int toIndex);
   
     float lowerBound;
     float upperBound;

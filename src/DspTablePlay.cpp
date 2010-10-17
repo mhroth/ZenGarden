@@ -28,7 +28,7 @@ DspTablePlay::DspTablePlay(PdMessage *initMessage, PdGraph *graph) : DspObject(1
   name = initMessage->isSymbol(0) ? StaticUtils::copyString(initMessage->getSymbol(0)) : NULL;
   table = NULL;
   outgoingMessage = NULL;
-  localDspBufferAtOutletReserved = localDspBufferAtOutlet[0];
+  //localDspBufferAtOutletReserved = localDspBufferAtOutlet[0];
   currentTableIndex = 0;
   endTableIndex = 0;
 }
@@ -36,7 +36,7 @@ DspTablePlay::DspTablePlay(PdMessage *initMessage, PdGraph *graph) : DspObject(1
 DspTablePlay::~DspTablePlay() {
   free(name);
   // allow the original audio buffer to be properly freed
-  localDspBufferAtOutlet[0] = localDspBufferAtOutletReserved;
+  //localDspBufferAtOutlet[0] = localDspBufferAtOutletReserved;
 }
 
 const char *DspTablePlay::getObjectLabel() {
@@ -68,7 +68,7 @@ void DspTablePlay::sendMessage(int outletIndex, PdMessage *message) {
 void DspTablePlay::processMessage(int inletIndex, PdMessage *message) {
   switch (message->getType(0)) {
     case FLOAT: {
-      processDspToIndex(graph->getBlockIndex(message));
+      processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
       playTable((int) message->getFloat(0),
           message->isFloat(1) ? (int) message->getFloat(1) : -1,
           message->getTimestamp());
@@ -76,13 +76,13 @@ void DspTablePlay::processMessage(int inletIndex, PdMessage *message) {
     }
     case SYMBOL: {
       if (message->isSymbol(0, "set") && message->isSymbol(1)) {
-        processDspToIndex(graph->getBlockIndex(message));
+        processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
         table = graph->getTable(message->getSymbol(1));
       }
       break;
     }
     case BANG: {
-      processDspToIndex(graph->getBlockIndex(message));
+      processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
       playTable(0, -1, message->getTimestamp());
       break;
     }
@@ -118,7 +118,8 @@ void DspTablePlay::playTable(int startIndex, int duration, double startTime) {
   }
 }
 
-void DspTablePlay::processDspToIndex(float blockIndex) {
+void DspTablePlay::processDspWithIndex(int fromIndex, int toIndex) {
+  /*
   if (table != NULL) {
     int bufferLength = 0;
     float *tableBuffer = table->getBuffer(&bufferLength);
@@ -160,5 +161,5 @@ void DspTablePlay::processDspToIndex(float blockIndex) {
       currentTableIndex += duration;
     }
   }
-  blockIndexOfLastMessage = blockIndex;
+  */
 }

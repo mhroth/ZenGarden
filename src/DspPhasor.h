@@ -36,7 +36,7 @@ class DspPhasor : public DspObject {
 
   protected:
     void processMessage(int inletIndex, PdMessage *message);
-    void processDspToIndex(float blockIndex);
+    void processDspWithIndex(int fromIndex, int toIndex);
 
   private:
     float sampleRate;
@@ -45,6 +45,9 @@ class DspPhasor : public DspObject {
     float index; // indexes the current place in the lookup table
     static float *phasor_table; // the phasor lookup table
     static int refCount; // a reference counter for phasor table. Now we know when to free it.
+  
+    double step;
+    double xphase;
 };
 
 #endif // _DSP_PHASOR_H_

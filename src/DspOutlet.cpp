@@ -21,14 +21,14 @@
  */
 
 #include "DspOutlet.h"
-#include "PdGraph.h"
 
-DspOutlet::DspOutlet(PdGraph *graph) : DspObject(0, 1, 0, 0, graph) {
-  outletIndex = 0;
+DspOutlet::DspOutlet(PdGraph *graph) : DspObject(0, 1, 0, 1, graph) {
+  numDspOutlets = 0;
+  canvasX = 0;
 }
 
 DspOutlet::~DspOutlet() {
-  // nothing to do
+  numDspOutlets = 1;
 }
 
 const char *DspOutlet::getObjectLabel() {
@@ -39,12 +39,19 @@ ObjectType DspOutlet::getObjectType() {
   return DSP_OUTLET;
 }
 
-void DspOutlet::setOutletIndex(int outletIndex) {
-  this->outletIndex = outletIndex; // set the outlet index
+int DspOutlet::getCanvasPosition() {
+  return canvasX;
 }
 
-void DspOutlet::processDspToIndex(float blockIndex) {
-  // copy the inlet buffer (which may change due to single-input optimisation in <code>DspObject</code>
-  // to the graph's output buffer
-  memcpy(graph->getDspBufferAtOutlet(outletIndex), localDspBufferAtInlet[0], numBytesInBlock);
+void DspOutlet::setCanvasPosition(int pos) {
+  canvasX = pos;
+}
+
+void DspOutlet::processDspWithIndex(int fromIndex, int toIndex) {
+  if (numConnectionsToInlet0 > 1) {
+    dspBufferAtOutlet0 = localDspOutletBuffers;
+    memcpy(dspBufferAtOutlet0, dspBufferAtInlet0, numBytesInBlock);
+  } else {
+    dspBufferAtOutlet0 = dspBufferAtInlet0;
+  }
 }

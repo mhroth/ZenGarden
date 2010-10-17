@@ -43,7 +43,7 @@ class DspEnvelope : public DspObject {
     ConnectionType getConnectionType(int outletIndex);
     
   private:
-    void processDspToIndex(float newBlockIndex);
+    void processDspWithIndex(int fromIndex, int toIndex);
   
     /** Initialise the analysis buffers. */
     void initBuffers();

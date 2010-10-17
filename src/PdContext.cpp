@@ -78,6 +78,7 @@
 #include "MessageSelect.h"
 #include "MessageSend.h"
 #include "MessageSine.h"
+#include "MessageSoundfiler.h"
 #include "MessageSpigot.h"
 #include "MessageSqrt.h"
 #include "MessageStripNote.h"
@@ -127,6 +128,7 @@
 #include "DspSignal.h"
 #include "DspSnapshot.h"
 #include "DspSubtract.h"
+#include "DspTablePlay.h"
 #include "DspTableRead.h"
 #include "DspTableRead4.h"
 #include "DspThrow.h"
@@ -349,7 +351,7 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
         // A new graph is defined inline. No arguments are passed (from this line)
         // the graphId is not incremented as this is a subpatch, not an abstraction
         PdGraph *newGraph = new PdGraph(graph->getArguments(), graph, this, graph->getGraphId());
-        graph->addObject(newGraph); // add the new graph to the current one as an object
+        graph->addObject(0, 0, newGraph); // add the new graph to the current one as an object
         
         // the new graph is pushed onto the stack
         graph = newGraph;
@@ -359,8 +361,8 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
     } else if (strcmp(hashType, "#X") == 0) {
       char *objectType = strtok(NULL, " ");
       if (strcmp(objectType, "obj") == 0) {
-        strtok(NULL, " "); // read the first canvas coordinate
-        strtok(NULL, " "); // read the second canvas coordinate
+        int canvasX = atoi(strtok(NULL, " ")); // read the first canvas coordinate
+        int canvasY = atoi(strtok(NULL, " ")); // read the second canvas coordinate
         char *objectLabel = strtok(NULL, " ;"); // delimit with " " or ";"
         char *objectInitString = strtok(NULL, ";"); // get the object initialisation string
         PdMessage *initMessage = new PdMessage(objectInitString, graph->getArguments());
@@ -380,12 +382,12 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
         delete initMessage;
 
         // add the object to the local graph and make any necessary registrations
-        graph->addObject(messageObject);
+        graph->addObject(canvasX, canvasY, messageObject);
       } else if (strcmp(objectType, "msg") == 0) {
-        strtok(NULL, " "); // read the first canvas coordinate
-        strtok(NULL, " "); // read the second canvas coordinate
+        int canvasX = atoi(strtok(NULL, " ")); // read the first canvas coordinate
+        int canvasY = atoi(strtok(NULL, " ")); // read the second canvas coordinate
         char *objectInitString = strtok(NULL, ""); // get the message initialisation string
-        graph->addObject(new MessageMessageBox(objectInitString, graph));
+        graph->addObject(canvasX, canvasY ,new MessageMessageBox(objectInitString, graph));
       } else if (strcmp(objectType, "connect") == 0) {
         int fromObjectIndex = atoi(strtok(NULL, " "));
         int outletIndex = atoi(strtok(NULL, " "));
@@ -393,18 +395,22 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
         int inletIndex = atoi(strtok(NULL, ";"));
         graph->addConnection(fromObjectIndex, outletIndex, toObjectIndex, inletIndex);
       } else if (strcmp(objectType, "floatatom") == 0) {
-        graph->addObject(new MessageFloat(0.0f, graph)); // defines a number box
+        int canvasX = atoi(strtok(NULL, " ")); // read the first canvas coordinate
+        int canvasY = atoi(strtok(NULL, " ")); // read the second canvas coordinate
+        graph->addObject(canvasX, canvasY, new MessageFloat(0.0f, graph)); // defines a number box
       } else if (strcmp(objectType, "symbolatom") == 0) {
-        graph->addObject(new MessageSymbol("", graph)); // defines a symbol box
+        int canvasX = atoi(strtok(NULL, " ")); // read the first canvas coordinate
+        int canvasY = atoi(strtok(NULL, " ")); // read the second canvas coordinate
+        graph->addObject(canvasX, canvasY, new MessageSymbol("", graph)); // defines a symbol box
       } else if (strcmp(objectType, "restore") == 0) {
         // the graph is finished being defined
         graph = graph->getParentGraph(); // pop the graph stack to the parent graph
       } else if (strcmp(objectType, "text") == 0) {
-        strtok(NULL, " "); // read the first canvas coordinate
-        strtok(NULL, " "); // read the second canvas coordinate
+        int canvasX = atoi(strtok(NULL, " ")); // read the first canvas coordinate
+        int canvasY = atoi(strtok(NULL, " ")); // read the second canvas coordinate
         char *comment = strtok(NULL, ";"); // get the comment
         MessageText *messageText = new MessageText(comment, graph);
-        graph->addObject(messageText);
+        graph->addObject(canvasX, canvasY, messageText);
       } else if (strcmp(objectType, "declare") == 0) {
         // set environment for loading patch
         char *objectInitString = strtok(NULL, ";"); // get the arguments to declare
@@ -427,7 +433,7 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
         int bufferLength = 0;
         float *buffer = table->getBuffer(&bufferLength);
         delete initMessage;
-        graph->addObject(table);
+        graph->addObject(0, 0, table);
         
         // next many lines should be elements of that array
         // while the next line begins with #A
@@ -450,6 +456,10 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
       printErr("Unrecognised hash type on line: \"%s\"", line);
     }
   }
+  
+  // force dsp ordering as the last step
+  // some graphs may not have any connections (only abstractions), and thus may appear to do nothing
+  graph->computeLocalDspProcessOrder();
 
   return true;
 }
@@ -612,6 +622,8 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
       return new MessageSend(initMessage, graph);
     } else if (strcmp(objectLabel, "sin") == 0) {
       return new MessageSine(initMessage, graph);
+    } else if (strcmp(objectLabel, "soundfiler") == 0) {
+      return new MessageSoundfiler(initMessage, graph);
     } else if (strcmp(objectLabel, "spigot") == 0) {
       return new MessageSpigot(initMessage, graph);
     } else if (strcmp(objectLabel, "stripnote") == 0) {
@@ -709,6 +721,8 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
       return new DspSnapshot(initMessage, graph);
     } else if (strcmp(objectLabel, "switch~") == 0) {
       return new MessageSwitch(initMessage, graph);
+    } else if (strcmp(objectLabel, "tabplay~") == 0) {
+      return new DspTablePlay(initMessage, graph);
     } else if (strcmp(objectLabel, "tabread~") == 0) {
       return new DspTableRead(initMessage, graph);
     } else if (strcmp(objectLabel, "tabread4~") == 0) {

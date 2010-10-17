@@ -64,6 +64,19 @@ class MessageObject {
     /** Establish a connection to another object from this object. */
     virtual void addConnectionToObjectFromOutlet(MessageObject *messageObject, int inletIndex, int outletIndex);
   
+    /**
+     * The destination inlet of an outgoing message connection can change if an [inlet] object
+     * in a graph is moved (and the inlet ordering changes). The connection index change has no
+     * effect on the graph ordering and thus it is not necessary to remove and readd a connection.
+     * However, the connection must be updated such that message will still be addressed to the
+     * correct inlet.
+     */
+    void updateOutgoingMessageConnection(MessageObject *messageObject, int oldInletIndex,
+        int outletIndex, int newInletIndex);
+  
+    void updateIncomingMessageConnection(MessageObject *messageObject, int oldOutletIndex,
+        int inletIndex, int newOutletIndex);
+  
     /** Returns the label for this object. */
     virtual const char *getObjectLabel() = 0;
   
@@ -82,13 +95,6 @@ class MessageObject {
      * <code>DspObject</code> objects.
      */
     virtual bool shouldDistributeMessageToInlets();
-  
-   /**
-    * Returns <code>true</code> if this object is a root in the Pd tree. <code>false</code> otherwise.
-    * This function is used only while computing the process order of objects. For this reason it also
-    * returns true in the cases when the object is receive, receive~, or catch~.
-    */
-    virtual bool isRootNode();
   
     /**
      * Returns <code>true</code> if this object is a leaf in the Pd tree. <code>false</code> otherwise.
