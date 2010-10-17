@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009, 2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -23,20 +23,11 @@
 #include "MessageArcTangent2.h"
 
 MessageArcTangent2::MessageArcTangent2(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
-  if (initMessage->getNumElements() > 0 &&
-      initMessage->getElement(0)->getType() == FLOAT) {
-    init(initMessage->getElement(0)->getFloat());
-  } else {
-    init(0.0f);
-  }
+  constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
 }
 
 MessageArcTangent2::~MessageArcTangent2() {
   // nothing to do
-}
-
-void MessageArcTangent2::init(float constant) {
-  this->constant = constant;
 }
 
 const char *MessageArcTangent2::getObjectLabel() {
@@ -46,19 +37,17 @@ const char *MessageArcTangent2::getObjectLabel() {
 void MessageArcTangent2::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
-      MessageElement *messageElement = message->getElement(0);
-      if (messageElement->getType() == FLOAT) {
+      if (message->isFloat(0)) {
         PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-        outgoingMessage->getElement(0)->setFloat(atan2f(messageElement->getFloat(),constant));
+        outgoingMessage->setFloat(0, atan2f(message->getFloat(0), constant));
         outgoingMessage->setTimestamp(message->getTimestamp());
         sendMessage(0, outgoingMessage); // send a message from outlet 0
       }
       break;
     }
     case 1: {
-      MessageElement *messageElement = message->getElement(0);
-      if (messageElement->getType() == FLOAT) {
-        constant = messageElement->getFloat();
+      if (message->isFloat(0)) {
+        constant = message->getFloat(0);
       }
       break;
     }
