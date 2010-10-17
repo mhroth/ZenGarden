@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009, 2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -31,7 +31,6 @@ class MessageAbsoluteValue : public MessageObject {
 
   public:
     MessageAbsoluteValue(PdMessage *initMessage, PdGraph *graph);
-    MessageAbsoluteValue(PdGraph *graph);
     ~MessageAbsoluteValue();
 
     const char *getObjectLabel();
