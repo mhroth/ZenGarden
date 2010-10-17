@@ -49,6 +49,10 @@ void MessageTableWrite::setTable(MessageTable *aTable) {
   table = aTable;
 }
 
+bool MessageTableWrite::shouldDistributeMessageToInlets() {
+  return false;
+}
+
 void MessageTableWrite::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
@@ -64,6 +68,7 @@ void MessageTableWrite::processMessage(int inletIndex, PdMessage *message) {
           break;
         }
         case SYMBOL: {
+          printf("%s", message->toString());
           if (message->isSymbol(0, "set") && message->isSymbol(1)) {
             free(name);
             name = StaticUtils::copyString(message->getSymbol(1));

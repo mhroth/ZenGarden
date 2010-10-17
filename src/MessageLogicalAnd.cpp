@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -22,20 +22,48 @@
 
 #include "MessageLogicalAnd.h"
 
-MessageLogicalAnd::MessageLogicalAnd(char *initString) : MessageBinaryOperationObject(initString) {
+MessageLogicalAnd::MessageLogicalAnd(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
   left = 0.0f;
   right = 0.0f;
-}
-
-MessageLogicalAnd::MessageLogicalAnd(float constant, char *initString) : MessageBinaryOperationObject(initString) {
-  left = 0.0f;
-  right = constant;
 }
 
 MessageLogicalAnd::~MessageLogicalAnd() {
   // nothing to do
 }
 
-inline float MessageLogicalAnd::performBinaryOperation(float left, float right) {
-  return (left == 0.0f || right == 0.0f) ? 0.0f : 1.0f;
+const char *MessageLogicalAnd::getObjectLabel() {
+  return "&&";
+}
+
+void MessageLogicalAnd::processMessage(int inletIndex, PdMessage *message) {
+  switch (inletIndex) {
+    case 0: {
+      switch (message->getType(0)) {
+        case FLOAT: {
+          left = message->getFloat(0);
+          // allow fallthrough
+        }
+        case BANG: {
+          PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+          outgoingMessage->setTimestamp(message->getTimestamp());
+          outgoingMessage->setFloat(0, (left == 0.0f || right == 0.0f) ? 0.0f : 1.0f);
+          sendMessage(0, outgoingMessage);
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+      break;
+    }
+    case 1: {
+      if (message->isFloat(0)) {
+        right = message->getFloat(0);
+      }
+      break;
+    }
+    default: {
+      break;
+    }
+  }
 }

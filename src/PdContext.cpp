@@ -50,6 +50,8 @@
 #include "MessageListTrim.h"
 #include "MessageLoadbang.h"
 #include "MessageLog.h"
+#include "MessageLogicalAnd.h"
+#include "MessageLogicalOr.h"
 #include "MessageMaximum.h"
 #include "MessageMessageBox.h"
 #include "MessageMetro.h"
@@ -172,6 +174,7 @@ PdContext::PdContext(int numInputChannels, int numOutputChannels, int blockSize,
   
   // lock is recursive
   pthread_mutexattr_t mta;
+  pthread_mutexattr_init(&mta);
   pthread_mutexattr_settype(&mta, PTHREAD_MUTEX_RECURSIVE);
   pthread_mutex_init(&contextLock, &mta); 
 }
@@ -496,6 +499,10 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
       return new MessageEqualsEquals(initMessage, graph);
     } else if (strcmp(objectLabel, "!=") == 0) {
       return new MessageNotEquals(initMessage, graph);
+    } else if (strcmp(objectLabel, "||") == 0) {
+      return new MessageLogicalOr(initMessage, graph);
+    } else if (strcmp(objectLabel, "&&") == 0) {
+      return new MessageLogicalAnd(initMessage, graph);
     } else if (strcmp(objectLabel, "abs") == 0) {
       return new MessageAbsoluteValue(initMessage, graph);
     } else if (strcmp(objectLabel, "atan") == 0) {
