@@ -308,13 +308,13 @@ void DspObject::resolveInputBuffers(int inletIndex, float *localInputBuffer) {
   
   // copy the single connection's output buffer to the input buffer
   int numConnections = dspBufferRefList->numElements;
-  float **remoteDspBufferRef = (float **) dspBufferRefList->arrayList[0];
-  memcpy(localInputBuffer, *remoteDspBufferRef, numBytesInBlock);
+  float ***refArray = (float ***) dspBufferRefList->arrayList;
+  memcpy(localInputBuffer, *(refArray[0]), numBytesInBlock);
+
   
   // add the remaining output buffers to the input buffer
   for (int j = 1; j < numConnections; j++) {
-    remoteDspBufferRef = (float **) dspBufferRefList->arrayList[j];
-    ArrayArithmetic::add(localInputBuffer, *remoteDspBufferRef, localInputBuffer, 0, blockSizeInt);
+    ArrayArithmetic::add(localInputBuffer, *(refArray[j]), localInputBuffer, 0, blockSizeInt);
   }
 }
 
