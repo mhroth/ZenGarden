@@ -23,8 +23,32 @@
 #include <math.h>
 #include "MessageWrap.h"
 
-MessageWrap::MessageWrap(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
-  // nothing to do
+MessageWrap::MessageWrap(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
+  switch (initMessage->getNumElements()) {
+    case 0: {
+      lower = 0.0f;
+      upper = 1.0f;
+      break;
+    }
+    case 1: {
+      lower = 0.0f;
+      upper = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
+      break;
+    }
+    case 2: {
+      lower = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
+      upper = initMessage->isFloat(1) ? initMessage->getFloat(1) : 0.0f;
+      if (upper < lower) {
+        upper = temp;
+        upper = lower;
+        lower = temp;
+      }
+      break;
+    }
+    default: {
+      break;
+    }
+  }
 }
 
 MessageWrap::~MessageWrap() {
@@ -36,11 +60,47 @@ const char *MessageWrap::getObjectLabel() {
 }
 
 void MessageWrap::processMessage(int inletIndex, PdMessage *message) {
-  if (message->isFloat(0)) {
-    float value = message->getFloat(0);
-    PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-    outgoingMessage->setTimestamp(message->getTimestamp());
-    outgoingMessage->setFloat(0, value - floorf(value));
-    sendMessage(0, outgoingMessage);
+  switch (inletIndex) {
+    case 0: {
+      if (message->isFloat(0)) {
+        PdMessage *outgoingMessage = getNextOutgoingMessage(0); 
+        outgoingMessage->setTimestamp(message->getTimestamp());
+        value = message->getFloat(0);
+        range = upper - lower;
+        if (upper <= value)  {
+          while (upper <= value) {
+            value = value - range;
+          }
+        } else if (value < lower)  {
+          while (value < lower) {
+            value = value + range;
+          }
+        }
+        outgoingMessage->setFloat(0, value);
+        sendMessage(0, outgoingMessage);
+      }
+      break;
+    }  
+    case 1: {
+        if (message->isFloat(0)) {
+        if (message->getNumElements() == 1) {
+          lower = message->getFloat(0);
+          upper = 0.0f;
+        } else if (message->getNumElements() == 2) {
+          lower = message->getFloat(0);
+          upper = message->getFloat(1);
+        }
+        if (upper < lower) {
+          temp = upper;
+          upper = lower;
+          lower = temp;
+        }
+        }
+    }
   }
 }
+        
+       
+    
+
+  

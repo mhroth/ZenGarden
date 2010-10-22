@@ -33,9 +33,11 @@ class MessageWrap : public MessageObject {
     ~MessageWrap();
   
     const char *getObjectLabel();
-  
+ 
   private:
     void processMessage(int inletIndex, PdMessage *message);
-};
+    
+    float lower,upper,range,temp,value;
+}; 
 
 #endif // _MESSAGE_WRAP_H_
