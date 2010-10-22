@@ -31,17 +31,16 @@ DspAdc::DspAdc(PdGraph *graph) : DspObject(0, 0, 0, graph->getNumInputChannels()
    * <code>DspObject</code>s can continue to refer to <code>localDspBufferAtOutlet</code>
    * and still get access to the global audio input buffers.
    */
-  for (int i = 0; i < numDspOutlets; i++) {
-    free(localDspBufferAtOutlet[i]);
-    localDspBufferAtOutlet[i] = graph->getGlobalDspBufferAtInlet(i);
+  free(localDspOutletBuffers);
+  localDspOutletBuffers = NULL;
+  dspBufferAtOutlet0 = graph->getGlobalDspBufferAtInlet(0);
+  for (int i = 1; i < numDspOutlets; i++) {
+    dspBufferAtOutlet[i] = graph->getGlobalDspBufferAtInlet(i);
   }
 }
 
 DspAdc::~DspAdc() {
-  for (int i = 0; i < numDspOutlets; i++) {
-    // null the global input buffer pointers such that they are not freed by the object deconstructor
-    localDspBufferAtOutlet[i] = NULL;
-  }
+  // nothing to do
 }
 
 const char *DspAdc::getObjectLabel() {
@@ -49,5 +48,5 @@ const char *DspAdc::getObjectLabel() {
 }
 
 void DspAdc::processDsp() {
-  // nothing to do as output buffers point directly at global input buffers
+  // nothing to do
 }

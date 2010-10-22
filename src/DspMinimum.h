@@ -25,6 +25,7 @@
 
 #include "DspObject.h"
 
+/** [min~ float] */
 class DspMinimum : public DspObject {
   
   public:
@@ -35,7 +36,7 @@ class DspMinimum : public DspObject {
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
-    void processDspToIndex(float blockIndex);
+    void processDspWithIndex(int fromIndex, int toIndex);
     
     float constant;
 };

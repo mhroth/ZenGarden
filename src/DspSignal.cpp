@@ -38,23 +38,17 @@ const char *DspSignal::getObjectLabel() {
 
 void DspSignal::processMessage(int inletIndex, PdMessage *message) {
   if (message->isFloat(0)) {
-    processDspToIndex(graph->getBlockIndex(message));
+    processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
     constant = message->getFloat(0);
   }
 }
 
-void DspSignal::processDspToIndex(float blockIndex) {
-  float *outputBuffer = localDspBufferAtOutlet[0];
-  int startSampleIndex = getStartSampleIndex();
-  int endSampleIndex = getEndSampleIndex(blockIndex);
+void DspSignal::processDspWithIndex(int fromIndex, int toIndex) {
   if (ArrayArithmetic::hasAccelerate) {
     #if __APPLE__
-    vDSP_vfill(&constant, outputBuffer+startSampleIndex, 1, endSampleIndex-startSampleIndex);
+    vDSP_vfill(&constant, dspBufferAtOutlet0+fromIndex, 1, toIndex-fromIndex);
     #endif
   } else {
-    for (int i = getStartSampleIndex(); i < endSampleIndex; i++) {
-      outputBuffer[i] = constant;
-    }
+    memset_pattern4(dspBufferAtOutlet0+fromIndex, &constant, (toIndex-fromIndex) * sizeof(float));
   }
-  blockIndexOfLastMessage = blockIndex;
 }

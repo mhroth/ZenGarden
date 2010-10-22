@@ -39,7 +39,7 @@ class DspLowpassFilter : public DspObject {
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
-    void processDspToIndex(float blockIndex);
+    void processDspWithIndex(int fromIndex, int toIndex);
     void calculateFilterCoefficients(float cutoffFrequency);
   
     float sampleRate;
@@ -47,8 +47,6 @@ class DspLowpassFilter : public DspObject {
     float alpha;
     float beta; // 1 - alpha;
   
-    float *filterInputBuffer;
-    float *filterOutputBuffer;
     float *coefficients;
     float signalConstant;
 };

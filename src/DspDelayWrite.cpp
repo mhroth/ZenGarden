@@ -20,14 +20,13 @@
  *
  */
 
+#include "ArrayArithmetic.h"
 #include "DspDelayWrite.h"
 #include "PdGraph.h"
 
 DspDelayWrite::DspDelayWrite(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0, 0, graph) {
-  if (initMessage->getNumElements() == 2 && 
-      initMessage->getElement(0)->getType() == SYMBOL &&
-      initMessage->getElement(1)->getType() == FLOAT) {
-    bufferLength = (int) ceilf(StaticUtils::millisecondsToSamples(initMessage->getElement(1)->getFloat(), 
+  if (initMessage->isSymbol(0) && initMessage->isFloat(1)) {
+    bufferLength = (int) ceilf(StaticUtils::millisecondsToSamples(initMessage->getFloat(1), 
         graph->getSampleRate())); 
     if (bufferLength % blockSizeInt != 0) {
       bufferLength = ((bufferLength/blockSizeInt)+2) * blockSizeInt;
@@ -37,7 +36,7 @@ DspDelayWrite::DspDelayWrite(PdMessage *initMessage, PdGraph *graph) : DspObject
     headIndex = 0;
     // buffer[bufferLength] == buffer[0], which makes calculation in vd~ easier
     buffer = (float *) calloc(bufferLength+1, sizeof(float));
-    name = StaticUtils::copyString(initMessage->getElement(0)->getSymbol());
+    name = StaticUtils::copyString(initMessage->getSymbol(0));
   } else {
     graph->printErr("ERROR: delwrite~ must be initialised as [delwrite~ name delay].");
     headIndex = 0;
@@ -70,14 +69,18 @@ float *DspDelayWrite::getBuffer(int *headIndex, int *bufferLength) {
   return buffer;
 }
 
-void DspDelayWrite::processDspToIndex(float newBlockIndex) {
+void DspDelayWrite::processDspWithIndex(int fromIndex, int toIndex) {
   // copy inlet buffer to delay buffer
-  memcpy(buffer + headIndex, localDspBufferAtInlet[0], numBytesInBlock);
-  if (headIndex == 0) {
-    buffer[bufferLength] = buffer[0];
-  }
-  headIndex += blockSizeInt;
-  if (headIndex >= bufferLength) {
-    headIndex = 0;
+  if (dspBufferAtInlet0 == NULL) {
+    // TODO(mhroth): refer buffer to a zero buffer
+  } else {
+    memcpy(buffer + headIndex, dspBufferAtInlet0, numBytesInBlock);
+    if (headIndex == 0) {
+      buffer[bufferLength] = buffer[0];
+    }
+    headIndex += blockSizeInt;
+    if (headIndex >= bufferLength) {
+      headIndex = 0;
+    }
   }
 }

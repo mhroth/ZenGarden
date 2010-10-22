@@ -61,13 +61,14 @@ class List {
      * Resets the number of elements to zero.
      */
     void clear();
+  
+    void **arrayList;
+    int numElements;
 
   private:
     void growArrayList();
   
     int maxLength;
-    void **arrayList;
-    int numElements;
 };
 
 #endif // _LIST_H_

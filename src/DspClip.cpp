@@ -41,14 +41,14 @@ void DspClip::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 1: {
       if (message->isFloat(0)) {
-        processDspToIndex(graph->getBlockIndex(message));
+        processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
         lowerBound = message->getFloat(0); // set the lower bound
       }
       break;
     }
     case 2: {
       if (message->isFloat(0)) {
-        processDspToIndex(graph->getBlockIndex(message));
+        processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
         upperBound = message->getFloat(0); // set the upper bound
       }
       break;
@@ -59,26 +59,21 @@ void DspClip::processMessage(int inletIndex, PdMessage *message) {
   }
 }
 
-void DspClip::processDspToIndex(float blockIndex) {
-  float *inputBuffer = localDspBufferAtInlet[0];
-  float *outputBuffer = localDspBufferAtOutlet[0];
-  int startSampleIndex = getStartSampleIndex();
-  int endSampleIndex = getEndSampleIndex(blockIndex);
+void DspClip::processDspWithIndex(int fromIndex, int toIndex) {
   if (ArrayArithmetic::hasAccelerate) {
     #if __APPLE__
-    vDSP_vclip(inputBuffer+startSampleIndex, 1, &lowerBound, &upperBound,
-        outputBuffer+startSampleIndex, 1, endSampleIndex-startSampleIndex);
+    vDSP_vclip(dspBufferAtInlet0+fromIndex, 1, &lowerBound, &upperBound,
+        dspBufferAtOutlet0+fromIndex, 1, toIndex-fromIndex);
     #endif
   } else {
-    for (int i = startSampleIndex; i < endSampleIndex; i++) {
-      if (inputBuffer[i] <= lowerBound) {
-        outputBuffer[i] = lowerBound;
-      } else if (inputBuffer[i] >= upperBound) {
-        outputBuffer[i] = upperBound;
+    for (int i = fromIndex; i < toIndex; i++) {
+      if (dspBufferAtInlet0[i] <= lowerBound) {
+        dspBufferAtOutlet0[i] = lowerBound;
+      } else if (dspBufferAtInlet0[i] >= upperBound) {
+        dspBufferAtOutlet0[i] = upperBound;
       } else {
-        outputBuffer[i] = inputBuffer[i];
+        dspBufferAtOutlet0[i] = dspBufferAtInlet0[i];
       }
     }
   }
-  blockIndexOfLastMessage = blockIndex;
 }

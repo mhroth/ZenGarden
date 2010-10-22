@@ -26,11 +26,6 @@ MessageAbsoluteValue::MessageAbsoluteValue(PdMessage *initMessage, PdGraph *grap
   // nothing to do
 }
 
-
-MessageAbsoluteValue::MessageAbsoluteValue(PdGraph *graph) : MessageObject(1, 1, graph) {
-  // nothing to do
-}
-
 MessageAbsoluteValue::~MessageAbsoluteValue() {
   // nothing to do
 }

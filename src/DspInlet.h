@@ -40,19 +40,17 @@ class DspInlet : public DspObject {
   
     const char *getObjectLabel();
     ObjectType getObjectType();
+    
+    void setCanvasPosition(int pos);
+    int getCanvasPosition();
   
-    /**
-     * Set the parent-graph's inlet buffer. A double pointer is used because the graph's inlet buffer
-     * may change due to the single-input buffer replacement optimisation in <code>DspObject</code>.
-     * The buffer will replace this object's output buffer.
-     */
-    void setInletBuffer(float **graphInletBuffer);
-  
-    void processDsp();
+    List *getProcessOrder();
+    List *getProcessOrderFromInlet();
   
   private:
-    float **graphInletBuffer;
-    float *tempLocalDspBuffer;
+    void processDspWithIndex(int fromIndex, int toIndex);
+  
+    int canvasX;
 };
 
 #endif // _DSP_INLET_H_

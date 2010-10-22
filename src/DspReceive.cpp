@@ -31,12 +31,11 @@ DspReceive::DspReceive(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 0,
     graph->printErr("receive~ not initialised with a name.\n");
   }
   sendBuffer = NULL;
-  originalLocalOutletBuffer = localDspBufferAtOutlet[0];
+  memset(localDspOutletBuffers, 0, blockSizeInt * sizeof(float));
 }
 
 DspReceive::~DspReceive() {
   free(name);
-  localDspBufferAtOutlet[0] = originalLocalOutletBuffer;
 }
 
 const char *DspReceive::getObjectLabel() {
@@ -58,7 +57,10 @@ void DspReceive::setBuffer(float **buffer) {
 
 void DspReceive::processDsp() {
   // replace the local outlet buffer with a pointer to the input buffer of the associated send~
-  if (sendBuffer != NULL) { // sendBuffer may be null if there is no related send~
-    localDspBufferAtOutlet[0] = *sendBuffer;
+  // sendBuffer may be null if there is no related send~
+  if (sendBuffer == NULL) {
+    // TODO(mhroth): if sendBuffer is null, point to a zero buffer
+  } else {
+    dspBufferAtOutlet0 = *sendBuffer;
   }
 }

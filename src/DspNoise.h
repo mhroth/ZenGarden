@@ -36,9 +36,8 @@ class DspNoise : public DspObject {
     ~DspNoise();
   
     const char *getObjectLabel();
-    
-  protected:
-    void processDspToIndex(float newBlockIndex);
+  
+    void processDsp();
   
   private:
     MTRand *twister;

@@ -33,19 +33,24 @@ MessageObject::MessageObject(int numMessageInlets, int numMessageOutlets, PdGrap
   distributedMessage->addElement();
 
   // initialise incoming connections list
-  incomingMessageConnectionsListAtInlet = (List **) malloc(numMessageInlets * sizeof(List *));
+  // while malloc(0) does work well with free(), it also seems to use some small amount of memory.
+  // thus numMessageInlets is manually checked for zero and a NULL pointer is returned.
+  incomingMessageConnectionsListAtInlet =
+      (numMessageInlets > 0) ? (List **) malloc(numMessageInlets * sizeof(List *)) : NULL;
   for (int i = 0; i < numMessageInlets; i++) {
     incomingMessageConnectionsListAtInlet[i] = new List();
   }
 
   // initialise outgoing connections list
-  outgoingMessageConnectionsListAtOutlet = (List **) malloc(numMessageOutlets * sizeof(List *));
+  outgoingMessageConnectionsListAtOutlet =
+      (numMessageOutlets > 0) ? (List **) malloc(numMessageOutlets * sizeof(List *)) : NULL;
   for (int i = 0; i < numMessageOutlets; i++) {
     outgoingMessageConnectionsListAtOutlet[i] = new List();
   }
 
   // initialise outgoing message pool
-  messageOutletPools = (List **) malloc(numMessageOutlets * sizeof(List *));
+  messageOutletPools =
+      (numMessageOutlets > 0) ? (List **) malloc(numMessageOutlets * sizeof(List *)) : NULL;
   for (int i = 0; i < numMessageOutlets; i++) {
     messageOutletPools[i] = new List();
   }
@@ -199,15 +204,6 @@ PdMessage *MessageObject::newCanonicalMessage(int outletIndex) {
   return outgoingMessage;
 }
 
-bool MessageObject::isRootNode() {
-  for (int i = 0; i < numMessageInlets; i++) {
-    if (incomingMessageConnectionsListAtInlet[i]->size() > 0) {
-      return false;
-    }
-  }
-  return true;
-}
-
 bool MessageObject::isLeafNode() {
   for (int i = 0; i < numMessageOutlets; i++) {
     if (outgoingMessageConnectionsListAtOutlet[i]->size() > 0) {
@@ -224,14 +220,12 @@ List *MessageObject::getProcessOrder() {
   } else {
     isOrdered = true;
     List *processList = new List();
-    if (!isRootNode()) {
-      for (int i = 0; i < numMessageInlets; i++) {
-        for (int j = 0; j < incomingMessageConnectionsListAtInlet[i]->size(); j++) {
-          ObjectLetPair *objectLetPair = (ObjectLetPair *) incomingMessageConnectionsListAtInlet[i]->get(j);
-          List *parentProcessList = objectLetPair->object->getProcessOrder();
-          processList->add(parentProcessList);
-          delete parentProcessList;
-        }
+    for (int i = 0; i < numMessageInlets; i++) {
+      for (int j = 0; j < incomingMessageConnectionsListAtInlet[i]->size(); j++) {
+        ObjectLetPair *objectLetPair = (ObjectLetPair *) incomingMessageConnectionsListAtInlet[i]->get(j);
+        List *parentProcessList = objectLetPair->object->getProcessOrder();
+        processList->add(parentProcessList);
+        delete parentProcessList;
       }
     }
     processList->add(this);
@@ -241,4 +235,32 @@ List *MessageObject::getProcessOrder() {
 
 void MessageObject::resetOrderedFlag() {
   isOrdered = false;
+}
+
+void MessageObject::updateIncomingMessageConnection(MessageObject *messageObject, int oldOutletIndex,
+    int inletIndex, int newOutletIndex) {
+  List *incomingMessageConnectionsList = (List *) incomingMessageConnectionsListAtInlet[inletIndex];
+  int numConnections = incomingMessageConnectionsList->size();
+  for (int i = 0; i < numConnections; i++) {
+    ObjectLetPair *objectLetPair = (ObjectLetPair *) incomingMessageConnectionsList->get(i);
+    if (objectLetPair->object == messageObject &&
+        objectLetPair->index == oldOutletIndex) {
+      objectLetPair->index = newOutletIndex;
+      return;
+    }
+  }
+}
+
+void MessageObject::updateOutgoingMessageConnection(MessageObject *messageObject, int oldInletIndex,
+      int outletIndex, int newInletIndex) {
+  List *outgoingMessageConnectionsList = (List *) outgoingMessageConnectionsListAtOutlet[outletIndex];
+  int numConnections = outgoingMessageConnectionsList->size();
+  for (int i = 0; i < numConnections; i++) {
+    ObjectLetPair *objectLetPair = (ObjectLetPair *) outgoingMessageConnectionsList->get(i);
+    if (objectLetPair->object == messageObject &&
+        objectLetPair->index == oldInletIndex) {
+      objectLetPair->index = newInletIndex;
+      return;
+    }
+  }
 }

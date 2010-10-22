@@ -23,12 +23,12 @@
 #include "MessageClip.h"
 
 MessageClip::MessageClip(PdMessage *initMessage, PdGraph *graph) : MessageObject(3, 1, graph) {
-  if (initMessage->getNumElements() == 1 && initMessage->getElement(0)->getType() == FLOAT) {
-    init(initMessage->getElement(0)->getFloat(), 0.0f);
-  } else if (initMessage->getNumElements() == 2 &&
-      initMessage->getElement(0)->getType() == FLOAT &&
-      initMessage->getElement(1)->getType() == FLOAT) {
-    init(initMessage->getElement(0)->getFloat(), initMessage->getElement(1)->getFloat());
+  if (initMessage->isFloat(0)) {
+    if (initMessage->isFloat(1)) {
+      init(initMessage->getFloat(0), initMessage->getFloat(1));
+    } else {
+      init(initMessage->getFloat(0), 0.0f);
+    }
   } else {
     init(0.0f, 0.0f);
   }
@@ -50,8 +50,8 @@ const char *MessageClip::getObjectLabel() {
 void MessageClip::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
-      if (message->getElement(0)->getType() == FLOAT) {
-        float output = message->getElement(0)->getFloat();
+      if (message->isFloat(0)) {
+        float output = message->getFloat(0);
         if (output < lowerBound) {
           output = lowerBound;
         } else if (output > upperBound) {
@@ -65,14 +65,14 @@ void MessageClip::processMessage(int inletIndex, PdMessage *message) {
       break;
     }
     case 1: {
-      if (message->getElement(0)->getType() == FLOAT) {
-        lowerBound = message->getElement(0)->getFloat();
+      if (message->isFloat(0)) {
+        lowerBound = message->getFloat(0);
       }
       break;
     }
     case 2: {
-      if (message->getElement(0)->getType() == FLOAT) {
-        upperBound = message->getElement(0)->getFloat();
+      if (message->isFloat(0)) {
+        upperBound = message->getFloat(0);
       }
       break;
     }

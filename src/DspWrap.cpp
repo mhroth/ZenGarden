@@ -35,29 +35,24 @@ const char *DspWrap::getObjectLabel() {
   return "wrap~";
 }
 
-void DspWrap::processDspToIndex(float blockIndex) {
-  int startSampleIndex = getStartSampleIndex();
-  int endSampleIndex = getEndSampleIndex(blockIndex);
-  float *inputBuffer = localDspBufferAtInlet[0];
-  float *outputBuffer = localDspBufferAtOutlet[0];
+void DspWrap::processDspWithIndex(int fromIndex, int toIndex) {
   if (ArrayArithmetic::hasAccelerate) {
     #if __APPLE__
-    inputBuffer += startSampleIndex;
-    outputBuffer += startSampleIndex;
-    int duration = endSampleIndex-startSampleIndex;
+    float *inputBuffer = dspBufferAtInlet0 + fromIndex;
+    float *outputBuffer = dspBufferAtOutlet0 + fromIndex;
+    int duration = toIndex-fromIndex;
     float one = 1.0f;
     // get fractional part of all input
     vDSP_vfrac(inputBuffer, 1, outputBuffer, 1, duration);
     // add one to all fractions (making negative fractions positive)
     vDSP_vsadd(outputBuffer, 1, &one, outputBuffer, 1, duration);
     // take fractional part again, removing positive results greater than one
-    vDSP_vfrac(inputBuffer, 1, outputBuffer, 1, duration);
+    vDSP_vfrac(outputBuffer, 1, outputBuffer, 1, duration);
     #endif
   } else {
-    for (int i = startSampleIndex; i < endSampleIndex; i++) {
-      float f = inputBuffer[i];
-      outputBuffer[i] = f - floorf(f);
+    for (int i = fromIndex; i < toIndex; i++) {
+      float f = dspBufferAtInlet0[i];
+      dspBufferAtOutlet0[i] = f - floorf(f);
     }
   }
-  blockIndexOfLastMessage = blockIndex;
 }

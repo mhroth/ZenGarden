@@ -21,13 +21,15 @@
  */
 
 #include "MessageInlet.h"
+#include "PdGraph.h"
 
 MessageInlet::MessageInlet(PdGraph *graph) : MessageObject(1, 1, graph) {
-  // nothing to do
+  numMessageInlets = 0;
+  canvasX = 0;
 }
 
 MessageInlet::~MessageInlet() {
-  // nothing to do
+  numMessageInlets = 1;
 }
 
 const char *MessageInlet::getObjectLabel() {
@@ -40,4 +42,24 @@ ObjectType MessageInlet::getObjectType() {
 
 void MessageInlet::processMessage(int inletIndex, PdMessage *message) {
   sendMessage(0, message);
+}
+
+List *MessageInlet::getProcessOrderFromInlet() {
+  List *processList = new List();
+  List *incomingMessageConnections = incomingMessageConnectionsListAtInlet[0];
+  for (int i = 0; i < incomingMessageConnections->size(); i++) {
+    ObjectLetPair *objectLetPair = (ObjectLetPair *) incomingMessageConnections->get(i);
+    List *parentProcessList = objectLetPair->object->getProcessOrder();
+    processList->add(parentProcessList);
+    delete parentProcessList;
+  }
+  return processList;
+}
+
+int MessageInlet::getCanvasPosition() {
+  return canvasX;
+}
+
+void MessageInlet::setCanvasPosition(int pos) {
+  canvasX = pos;
 }

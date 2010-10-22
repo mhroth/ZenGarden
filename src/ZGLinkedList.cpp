@@ -94,6 +94,26 @@ void ZGLinkedList::add(void *data) {
   *nodeData = data;
 }
 
+void ZGLinkedList::add(int index, void *data) {
+  if (index <= 0) {
+    LinkedListNode *node = getEmptyNode();
+    node->data = data;
+    insertBefore(node, head);
+  } else if (index >= numElements) {
+    LinkedListNode *node = getEmptyNode();
+    node->data = data;
+    insertAfter(node, tail);
+  } else {
+    LinkedListNode *newNode = getEmptyNode();
+    newNode->data = data;
+    LinkedListNode *node = head;
+    for (int i = 0; i < index; i++) {
+      node = node->next;
+    }
+    insertBefore(newNode, node);
+  }
+}
+
 LinkedListNode *ZGLinkedList::getEmptyNode() {
   LinkedListNode *newNode = NULL;
   if (numEmptyElements > 0) {
@@ -112,7 +132,6 @@ LinkedListNode *ZGLinkedList::getEmptyNode() {
 
 void *ZGLinkedList::remove(LinkedListNode *node) {
   // remove the current node from the list
-  //if (head == tail && node == head && numElements == 1) {
   if (numElements == 1) {
     // if there is only one node in the list and this node is it
     head = NULL;

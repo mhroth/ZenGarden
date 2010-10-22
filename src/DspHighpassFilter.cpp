@@ -29,8 +29,6 @@ DspHighpassFilter::DspHighpassFilter(PdMessage *initMessage, PdGraph *graph) : D
   sampleRate = graph->getSampleRate();
   tapIn = 0.0f;
   tapOut = 0.0f;
-  filterInputBuffer = (float *) calloc(blockSizeInt+2, sizeof(float));
-  filterOutputBuffer = (float *) calloc(blockSizeInt+2, sizeof(float));
   coefficients = (float *) calloc(5, sizeof(float));
   // by default, the filter is initialised completely open
   calculateFilterCoefficients(initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f);
@@ -38,8 +36,6 @@ DspHighpassFilter::DspHighpassFilter(PdMessage *initMessage, PdGraph *graph) : D
 
 DspHighpassFilter::~DspHighpassFilter() {
   free(coefficients);
-  free(filterInputBuffer);
-  free(filterOutputBuffer);
 }
 
 const char *DspHighpassFilter::getObjectLabel() {
@@ -63,17 +59,15 @@ void DspHighpassFilter::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
       if (message->isSymbol(0) && strcmp(message->getSymbol(0), "clear") == 0) {
-        processDspToIndex(graph->getBlockIndex(message));
+        processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
         tapIn = 0.0f;
         tapOut = 0.0f;
-        memset(filterInputBuffer, 0, (blockSizeInt+2) * sizeof(float));
-        memset(filterOutputBuffer, 0, (blockSizeInt+2) * sizeof(float));
       }
       break;
     }
     case 1: {
       if (message->isFloat(0)) {
-        processDspToIndex(graph->getBlockIndex(message));
+        processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
         calculateFilterCoefficients(message->getFloat(0));
       }
       break;
@@ -85,28 +79,27 @@ void DspHighpassFilter::processMessage(int inletIndex, PdMessage *message) {
 }
 
 // http://en.wikipedia.org/wiki/High-pass_filter
-void DspHighpassFilter::processDspToIndex(float blockIndex) {
-  float *inputBuffer = localDspBufferAtInlet[0]; 
-  float *outputBuffer = localDspBufferAtOutlet[0];
-  int startSampleIndex = getStartSampleIndex();
-  int endSampleIndex = getEndSampleIndex(blockIndex);
+void DspHighpassFilter::processDspWithIndex(int fromIndex, int toIndex) {
   if (ArrayArithmetic::hasAccelerate) {
     #if __APPLE__
-    const int duration = endSampleIndex - startSampleIndex;
+    const int duration = toIndex - fromIndex;
     const int durationBytes = duration * sizeof(float);
-    memcpy(filterInputBuffer+2, inputBuffer+startSampleIndex, durationBytes);
+    float filterInputBuffer[duration+2];
+    memcpy(filterInputBuffer+2, dspBufferAtInlet0+fromIndex, durationBytes);
+    filterInputBuffer[1] = tapIn;
+    float filterOutputBuffer[duration+2];
+    filterOutputBuffer[1] = tapOut;
     vDSP_deq22(filterInputBuffer, 1, coefficients, filterOutputBuffer, 1, duration);
-    memcpy(outputBuffer+startSampleIndex, filterOutputBuffer+2, durationBytes);
-    memcpy(filterInputBuffer, filterInputBuffer+duration, 2 * sizeof(float));
-    memcpy(filterOutputBuffer, filterOutputBuffer+duration, 2 * sizeof(float));
+    memcpy(dspBufferAtOutlet0+fromIndex, filterOutputBuffer+2, durationBytes);
+    tapIn = dspBufferAtInlet0[toIndex-1];
+    tapOut = dspBufferAtOutlet0[toIndex-1];
     #endif
   } else {
-    outputBuffer[startSampleIndex] = alpha * (tapOut + inputBuffer[startSampleIndex] - tapIn);
-    for (int i = startSampleIndex+1; i < endSampleIndex; i++) {
-      outputBuffer[i] = alpha * (outputBuffer[i-1] + inputBuffer[i] - inputBuffer[i-1]);
+    dspBufferAtOutlet0[fromIndex] = alpha * (tapOut + dspBufferAtInlet0[fromIndex] - tapIn);
+    for (int i = fromIndex+1; i < toIndex; i++) {
+      dspBufferAtOutlet0[i] = alpha * (dspBufferAtOutlet0[i-1] + dspBufferAtInlet0[i] - dspBufferAtInlet0[i-1]);
     }
-    tapIn = inputBuffer[endSampleIndex-1];
-    tapOut = outputBuffer[endSampleIndex-1];
+    tapIn = dspBufferAtInlet0[toIndex-1];
+    tapOut = dspBufferAtOutlet0[toIndex-1];
   }
-  blockIndexOfLastMessage = blockIndex;
 }

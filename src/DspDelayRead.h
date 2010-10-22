@@ -42,11 +42,10 @@ class DspDelayRead : public DelayReceiver {
   
   private:
     void processMessage(int inletIndex, PdMessage *message);
-    void processDspToIndex(float newBlockIndex);
+    void processDspWithIndex(int fromIndex, int toIndex);
   
     float delayInSamples;
     int delayInSamplesInt;
-    float *originalOutputBuffer;
 };
 
 #endif // _DSP_DELAY_READ_H_

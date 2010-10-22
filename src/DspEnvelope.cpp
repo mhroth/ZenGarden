@@ -95,8 +95,8 @@ void DspEnvelope::initBuffers() {
   int numBlocksPerWindow = (windowSize % graph->getBlockSize() == 0) ? (windowSize/graph->getBlockSize()) : (windowSize/graph->getBlockSize()) + 1;
   int bufferSize = numBlocksPerWindow * graph->getBlockSize();
   signalBuffer = (float *) malloc(bufferSize * sizeof(float));
+  rmsBuffer = (float *) malloc(windowSize * sizeof(float));
   hanningCoefficients = (float *) malloc(bufferSize * sizeof(float));
-  rmsBuffer = (float *) malloc(bufferSize * sizeof(float));
   float N_1 = (float) (windowSize - 1); // (N == windowSize) - 1
   float hanningSum = 0.0f;
   for (int i = 0; i < windowSize; i++) {
@@ -111,9 +111,9 @@ void DspEnvelope::initBuffers() {
 }
 
 // windowSize and windowInterval are constrained to be multiples of the block size
-void DspEnvelope::processDspToIndex(float newBlockIndex) {
+void DspEnvelope::processDspWithIndex(int fromIndex, int toIndex) {
   // copy the input into the signal buffer
-  memcpy(signalBuffer + numSamplesReceived, localDspBufferAtInlet[0], numBytesInBlock);
+  memcpy(signalBuffer + numSamplesReceived, dspBufferAtInlet0, numBytesInBlock);
   numSamplesReceived += blockSizeInt;
   numSamplesReceivedSinceLastInterval += blockSizeInt;
   if (numSamplesReceived >= windowSize) {
@@ -123,15 +123,17 @@ void DspEnvelope::processDspToIndex(float newBlockIndex) {
     numSamplesReceivedSinceLastInterval -= windowInterval;
     // apply hanning window to signal and calculate Root Mean Square
     float rms = 0.0f;
-    #if TARGET_OS_MAC || TARGET_OS_IPHONE
-    vDSP_vsq(signalBuffer, 1, rmsBuffer, 1, windowSize); // signalBuffer^2 
-    vDSP_vmul(rmsBuffer, 1, hanningCoefficients, 1, rmsBuffer, 1, windowSize); // * hanning window
-    vDSP_sve(rmsBuffer, 1, &rms, windowSize); // sum the result
-    #else
-    for (int i = 0; i < windowSize; i++) {
-      rms += signalBuffer[i] * signalBuffer[i] * hanningCoefficients[i];
+    if (ArrayArithmetic::hasAccelerate) {
+      #if __APPLE__
+      vDSP_vsq(signalBuffer, 1, rmsBuffer, 1, windowSize); // signalBuffer^2 
+      vDSP_vmul(rmsBuffer, 1, hanningCoefficients, 1, rmsBuffer, 1, windowSize); // * hanning window
+      vDSP_sve(rmsBuffer, 1, &rms, windowSize); // sum the result
+      #endif
+    } else {
+      for (int i = 0; i < windowSize; i++) {
+        rms += signalBuffer[i] * signalBuffer[i] * hanningCoefficients[i];
+      }
     }
-    #endif
     // finish RMS calculation. sqrt is removed as it can be combined with the log operation.
     // result is normalised such that 1 RMS == 100 dB
     rms = 10.0f * log10f(rms) + 100.0f;

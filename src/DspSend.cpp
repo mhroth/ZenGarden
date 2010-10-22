@@ -26,14 +26,18 @@
 DspSend::DspSend(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0, 0, graph) {
   if (initMessage->isSymbol(0)) {
     name = StaticUtils::copyString(initMessage->getSymbol(0));
+    buffer = (float *) calloc(blockSizeInt, sizeof(float));
+    dspBufferAtOutlet0 = buffer;
   } else {
     name = NULL;
-    graph->printErr("send~ not initialised with a name.\n");
+    buffer = NULL;
+    graph->printErr("send~ not initialised with a name.");
   }
 }
 
 DspSend::~DspSend() {
   free(name);
+  free(dspBufferAtOutlet0);
 }
 
 const char *DspSend::getObjectLabel() {
@@ -49,5 +53,18 @@ char *DspSend::getName() {
 }
 
 float **DspSend::getBuffer() {
-  return &localDspBufferAtInlet[0];
+  return &buffer;
+}
+
+void DspSend::processDspWithIndex(int fromIndex, int toIndex) {
+  if (dspBufferAtInlet0 == NULL) {
+    // TODO(mhroth): if inlet buffer is NULL, then point to zero buffer
+  } else {
+    if (numConnectionsToInlet0 > 1) {
+      buffer = dspBufferAtOutlet0;
+      memcpy(buffer, dspBufferAtInlet0, numBytesInBlock);
+    } else {
+      buffer = dspBufferAtInlet0;
+    }
+  }
 }

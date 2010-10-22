@@ -35,7 +35,7 @@ class DspCosine : public DspObject {
     const char *getObjectLabel();
 
   protected:
-    void processDspToIndex(float blockIndex);
+    void processDspWithIndex(int fromIndex, int toIndex);
 
   private:
     float sampleRate;

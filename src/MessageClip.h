@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009, 2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -31,7 +31,6 @@ class MessageClip : public MessageObject {
 
   public:
     MessageClip(PdMessage *initMessage, PdGraph *graph);
-    MessageClip(PdGraph *graph);
     ~MessageClip();
 
     const char *getObjectLabel();
