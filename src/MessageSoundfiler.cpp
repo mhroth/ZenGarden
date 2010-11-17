@@ -38,31 +38,35 @@ const char *MessageSoundfiler::getObjectLabel() {
 }
 
 void MessageSoundfiler::processMessage(int inletIndex, PdMessage *message) {
-  if (message->isSymbol(0) && strcmp(message->getSymbol(0), "read") == 0) {
-	  int currentElementIndex = 1;
-	  bool shouldResizeTable = false;
-	  
-	  while (currentElementIndex < message->getNumElements()) {
-		  MessageElement *messageElement = message->getElement(currentElementIndex++);
-			if (messageElement->getType() == SYMBOL) {
-			  // only the -resize flag is supported for now
-			  if (strcmp(messageElement->getSymbol(), "-resize") == 0) {
-				  shouldResizeTable = true;
-			  } else {
-				  // all of the flags should have been seen now and now we expect the last two parameters,
-				  // which are file location and destination table name
-				  MessageElement *tableNameElement = message->getElement(currentElementIndex++);
-				  if (messageElement != NULL && messageElement->getType() == SYMBOL &&
-					    tableNameElement != NULL && tableNameElement->getType() == SYMBOL) {
+  if (message->isSymbol(0, "read")) {
+    int currentElementIndex = 1;
+    bool shouldResizeTable = false;
+    
+    while (currentElementIndex < message->getNumElements()) {
+      MessageElement *messageElement = message->getElement(currentElementIndex++);
+      if (messageElement->isSymbol()) {
+        // only the -resize flag is supported for now
+        if (strcmp(messageElement->getSymbol(), "-resize") == 0) {
+          shouldResizeTable = true;
+        } else {
+          // all of the flags should have been seen now and now we expect the last two parameters,
+          // which are file location and destination table name
+          MessageElement *tableNameElement = message->getElement(currentElementIndex++);
+          if (messageElement != NULL && messageElement->isSymbol() &&
+              tableNameElement != NULL && tableNameElement->isSymbol()) {
             MessageTable *table = graph->getTable(tableNameElement->getSymbol());
             if (table != NULL) {
               // use libsndfile to load and read the file (also converting the samples to [-1,1] float)
               SF_INFO sfInfo;
               char *fullPath = graph->resolveFullPath(messageElement->getSymbol());
-              SNDFILE *sndFile = sf_open(fullPath, SFM_READ, &sfInfo);
+              if (fullPath == NULL) {
+                graph->printErr("[soundfiler]: file %s cannot be found.", messageElement->getSymbol());
+                return;
+              }
               
+              SNDFILE *sndFile = sf_open(fullPath, SFM_READ, &sfInfo);
               if (sndFile == NULL) {
-                graph->printErr("soundfiler can't open %s.", fullPath);
+                graph->printErr("[soundfiler]: file %s cannot be opened.", fullPath);
                 free(fullPath);
                 return; // there was an error reading the file. Move on with life.
               } 
@@ -80,7 +84,7 @@ void MessageSoundfiler::processMessage(int inletIndex, PdMessage *message) {
                 // get the table's buffer. Resize the buffer if necessary.
                 int tableLength = samplesPerChannel;
                 float *tableBuffer = shouldResizeTable ? table->resizeBuffer(samplesPerChannel) :
-                    table->getBuffer(&tableLength);
+                table->getBuffer(&tableLength);
                 if (tableLength > samplesPerChannel) {
                   // avoid trying to read more into the table buffer than is available
                   tableLength = samplesPerChannel;
@@ -94,11 +98,11 @@ void MessageSoundfiler::processMessage(int inletIndex, PdMessage *message) {
                 // extract the second channel (if it exists and if there is a table to write it to)
                 if (sfInfo.channels > 1 &&
                     (tableNameElement = message->getElement(currentElementIndex++)) != NULL &&
-                    tableNameElement->getType() == SYMBOL &&
+                    tableNameElement->isSymbol() &&
                     (table = graph->getTable(tableNameElement->getSymbol())) != NULL) {
                   tableLength = samplesPerChannel;
                   tableBuffer = shouldResizeTable ? table->resizeBuffer(samplesPerChannel) :
-                      table->getBuffer(&tableLength);
+                  table->getBuffer(&tableLength);
                   if (tableLength > samplesPerChannel) {
                     // avoid trying to read more into the table buffer than is available
                     tableLength = samplesPerChannel;
@@ -117,11 +121,11 @@ void MessageSoundfiler::processMessage(int inletIndex, PdMessage *message) {
               sendMessage(0, outgoingMessage);
             }
           }
-			  }
-		  }
-		}
-  } else if (message->isSymbol(0) && strcmp(message->getSymbol(0), "write") == 0) {
-		// TODO(mhroth): not supported yet
+        }
+      }
+    }
+  } else if (message->isSymbol(0, "write")) {
+    // TODO(mhroth): not supported yet
     graph->printErr("The \"write\" command to soundfiler is not supported.");
-	}
+  }
 }
