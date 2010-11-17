@@ -102,12 +102,14 @@ void DspLowpassFilter::processDspWithIndex(int fromIndex, int toIndex) {
       if (ArrayArithmetic::hasAccelerate) {
         #if __APPLE__
         const int duration = toIndex - fromIndex;
+        float filterInputBuffer[duration+2];
+        filterInputBuffer[0] = filterInputBuffer[1] = 0.0f;
+        memcpy(filterInputBuffer+2, dspBufferAtInlet0+fromIndex, duration * sizeof(float));
         float filterOutputBuffer[duration+2];
-        filterOutputBuffer[1] = tap_0;
+        filterOutputBuffer[0] = 0.0f; filterOutputBuffer[1] = tap_0;
         // vDSP_deq22 =
         // out[i] = coeff[0]*in[i] + coeff[1]*in[i-1] + coeff[2]*in[i-2] - coeff[3]*out[i-1] - coeff[4]*out[i-2]
-        // use dspBufferAtInlet0 directly as in[i-1] and in[i-2] are not used (coeff[1] and coeff[2] are zero)
-        vDSP_deq22(dspBufferAtInlet0+fromIndex-2, 1, coefficients, filterOutputBuffer, 1, duration);
+        vDSP_deq22(filterInputBuffer, 1, coefficients, filterOutputBuffer, 1, duration);
         memcpy(dspBufferAtOutlet0+fromIndex, filterOutputBuffer+2, duration * sizeof(float));
         // retain last output
         tap_0 = dspBufferAtOutlet0[toIndex-1];
