@@ -86,9 +86,9 @@ void DspHighpassFilter::processDspWithIndex(int fromIndex, int toIndex) {
     const int durationBytes = duration * sizeof(float);
     float filterInputBuffer[duration+2];
     memcpy(filterInputBuffer+2, dspBufferAtInlet0+fromIndex, durationBytes);
-    filterInputBuffer[1] = tapIn;
+    filterInputBuffer[0] = 0.0f; filterInputBuffer[1] = tapIn;
     float filterOutputBuffer[duration+2];
-    filterOutputBuffer[1] = tapOut;
+    filterOutputBuffer[0] = 0.0f; filterOutputBuffer[1] = tapOut;
     vDSP_deq22(filterInputBuffer, 1, coefficients, filterOutputBuffer, 1, duration);
     memcpy(dspBufferAtOutlet0+fromIndex, filterOutputBuffer+2, durationBytes);
     tapIn = dspBufferAtInlet0[toIndex-1];
