@@ -80,26 +80,25 @@ void DspTableRead::processDspWithIndex(int fromIndex, int toIndex) {
     float *buffer = table->getBuffer(&bufferLength);
     if (ArrayArithmetic::hasAccelerate) {
       #if __APPLE__
+      int duration = toIndex - fromIndex;
+      
       // add the offset
-      vDSP_vsadd(dspBufferAtInlet0+fromIndex, 1, &offset, dspBufferAtOutlet0+fromIndex, 1,
-          toIndex-fromIndex);
+      vDSP_vsadd(dspBufferAtInlet0+fromIndex, 1, &offset, dspBufferAtOutlet0+fromIndex, 1, duration);
       
       // clip to the bounds of the table
-      float lowThresh = 0;
-      float highThresh = (float) (bufferLength-1);
-      vDSP_vclip(dspBufferAtInlet0+fromIndex, 1, &lowThresh, &highThresh,
-          dspBufferAtOutlet0+fromIndex, 1, toIndex-fromIndex);
+      float min = 0;
+      float max = (float) (bufferLength-1);
+      vDSP_vclip(dspBufferAtInlet0+fromIndex, 1, &min, &max, dspBufferAtOutlet0+fromIndex, 1, duration);
       
       // select the indicies
-      vDSP_vindex(buffer, dspBufferAtInlet0+fromIndex, 1, dspBufferAtOutlet0+fromIndex, 1,
-          toIndex-fromIndex);
+      vDSP_vindex(buffer, dspBufferAtInlet0+fromIndex, 1, dspBufferAtOutlet0+fromIndex, 1, duration);
       #endif
     } else {
       for (int i = fromIndex; i < toIndex; i++) {
         int x = (int) (dspBufferAtInlet0[i] + offset);
         if (x <= 0) {
           dspBufferAtOutlet0[i] = buffer[0];
-        } else if (x >= bufferLength-1) {
+        } else if (x >= bufferLength) {
           dspBufferAtOutlet0[i] = buffer[bufferLength-1];
         } else {
           dspBufferAtOutlet0[i] = buffer[x];
