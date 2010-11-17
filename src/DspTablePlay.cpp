@@ -28,15 +28,12 @@ DspTablePlay::DspTablePlay(PdMessage *initMessage, PdGraph *graph) : DspObject(1
   name = initMessage->isSymbol(0) ? StaticUtils::copyString(initMessage->getSymbol(0)) : NULL;
   table = NULL;
   outgoingMessage = NULL;
-  //localDspBufferAtOutletReserved = localDspBufferAtOutlet[0];
   currentTableIndex = 0;
   endTableIndex = 0;
 }
 
 DspTablePlay::~DspTablePlay() {
   free(name);
-  // allow the original audio buffer to be properly freed
-  //localDspBufferAtOutlet[0] = localDspBufferAtOutletReserved;
 }
 
 const char *DspTablePlay::getObjectLabel() {
@@ -95,7 +92,7 @@ void DspTablePlay::processMessage(int inletIndex, PdMessage *message) {
 void DspTablePlay::playTable(int startIndex, int duration, double startTime) {
   if (startIndex >= 0 && duration >= -1) {
     if (outgoingMessage != NULL) {
-      // if the table is currently playing and there is an outstanding scheduled message, cancel it
+      // if the table is currently playing, i.e. there is an outstanding scheduled message, cancel it
       graph->cancelMessage(this, 1, outgoingMessage);
       outgoingMessage = NULL;
     }
@@ -119,7 +116,6 @@ void DspTablePlay::playTable(int startIndex, int duration, double startTime) {
 }
 
 void DspTablePlay::processDspWithIndex(int fromIndex, int toIndex) {
-  /*
   if (table != NULL) {
     int bufferLength = 0;
     float *tableBuffer = table->getBuffer(&bufferLength);
@@ -127,39 +123,35 @@ void DspTablePlay::processDspWithIndex(int fromIndex, int toIndex) {
       // in case the table length has been reset while tabplay~ is playing the buffer
       endTableIndex = bufferLength;
     }
-    int startSampleIndex = getStartSampleIndex();
-    int endSampleIndex = getEndSampleIndex(blockIndex);
-    int duration = endSampleIndex - startSampleIndex; // the duration of the output buffer to fill
-    // the number of reamining samples in the table buffer
+    int duration = toIndex - fromIndex; // the duration of the output buffer to fill
+    // the number of remaining samples to play in the table buffer
     int remainingTableSamples = endTableIndex - currentTableIndex;
     if (remainingTableSamples <= 0) {
       // if the entire buffer has already been read, fill the output with silence
-      localDspBufferAtOutlet[0] = localDspBufferAtOutletReserved;
-      memset(localDspBufferAtOutletReserved + startSampleIndex, 0, duration * sizeof(float));
-    } else if (startSampleIndex == 0 && endSampleIndex == blockSizeInt &&
-        duration <= remainingTableSamples) {
-      // if the entire output must be filled and there are more than one buffer's worth of
-      // samples still available from the table, just set the output buffer pointer
-      localDspBufferAtOutlet[0] = tableBuffer + currentTableIndex;
-      currentTableIndex += blockSizeInt;
+      dspBufferAtOutlet0 = DspObject::zeroBuffer;
     } else if (duration <= remainingTableSamples) {
-      // if the number of remaining samples in the table is more than the number of samples
-      // which need to be read to the output buffer
-      localDspBufferAtOutlet[0] = localDspBufferAtOutletReserved;
-      memcpy(localDspBufferAtOutletReserved + startSampleIndex,
-             tableBuffer + currentTableIndex, duration * sizeof(float));
-      currentTableIndex += duration;
+      if (duration == blockSizeInt) {
+        // if the entire output must be filled and there are more than one buffer's worth of
+        // samples still available from the table, just set the output buffer pointer
+        dspBufferAtOutlet0 = tableBuffer + currentTableIndex;
+        currentTableIndex += blockSizeInt;
+      } else {
+        // if the number of remaining samples in the table is more than the number of samples
+        // which need to be read to the output buffer, but not the whole output buffer must be written
+        dspBufferAtOutlet0 = localDspOutletBuffers;
+        memcpy(dspBufferAtOutlet0 + fromIndex, tableBuffer + currentTableIndex, duration * sizeof(float));
+        currentTableIndex += duration;
+      }
     } else {
       // if the number of output buffer samples to fill is larger than the number of remaining table
       // samples, fill the output with the maximum available table samples, and fill in the remainder
       // with zero
-      localDspBufferAtOutlet[0] = localDspBufferAtOutletReserved;
-      memcpy(localDspBufferAtOutletReserved + startSampleIndex,
-             tableBuffer + currentTableIndex, remainingTableSamples * sizeof(float));
-      memset(localDspBufferAtOutletReserved + startSampleIndex + remainingTableSamples, 0,
-             (duration-remainingTableSamples) * sizeof(float));
+      dspBufferAtOutlet0 = localDspOutletBuffers;
+      memcpy(dspBufferAtOutlet0 + fromIndex, tableBuffer + currentTableIndex,
+          remainingTableSamples * sizeof(float));
+      memset(dspBufferAtOutlet0 + fromIndex + remainingTableSamples, 0,
+          (duration-remainingTableSamples) * sizeof(float));
       currentTableIndex += duration;
     }
   }
-  */
 }

@@ -57,7 +57,6 @@ class DspTablePlay : public DspObject, public TableReceiverInterface {
   
     // the message which is scheduled to be issues when the sample finishes playing
     PdMessage *outgoingMessage;
-    float *localDspBufferAtOutletReserved;
     int currentTableIndex; // the current index 
     int endTableIndex; // the index to play to
   
