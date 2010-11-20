@@ -23,48 +23,16 @@
 #include "MessageLine.h"
 #include "PdGraph.h"
 
+#define DEFAULT_GRAIN_RATE 20.0 // 20ms
+
 MessageLine::MessageLine(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
-  switch (initMessage->getNumElements()) {
-    case 1: {
-      if (initMessage->getElement(0)->getType() == FLOAT) {
-        currentValue = initMessage->getElement(0)->getFloat();
-      } else {
-        currentValue = 0.0f;
-      }
-      grainRate = DEFAULT_GRAIN_RATE;
-      slope = 0.0f;
-      break;
-    }
-    case 2: {
-      if (initMessage->getElement(0)->getType() == FLOAT &&
-          initMessage->getElement(1)->getType() == FLOAT) {
-        currentValue = initMessage->getElement(0)->getFloat();
-        grainRate = (double) initMessage->getElement(1)->getFloat();
-      } else {
-        currentValue = 0.0f;
-        grainRate = DEFAULT_GRAIN_RATE;
-      }
-      slope = 0.0f;
-      break;
-    }
-    default: {
-      currentValue = 0.0f;
-      grainRate = DEFAULT_GRAIN_RATE;
-      slope = 0.0f;
-      break;
-    }
+  if (initMessage->isFloat(0)) {
+    currentValue = initMessage->getFloat(0);
+    grainRate = initMessage->isFloat(1) ? (double) initMessage->getFloat(1) : DEFAULT_GRAIN_RATE;
+  } else {
+    currentValue = 0.0f;
+    grainRate = DEFAULT_GRAIN_RATE;
   }
-}
-
-MessageLine::MessageLine(float initValue, PdGraph *graph) : MessageObject(1, 1, graph) {
-  this->currentValue = initValue;
-  grainRate = DEFAULT_GRAIN_RATE;
-  slope = 0.0f;
-}
-
-MessageLine::MessageLine(float initValue, float grainRate, PdGraph *graph) : MessageObject(1, 1, graph) {
-  this->currentValue = initValue;
-  this->grainRate = (double) grainRate;
   slope = 0.0f;
 }
 
@@ -72,43 +40,65 @@ MessageLine::~MessageLine() {
   // nothing to do
 }
 
+const char *MessageLine::getObjectLabel() {
+  return "line";
+}
+
+bool MessageLine::shouldDistributeMessageToInlets() {
+  return false;
+}
+
 void MessageLine::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
       switch (message->getNumElements()) {
         case 1: {
-          if (message->getElement(0)->getType() == FLOAT) {
+          if (message->isFloat(0)) {
+            cancelPendingMessage();
+            
+            // update the current value of the [line] object
+            targetValue = currentValue = message->getFloat(0);
+            
             // jump to the given value
+            lastMessageTimestamp = message->getTimestamp();
             PdMessage *outgoingMessage = getNextOutgoingMessage(0);
             outgoingMessage->setTimestamp(message->getTimestamp());
-            
-            currentValue = message->getElement(0)->getFloat();
-            // TODO(mhroth): cancel any callbacks
-            
-            outgoingMessage->getElement(0)->setFloat(currentValue);
+            outgoingMessage->setFloat(0, currentValue);
             sendMessage(0, outgoingMessage);
+          } else if (message->isSymbol(0, "stop")) {
+            cancelPendingMessage();
           }
           break;
         }
         case 2: {
-          if (message->getElement(0)->getType() == FLOAT &&
-              message->getElement(1)->getType() == FLOAT) {
+          if (message->isFloat(0) && message->isFloat(1)) {
             // set value and target
-            targetValue = message->getElement(0)->getFloat();
-            float duration = message->getElement(1)->getFloat();
+            targetValue = message->getFloat(0);
+            float duration = message->getFloat(1);
+            
+            if (pendingMessage != NULL) {
+              // the target value has not yet been reached
+              // calculate the new current value depending on when the last message as sent from this object
+              currentValue += (message->getTimestamp() - lastMessageTimestamp) * slope;
+            }
             slope = (targetValue - currentValue) / duration;
             
-            // send the current message
-            PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-            outgoingMessage->setTimestamp(message->getTimestamp());
-            outgoingMessage->getElement(0)->setFloat(currentValue);
-            sendMessage(0, outgoingMessage);
+            // cancel any previous pending messages. The next message will be scheduled in sendMessage()
+            cancelPendingMessage();
             
-            // schedule the next message
-            pendingMessage = getNextOutgoingMessage(0);
-            pendingMessage->setTimestamp(message->getTimestamp() + grainRate);
-            pendingMessage->getElement(0)->setFloat(currentValue + slope);
-            graph->scheduleMessage(this, 0, pendingMessage);
+            if (slope != 0.0f) {
+              // send the current message (if the slope isn't flat)
+              lastMessageTimestamp = message->getTimestamp();
+              PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+              outgoingMessage->setTimestamp(message->getTimestamp());
+              outgoingMessage->setFloat(0, currentValue);
+              sendMessage(0, outgoingMessage);
+            }
+          } else if (message->isSymbol(0, "set") && message->isFloat(1)) {
+            cancelPendingMessage();
+            
+            // set the current value to the given input, without outputting any message
+            currentValue = message->getFloat(1);
           }
           break;
         }
@@ -120,7 +110,61 @@ void MessageLine::processMessage(int inletIndex, PdMessage *message) {
     }
     case 1: {
       // not sure what to do in this case
+      if (message->isFloat(0)) {
+        // update the grain rate, because somehow that makes sense. Could be completely wrong :-/
+        grainRate = (double) message->getFloat(0);
+      }
+      break;
+    }
+    default: {
       break;
     }
   }
+}
+
+void MessageLine::cancelPendingMessage() {
+  graph->cancelMessage(this, 0, pendingMessage);
+  pendingMessage = NULL;
+}
+
+void MessageLine::sendMessage(int outletIndex, PdMessage *message) {
+  // schedule the pending message before the current one is sent so that if a stop message
+  // arrives at this object while in this function, then the next message can be cancelled
+  
+  // increase the retain count of the message so that it is not reused on the next call to getNextOutgoingMessage()
+  message->reserve();
+  
+  // now that this message is being sent, the current value of this [line] object is certain
+  currentValue = message->getFloat(0);
+  if (slope > 0.0f) {
+    if (currentValue < targetValue) {
+      pendingMessage = getNextOutgoingMessage(0);
+      pendingMessage->setTimestamp(message->getTimestamp() + grainRate);
+      pendingMessage->setFloat(0, currentValue + slope * grainRate);
+      graph->scheduleMessage(this, 0, pendingMessage);
+    } else { // currentValue >= targetValue
+      // in case the current value is greater than the target value, due to floating-point precision error
+      currentValue = targetValue;
+      message->setFloat(0, currentValue);
+      pendingMessage = NULL;
+    }
+  } else if (slope < 0.0f) {
+    if (currentValue > targetValue) {
+      pendingMessage = getNextOutgoingMessage(0);
+      pendingMessage->setTimestamp(message->getTimestamp() + grainRate);
+      pendingMessage->setFloat(0, currentValue + slope * grainRate);
+      graph->scheduleMessage(this, 0, pendingMessage);
+    } else { // currentValue <= targetValue
+      currentValue = targetValue;
+      message->setFloat(0, currentValue);
+      pendingMessage = NULL;
+    }
+  }
+  // do nothing if slope == 0.0f (i.e., flat)
+  
+  // decrement the retain count in order to balance the previous call to retain()
+  message->unreserve();
+  
+  lastMessageTimestamp = message->getTimestamp();
+  MessageObject::sendMessage(outletIndex, message);
 }

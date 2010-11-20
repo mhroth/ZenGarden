@@ -43,6 +43,7 @@
 #include "MessageInteger.h"
 #include "MessageLessThan.h"
 #include "MessageLessThanOrEqualTo.h"
+#include "MessageLine.h"
 #include "MessageListAppend.h"
 #include "MessageListLength.h"
 #include "MessageListPrepend.h"
@@ -550,6 +551,8 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
     } else if (strcmp(objectLabel, "int") == 0 ||
                strcmp(objectLabel, "i") == 0) {
       return new MessageInteger(initMessage, graph);
+    } else if (strcmp(objectLabel, "line") == 0) {
+      return new MessageLine(initMessage, graph);
     } else if (strcmp(objectLabel, "list") == 0) {
       if (initMessage->isSymbol(0)) {
         if (initMessage->isSymbol(0, "append") ||
@@ -1011,27 +1014,33 @@ PdMessage *PdContext::getNextExternalMessage() {
 }
 
 void PdContext::scheduleMessage(MessageObject *messageObject, int outletIndex, PdMessage *message) {
-  message->reserve();
-  messageCallbackQueue->insertMessage(messageObject, outletIndex, message);
+  // basic argument checking. It may happen that the message is NULL in case a cancel message
+  // is sent multiple times to a particular object, when no message is pending
+  if (message != NULL && outletIndex >= 0 && messageObject != NULL) {
+    message->reserve();
+    messageCallbackQueue->insertMessage(messageObject, outletIndex, message);
+  }
 }
 
 void PdContext::cancelMessage(MessageObject *messageObject, int outletIndex, PdMessage *message) {
-  messageCallbackQueue->removeMessage(messageObject, outletIndex, message);
-  message->unreserve();
+  if (message != NULL && outletIndex >= 0 && messageObject != NULL) {
+    messageCallbackQueue->removeMessage(messageObject, outletIndex, message);
+    message->unreserve();
+  }
 }
 
 void PdContext::receiveSystemMessage(PdMessage *message) {
   // TODO(mhroth): What are all of the possible system messages?
   if (message->isSymbol(0, "obj")) {
-    // TODO(mhroth)
+    // TODO(mhroth): dynamic patching
   } else if (callbackFunction != NULL) {
     if (message->isSymbol(0, "dsp") && message->isFloat(1)) {
       int result = (message->getFloat(1) != 0.0f) ? 1 : 0;
       callbackFunction(ZG_PD_DSP, callbackUserData, &result);
-    } else {
-      char *messageString = message->toString();
-      printErr("Unrecognised system command: %s", messageString);
-      free(messageString);
     }
+  } else {
+    char *messageString = message->toString();
+    printErr("Unrecognised system command: %s", messageString);
+    free(messageString);
   }
 }

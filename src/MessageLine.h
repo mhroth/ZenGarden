@@ -32,19 +32,23 @@ class MessageLine : public MessageObject {
   
   public:
     MessageLine(PdMessage *initMessage, PdGraph *graph);
-    MessageLine(float initValue, PdGraph *graph);
-    MessageLine(float initValue, float grainRate, PdGraph *graph);
     ~MessageLine();
+  
+    bool shouldDistributeMessageToInlets();
+    void sendMessage(int outletIndex, PdMessage *message);
+  
+    const char *getObjectLabel();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
+    void cancelPendingMessage();
   
     double grainRate;
     float slope;
+    double lastMessageTimestamp; // timestamp of when the last message was sent from this object
     float currentValue;
     float targetValue;
     PdMessage *pendingMessage;
-    static const double DEFAULT_GRAIN_RATE = 20.0; // 20ms
 };
 
 #endif // _MESSAGE_LINE_H_
