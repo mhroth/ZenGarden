@@ -349,7 +349,7 @@ char *PdMessage::toString() {
         break;
       }
       case BANG: {
-        lengths[i] = 4; //snprintf(NULL, 0, "%s", "bang");
+        lengths[i] = 4; // snprintf(NULL, 0, "%s", "bang");
         break;
       }
       case SYMBOL: {
