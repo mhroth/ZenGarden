@@ -62,6 +62,11 @@ public class PdObjectTest implements ZenGardenListener {
   }
   
   @Test
+  public void testDspPrint() {
+    genericMessageTest("DspPrint.pd");
+  }
+  
+  @Test
   public void testMessageAdd() {
     genericMessageTest("MessageAdd.pd");
   }
@@ -230,7 +235,12 @@ public class PdObjectTest implements ZenGardenListener {
   public void testMessageMultiply() { 
     genericMessageTest("MessageMultiply.pd");
   }
-
+  /*
+  @Test
+  public void testMessageLine() { 
+    genericMessageTest("MessageLine.pd", 3000.0f);
+  }
+  */
   @Test
   public void testMessageNotEquals() {
     genericMessageTest("MessageNotEquals.pd");
@@ -243,7 +253,7 @@ public class PdObjectTest implements ZenGardenListener {
 
   @Test
   public void testMessagePipe() {
-	genericMessageTest("MessagePipe.pd", 2000.0f);
+    genericMessageTest("MessagePipe.pd", 2000.0f);
   }
 	
   @Test
@@ -263,7 +273,7 @@ public class PdObjectTest implements ZenGardenListener {
   
   @Test
   public void testMessageReceive() {
-	genericMessageTest("MessageReceive.pd");
+    genericMessageTest("MessageReceive.pd");
   }
 	
   @Test
@@ -283,7 +293,7 @@ public class PdObjectTest implements ZenGardenListener {
 
   @Test
   public void testMessageSelect() {
-	genericMessageTest("MessageSelect.pd");
+    genericMessageTest("MessageSelect.pd");
   }	
 	
   @Test
@@ -293,17 +303,17 @@ public class PdObjectTest implements ZenGardenListener {
 
   @Test
   public void testMessageSine() {
-	genericMessageTest("MessageSine.pd");
+    genericMessageTest("MessageSine.pd");
   }
 
   @Test
   public void testMessageSpigot() {
-	genericMessageTest("MessageSpigot.pd");
+    genericMessageTest("MessageSpigot.pd");
   }
 	
   @Test
   public void testMessageSqrt() {
-	genericMessageTest("MessageSqrt.pd");
+    genericMessageTest("MessageSqrt.pd");
   }
 	
   @Test
@@ -318,22 +328,22 @@ public class PdObjectTest implements ZenGardenListener {
 	
   @Test
   public void testMessageSymbol() {
-	genericMessageTest("MessageSymbol.pd");
+    genericMessageTest("MessageSymbol.pd");
   }
 	
   @Test
   public void testMessageTable() {
-  genericMessageTest("MessageTable.pd");
+    genericMessageTest("MessageTable.pd");
   }
 
   @Test
   public void testMessageTangent() {
-	genericMessageTest("MessageTangent.pd");
+    genericMessageTest("MessageTangent.pd");
   }
 	
   @Test
   public void testMessageTimer() {
-	genericMessageTest("MessageTimer.pd", 1247.0f);
+    genericMessageTest("MessageTimer.pd", 1247.0f);
   }
 
   @Test

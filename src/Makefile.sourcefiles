@@ -25,7 +25,9 @@ LOCAL_SRC_FILES := \
 ./DspOsc.cpp \
 ./DspOutlet.cpp \
 ./DspPhasor.cpp \
+./DspPrint.cpp \
 ./DspReceive.cpp \
+./DspRfft.cpp \
 ./DspSend.cpp \
 ./DspSignal.cpp \
 ./DspSnapshot.cpp \

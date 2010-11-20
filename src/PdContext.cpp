@@ -124,7 +124,9 @@
 #include "DspOsc.h"
 #include "DspOutlet.h"
 #include "DspPhasor.h"
+#include "DspPrint.h"
 #include "DspReceive.h"
+#include "DspRfft.h"
 #include "DspSend.h"
 #include "DspSignal.h"
 #include "DspSnapshot.h"
@@ -710,9 +712,13 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
       return new DspOutlet(graph);
     } else if (strcmp(objectLabel, "phasor~") == 0) {
       return new DspPhasor(initMessage, graph);
+    } else if (strcmp(objectLabel, "print~") == 0) {
+      return new DspPrint(initMessage, graph);
     } else if (strcmp(objectLabel, "receive~") == 0 ||
                strcmp(objectLabel, "r~") == 0) {
       return new DspReceive(initMessage, graph);
+    } else if (strcmp(objectLabel, "rfft~") == 0) {
+      return new DspRfft(initMessage, graph);
     } else if (strcmp(objectLabel, "samplerate~") == 0) {
       return new MessageSamplerate(initMessage, graph);
     } else if (strcmp(objectLabel, "send~") == 0 ||
