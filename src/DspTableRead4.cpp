@@ -86,24 +86,25 @@ void DspTableRead4::processDspWithIndex(int fromIndex, int toIndex) {
       //    inputBuffer+startSampleIndex, 1, endSampleIndex-startSampleIndex);
       // NOTE(mhroth): is isn't clear what the clipping behaviour of vDSP_vlint is, but I
       // *think* that it is doing the right thing (i.e., clipping OOB indicies)
-      vDSP_vsadd(dspBufferAtInlet0+fromIndex, 1, &offset, dspBufferAtOutlet0+fromIndex, 1,
-          toIndex-fromIndex);
-      vDSP_vlint(buffer, dspBufferAtInlet0+fromIndex, 1, dspBufferAtOutlet0+fromIndex, 1,
-          toIndex-fromIndex, bufferLength);
+      int duration = toIndex - fromIndex;
+      vDSP_vsadd(dspBufferAtInlet0+fromIndex, 1, &offset, dspBufferAtOutlet0+fromIndex, 1, duration);
+      vDSP_vlint(buffer, dspBufferAtOutlet0+fromIndex, 1, dspBufferAtOutlet0+fromIndex, 1,
+          duration, bufferLength);
       #endif
     } else {
       int maxIndex = bufferLength-1;
       for (int i = fromIndex; i < toIndex; i++) {
-        int x = (int) (dspBufferAtInlet0[i] + offset);
-        if (x <= 0) {
+        float xf = dspBufferAtInlet0[i] + offset;
+        int xi = (int) xf;
+        if (xi <= 0) {
           dspBufferAtOutlet0[i] = buffer[0];
-        } else if (x >= maxIndex) {
+        } else if (xi >= maxIndex) {
           dspBufferAtOutlet0[i] = buffer[maxIndex];
         } else {
           // 2-point linear interpolation (basic and fast)
-          float dx = dspBufferAtInlet0[i] - ((float) x);
-          float y0 = buffer[x];
-          float y1 = buffer[x+1];
+          float dx = xf - ((float) xi);
+          float y0 = buffer[xi];
+          float y1 = buffer[xi+1];
           float slope = (y1 - y0);
           dspBufferAtOutlet0[i] = (slope * dx) + y0;
         }
