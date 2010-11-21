@@ -28,6 +28,7 @@ LOCAL_SRC_FILES := \
 ./DspPrint.cpp \
 ./DspReceive.cpp \
 ./DspRfft.cpp \
+./DspRifft.cpp \
 ./DspSend.cpp \
 ./DspSignal.cpp \
 ./DspSnapshot.cpp \

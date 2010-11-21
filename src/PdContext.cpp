@@ -127,6 +127,7 @@
 #include "DspPrint.h"
 #include "DspReceive.h"
 #include "DspRfft.h"
+#include "DspRifft.h"
 #include "DspSend.h"
 #include "DspSignal.h"
 #include "DspSnapshot.h"
@@ -719,6 +720,8 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
       return new DspReceive(initMessage, graph);
     } else if (strcmp(objectLabel, "rfft~") == 0) {
       return new DspRfft(initMessage, graph);
+    } else if (strcmp(objectLabel, "rifft~") == 0) {
+      return new DspRifft(initMessage, graph);
     } else if (strcmp(objectLabel, "samplerate~") == 0) {
       return new MessageSamplerate(initMessage, graph);
     } else if (strcmp(objectLabel, "send~") == 0 ||

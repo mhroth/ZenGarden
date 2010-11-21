@@ -647,6 +647,11 @@
 		90AD81BA12986DE10029E2B1 /* DspPrint.h in Headers */ = {isa = PBXBuildFile; fileRef = 90AD81B612986DE10029E2B1 /* DspPrint.h */; };
 		90AD81BB12986DE10029E2B1 /* DspPrint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90AD81B712986DE10029E2B1 /* DspPrint.cpp */; };
 		90AD81BC12986DE10029E2B1 /* DspPrint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90AD81B712986DE10029E2B1 /* DspPrint.cpp */; };
+		90AD8257129883080029E2B1 /* DspRifft.h in Headers */ = {isa = PBXBuildFile; fileRef = 90AD8255129883080029E2B1 /* DspRifft.h */; };
+		90AD8258129883080029E2B1 /* DspRifft.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90AD8256129883080029E2B1 /* DspRifft.cpp */; };
+		90AD8259129883080029E2B1 /* DspRifft.h in Headers */ = {isa = PBXBuildFile; fileRef = 90AD8255129883080029E2B1 /* DspRifft.h */; };
+		90AD825A129883080029E2B1 /* DspRifft.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90AD8256129883080029E2B1 /* DspRifft.cpp */; };
+		90AD825B129883080029E2B1 /* DspRifft.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90AD8256129883080029E2B1 /* DspRifft.cpp */; };
 		90AF7F7511FE67BE006F88E6 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9069DFD111D17BD600889A5B /* Accelerate.framework */; };
 		90B1873411FDB167009B45AB /* DspMinimum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90B1873311FDB167009B45AB /* DspMinimum.cpp */; };
 		90B1873511FDB167009B45AB /* DspMinimum.h in Headers */ = {isa = PBXBuildFile; fileRef = 90B1873211FDB167009B45AB /* DspMinimum.h */; };
@@ -978,6 +983,8 @@
 		90AD81751298675C0029E2B1 /* DspRfft.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspRfft.cpp; path = ../src/DspRfft.cpp; sourceTree = SOURCE_ROOT; };
 		90AD81B612986DE10029E2B1 /* DspPrint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspPrint.h; path = ../src/DspPrint.h; sourceTree = SOURCE_ROOT; };
 		90AD81B712986DE10029E2B1 /* DspPrint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspPrint.cpp; path = ../src/DspPrint.cpp; sourceTree = SOURCE_ROOT; };
+		90AD8255129883080029E2B1 /* DspRifft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspRifft.h; path = ../src/DspRifft.h; sourceTree = SOURCE_ROOT; };
+		90AD8256129883080029E2B1 /* DspRifft.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspRifft.cpp; path = ../src/DspRifft.cpp; sourceTree = SOURCE_ROOT; };
 		90B1873211FDB167009B45AB /* DspMinimum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspMinimum.h; path = ../src/DspMinimum.h; sourceTree = SOURCE_ROOT; };
 		90B1873311FDB167009B45AB /* DspMinimum.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspMinimum.cpp; path = ../src/DspMinimum.cpp; sourceTree = SOURCE_ROOT; };
 		90BB31C811FE3F62008A0628 /* ObjectType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ObjectType.h; path = ../src/ObjectType.h; sourceTree = SOURCE_ROOT; };
@@ -1111,6 +1118,8 @@
 				90337B7D11D0D847009FCC01 /* DspReceive.h */,
 				90AD81751298675C0029E2B1 /* DspRfft.cpp */,
 				90AD81741298675C0029E2B1 /* DspRfft.h */,
+				90AD8256129883080029E2B1 /* DspRifft.cpp */,
+				90AD8255129883080029E2B1 /* DspRifft.h */,
 				90337B7E11D0D847009FCC01 /* DspSend.cpp */,
 				90337B7F11D0D847009FCC01 /* DspSend.h */,
 				90251D5512043445000EAF40 /* DspSignal.cpp */,
@@ -1512,6 +1521,7 @@
 				90F4C19C12328CFC001182CF /* MessageLogicalOr.h in Headers */,
 				90AD81781298675C0029E2B1 /* DspRfft.h in Headers */,
 				90AD81BA12986DE10029E2B1 /* DspPrint.h in Headers */,
+				90AD8259129883080029E2B1 /* DspRifft.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1664,6 +1674,7 @@
 				90F4C19E12328CFC001182CF /* MessageLogicalOr.h in Headers */,
 				90AD81761298675C0029E2B1 /* DspRfft.h in Headers */,
 				90AD81B812986DE10029E2B1 /* DspPrint.h in Headers */,
+				90AD8257129883080029E2B1 /* DspRifft.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1886,6 +1897,7 @@
 				9082C816126133160026725E /* DspTableRead.cpp in Sources */,
 				90AD817A1298675C0029E2B1 /* DspRfft.cpp in Sources */,
 				90AD81BC12986DE10029E2B1 /* DspPrint.cpp in Sources */,
+				90AD825B129883080029E2B1 /* DspRifft.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2025,6 +2037,7 @@
 				90F4C19B12328CFC001182CF /* MessageLogicalOr.cpp in Sources */,
 				90AD81791298675C0029E2B1 /* DspRfft.cpp in Sources */,
 				90AD81BB12986DE10029E2B1 /* DspPrint.cpp in Sources */,
+				90AD825A129883080029E2B1 /* DspRifft.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2165,6 +2178,7 @@
 				90F4C19D12328CFC001182CF /* MessageLogicalOr.cpp in Sources */,
 				90AD81771298675C0029E2B1 /* DspRfft.cpp in Sources */,
 				90AD81B912986DE10029E2B1 /* DspPrint.cpp in Sources */,
+				90AD8258129883080029E2B1 /* DspRifft.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
