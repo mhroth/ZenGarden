@@ -58,7 +58,7 @@ void MessageTableRead::processMessage(int inletIndex, PdMessage *message) {
         if (index >= 0 && index < bufferLength) {
           PdMessage *outgoingMessage = getNextOutgoingMessage(0);
           outgoingMessage->setTimestamp(message->getTimestamp());
-          outgoingMessage->setFloat(0, (float) buffer[index]);
+          outgoingMessage->setFloat(0, buffer[index]);
           sendMessage(0, outgoingMessage);
         }
       }
