@@ -121,6 +121,7 @@ class PdMessage {
      */
     void setFloat(int index, float value);
     void setSymbol(int index, char *symbol);
+    void setBang(int index);
   
     /** Add a new element to the message, making a copy of the value of the given element. */
     void addElement(MessageElement *messageElement);

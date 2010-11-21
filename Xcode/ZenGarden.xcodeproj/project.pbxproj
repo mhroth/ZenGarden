@@ -628,6 +628,11 @@
 		905C404A1205D274001B31A7 /* MessageListAppend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 905C40451205D274001B31A7 /* MessageListAppend.cpp */; };
 		9069DFD211D17BD600889A5B /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9069DFD111D17BD600889A5B /* Accelerate.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		9069DFD311D17BF100889A5B /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9069DFD111D17BD600889A5B /* Accelerate.framework */; };
+		907B1F52129965D900B263E2 /* DspBang.h in Headers */ = {isa = PBXBuildFile; fileRef = 907B1F50129965D900B263E2 /* DspBang.h */; };
+		907B1F53129965D900B263E2 /* DspBang.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 907B1F51129965D900B263E2 /* DspBang.cpp */; };
+		907B1F54129965D900B263E2 /* DspBang.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 907B1F51129965D900B263E2 /* DspBang.cpp */; };
+		907B1F55129965D900B263E2 /* DspBang.h in Headers */ = {isa = PBXBuildFile; fileRef = 907B1F50129965D900B263E2 /* DspBang.h */; };
+		907B1F56129965D900B263E2 /* DspBang.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 907B1F51129965D900B263E2 /* DspBang.cpp */; };
 		9082C7FE126132920026725E /* DspTablePlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9017567311DFDD4B00A22517 /* DspTablePlay.cpp */; };
 		9082C801126132A20026725E /* DspDelayRead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B5C11D0D847009FCC01 /* DspDelayRead.cpp */; };
 		9082C802126132AD0026725E /* DspReceive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B7C11D0D847009FCC01 /* DspReceive.cpp */; };
@@ -665,6 +670,11 @@
 		90BB31CF11FE3F62008A0628 /* ObjectType.h in Headers */ = {isa = PBXBuildFile; fileRef = 90BB31C811FE3F62008A0628 /* ObjectType.h */; };
 		90BB31D011FE3F62008A0628 /* PdContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90BB31C911FE3F62008A0628 /* PdContext.cpp */; };
 		90BB31D111FE3F62008A0628 /* PdContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 90BB31CA11FE3F62008A0628 /* PdContext.h */; };
+		90CCEBE31299CD7D009D36DF /* DspReciprocalSqrt.h in Headers */ = {isa = PBXBuildFile; fileRef = 90CCEBE11299CD7D009D36DF /* DspReciprocalSqrt.h */; };
+		90CCEBE41299CD7D009D36DF /* DspReciprocalSqrt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90CCEBE21299CD7D009D36DF /* DspReciprocalSqrt.cpp */; };
+		90CCEBE51299CD7D009D36DF /* DspReciprocalSqrt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90CCEBE21299CD7D009D36DF /* DspReciprocalSqrt.cpp */; };
+		90CCEBE61299CD7D009D36DF /* DspReciprocalSqrt.h in Headers */ = {isa = PBXBuildFile; fileRef = 90CCEBE11299CD7D009D36DF /* DspReciprocalSqrt.h */; };
+		90CCEBE71299CD7D009D36DF /* DspReciprocalSqrt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90CCEBE21299CD7D009D36DF /* DspReciprocalSqrt.cpp */; };
 		90D0312A1204866300FEE5BB /* MessageListSplit.h in Headers */ = {isa = PBXBuildFile; fileRef = 90D031281204866300FEE5BB /* MessageListSplit.h */; };
 		90D0312B1204866300FEE5BB /* MessageListSplit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90D031291204866300FEE5BB /* MessageListSplit.cpp */; };
 		90D0312C1204866300FEE5BB /* MessageListSplit.h in Headers */ = {isa = PBXBuildFile; fileRef = 90D031281204866300FEE5BB /* MessageListSplit.h */; };
@@ -977,6 +987,8 @@
 		905C40441205D274001B31A7 /* MessageListAppend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageListAppend.h; path = ../src/MessageListAppend.h; sourceTree = SOURCE_ROOT; };
 		905C40451205D274001B31A7 /* MessageListAppend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageListAppend.cpp; path = ../src/MessageListAppend.cpp; sourceTree = SOURCE_ROOT; };
 		9069DFD111D17BD600889A5B /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
+		907B1F50129965D900B263E2 /* DspBang.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspBang.h; path = ../src/DspBang.h; sourceTree = SOURCE_ROOT; };
+		907B1F51129965D900B263E2 /* DspBang.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspBang.cpp; path = ../src/DspBang.cpp; sourceTree = SOURCE_ROOT; };
 		909608DC120B8A1C00135B03 /* MessageStripNote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageStripNote.h; path = ../src/MessageStripNote.h; sourceTree = SOURCE_ROOT; };
 		909608DD120B8A1C00135B03 /* MessageStripNote.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageStripNote.cpp; path = ../src/MessageStripNote.cpp; sourceTree = SOURCE_ROOT; };
 		90AD81741298675C0029E2B1 /* DspRfft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspRfft.h; path = ../src/DspRfft.h; sourceTree = SOURCE_ROOT; };
@@ -990,6 +1002,8 @@
 		90BB31C811FE3F62008A0628 /* ObjectType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ObjectType.h; path = ../src/ObjectType.h; sourceTree = SOURCE_ROOT; };
 		90BB31C911FE3F62008A0628 /* PdContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PdContext.cpp; path = ../src/PdContext.cpp; sourceTree = SOURCE_ROOT; };
 		90BB31CA11FE3F62008A0628 /* PdContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PdContext.h; path = ../src/PdContext.h; sourceTree = SOURCE_ROOT; };
+		90CCEBE11299CD7D009D36DF /* DspReciprocalSqrt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspReciprocalSqrt.h; path = ../src/DspReciprocalSqrt.h; sourceTree = SOURCE_ROOT; };
+		90CCEBE21299CD7D009D36DF /* DspReciprocalSqrt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspReciprocalSqrt.cpp; path = ../src/DspReciprocalSqrt.cpp; sourceTree = SOURCE_ROOT; };
 		90D031281204866300FEE5BB /* MessageListSplit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageListSplit.h; path = ../src/MessageListSplit.h; sourceTree = SOURCE_ROOT; };
 		90D031291204866300FEE5BB /* MessageListSplit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageListSplit.cpp; path = ../src/MessageListSplit.cpp; sourceTree = SOURCE_ROOT; };
 		90D76583120A208B0047C019 /* DeclareList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeclareList.h; path = ../src/DeclareList.h; sourceTree = SOURCE_ROOT; };
@@ -1070,6 +1084,8 @@
 				90337B5111D0D847009FCC01 /* DspAdd.h */,
 				90337B5211D0D847009FCC01 /* DspBandpassFilter.cpp */,
 				90337B5311D0D847009FCC01 /* DspBandpassFilter.h */,
+				907B1F51129965D900B263E2 /* DspBang.cpp */,
+				907B1F50129965D900B263E2 /* DspBang.h */,
 				90337B5411D0D847009FCC01 /* DspCatch.cpp */,
 				90337B5511D0D847009FCC01 /* DspCatch.h */,
 				90337B5611D0D847009FCC01 /* DspClip.cpp */,
@@ -1116,6 +1132,8 @@
 				90AD81B712986DE10029E2B1 /* DspPrint.cpp */,
 				90AD81B612986DE10029E2B1 /* DspPrint.h */,
 				90337B7D11D0D847009FCC01 /* DspReceive.h */,
+				90CCEBE21299CD7D009D36DF /* DspReciprocalSqrt.cpp */,
+				90CCEBE11299CD7D009D36DF /* DspReciprocalSqrt.h */,
 				90AD81751298675C0029E2B1 /* DspRfft.cpp */,
 				90AD81741298675C0029E2B1 /* DspRfft.h */,
 				90AD8256129883080029E2B1 /* DspRifft.cpp */,
@@ -1522,6 +1540,8 @@
 				90AD81781298675C0029E2B1 /* DspRfft.h in Headers */,
 				90AD81BA12986DE10029E2B1 /* DspPrint.h in Headers */,
 				90AD8259129883080029E2B1 /* DspRifft.h in Headers */,
+				907B1F52129965D900B263E2 /* DspBang.h in Headers */,
+				90CCEBE31299CD7D009D36DF /* DspReciprocalSqrt.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1675,6 +1695,8 @@
 				90AD81761298675C0029E2B1 /* DspRfft.h in Headers */,
 				90AD81B812986DE10029E2B1 /* DspPrint.h in Headers */,
 				90AD8257129883080029E2B1 /* DspRifft.h in Headers */,
+				907B1F55129965D900B263E2 /* DspBang.h in Headers */,
+				90CCEBE61299CD7D009D36DF /* DspReciprocalSqrt.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1898,6 +1920,8 @@
 				90AD817A1298675C0029E2B1 /* DspRfft.cpp in Sources */,
 				90AD81BC12986DE10029E2B1 /* DspPrint.cpp in Sources */,
 				90AD825B129883080029E2B1 /* DspRifft.cpp in Sources */,
+				907B1F54129965D900B263E2 /* DspBang.cpp in Sources */,
+				90CCEBE51299CD7D009D36DF /* DspReciprocalSqrt.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2038,6 +2062,8 @@
 				90AD81791298675C0029E2B1 /* DspRfft.cpp in Sources */,
 				90AD81BB12986DE10029E2B1 /* DspPrint.cpp in Sources */,
 				90AD825A129883080029E2B1 /* DspRifft.cpp in Sources */,
+				907B1F53129965D900B263E2 /* DspBang.cpp in Sources */,
+				90CCEBE41299CD7D009D36DF /* DspReciprocalSqrt.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2179,6 +2205,8 @@
 				90AD81771298675C0029E2B1 /* DspRfft.cpp in Sources */,
 				90AD81B912986DE10029E2B1 /* DspPrint.cpp in Sources */,
 				90AD8258129883080029E2B1 /* DspRifft.cpp in Sources */,
+				907B1F56129965D900B263E2 /* DspBang.cpp in Sources */,
+				90CCEBE71299CD7D009D36DF /* DspReciprocalSqrt.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

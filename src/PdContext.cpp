@@ -105,6 +105,7 @@
 #include "DspAdc.h"
 #include "DspAdd.h"
 #include "DspBandpassFilter.h"
+#include "DspBang.h"
 #include "DspCatch.h"
 #include "DspClip.h"
 #include "DspCosine.h"
@@ -126,6 +127,7 @@
 #include "DspPhasor.h"
 #include "DspPrint.h"
 #include "DspReceive.h"
+#include "DspReciprocalSqrt.h"
 #include "DspRfft.h"
 #include "DspRifft.h"
 #include "DspSend.h"
@@ -679,6 +681,8 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
       return new DspAdc(graph);
     } else if (strcmp(objectLabel, "bp~") == 0) {
       return new DspBandpassFilter(initMessage, graph);
+    } else if (strcmp(objectLabel, "bang~") == 0) {
+      return new DspBang(initMessage, graph);
     } else if (strcmp(objectLabel, "catch~") == 0) {
       return new DspCatch(initMessage, graph);
     } else if (strcmp(objectLabel, "clip~") == 0) {
@@ -722,6 +726,9 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
       return new DspRfft(initMessage, graph);
     } else if (strcmp(objectLabel, "rifft~") == 0) {
       return new DspRifft(initMessage, graph);
+    } else if (strcmp(objectLabel, "rsqrt~") == 0 ||
+               strcmp(objectLabel, "q8_rsqrt~") == 0) {
+      return new DspReciprocalSqrt(initMessage, graph);
     } else if (strcmp(objectLabel, "samplerate~") == 0) {
       return new MessageSamplerate(initMessage, graph);
     } else if (strcmp(objectLabel, "send~") == 0 ||

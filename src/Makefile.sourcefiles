@@ -5,6 +5,7 @@ LOCAL_SRC_FILES := \
 ./DspAdd.cpp \
 ./DspAdc.cpp \
 ./DspBandpassFilter.cpp \
+./DspBang.cpp \
 ./DspCatch.cpp \
 ./DspClip.cpp \
 ./DspCosine.cpp \
@@ -27,6 +28,7 @@ LOCAL_SRC_FILES := \
 ./DspPhasor.cpp \
 ./DspPrint.cpp \
 ./DspReceive.cpp \
+./DspReciprocalSqrt.cpp \
 ./DspRfft.cpp \
 ./DspRifft.cpp \
 ./DspSend.cpp \

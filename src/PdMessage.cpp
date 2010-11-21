@@ -296,6 +296,10 @@ void PdMessage::setSymbol(int index, char *symbol) {
   getElement(index)->setSymbol(symbol);
 }
 
+void PdMessage::setBang(int index) {
+  getElement(index)->setBang();
+}
+
 #pragma mark -
 #pragma mark reserve/unreserve
 
