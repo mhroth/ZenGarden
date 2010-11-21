@@ -58,11 +58,14 @@ float *MessageTable::getBuffer(int *bufferLength) {
 }
 
 float *MessageTable::resizeBuffer(int newBufferLength) {
-  buffer = (float *) realloc(buffer, newBufferLength * sizeof(float));
-  if (newBufferLength > bufferLength) {
-    memset(buffer+bufferLength, 0, (newBufferLength-bufferLength) * sizeof(float));
+  if (newBufferLength > 0) {
+    // the new buffer length must be positive
+    buffer = (float *) realloc(buffer, newBufferLength * sizeof(float));
+    if (newBufferLength > bufferLength) {
+      memset(buffer+bufferLength, 0, (newBufferLength-bufferLength) * sizeof(float));
+    }
+    bufferLength = newBufferLength;
   }
-  bufferLength = newBufferLength;
   return buffer;
 }
 
@@ -90,9 +93,7 @@ void MessageTable::processMessage(int inletIndex, PdMessage *message) {
   } else if (message->isSymbol(0, "resize")) {
     if (message->isFloat(1)) {
       int newBufferLength = (int) message->getFloat(1);
-      if (newBufferLength > 0) {
-        resizeBuffer(newBufferLength);
-      }
+      resizeBuffer(newBufferLength);
     }
   }
 }
