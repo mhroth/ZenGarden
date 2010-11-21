@@ -23,7 +23,7 @@
 #include "DspNoise.h"
 #include "PdGraph.h"
 
-DspNoise::DspNoise(PdGraph *graph) : DspObject(1, 0, 0, 1, graph->getBlockSize(), graph) {
+DspNoise::DspNoise(PdGraph *graph) : DspObject(1, 0, 0, 1, graph) {
   twister = new MTRand(); // use new seed
 }
 
