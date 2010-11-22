@@ -35,8 +35,30 @@ const char *DspReciprocalSqrt::getObjectLabel() {
   return "rsqrt~";
 }
 
-// http://en.wikipedia.org/wiki/Fast_inverse_square_root
 void DspReciprocalSqrt::processDspWithIndex(int fromIndex, int toIndex) {
+  // [rsqrt~] takes no messages, so the full block will be computed every time
+  #ifdef __ARM_NEON__
+  float *inBuff = dspBufferAtInlet0 + fromIndex;
+  float *outBuff = dspBufferAtOutlet0 + fromIndex;
+  float32x4_t inVec, outVec;
+  int n = toIndex - fromIndex;
+  for (int i = 0; i < n; i+=4, inBuff+=4, outBuff+=4) {
+    inVec = vld1q_f32((const float32_t *) inBuff);
+    outVec = vrsqrteq_f32(inVec);
+    vst1q_f32((float32_t *) outBuff, outVec);
+  }
+  #elif defined __SSE__
+  float *inBuff = dspBufferAtInlet0 + fromIndex;
+  float *outBuff = dspBufferAtOutlet0 + fromIndex;
+  __m128 inVec, outVec;
+  int n = toIndex - fromIndex;
+  for (int i = 0; i < n; i+=4, inBuff+=4, outBuff+=4) {
+    inVec = _mm_loadu_ps(inBuff);
+    outVec = _mm_rsqrt_ps(inVec);
+    _mm_store_ps(outBuff, outVec);
+  }
+  #else
+  // http://en.wikipedia.org/wiki/Fast_inverse_square_root
   int j;
   float y;
   for (int i = fromIndex; i < toIndex; ++i) {
@@ -51,4 +73,5 @@ void DspReciprocalSqrt::processDspWithIndex(int fromIndex, int toIndex) {
       dspBufferAtOutlet0[i]  = y * (1.5f - ( 0.5f * f * y * y ));
     }
   }
+  #endif
 }
