@@ -54,9 +54,11 @@ void DspSqrt::processDspWithIndex(int fromIndex, int toIndex) {
   float *inBuff = dspBufferAtInlet0 + fromIndex;
   float *outBuff = dspBufferAtOutlet0 + fromIndex;
   __m128 inVec, outVec;
+  __m128 zeroVec = _mm_setzero_ps();
   int n = toIndex - fromIndex;
   for (int i = 0; i < n; i+=4, inBuff+=4, outBuff+=4) {
     inVec = _mm_loadu_ps(inBuff);
+    inVec = _mm_max_ps(inVec, zeroVec); // ensure that all inputs are non-negative, max(0, inVec)
     outVec = _mm_sqrt_ps(inVec);
     _mm_store_ps(outBuff, outVec);
   }

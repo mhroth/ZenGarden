@@ -20,6 +20,7 @@
  *
  */
 
+#include <float.h>
 #include "DspReciprocalSqrt.h"
 #include "PdGraph.h"
 
@@ -52,9 +53,12 @@ void DspReciprocalSqrt::processDspWithIndex(int fromIndex, int toIndex) {
   float *inBuff = dspBufferAtInlet0 + fromIndex;
   float *outBuff = dspBufferAtOutlet0 + fromIndex;
   __m128 inVec, outVec;
+  __m128 zeroVec = _mm_set1_ps(FLT_MIN);
   int n = toIndex - fromIndex;
   for (int i = 0; i < n; i+=4, inBuff+=4, outBuff+=4) {
     inVec = _mm_loadu_ps(inBuff);
+    // ensure that all inputs are positive, max(FLT_MIN, inVec), preventing divide-by-zero
+    inVec = _mm_max_ps(inVec, zeroVec);
     outVec = _mm_rsqrt_ps(inVec);
     _mm_store_ps(outBuff, outVec);
   }
