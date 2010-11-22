@@ -637,6 +637,11 @@
 		9082C801126132A20026725E /* DspDelayRead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B5C11D0D847009FCC01 /* DspDelayRead.cpp */; };
 		9082C802126132AD0026725E /* DspReceive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B7C11D0D847009FCC01 /* DspReceive.cpp */; };
 		9082C816126133160026725E /* DspTableRead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9038F48B12035DCC006AB117 /* DspTableRead.cpp */; };
+		9086906C129AC67B00D3BD5D /* DspSqrt.h in Headers */ = {isa = PBXBuildFile; fileRef = 9086906A129AC67B00D3BD5D /* DspSqrt.h */; };
+		9086906D129AC67B00D3BD5D /* DspSqrt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9086906B129AC67B00D3BD5D /* DspSqrt.cpp */; };
+		9086906E129AC67B00D3BD5D /* DspSqrt.h in Headers */ = {isa = PBXBuildFile; fileRef = 9086906A129AC67B00D3BD5D /* DspSqrt.h */; };
+		9086906F129AC67B00D3BD5D /* DspSqrt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9086906B129AC67B00D3BD5D /* DspSqrt.cpp */; };
+		90869070129AC67B00D3BD5D /* DspSqrt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9086906B129AC67B00D3BD5D /* DspSqrt.cpp */; };
 		909608DE120B8A1C00135B03 /* MessageStripNote.h in Headers */ = {isa = PBXBuildFile; fileRef = 909608DC120B8A1C00135B03 /* MessageStripNote.h */; };
 		909608DF120B8A1C00135B03 /* MessageStripNote.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 909608DD120B8A1C00135B03 /* MessageStripNote.cpp */; };
 		909608E0120B8A1C00135B03 /* MessageStripNote.h in Headers */ = {isa = PBXBuildFile; fileRef = 909608DC120B8A1C00135B03 /* MessageStripNote.h */; };
@@ -989,6 +994,8 @@
 		9069DFD111D17BD600889A5B /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		907B1F50129965D900B263E2 /* DspBang.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspBang.h; path = ../src/DspBang.h; sourceTree = SOURCE_ROOT; };
 		907B1F51129965D900B263E2 /* DspBang.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspBang.cpp; path = ../src/DspBang.cpp; sourceTree = SOURCE_ROOT; };
+		9086906A129AC67B00D3BD5D /* DspSqrt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspSqrt.h; path = ../src/DspSqrt.h; sourceTree = SOURCE_ROOT; };
+		9086906B129AC67B00D3BD5D /* DspSqrt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspSqrt.cpp; path = ../src/DspSqrt.cpp; sourceTree = SOURCE_ROOT; };
 		909608DC120B8A1C00135B03 /* MessageStripNote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageStripNote.h; path = ../src/MessageStripNote.h; sourceTree = SOURCE_ROOT; };
 		909608DD120B8A1C00135B03 /* MessageStripNote.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageStripNote.cpp; path = ../src/MessageStripNote.cpp; sourceTree = SOURCE_ROOT; };
 		90AD81741298675C0029E2B1 /* DspRfft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspRfft.h; path = ../src/DspRfft.h; sourceTree = SOURCE_ROOT; };
@@ -1144,6 +1151,8 @@
 				90251D5612043445000EAF40 /* DspSignal.h */,
 				90337B8211D0D847009FCC01 /* DspSnapshot.cpp */,
 				90337B8311D0D847009FCC01 /* DspSnapshot.h */,
+				9086906B129AC67B00D3BD5D /* DspSqrt.cpp */,
+				9086906A129AC67B00D3BD5D /* DspSqrt.h */,
 				90337B8411D0D847009FCC01 /* DspSubtract.cpp */,
 				90337B8511D0D847009FCC01 /* DspSubtract.h */,
 				9017567311DFDD4B00A22517 /* DspTablePlay.cpp */,
@@ -1542,6 +1551,7 @@
 				90AD8259129883080029E2B1 /* DspRifft.h in Headers */,
 				907B1F52129965D900B263E2 /* DspBang.h in Headers */,
 				90CCEBE31299CD7D009D36DF /* DspReciprocalSqrt.h in Headers */,
+				9086906C129AC67B00D3BD5D /* DspSqrt.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1697,6 +1707,7 @@
 				90AD8257129883080029E2B1 /* DspRifft.h in Headers */,
 				907B1F55129965D900B263E2 /* DspBang.h in Headers */,
 				90CCEBE61299CD7D009D36DF /* DspReciprocalSqrt.h in Headers */,
+				9086906E129AC67B00D3BD5D /* DspSqrt.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1922,6 +1933,7 @@
 				90AD825B129883080029E2B1 /* DspRifft.cpp in Sources */,
 				907B1F54129965D900B263E2 /* DspBang.cpp in Sources */,
 				90CCEBE51299CD7D009D36DF /* DspReciprocalSqrt.cpp in Sources */,
+				90869070129AC67B00D3BD5D /* DspSqrt.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2064,6 +2076,7 @@
 				90AD825A129883080029E2B1 /* DspRifft.cpp in Sources */,
 				907B1F53129965D900B263E2 /* DspBang.cpp in Sources */,
 				90CCEBE41299CD7D009D36DF /* DspReciprocalSqrt.cpp in Sources */,
+				9086906D129AC67B00D3BD5D /* DspSqrt.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2207,6 +2220,7 @@
 				90AD8258129883080029E2B1 /* DspRifft.cpp in Sources */,
 				907B1F56129965D900B263E2 /* DspBang.cpp in Sources */,
 				90CCEBE71299CD7D009D36DF /* DspReciprocalSqrt.cpp in Sources */,
+				9086906F129AC67B00D3BD5D /* DspSqrt.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2306,7 +2320,7 @@
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = zengarden;
-				SDKROOT = iphoneos4.0;
+				SDKROOT = iphoneos4.1;
 			};
 			name = Debug;
 		};

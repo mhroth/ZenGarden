@@ -132,6 +132,7 @@
 #include "DspRifft.h"
 #include "DspSend.h"
 #include "DspSignal.h"
+#include "DspSqrt.h"
 #include "DspSnapshot.h"
 #include "DspSubtract.h"
 #include "DspTablePlay.h"
@@ -738,6 +739,9 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
       return new DspSignal(initMessage, graph);
     } else if (strcmp(objectLabel, "snapshot~") == 0) {
       return new DspSnapshot(initMessage, graph);
+    } else if (strcmp(objectLabel, "sqrt~") == 0 ||
+               strcmp(objectLabel, "q8_sqrt~") == 0) {
+      return new DspSqrt(initMessage, graph);
     } else if (strcmp(objectLabel, "switch~") == 0) {
       return new MessageSwitch(initMessage, graph);
     } else if (strcmp(objectLabel, "tabplay~") == 0) {

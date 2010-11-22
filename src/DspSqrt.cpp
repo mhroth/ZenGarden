@@ -20,23 +20,23 @@
  *
  */
 
-#include "DspReciprocalSqrt.h"
+#include "DspSqrt.h"
 #include "PdGraph.h"
 
-DspReciprocalSqrt::DspReciprocalSqrt(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0, 1, graph) {
+DspSqrt::DspSqrt(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0, 1, graph) {
   // nothign to do
 }
 
-DspReciprocalSqrt::~DspReciprocalSqrt() {
+DspSqrt::~DspSqrt() {
   // nothing to do
 }
 
-const char *DspReciprocalSqrt::getObjectLabel() {
-  return "rsqrt~";
+const char *DspSqrt::getObjectLabel() {
+  return "sqrt~";
 }
 
-void DspReciprocalSqrt::processDspWithIndex(int fromIndex, int toIndex) {
-  // [rsqrt~] takes no messages, so the full block will be computed every time
+void DspSqrt::processDspWithIndex(int fromIndex, int toIndex) {
+  // [sqrt~] takes no messages, so the full block will be computed every time
   // The hardware-specific solutions expect that the duration is a multiple of four
   #ifdef __ARM_NEON__
   float *inBuff = dspBufferAtInlet0 + fromIndex;
@@ -45,7 +45,9 @@ void DspReciprocalSqrt::processDspWithIndex(int fromIndex, int toIndex) {
   int n = toIndex - fromIndex;
   for (int i = 0; i < n; i+=4, inBuff+=4, outBuff+=4) {
     inVec = vld1q_f32((const float32_t *) inBuff);
-    outVec = vrsqrteq_f32(inVec);
+    // is this at all correct? No sqrt intrinsic for ARM NEON?
+    outVec = vrsqrteq_f32(inVec); // out = 1/sqrt(in)
+    outVec = vrecpeq_f32(outVec); // out = 1/out
     vst1q_f32((float32_t *) outBuff, outVec);
   }
   #elif defined __SSE__
@@ -55,24 +57,12 @@ void DspReciprocalSqrt::processDspWithIndex(int fromIndex, int toIndex) {
   int n = toIndex - fromIndex;
   for (int i = 0; i < n; i+=4, inBuff+=4, outBuff+=4) {
     inVec = _mm_loadu_ps(inBuff);
-    outVec = _mm_rsqrt_ps(inVec);
+    outVec = _mm_sqrt_ps(inVec);
     _mm_store_ps(outBuff, outVec);
   }
   #else
-  // http://en.wikipedia.org/wiki/Fast_inverse_square_root
-  int j;
-  float y;
-  for (int i = fromIndex; i < toIndex; ++i) {
-    float f = dspBufferAtInlet0[i];
-    if (f <= 0.0f) {
-      dspBufferAtOutlet0[i] = 0.0f;
-    } else {
-      y  = f;
-      j  = *((long *) &y);
-      j  = 0x5f375a86 - (j >> 1);
-      y  = *((float *) &j);
-      dspBufferAtOutlet0[i]  = y * (1.5f - ( 0.5f * f * y * y ));
-    }
+  for (int i = fromIndex; i < toIndex; i++) {
+    dspBufferAtOutlet0[i] = sqrtf(dspBufferAtInlet0[i]);
   }
   #endif
 }
