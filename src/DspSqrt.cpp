@@ -38,7 +38,7 @@ const char *DspSqrt::getObjectLabel() {
 void DspSqrt::processDspWithIndex(int fromIndex, int toIndex) {
   // [sqrt~] takes no messages, so the full block will be computed every time
   // The hardware-specific solutions expect that the duration is a multiple of four
-  #ifdef __ARM_NEON__
+  #if __ARM_NEON__
   float *inBuff = dspBufferAtInlet0 + fromIndex;
   float *outBuff = dspBufferAtOutlet0 + fromIndex;
   float32x4_t inVec, outVec;
@@ -50,17 +50,27 @@ void DspSqrt::processDspWithIndex(int fromIndex, int toIndex) {
     outVec = vrecpeq_f32(outVec); // out = 1/out
     vst1q_f32((float32_t *) outBuff, outVec);
   }
-  #elif defined __SSE__
+  #elif __SSE__
   float *inBuff = dspBufferAtInlet0 + fromIndex;
   float *outBuff = dspBufferAtOutlet0 + fromIndex;
   __m128 inVec, outVec;
-  __m128 zeroVec = _mm_setzero_ps();
+  __m128 zeroVec = _mm_set1_ps(0.0f);
   int n = toIndex - fromIndex;
-  for (int i = 0; i < n; i+=4, inBuff+=4, outBuff+=4) {
+  int n4 = n & 0xFFFFFFF3;
+  while (n4) {
     inVec = _mm_loadu_ps(inBuff);
     inVec = _mm_max_ps(inVec, zeroVec); // ensure that all inputs are non-negative, max(0, inVec)
     outVec = _mm_sqrt_ps(inVec);
     _mm_store_ps(outBuff, outVec);
+    n4 -= 4;
+    inBuff += 4;
+    outBuff += 4;
+  }
+  switch (n & 0x3) {
+    case 3: *outBuff++ = sqrtf((*inBuff >= 0.0f) ? *inBuff++ : 0.0f);
+    case 2: *outBuff++ = sqrtf((*inBuff >= 0.0f) ? *inBuff++ : 0.0f);
+    case 1: *outBuff++ = sqrtf((*inBuff >= 0.0f) ? *inBuff++ : 0.0f);
+    default: break;
   }
   #else
   for (int i = fromIndex; i < toIndex; i++) {
