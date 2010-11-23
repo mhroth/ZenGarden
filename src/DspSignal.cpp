@@ -44,11 +44,5 @@ void DspSignal::processMessage(int inletIndex, PdMessage *message) {
 }
 
 void DspSignal::processDspWithIndex(int fromIndex, int toIndex) {
-  if (ArrayArithmetic::hasAccelerate) {
-    #if __APPLE__
-    vDSP_vfill(&constant, dspBufferAtOutlet0+fromIndex, 1, toIndex-fromIndex);
-    #endif
-  } else {
-    memset_pattern4(dspBufferAtOutlet0+fromIndex, &constant, (toIndex-fromIndex) * sizeof(float));
-  }
+  ArrayArithmetic::fill(dspBufferAtOutlet0, constant, fromIndex, toIndex);
 }

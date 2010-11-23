@@ -89,13 +89,7 @@ void DspLowpassFilter::processMessage(int inletIndex, PdMessage *message) {
 void DspLowpassFilter::processDspWithIndex(int fromIndex, int toIndex) {
   switch (signalPrecedence) {
     case MESSAGE_MESSAGE: {
-      if (ArrayArithmetic::hasAccelerate) {
-        #if __APPLE__
-        vDSP_vfill(&signalConstant, dspBufferAtOutlet0+fromIndex, 1, toIndex-fromIndex);  
-        #endif
-      } else {
-        memset_pattern4(dspBufferAtOutlet0+fromIndex, &signalConstant, (toIndex-fromIndex)*sizeof(float));
-      }
+      ArrayArithmetic::fill(dspBufferAtOutlet0, signalConstant, fromIndex, toIndex);
       // allow fallthrough
     }
     case DSP_MESSAGE: {

@@ -62,7 +62,7 @@ void DspMultiply::processMessage(int inletIndex, PdMessage *message) {
 void DspMultiply::processDspWithIndex(int fromIndex, int toIndex) {
   switch (signalPrecedence) {
     case MESSAGE_DSP: {
-      memset_pattern4(dspBufferAtInlet0+fromIndex, &inputConstant, (toIndex-fromIndex)*sizeof(float));
+      ArrayArithmetic::fill(dspBufferAtInlet0, inputConstant, fromIndex, toIndex);
       // allow fallthrough
     }
     case DSP_DSP: {

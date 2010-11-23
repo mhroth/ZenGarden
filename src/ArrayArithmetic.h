@@ -50,7 +50,7 @@ class ArrayArithmetic {
      * A constant boolean indicating if Apple's Accelerate framework is available for use. Is
      * accurate on any platform, even non-Apple.
      */
-    static const bool hasAccelerate;
+    const static bool hasAccelerate = true;
   
     static inline void add(float *input0, float *input1, float *output, int startIndex, int endIndex) {
       if (ArrayArithmetic::hasAccelerate) {
@@ -337,6 +337,48 @@ class ArrayArithmetic {
         }
         #endif
       }
+    }
+  
+    static inline void fill(float *input, float constant, int startIndex, int endIndex) {
+      #if __APPLE__
+      vDSP_vfill(&constant, input, 1, endIndex-startIndex);
+      #elif __ARM_NEON__
+      input += startIndex;
+      const int n = endIndex - startIndex;
+      const int n4 = n & 0xFFFFFFF3; // force n to be a multiple of 4
+      float32x4_t constVec = vdupq_n_f32(constant);
+      while (n4) {
+        vst1q_f32((float32_t *) input, constVec);
+        n4 -= 4;
+        input += 4;
+      }
+      switch (n & 0x3) {
+        case 3: *input++ = constant;
+        case 2: *input++ = constant;
+        case 1: *input++ = constant;
+        default: break;
+      }
+      #elif __SSE__
+      input += startIndex;
+      const int n = endIndex - startIndex;
+      const int n4 = n & 0xFFFFFFF3; // force n to be a multiple of 4
+      const __m128 constVec = _mm_set1_ps(constant);
+      while (n4) {
+        _mm_storeu_ps(input, constVec); // _mm_store_ps or _mm_storeu_ps?
+        n4 -= 4;
+        input += 4;
+      }
+      switch (n & 0x3) {
+        case 3: *input++ = constant;
+        case 2: *input++ = constant;
+        case 1: *input++ = constant;
+        default: break;
+      }
+      #else
+      for (int i = startIndex; i < endIndex; i++) {
+        input[i] = constant;
+      }
+      #endif
     }
     
   private:

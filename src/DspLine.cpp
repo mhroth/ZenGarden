@@ -50,6 +50,7 @@ void DspLine::processMessage(int inletIndex, PdMessage *message) {
         if (message->isFloat(0)) {
           processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
           target = message->getFloat(0);
+          lastOutputSample = target;
           slope = 0.0f;
           numSamplesToTarget = 0.0f;
         }
@@ -73,20 +74,17 @@ void DspLine::processMessage(int inletIndex, PdMessage *message) {
 
 void DspLine::processDspWithIndex(int fromIndex, int toIndex) {
   if (numSamplesToTarget <= 0.0f) { // if we have already reached the target
-    if (ArrayArithmetic::hasAccelerate) {
-      #if __APPLE__
-      vDSP_vfill(&target, dspBufferAtOutlet0+fromIndex, 1, toIndex-fromIndex);
-      #endif
-    } else {
-      memset_pattern4(dspBufferAtOutlet0+fromIndex, &target, (toIndex-fromIndex)*sizeof(float));
+    int n = toIndex - fromIndex;
+    if (n > 0) { // n may be zero
+      ArrayArithmetic::fill(dspBufferAtOutlet0, target, fromIndex, toIndex);
+      lastOutputSample = target;
     }
-    lastOutputSample = target;
   } else {
     // the number of samples to be processed this iteration
-    float processLength = toIndex - fromIndex;
-    if (processLength > 0.0f) {
+    int n = toIndex - fromIndex;
+    if (n > 0) { // n may be zero
       // if there is anything to process at all (several messages may be received at once)
-      if (numSamplesToTarget < processLength) {
+      if (numSamplesToTarget < n) {
         int targetIndexInt = fromIndex + numSamplesToTarget;
         if (ArrayArithmetic::hasAccelerate) {
           #if __APPLE__
@@ -110,7 +108,7 @@ void DspLine::processDspWithIndex(int fromIndex, int toIndex) {
         // if the target is far off
         if (ArrayArithmetic::hasAccelerate) {
           #if __APPLE__
-          vDSP_vramp(&lastOutputSample, &slope, dspBufferAtOutlet0+fromIndex, 1, toIndex-fromIndex);
+          vDSP_vramp(&lastOutputSample, &slope, dspBufferAtOutlet0+fromIndex, 1, n);
           #endif
         } else {
           dspBufferAtOutlet0[fromIndex] = lastOutputSample + slope;
@@ -119,7 +117,7 @@ void DspLine::processDspWithIndex(int fromIndex, int toIndex) {
           }
         }
         lastOutputSample = dspBufferAtOutlet0[toIndex-1];  
-        numSamplesToTarget -= processLength;
+        numSamplesToTarget -= n;
       }
     }
   }
