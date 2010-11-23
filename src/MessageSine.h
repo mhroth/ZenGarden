@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009, 2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -31,7 +31,6 @@ class MessageSine : public MessageObject {
 
   public:
     MessageSine(PdMessage *initMessage, PdGraph *graph);
-    MessageSine(PdGraph *graph);
     ~MessageSine();
 
     const char *getObjectLabel();
