@@ -2347,7 +2347,7 @@
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = zengarden;
-				SDKROOT = iphoneos4.0;
+				SDKROOT = iphoneos;
 				SEPARATE_STRIP = NO;
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
 				STRIP_INSTALLED_PRODUCT = YES;
