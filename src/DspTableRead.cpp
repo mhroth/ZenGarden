@@ -76,22 +76,25 @@ void DspTableRead::processMessage(int inletIndex, PdMessage *message) {
 
 void DspTableRead::processDspWithIndex(int fromIndex, int toIndex) {
   if (table != NULL) { // ensure that there is a table to read from!
-    int bufferLength;
+    int bufferLength = 0;
     float *buffer = table->getBuffer(&bufferLength);
     if (ArrayArithmetic::hasAccelerate) {
       #if __APPLE__
       int duration = toIndex - fromIndex;
+      float *outBuff = dspBufferAtOutlet0+fromIndex;
       
       // add the offset
-      vDSP_vsadd(dspBufferAtInlet0+fromIndex, 1, &offset, dspBufferAtOutlet0+fromIndex, 1, duration);
+      vDSP_vsadd(dspBufferAtInlet0+fromIndex, 1, &offset, outBuff, 1, duration);
       
       // clip to the bounds of the table
+      // NOTE(mhroth): is this necessary? Or does vDSP_vindex clip automatically? What is the
+      // clipping behaviour of vDSP_vindex?
       float min = 0;
       float max = (float) (bufferLength-1);
-      vDSP_vclip(dspBufferAtInlet0+fromIndex, 1, &min, &max, dspBufferAtOutlet0+fromIndex, 1, duration);
+      vDSP_vclip(outBuff, 1, &min, &max, outBuff, 1, duration);
       
       // select the indicies
-      vDSP_vindex(buffer, dspBufferAtInlet0+fromIndex, 1, dspBufferAtOutlet0+fromIndex, 1, duration);
+      vDSP_vindex(buffer, outBuff, 1, outBuff, 1, duration);
       #endif
     } else {
       for (int i = fromIndex; i < toIndex; i++) {
