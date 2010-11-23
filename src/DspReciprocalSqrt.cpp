@@ -38,8 +38,7 @@ const char *DspReciprocalSqrt::getObjectLabel() {
 
 void DspReciprocalSqrt::processDspWithIndex(int fromIndex, int toIndex) {
   // [rsqrt~] takes no messages, so the full block will be computed every time
-  // The hardware-specific solutions expect that the duration is a multiple of four
-  #ifdef __ARM_NEON__
+  #if __ARM_NEON__
   float *inBuff = dspBufferAtInlet0 + fromIndex;
   float *outBuff = dspBufferAtOutlet0 + fromIndex;
   float32x4_t inVec, outVec;
@@ -49,18 +48,29 @@ void DspReciprocalSqrt::processDspWithIndex(int fromIndex, int toIndex) {
     outVec = vrsqrteq_f32(inVec);
     vst1q_f32((float32_t *) outBuff, outVec);
   }
-  #elif defined __SSE__
+  #elif __SSE__
+  // NOTE: for all non-positive numbers, this routine will output a very large number (not Inf) == 1/sqrt(FLT_MIN)
   float *inBuff = dspBufferAtInlet0 + fromIndex;
   float *outBuff = dspBufferAtOutlet0 + fromIndex;
   __m128 inVec, outVec;
   __m128 zeroVec = _mm_set1_ps(FLT_MIN);
   int n = toIndex - fromIndex;
-  for (int i = 0; i < n; i+=4, inBuff+=4, outBuff+=4) {
+  int n4 = n & 0xFFFFFFF3;
+  while (n4) {
     inVec = _mm_loadu_ps(inBuff);
     // ensure that all inputs are positive, max(FLT_MIN, inVec), preventing divide-by-zero
     inVec = _mm_max_ps(inVec, zeroVec);
     outVec = _mm_rsqrt_ps(inVec);
     _mm_store_ps(outBuff, outVec);
+    n4 -= 4;
+    inBuff += 4;
+    outBuff += 4;
+  }
+  switch (n & 0x3) {
+    case 3: *outBuff++ = 1.0f / sqrtf((*inBuff >= 0.0f) ? *inBuff++ : FLT_MIN);
+    case 2: *outBuff++ = 1.0f / sqrtf((*inBuff >= 0.0f) ? *inBuff++ : FLT_MIN);
+    case 1: *outBuff++ = 1.0f / sqrtf((*inBuff >= 0.0f) ? *inBuff++ : FLT_MIN);
+    default: break;
   }
   #else
   // http://en.wikipedia.org/wiki/Fast_inverse_square_root
