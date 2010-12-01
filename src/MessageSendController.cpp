@@ -78,7 +78,9 @@ void MessageSendController::processMessage(int inletIndex, PdMessage *message) {
 }
 
 void MessageSendController::sendMessage(int outletIndex, PdMessage *message) {
-  if (outletIndex == SYSTEM_NAME_INDEX) {
+  if (outletIndex < 0) {
+    return; // outlet index does not exist
+  } else if (outletIndex == SYSTEM_NAME_INDEX) {
     context->receiveSystemMessage(message);
   } else {
     ZGLinkedList *receiverList = (ZGLinkedList *) receiverLists->get(outletIndex);
