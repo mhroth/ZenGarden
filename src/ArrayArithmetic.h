@@ -257,16 +257,25 @@ class ArrayArithmetic {
         #endif
       } else {
         #if __SSE__
+        input += startIndex;
+        output += startIndex;
+        int n = endIndex - startIndex;
+        int n4 = n & 0xFFFFFFF4;
         __m128 inVec, res;
-        const __m128 constVec = _mm_load1_ps(&constant);
-        const int numFours = (endIndex - startIndex) >> 2;
-        for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
-          inVec = _mm_loadu_ps(input + i);
+        __m128 constVec = _mm_set1_ps(constant);
+        while (n4) {
+          inVec = _mm_loadu_ps(input);
           res = _mm_mul_ps(inVec, constVec);
-          _mm_store_ps(output + i, res);
+          _mm_storeu_ps(output, res);
+          n4 -= 4;
+          input += 4;
+          output += 4;
         }
-        for (int i = startIndex + numFours<<2; i < endIndex; i++) {
-          output[i] = input[i] * constant;
+        switch (n & 0x3) {
+          case 3: *input++ *= constant;
+          case 2: *input++ *= constant;
+          case 1: *input++ *= constant;
+          default: break;
         }
         #elif __ARM_NEON__
         const int numFours = (endIndex - startIndex) >> 2;
@@ -344,8 +353,8 @@ class ArrayArithmetic {
       vDSP_vfill(&constant, input, 1, endIndex-startIndex);
       #elif __ARM_NEON__
       input += startIndex;
-      const int n = endIndex - startIndex;
-      const int n4 = n & 0xFFFFFFF3; // force n to be a multiple of 4
+      int n = endIndex - startIndex;
+      int n4 = n & 0xFFFFFFF4; // force n to be a multiple of 4
       float32x4_t constVec = vdupq_n_f32(constant);
       while (n4) {
         vst1q_f32((float32_t *) input, constVec);
@@ -360,8 +369,8 @@ class ArrayArithmetic {
       }
       #elif __SSE__
       input += startIndex;
-      const int n = endIndex - startIndex;
-      const int n4 = n & 0xFFFFFFF3; // force n to be a multiple of 4
+      int n = endIndex - startIndex;
+      int n4 = n & 0xFFFFFFF4; // force n to be a multiple of 4
       const __m128 constVec = _mm_set1_ps(constant);
       while (n4) {
         _mm_storeu_ps(input, constVec); // _mm_store_ps or _mm_storeu_ps?

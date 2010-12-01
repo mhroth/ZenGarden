@@ -50,7 +50,7 @@ void DspRifft::processDspWithIndex(int fromIndex, int toIndex) {
   inputVector.imagp = dspBufferAtInlet1;
   DSPSplitComplex outputVector;
   outputVector.realp = dspBufferAtOutlet0;
-  outputVector.imagp = (float *) alloca(numBytesInBlock);
+  outputVector.imagp = (float *) alloca(numBytesInBlock); // this buffer will not contain any useful data
   vDSP_fft_zop(fftSetup, &inputVector, 1, &outputVector, 1, log2n, kFFTDirection_Inverse);
   #endif // __APPLE__
 }

@@ -39,37 +39,50 @@ const char *DspReciprocalSqrt::getObjectLabel() {
 void DspReciprocalSqrt::processDspWithIndex(int fromIndex, int toIndex) {
   // [rsqrt~] takes no messages, so the full block will be computed every time
   #if __ARM_NEON__
-  float *inBuff = dspBufferAtInlet0 + fromIndex;
-  float *outBuff = dspBufferAtOutlet0 + fromIndex;
+  float *inBuff = dspBufferAtInlet0;
+  float *outBuff = dspBufferAtOutlet0;
   float32x4_t inVec, outVec;
+  float32x4_t zeroVec = vdupq_n_f32(FLT_MIN);
   int n = toIndex - fromIndex;
-  for (int i = 0; i < n; i+=4, inBuff+=4, outBuff+=4) {
-    inVec = vld1q_f32((const float32_t *) inBuff);
+  int n4 = n & 0xFFFFFFF4;
+  while (n4) {
+    inVec = vld1q_f32(inBuff);
+    inVec = vmaxq_f32(inVec, zeroVec);
     outVec = vrsqrteq_f32(inVec);
     vst1q_f32((float32_t *) outBuff, outVec);
+    n4 -= 4;
+    inBuff += 4;
+    outBuff += 4;
+  }
+  switch (n & 0x3) {
+    case 3: *outBuff++ = 1.0f / sqrtf((*inBuff >= 0.0f) ? *inBuff : FLT_MIN); ++inBuff;
+    case 2: *outBuff++ = 1.0f / sqrtf((*inBuff >= 0.0f) ? *inBuff : FLT_MIN); ++inBuff;
+    case 1: *outBuff++ = 1.0f / sqrtf((*inBuff >= 0.0f) ? *inBuff : FLT_MIN); ++inBuff;
+    default: break;
   }
   #elif __SSE__
   // NOTE: for all non-positive numbers, this routine will output a very large number (not Inf) == 1/sqrt(FLT_MIN)
-  float *inBuff = dspBufferAtInlet0 + fromIndex;
-  float *outBuff = dspBufferAtOutlet0 + fromIndex;
+  float *inBuff = dspBufferAtInlet0;
+  float *outBuff = dspBufferAtOutlet0;
   __m128 inVec, outVec;
   __m128 zeroVec = _mm_set1_ps(FLT_MIN);
   int n = toIndex - fromIndex;
-  int n4 = n & 0xFFFFFFF3;
+  int n4 = n & 0xFFFFFFF4;
   while (n4) {
-    inVec = _mm_loadu_ps(inBuff);
+    inVec = _mm_loadu_ps(inBuff); // unaligned load must be used because inBuff could point anywhere
     // ensure that all inputs are positive, max(FLT_MIN, inVec), preventing divide-by-zero
     inVec = _mm_max_ps(inVec, zeroVec);
     outVec = _mm_rsqrt_ps(inVec);
+    // aligned store may be used because outBuff always points to the beginning of the output buffer
     _mm_store_ps(outBuff, outVec);
     n4 -= 4;
     inBuff += 4;
     outBuff += 4;
   }
   switch (n & 0x3) {
-    case 3: *outBuff++ = 1.0f / sqrtf((*inBuff >= 0.0f) ? *inBuff++ : FLT_MIN);
-    case 2: *outBuff++ = 1.0f / sqrtf((*inBuff >= 0.0f) ? *inBuff++ : FLT_MIN);
-    case 1: *outBuff++ = 1.0f / sqrtf((*inBuff >= 0.0f) ? *inBuff++ : FLT_MIN);
+    case 3: *outBuff++ = 1.0f / sqrtf((*inBuff >= 0.0f) ? *inBuff : FLT_MIN); ++inBuff;
+    case 2: *outBuff++ = 1.0f / sqrtf((*inBuff >= 0.0f) ? *inBuff : FLT_MIN); ++inBuff;
+    case 1: *outBuff++ = 1.0f / sqrtf((*inBuff >= 0.0f) ? *inBuff : FLT_MIN); ++inBuff;
     default: break;
   }
   #else
