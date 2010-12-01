@@ -42,7 +42,7 @@ ConnectionType DspSnapshot::getConnectionType(int outletIndex) {
 void DspSnapshot::processMessage(int inletIndex, PdMessage *message) {
   switch (message->getType(0)) {
     case SYMBOL: {
-      graph->printErr("snapshot~ does not support the \"set\" message.");
+      graph->printErr("[snapshot~] does not support the \"set\" message.");
       break;
     }
     case BANG: {
