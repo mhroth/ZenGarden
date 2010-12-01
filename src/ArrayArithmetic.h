@@ -260,7 +260,7 @@ class ArrayArithmetic {
         input += startIndex;
         output += startIndex;
         int n = endIndex - startIndex;
-        int n4 = n & 0xFFFFFFF4;
+        int n4 = n & 0xFFFFFFFC;
         __m128 inVec, res;
         __m128 constVec = _mm_set1_ps(constant);
         while (n4) {
@@ -354,7 +354,7 @@ class ArrayArithmetic {
       #elif __ARM_NEON__
       input += startIndex;
       int n = endIndex - startIndex;
-      int n4 = n & 0xFFFFFFF4; // force n to be a multiple of 4
+      int n4 = n & 0xFFFFFFFC; // force n to be a multiple of 4
       float32x4_t constVec = vdupq_n_f32(constant);
       while (n4) {
         vst1q_f32((float32_t *) input, constVec);
@@ -370,7 +370,7 @@ class ArrayArithmetic {
       #elif __SSE__
       input += startIndex;
       int n = endIndex - startIndex;
-      int n4 = n & 0xFFFFFFF4; // force n to be a multiple of 4
+      int n4 = n & 0xFFFFFFFC; // force n to be a multiple of 4
       const __m128 constVec = _mm_set1_ps(constant);
       while (n4) {
         _mm_storeu_ps(input, constVec); // _mm_store_ps or _mm_storeu_ps?

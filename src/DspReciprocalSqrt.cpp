@@ -44,7 +44,7 @@ void DspReciprocalSqrt::processDspWithIndex(int fromIndex, int toIndex) {
   float32x4_t inVec, outVec;
   float32x4_t zeroVec = vdupq_n_f32(FLT_MIN);
   int n = toIndex - fromIndex;
-  int n4 = n & 0xFFFFFFF4;
+  int n4 = n & 0xFFFFFFFC;
   while (n4) {
     inVec = vld1q_f32(inBuff);
     inVec = vmaxq_f32(inVec, zeroVec);
@@ -67,7 +67,7 @@ void DspReciprocalSqrt::processDspWithIndex(int fromIndex, int toIndex) {
   __m128 inVec, outVec;
   __m128 zeroVec = _mm_set1_ps(FLT_MIN);
   int n = toIndex - fromIndex;
-  int n4 = n & 0xFFFFFFF4;
+  int n4 = n & 0xFFFFFFFC;
   while (n4) {
     inVec = _mm_loadu_ps(inBuff); // unaligned load must be used because inBuff could point anywhere
     // ensure that all inputs are positive, max(FLT_MIN, inVec), preventing divide-by-zero
