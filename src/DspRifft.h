@@ -38,7 +38,7 @@ class DspRifft : public DspObject {
   private:
     void processDspWithIndex(int fromIndex, int toIndex);
     
-    #ifdef __APPLE__
+    #if __APPLE__
     vDSP_Length log2n;
     FFTSetup fftSetup;
     #endif // __APPLE__

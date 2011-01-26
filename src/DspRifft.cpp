@@ -25,7 +25,7 @@
 #include "PdGraph.h"
 
 DspRifft::DspRifft(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 2, 0, 1, graph) {
-  #ifdef __APPLE__
+  #if __APPLE__
   log2n = lrintf(log2f(blockSizeFloat));
   fftSetup = vDSP_create_fftsetup(log2n, kFFTRadix2);
   #else
@@ -34,7 +34,7 @@ DspRifft::DspRifft(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 2, 0, 
 }
 
 DspRifft::~DspRifft() {
-  #ifdef __APPLE__
+  #if __APPLE__
   vDSP_destroy_fftsetup(fftSetup);
   #endif // __APPLE__
 }
@@ -44,7 +44,7 @@ const char *DspRifft::getObjectLabel() {
 }
 
 void DspRifft::processDspWithIndex(int fromIndex, int toIndex) {
-  #ifdef __APPLE__
+  #if __APPLE__
   DSPSplitComplex inputVector;
   inputVector.realp = dspBufferAtInlet0;
   inputVector.imagp = dspBufferAtInlet1;
