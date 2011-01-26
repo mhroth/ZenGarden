@@ -1,6 +1,7 @@
 PLATFORM_TARGETS=libzengarden libzengarden-static libjnizengarden java-jar
 MAKE_SO=$(CC) -o $(1) $(CXXFLAGS) -dynamiclib \
 	-I`javaconfig Headers` \
+        -I/Developer/SDKs/MacOSX10.6.sdk/System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK/Headers \
 	$(2) $(3) $(SNDFILE_LIB) -lstdc++ -framework Accelerate
 JNI_EXTENSION=jnilib
 SO_EXTENSION=dylib

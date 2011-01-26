@@ -30,7 +30,6 @@
 		9025F824120ECFF700129300 /* libsndfile_x86.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9025F823120ECFF700129300 /* libsndfile_x86.a */; };
 		9025F825120ECFF700129300 /* libsndfile_x86.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9025F823120ECFF700129300 /* libsndfile_x86.a */; };
 		9025F82F120ED04400129300 /* libsndfile_iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9025F82E120ED04400129300 /* libsndfile_iOS.a */; };
-		90337C5D11D0D847009FCC01 /* ArrayArithmetic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B4911D0D847009FCC01 /* ArrayArithmetic.cpp */; };
 		90337C5E11D0D847009FCC01 /* DelayReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B4C11D0D847009FCC01 /* DelayReceiver.cpp */; };
 		90337C5F11D0D847009FCC01 /* DspAdc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B4E11D0D847009FCC01 /* DspAdc.cpp */; };
 		90337C6011D0D847009FCC01 /* DspAdd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B5011D0D847009FCC01 /* DspAdd.cpp */; };
@@ -140,7 +139,6 @@
 		90337CD811D0D847009FCC01 /* StaticUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C4F11D0D847009FCC01 /* StaticUtils.cpp */; };
 		90337CDA11D0D847009FCC01 /* ZenGarden.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C5311D0D847009FCC01 /* ZenGarden.cpp */; };
 		90337CDD11D0D847009FCC01 /* ZGLinkedList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C5B11D0D847009FCC01 /* ZGLinkedList.cpp */; };
-		90337CDE11D0D847009FCC01 /* ArrayArithmetic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B4911D0D847009FCC01 /* ArrayArithmetic.cpp */; };
 		90337CDF11D0D847009FCC01 /* ArrayArithmetic.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337B4A11D0D847009FCC01 /* ArrayArithmetic.h */; };
 		90337CE011D0D847009FCC01 /* ConnectionType.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337B4B11D0D847009FCC01 /* ConnectionType.h */; };
 		90337CE111D0D847009FCC01 /* DelayReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B4C11D0D847009FCC01 /* DelayReceiver.cpp */; };
@@ -373,7 +371,6 @@
 		90337DDF11D0D847009FCC01 /* ZGCallbackFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C5A11D0D847009FCC01 /* ZGCallbackFunction.h */; };
 		90337DE011D0D847009FCC01 /* ZGLinkedList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C5B11D0D847009FCC01 /* ZGLinkedList.cpp */; };
 		90337DE111D0D847009FCC01 /* ZGLinkedList.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C5C11D0D847009FCC01 /* ZGLinkedList.h */; };
-		90337DE211D0D847009FCC01 /* ArrayArithmetic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B4911D0D847009FCC01 /* ArrayArithmetic.cpp */; };
 		90337DE311D0D847009FCC01 /* ArrayArithmetic.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337B4A11D0D847009FCC01 /* ArrayArithmetic.h */; };
 		90337DE411D0D847009FCC01 /* ConnectionType.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337B4B11D0D847009FCC01 /* ConnectionType.h */; };
 		90337DE511D0D847009FCC01 /* DelayReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B4C11D0D847009FCC01 /* DelayReceiver.cpp */; };
@@ -749,7 +746,6 @@
 		90251D5612043445000EAF40 /* DspSignal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspSignal.h; path = ../src/DspSignal.h; sourceTree = SOURCE_ROOT; };
 		9025F823120ECFF700129300 /* libsndfile_x86.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsndfile_x86.a; path = ../libs/Darwin/libsndfile_x86.a; sourceTree = SOURCE_ROOT; };
 		9025F82E120ED04400129300 /* libsndfile_iOS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsndfile_iOS.a; path = ../libs/iOS/libsndfile_iOS.a; sourceTree = SOURCE_ROOT; };
-		90337B4911D0D847009FCC01 /* ArrayArithmetic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ArrayArithmetic.cpp; path = ../src/ArrayArithmetic.cpp; sourceTree = SOURCE_ROOT; };
 		90337B4A11D0D847009FCC01 /* ArrayArithmetic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArrayArithmetic.h; path = ../src/ArrayArithmetic.h; sourceTree = SOURCE_ROOT; };
 		90337B4B11D0D847009FCC01 /* ConnectionType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConnectionType.h; path = ../src/ConnectionType.h; sourceTree = SOURCE_ROOT; };
 		90337B4C11D0D847009FCC01 /* DelayReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DelayReceiver.cpp; path = ../src/DelayReceiver.cpp; sourceTree = SOURCE_ROOT; };
@@ -1078,7 +1074,6 @@
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				90337B4911D0D847009FCC01 /* ArrayArithmetic.cpp */,
 				90337B4A11D0D847009FCC01 /* ArrayArithmetic.h */,
 				90337B4B11D0D847009FCC01 /* ConnectionType.h */,
 				90DA52A1120A1F2100D00917 /* DeclareList.cpp */,
@@ -1797,7 +1792,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				90337C5D11D0D847009FCC01 /* ArrayArithmetic.cpp in Sources */,
 				90337C5E11D0D847009FCC01 /* DelayReceiver.cpp in Sources */,
 				90337C5F11D0D847009FCC01 /* DspAdc.cpp in Sources */,
 				90337C6011D0D847009FCC01 /* DspAdd.cpp in Sources */,
@@ -1941,7 +1935,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				90337CDE11D0D847009FCC01 /* ArrayArithmetic.cpp in Sources */,
 				90337CE111D0D847009FCC01 /* DelayReceiver.cpp in Sources */,
 				90337CE311D0D847009FCC01 /* DspAdc.cpp in Sources */,
 				90337CE511D0D847009FCC01 /* DspAdd.cpp in Sources */,
@@ -2084,7 +2077,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				90337DE211D0D847009FCC01 /* ArrayArithmetic.cpp in Sources */,
 				90337DE511D0D847009FCC01 /* DelayReceiver.cpp in Sources */,
 				90337DE711D0D847009FCC01 /* DspAdc.cpp in Sources */,
 				90337DE911D0D847009FCC01 /* DspAdd.cpp in Sources */,

@@ -74,7 +74,10 @@ void DspMultiply::processDspWithIndex(int fromIndex, int toIndex) {
       ArrayArithmetic::multiply(dspBufferAtInlet0, constant, dspBufferAtOutlet0, fromIndex, toIndex);
       break;
     }
-    case MESSAGE_MESSAGE:
+    case MESSAGE_MESSAGE: {
+      ArrayArithmetic::fill(dspBufferAtOutlet0, inputConstant*constant, fromIndex, toIndex);
+      break;
+    }
     default: {
       break; // nothing to do
     }

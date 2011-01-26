@@ -53,20 +53,18 @@ const char *DspCosine::getObjectLabel() {
 }
 
 void DspCosine::processDspWithIndex(int fromIndex, int toIndex) {
-  if (ArrayArithmetic::hasAccelerate) {
-    #if __APPLE__
-    float tempBuffer[blockSizeInt];
-    vDSP_vabs(dspBufferAtInlet0, 1, tempBuffer, 1, blockSizeInt); // abs(x)
-    vDSP_vfrac(tempBuffer, 1, tempBuffer, 1, blockSizeInt); // get the fractional part of x
-    vDSP_vsmul(tempBuffer, 1, &sampleRate, tempBuffer, 1, blockSizeInt); // * sampleRate
-    vDSP_vindex(cos_table, tempBuffer, 1, dspBufferAtOutlet0, 1, blockSizeInt); // perform a table lookup
-    #endif
-  } else {
-    for (int i = 0; i < blockSizeInt; i++) {
-      // works because cosine is symmetric about zero
-      float f = fabsf(dspBufferAtInlet0[i]);
-      f -= floorf(f);
-      dspBufferAtOutlet0[i] = cos_table[(int) (f * sampleRate)];
-    }
+  #if __APPLE__
+  float tempBuffer[blockSizeInt];
+  vDSP_vabs(dspBufferAtInlet0, 1, tempBuffer, 1, blockSizeInt); // abs(x)
+  vDSP_vfrac(tempBuffer, 1, tempBuffer, 1, blockSizeInt); // get the fractional part of x
+  vDSP_vsmul(tempBuffer, 1, &sampleRate, tempBuffer, 1, blockSizeInt); // * sampleRate
+  vDSP_vindex(cos_table, tempBuffer, 1, dspBufferAtOutlet0, 1, blockSizeInt); // perform a table lookup
+  #else
+  for (int i = 0; i < blockSizeInt; i++) {
+    // works because cosine is symmetric about zero
+    float f = fabsf(dspBufferAtInlet0[i]);
+    f -= floorf(f);
+    dspBufferAtOutlet0[i] = cos_table[(int) (f * sampleRate)];
   }
+  #endif
 }

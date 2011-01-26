@@ -86,36 +86,32 @@ void DspLine::processDspWithIndex(int fromIndex, int toIndex) {
       // if there is anything to process at all (several messages may be received at once)
       if (numSamplesToTarget < n) {
         int targetIndexInt = fromIndex + numSamplesToTarget;
-        if (ArrayArithmetic::hasAccelerate) {
-          #if __APPLE__
-          vDSP_vramp(&lastOutputSample, &slope, dspBufferAtOutlet0+fromIndex, 1, targetIndexInt-fromIndex);
-          vDSP_vfill(&target, dspBufferAtOutlet0+targetIndexInt, 1, toIndex-targetIndexInt);
-          #endif
-        } else {
-          // if we will process more samples than we have remaining to the target
-          // i.e., if we will arrive at the target while processing
-          dspBufferAtOutlet0[fromIndex] = lastOutputSample + slope;
-          for (int i = fromIndex+1; i < targetIndexInt; i++) {
-            dspBufferAtOutlet0[i] = dspBufferAtOutlet0[i-1] + slope;
-          }
-          for (int i = targetIndexInt; i < toIndex; i++) {
-            dspBufferAtOutlet0[i] = target;
-          }
+        #if __APPLE__
+        vDSP_vramp(&lastOutputSample, &slope, dspBufferAtOutlet0+fromIndex, 1, targetIndexInt-fromIndex);
+        vDSP_vfill(&target, dspBufferAtOutlet0+targetIndexInt, 1, toIndex-targetIndexInt);
+        #else
+        // if we will process more samples than we have remaining to the target
+        // i.e., if we will arrive at the target while processing
+        dspBufferAtOutlet0[fromIndex] = lastOutputSample + slope;
+        for (int i = fromIndex+1; i < targetIndexInt; i++) {
+          dspBufferAtOutlet0[i] = dspBufferAtOutlet0[i-1] + slope;
         }
+        for (int i = targetIndexInt; i < toIndex; i++) {
+          dspBufferAtOutlet0[i] = target;
+        }
+        #endif
         lastOutputSample = target;
         numSamplesToTarget = 0;
       } else {
         // if the target is far off
-        if (ArrayArithmetic::hasAccelerate) {
-          #if __APPLE__
-          vDSP_vramp(&lastOutputSample, &slope, dspBufferAtOutlet0+fromIndex, 1, n);
-          #endif
-        } else {
-          dspBufferAtOutlet0[fromIndex] = lastOutputSample + slope;
-          for (int i = fromIndex+1; i < toIndex; i++) {
-            dspBufferAtOutlet0[i] = dspBufferAtOutlet0[i-1] + slope;
-          }
+        #if __APPLE__
+        vDSP_vramp(&lastOutputSample, &slope, dspBufferAtOutlet0+fromIndex, 1, n);
+        #else
+        dspBufferAtOutlet0[fromIndex] = lastOutputSample + slope;
+        for (int i = fromIndex+1; i < toIndex; i++) {
+          dspBufferAtOutlet0[i] = dspBufferAtOutlet0[i-1] + slope;
         }
+        #endif
         lastOutputSample = dspBufferAtOutlet0[toIndex-1];  
         numSamplesToTarget -= n;
       }

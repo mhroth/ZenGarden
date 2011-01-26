@@ -60,20 +60,18 @@ void DspClip::processMessage(int inletIndex, PdMessage *message) {
 }
 
 void DspClip::processDspWithIndex(int fromIndex, int toIndex) {
-  if (ArrayArithmetic::hasAccelerate) {
-    #if __APPLE__
-    vDSP_vclip(dspBufferAtInlet0+fromIndex, 1, &lowerBound, &upperBound,
-        dspBufferAtOutlet0+fromIndex, 1, toIndex-fromIndex);
-    #endif
-  } else {
-    for (int i = fromIndex; i < toIndex; i++) {
-      if (dspBufferAtInlet0[i] <= lowerBound) {
-        dspBufferAtOutlet0[i] = lowerBound;
-      } else if (dspBufferAtInlet0[i] >= upperBound) {
-        dspBufferAtOutlet0[i] = upperBound;
-      } else {
-        dspBufferAtOutlet0[i] = dspBufferAtInlet0[i];
-      }
+  #if __APPLE__
+  vDSP_vclip(dspBufferAtInlet0+fromIndex, 1, &lowerBound, &upperBound,
+      dspBufferAtOutlet0+fromIndex, 1, toIndex-fromIndex);
+  #else
+  for (int i = fromIndex; i < toIndex; i++) {
+    if (dspBufferAtInlet0[i] <= lowerBound) {
+      dspBufferAtOutlet0[i] = lowerBound;
+    } else if (dspBufferAtInlet0[i] >= upperBound) {
+      dspBufferAtOutlet0[i] = upperBound;
+    } else {
+      dspBufferAtOutlet0[i] = dspBufferAtInlet0[i];
     }
   }
+  #endif
 }

@@ -48,40 +48,36 @@ void DspMinimum::processMessage(int inletIndex, PdMessage *message) {
 void DspMinimum::processDspWithIndex(int fromIndex, int toIndex) {
   switch (signalPrecedence) {
     case DSP_DSP: {
-      if (ArrayArithmetic::hasAccelerate) {
-        #if __APPLE__
-        vDSP_vmin(dspBufferAtInlet0+fromIndex, 1, dspBufferAtInlet1+fromIndex, 1,
-            dspBufferAtOutlet0+fromIndex, 1, toIndex-fromIndex);
-        #endif
-      } else {
-        for (int i = fromIndex; i < toIndex; i++) {
-          if (dspBufferAtInlet0[i] <= dspBufferAtInlet1[i]) {
-            dspBufferAtOutlet0[i] = dspBufferAtInlet0[i];
-          } else {
-            dspBufferAtOutlet0[i] = dspBufferAtInlet1[i];
-          }
+      #if __APPLE__
+      vDSP_vmin(dspBufferAtInlet0+fromIndex, 1, dspBufferAtInlet1+fromIndex, 1,
+          dspBufferAtOutlet0+fromIndex, 1, toIndex-fromIndex);
+      #else
+      for (int i = fromIndex; i < toIndex; i++) {
+        if (dspBufferAtInlet0[i] <= dspBufferAtInlet1[i]) {
+          dspBufferAtOutlet0[i] = dspBufferAtInlet0[i];
+        } else {
+          dspBufferAtOutlet0[i] = dspBufferAtInlet1[i];
         }
       }
+      #endif
       break;
     }
     case DSP_MESSAGE: {
-      if (ArrayArithmetic::hasAccelerate) {
-        #if __APPLE__
-        int duration = toIndex - fromIndex;
-        float vconst[duration];
-        vDSP_vfill(&constant, vconst, 1, duration);
-        vDSP_vmin(dspBufferAtInlet0 + fromIndex, 1, vconst, 1, dspBufferAtOutlet0 + fromIndex, 1,
-            duration);
-        #endif
-      } else {
-        for (int i = fromIndex; i < toIndex; i++) {
-          if (dspBufferAtInlet0[i] <= constant) {
-            dspBufferAtOutlet0[i] = dspBufferAtInlet0[i];
-          } else {
-            dspBufferAtOutlet0[i] = constant;
-          }
+      #if __APPLE__
+      int duration = toIndex - fromIndex;
+      float vconst[duration];
+      vDSP_vfill(&constant, vconst, 1, duration);
+      vDSP_vmin(dspBufferAtInlet0 + fromIndex, 1, vconst, 1, dspBufferAtOutlet0 + fromIndex, 1,
+          duration);
+      #else
+      for (int i = fromIndex; i < toIndex; i++) {
+        if (dspBufferAtInlet0[i] <= constant) {
+          dspBufferAtOutlet0[i] = dspBufferAtInlet0[i];
+        } else {
+          dspBufferAtOutlet0[i] = constant;
         }
       }
+      #endif
       break;
     }
     case MESSAGE_DSP:

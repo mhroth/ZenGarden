@@ -123,17 +123,15 @@ void DspEnvelope::processDspWithIndex(int fromIndex, int toIndex) {
     numSamplesReceivedSinceLastInterval -= windowInterval;
     // apply hanning window to signal and calculate Root Mean Square
     float rms = 0.0f;
-    if (ArrayArithmetic::hasAccelerate) {
-      #if __APPLE__
-      vDSP_vsq(signalBuffer, 1, rmsBuffer, 1, windowSize); // signalBuffer^2 
-      vDSP_vmul(rmsBuffer, 1, hanningCoefficients, 1, rmsBuffer, 1, windowSize); // * hanning window
-      vDSP_sve(rmsBuffer, 1, &rms, windowSize); // sum the result
-      #endif
-    } else {
-      for (int i = 0; i < windowSize; i++) {
-        rms += signalBuffer[i] * signalBuffer[i] * hanningCoefficients[i];
-      }
+    #if __APPLE__
+    vDSP_vsq(signalBuffer, 1, rmsBuffer, 1, windowSize); // signalBuffer^2 
+    vDSP_vmul(rmsBuffer, 1, hanningCoefficients, 1, rmsBuffer, 1, windowSize); // * hanning window
+    vDSP_sve(rmsBuffer, 1, &rms, windowSize); // sum the result
+    #else
+    for (int i = 0; i < windowSize; i++) {
+      rms += signalBuffer[i] * signalBuffer[i] * hanningCoefficients[i];
     }
+    #endif
     // finish RMS calculation. sqrt is removed as it can be combined with the log operation.
     // result is normalised such that 1 RMS == 100 dB
     rms = 10.0f * log10f(rms) + 100.0f;

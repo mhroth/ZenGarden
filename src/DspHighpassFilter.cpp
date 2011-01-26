@@ -80,26 +80,24 @@ void DspHighpassFilter::processMessage(int inletIndex, PdMessage *message) {
 
 // http://en.wikipedia.org/wiki/High-pass_filter
 void DspHighpassFilter::processDspWithIndex(int fromIndex, int toIndex) {
-  if (ArrayArithmetic::hasAccelerate) {
-    #if __APPLE__
-    const int duration = toIndex - fromIndex;
-    const int durationBytes = duration * sizeof(float);
-    float filterInputBuffer[duration+2];
-    memcpy(filterInputBuffer+2, dspBufferAtInlet0+fromIndex, durationBytes);
-    filterInputBuffer[0] = 0.0f; filterInputBuffer[1] = tapIn;
-    float filterOutputBuffer[duration+2];
-    filterOutputBuffer[0] = 0.0f; filterOutputBuffer[1] = tapOut;
-    vDSP_deq22(filterInputBuffer, 1, coefficients, filterOutputBuffer, 1, duration);
-    memcpy(dspBufferAtOutlet0+fromIndex, filterOutputBuffer+2, durationBytes);
-    tapIn = dspBufferAtInlet0[toIndex-1];
-    tapOut = dspBufferAtOutlet0[toIndex-1];
-    #endif
-  } else {
-    dspBufferAtOutlet0[fromIndex] = alpha * (tapOut + dspBufferAtInlet0[fromIndex] - tapIn);
-    for (int i = fromIndex+1; i < toIndex; i++) {
-      dspBufferAtOutlet0[i] = alpha * (dspBufferAtOutlet0[i-1] + dspBufferAtInlet0[i] - dspBufferAtInlet0[i-1]);
-    }
-    tapIn = dspBufferAtInlet0[toIndex-1];
-    tapOut = dspBufferAtOutlet0[toIndex-1];
+  #if __APPLE__
+  const int duration = toIndex - fromIndex;
+  const int durationBytes = duration * sizeof(float);
+  float filterInputBuffer[duration+2];
+  memcpy(filterInputBuffer+2, dspBufferAtInlet0+fromIndex, durationBytes);
+  filterInputBuffer[0] = 0.0f; filterInputBuffer[1] = tapIn;
+  float filterOutputBuffer[duration+2];
+  filterOutputBuffer[0] = 0.0f; filterOutputBuffer[1] = tapOut;
+  vDSP_deq22(filterInputBuffer, 1, coefficients, filterOutputBuffer, 1, duration);
+  memcpy(dspBufferAtOutlet0+fromIndex, filterOutputBuffer+2, durationBytes);
+  tapIn = dspBufferAtInlet0[toIndex-1];
+  tapOut = dspBufferAtOutlet0[toIndex-1];
+  #else
+  dspBufferAtOutlet0[fromIndex] = alpha * (tapOut + dspBufferAtInlet0[fromIndex] - tapIn);
+  for (int i = fromIndex+1; i < toIndex; i++) {
+    dspBufferAtOutlet0[i] = alpha * (dspBufferAtOutlet0[i-1] + dspBufferAtInlet0[i] - dspBufferAtInlet0[i-1]);
   }
+  tapIn = dspBufferAtInlet0[toIndex-1];
+  tapOut = dspBufferAtOutlet0[toIndex-1];
+  #endif
 }

@@ -93,29 +93,27 @@ void DspLowpassFilter::processDspWithIndex(int fromIndex, int toIndex) {
       // allow fallthrough
     }
     case DSP_MESSAGE: {
-      if (ArrayArithmetic::hasAccelerate) {
-        #if __APPLE__
-        const int duration = toIndex - fromIndex;
-        float filterInputBuffer[duration+2];
-        filterInputBuffer[0] = filterInputBuffer[1] = 0.0f;
-        memcpy(filterInputBuffer+2, dspBufferAtInlet0+fromIndex, duration * sizeof(float));
-        float filterOutputBuffer[duration+2];
-        filterOutputBuffer[0] = 0.0f; filterOutputBuffer[1] = tap_0;
-        // vDSP_deq22 =
-        // out[i] = coeff[0]*in[i] + coeff[1]*in[i-1] + coeff[2]*in[i-2] - coeff[3]*out[i-1] - coeff[4]*out[i-2]
-        vDSP_deq22(filterInputBuffer, 1, coefficients, filterOutputBuffer, 1, duration);
-        memcpy(dspBufferAtOutlet0+fromIndex, filterOutputBuffer+2, duration * sizeof(float));
-        // retain last output
-        tap_0 = dspBufferAtOutlet0[toIndex-1];
-        #endif
-      } else {
-        ArrayArithmetic::multiply(dspBufferAtInlet0, alpha, dspBufferAtOutlet0, fromIndex, toIndex);
-        dspBufferAtOutlet0[fromIndex] += beta * tap_0;
-        for (int i = fromIndex+1; i < toIndex; i++) {
-          dspBufferAtOutlet0[i] += beta * dspBufferAtOutlet0[i-1];
-        }
-        tap_0 = dspBufferAtOutlet0[toIndex-1];
+      #if __APPLE__
+      const int duration = toIndex - fromIndex;
+      float filterInputBuffer[duration+2];
+      filterInputBuffer[0] = filterInputBuffer[1] = 0.0f;
+      memcpy(filterInputBuffer+2, dspBufferAtInlet0+fromIndex, duration * sizeof(float));
+      float filterOutputBuffer[duration+2];
+      filterOutputBuffer[0] = 0.0f; filterOutputBuffer[1] = tap_0;
+      // vDSP_deq22 =
+      // out[i] = coeff[0]*in[i] + coeff[1]*in[i-1] + coeff[2]*in[i-2] - coeff[3]*out[i-1] - coeff[4]*out[i-2]
+      vDSP_deq22(filterInputBuffer, 1, coefficients, filterOutputBuffer, 1, duration);
+      memcpy(dspBufferAtOutlet0+fromIndex, filterOutputBuffer+2, duration * sizeof(float));
+      // retain last output
+      tap_0 = dspBufferAtOutlet0[toIndex-1];
+      #else
+      ArrayArithmetic::multiply(dspBufferAtInlet0, alpha, dspBufferAtOutlet0, fromIndex, toIndex);
+      dspBufferAtOutlet0[fromIndex] += beta * tap_0;
+      for (int i = fromIndex+1; i < toIndex; i++) {
+        dspBufferAtOutlet0[i] += beta * dspBufferAtOutlet0[i-1];
       }
+      tap_0 = dspBufferAtOutlet0[toIndex-1];
+      #endif
       break;
     }
     case MESSAGE_DSP:
