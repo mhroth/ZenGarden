@@ -9,6 +9,7 @@ Xcode/build
 Xcode/ZenGarden.xcodeproj/mhroth.pbxuser
 Xcode/ZenGarden.xcodeproj/mhroth.mode1v3
 Xcode/ZenGarden.xcodeproj/project.pbxproj
+Xcode/ZenGarden.xcodeproj/xcuserdata
 src/main.cpp
 src/sndfile.h
 .*.swp
