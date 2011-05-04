@@ -27,9 +27,6 @@
 		90251D5912043445000EAF40 /* DspSignal.h in Headers */ = {isa = PBXBuildFile; fileRef = 90251D5612043445000EAF40 /* DspSignal.h */; };
 		90251D5A12043445000EAF40 /* DspSignal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90251D5512043445000EAF40 /* DspSignal.cpp */; };
 		90251D5B12043445000EAF40 /* DspSignal.h in Headers */ = {isa = PBXBuildFile; fileRef = 90251D5612043445000EAF40 /* DspSignal.h */; };
-		9025F824120ECFF700129300 /* libsndfile_x86.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9025F823120ECFF700129300 /* libsndfile_x86.a */; };
-		9025F825120ECFF700129300 /* libsndfile_x86.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9025F823120ECFF700129300 /* libsndfile_x86.a */; };
-		9025F82F120ED04400129300 /* libsndfile_iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9025F82E120ED04400129300 /* libsndfile_iOS.a */; };
 		90337C5E11D0D847009FCC01 /* DelayReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B4C11D0D847009FCC01 /* DelayReceiver.cpp */; };
 		90337C5F11D0D847009FCC01 /* DspAdc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B4E11D0D847009FCC01 /* DspAdc.cpp */; };
 		90337C6011D0D847009FCC01 /* DspAdd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B5011D0D847009FCC01 /* DspAdd.cpp */; };
@@ -744,8 +741,6 @@
 		90251D3912042F38000EAF40 /* MessageOpenPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageOpenPanel.cpp; path = ../src/MessageOpenPanel.cpp; sourceTree = SOURCE_ROOT; };
 		90251D5512043445000EAF40 /* DspSignal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspSignal.cpp; path = ../src/DspSignal.cpp; sourceTree = SOURCE_ROOT; };
 		90251D5612043445000EAF40 /* DspSignal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspSignal.h; path = ../src/DspSignal.h; sourceTree = SOURCE_ROOT; };
-		9025F823120ECFF700129300 /* libsndfile_x86.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsndfile_x86.a; path = ../libs/Darwin/libsndfile_x86.a; sourceTree = SOURCE_ROOT; };
-		9025F82E120ED04400129300 /* libsndfile_iOS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsndfile_iOS.a; path = ../libs/iOS/libsndfile_iOS.a; sourceTree = SOURCE_ROOT; };
 		90337B4A11D0D847009FCC01 /* ArrayArithmetic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArrayArithmetic.h; path = ../src/ArrayArithmetic.h; sourceTree = SOURCE_ROOT; };
 		90337B4B11D0D847009FCC01 /* ConnectionType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConnectionType.h; path = ../src/ConnectionType.h; sourceTree = SOURCE_ROOT; };
 		90337B4C11D0D847009FCC01 /* DelayReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DelayReceiver.cpp; path = ../src/DelayReceiver.cpp; sourceTree = SOURCE_ROOT; };
@@ -1035,7 +1030,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				90AF7F7511FE67BE006F88E6 /* Accelerate.framework in Frameworks */,
-				9025F824120ECFF700129300 /* libsndfile_x86.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1044,7 +1038,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				9069DFD211D17BD600889A5B /* Accelerate.framework in Frameworks */,
-				9025F82F120ED04400129300 /* libsndfile_iOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1053,7 +1046,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				9069DFD311D17BF100889A5B /* Accelerate.framework in Frameworks */,
-				9025F825120ECFF700129300 /* libsndfile_x86.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1376,8 +1368,6 @@
 		90F84D98120ECDEC0011407E /* Frameworks & Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				9025F823120ECFF700129300 /* libsndfile_x86.a */,
-				9025F82E120ED04400129300 /* libsndfile_iOS.a */,
 				9069DFD111D17BD600889A5B /* Accelerate.framework */,
 			);
 			name = "Frameworks & Libraries";
@@ -2276,7 +2266,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				PREBINDING = NO;
 				SDKROOT = macosx10.6;
 			};
@@ -2357,10 +2347,11 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				INSTALL_PATH = /usr/local/lib;
-				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../libs/Darwin/";
-				OTHER_LDFLAGS = "-lsndfilezg";
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				OTHER_LDFLAGS = "-lsndfile";
 				PREBINDING = NO;
 				PRODUCT_NAME = zengarden;
 			};
@@ -2378,13 +2369,11 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				INSTALL_PATH = /usr/local/lib;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../libs/Darwin\"",
-				);
-				OTHER_LDFLAGS = "";
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				OTHER_LDFLAGS = "-lsndfile";
 				PREBINDING = NO;
 				PRODUCT_NAME = zengarden;
 				STRIP_INSTALLED_PRODUCT = YES;
