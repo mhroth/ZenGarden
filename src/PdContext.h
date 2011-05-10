@@ -169,12 +169,12 @@ class PdContext {
     void setValueForName(char *name, float constant);
     float getValueForName(char *name);
   
+    /** Create a new object based on its initialisation string. */
+    MessageObject *newObject(char *objectType, char *objectLabel, PdMessage *initMessage, PdGraph *graph);
+  
   private:
     /** Returns <code>true</code> if the graph was successfully configured. <code>false</code> otherwise. */
     bool configureEmptyGraphWithParser(PdGraph *graph, PdFileParser *fileParser);
-  
-    /** Create a new object based on its initialisation string. */
-    MessageObject *newObject(char *objectType, char *objectLabel, PdMessage *initMessage, PdGraph *graph);
   
     /**
      * This is an analog of MessageObject::getNextOutgoingMessage(), but strictly for use with the

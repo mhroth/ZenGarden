@@ -43,6 +43,9 @@ extern "C" {
   typedef void ZGObject;
 #endif
   
+  
+#pragma mark - New Context/Graph/Object
+  
   /** Create a new context to which graphs can be added. */
   ZGContext *zg_new_context(int numInputChannels, int numOutputChannels, int blockSize, float sampleRate,
       void (*callbackFunction)(ZGCallbackFunction function, void *userData, void *ptr), void *userData);
@@ -68,21 +71,55 @@ extern "C" {
   /** Deletes the given graph. If attached, the graph is automatically removed from its context. */
   void zg_delete_graph(ZGGraph *graph);
   
+  
+#pragma mark - Object Manipulation
+  
+  /**
+   * Create a new object with the given label (e.g. "+", "send~", or "pack"), and an optional
+   * initialisation string (e.g. "5", "hello", or "f f f"). The object must be added to the same
+   * context and graph as given to this function.
+   */
+  ZGObject *zg_new_object(ZGContext *context, ZGGraph *graph, char *objectLabel, char *initString);
+  
   /**
    * Add an object to a graph. If the graph is currently attached then audio may be interrupted
    * while the object is attached the and graph reconfigured (if necessary). If the graph is unattached
-   * then no audio interruption will take place, even if reconfiguration takes place.
+   * then no audio interruption will take place, even if reconfiguration takes place. The canvasX
+   * and canvasY arguments specify the canvas location of the object. This is only relevant for
+   * input/~ and output/~ objects, otherwise 0 may be specified.
    */
-  void zg_add_object(ZGGraph *graph, ZGObject *object);
+  void zg_add_object(ZGGraph *graph, ZGObject *object, int canvasX, int canvasY);
   
   /**
    * Removes the object from the graph. Any connections that this object may have had in the graph
    * are also deleted.
    */
   void zg_remove_object(ZGGraph *graph, ZGObject *object);
+  
+  
+#pragma mark - Add/Remove Connection
+  
+  /**
+   * Add a connection between two objects, both of which are in the given graph. The new connection
+   * may cause the object graph to be reordered and cause audio dropouts. If the arguments do
+   * not define a valid connection, then this function does nothing.
+   */
+  void zg_add_connection(ZGGraph *graph, ZGObject *fromObject, int outletIndex, ZGObject *toObject, int inletIndex);
+  
+  /**
+   * Remove a connection between two objects, both of which are in the given graph. If the arguments
+   * do not define a valid connection, then this function does nothing.
+   */
+  void zg_remove_connection(ZGGraph *graph, ZGObject *fromObject, int outletIndex, ZGObject *toObject, int inletIndex);
+  
+  
+#pragma mark - Process
 
   /** Process the given context. */
   void zg_process(ZGContext *context, float *inputBuffers, float *outputBuffers);
+  
+  
+#pragma mark - Send Message
   
   /**
    * Send a message to the named receiver with the given format at the beginning of the next audio block.

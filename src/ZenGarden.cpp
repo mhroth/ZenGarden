@@ -55,8 +55,16 @@ void zg_remove_graph(PdContext *context, PdGraph *graph) {
   context->removeGraph(graph);
 }
 */
-void zg_add_object(PdGraph *graph, MessageObject *object) {
-  graph->addObject(0, 0, object);
+
+ZGObject *zg_new_object(ZGContext *context, ZGGraph *graph, char *objectLabel, char *initString) {
+  PdMessage *initMessage = new PdMessage(initString, graph->getArguments());
+  MessageObject *messageObject = context->newObject("obj", objectLabel, initMessage, graph);
+  delete initMessage;
+  return messageObject;
+}
+
+void zg_add_object(PdGraph *graph, ZGObject *object, int canvasX, int canvasY) {
+  graph->addObject(canvasX, canvasY, object);
 }
 /*
 void zg_remove_object(PdGraph *graph, MessageObject *object) {
@@ -78,6 +86,14 @@ void zg_delete_graph(ZGGraph *graph) {
     */
     delete graph;
   }
+}
+
+void zg_add_connection(ZGGraph *graph, ZGObject *fromObject, int outletIndex, ZGObject *toObject, int inletIndex) {
+  graph->addConnection(fromObject, outletIndex, toObject, inletIndex);
+}
+
+void zg_remove_connection(ZGObject *fromObject, int outletIndex, ZGObject *toObject, int inletIndex) {
+  //graph->removeConnection(fromObject, outletIndex, toObject, inletIndex);
 }
 
 void zg_process(PdContext *context, float *inputBuffers, float *outputBuffers) {
