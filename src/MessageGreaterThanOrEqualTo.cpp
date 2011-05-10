@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -44,9 +44,8 @@ void MessageGreaterThanOrEqualTo::processMessage(int inletIndex, PdMessage *mess
           // allow fallthrough
         }
         case BANG: {
-          PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-          outgoingMessage->setFloat(0, lastOutput);
-          outgoingMessage->setTimestamp(message->getTimestamp());
+          PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+          outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), lastOutput);
           sendMessage(0, outgoingMessage);
           break;
         }

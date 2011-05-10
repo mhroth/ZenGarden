@@ -32,18 +32,18 @@ ZGContext *zg_new_context(int numInputChannels, int numOutputChannels, int block
 }
 
 ZGGraph *zg_new_empty_graph(PdContext *context) {
-  PdMessage *initMessage = new PdMessage(); // create an empty message to use for initialisation
-  // the new graph has no parent grpah and is created in the given context
+  PdMessage *initMessage = PD_MESSAGE_ON_STACK(0); // create an empty message to use for initialisation
+  initMessage->initWithTimestampAndNumElements(0.0, 0);
+  // the new graph has no parent graph and is created in the given context
   PdGraph *graph = new PdGraph(initMessage, NULL, context, context->getNextGraphId());
-  delete initMessage; // destroy the dummy initial message
   return graph;
 }
 
 ZGGraph *zg_new_graph(PdContext *context, char *directory, char *filename) {
-  PdMessage *initMessage = new PdMessage(); // create an empty initMessage
+  PdMessage *initMessage = PD_MESSAGE_ON_STACK(0); // create an empty initMessage
+  initMessage->initWithTimestampAndNumElements(0.0, 0);
   // no parent graph
   PdGraph *graph = context->newGraph(directory, filename, initMessage, NULL);
-  delete initMessage;
   return graph;
 }
 

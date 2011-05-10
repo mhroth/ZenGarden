@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -23,14 +23,14 @@
 #include "MessagePack.h"
 #include "PdGraph.h"
 
-MessagePack::MessagePack(PdMessage *initMessage, PdGraph *graph) : MessageObject(initMessage->getNumElements(), 1, graph) {
-  templateMessage = initMessage->copy();
-  templateMessage->resolveSymbolsToType();
-  outgoingMessage = getNextOutgoingMessage(0);
+MessagePack::MessagePack(PdMessage *initMessage, PdGraph *graph) :
+    MessageObject(initMessage->getNumElements(), 1, graph) {
+  outgoingMessage = initMessage->copyToHeap();
+  outgoingMessage->resolveSymbolsToType();
 }
 
 MessagePack::~MessagePack() {
-  delete templateMessage;
+  outgoingMessage->free();
 }
 
 const char *MessagePack::getObjectLabel() {
@@ -42,7 +42,7 @@ void MessagePack::processMessage(int inletIndex, PdMessage *message) {
     case FLOAT: {
       if (outgoingMessage->isFloat(inletIndex)) {
         outgoingMessage->setFloat(inletIndex, message->getFloat(0));
-        onBangAtLeftInlet(inletIndex, message->getTimestamp());
+        onBangAtInlet(inletIndex, message->getTimestamp());
       } else {
         graph->printErr("pack: type mismatch: %s expected but got %s at inlet %i.\n",
             StaticUtils::messageElementTypeToString(outgoingMessage->getType(inletIndex)),
@@ -55,7 +55,7 @@ void MessagePack::processMessage(int inletIndex, PdMessage *message) {
     case SYMBOL: {
       if (outgoingMessage->isSymbol(inletIndex)) {
         outgoingMessage->setSymbol(inletIndex, message->getSymbol(0));
-        onBangAtLeftInlet(inletIndex, message->getTimestamp());
+        onBangAtInlet(inletIndex, message->getTimestamp());
       } else {
         graph->printErr("pack: type mismatch: %s expected but got %s at inlet %i.\n",
             StaticUtils::messageElementTypeToString(outgoingMessage->getType(inletIndex)),
@@ -66,7 +66,7 @@ void MessagePack::processMessage(int inletIndex, PdMessage *message) {
       break;
     }
     case BANG: {
-      onBangAtLeftInlet(inletIndex, message->getTimestamp());
+      onBangAtInlet(inletIndex, message->getTimestamp());
     }
     default: {
       break;
@@ -74,18 +74,10 @@ void MessagePack::processMessage(int inletIndex, PdMessage *message) {
   }
 }
 
-void MessagePack::onBangAtLeftInlet(int inletIndex, double timestamp) {
+void MessagePack::onBangAtInlet(int inletIndex, double timestamp) {
   if (inletIndex == 0) {
     // send the outgoing message
     outgoingMessage->setTimestamp(timestamp);
     sendMessage(0, outgoingMessage);
-    
-    // prepare the next outgoing message
-    // it already has the correct format due to newCanonicalMessage()
-    outgoingMessage = getNextOutgoingMessage(0);
   }
-}
-
-PdMessage *MessagePack::newCanonicalMessage(int outletIndex) {
-  return templateMessage->copy();
 }

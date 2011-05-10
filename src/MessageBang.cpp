@@ -35,7 +35,7 @@ const char *MessageBang::getObjectLabel() {
 }
 
 void MessageBang::processMessage(int inletIndex, PdMessage *message) {
-  PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-  outgoingMessage->setTimestamp(message->getTimestamp());
+  PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+  outgoingMessage->initWithTimestampAndBang(message->getTimestamp());
   sendMessage(0, outgoingMessage);
 }

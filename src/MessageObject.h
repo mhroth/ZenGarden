@@ -88,8 +88,8 @@ class MessageObject {
     /**
      * Returns <code>true</code> if this object should distribute the elements of the incoming
      * message across the inlets. A message is otherwise only distributed if the message arrives
-     * on the left-most inlet, has more than one inlet, and has exactly as many elements as there
-     * object inlets. This function returns <code>true</code> by default and should be overridden
+     * on the left-most inlet and has more than one inlet. This function returns <code>true</code>
+     * by default and should be overridden
      * to return <code>false</code> if this behaviour is not desired (e.g., as in the case of the
      * <code>line</code> object). This behaviour is set to <code>false</code> for all
      * <code>DspObject</code> objects.
@@ -112,25 +112,17 @@ class MessageObject {
      */
     void resetOrderedFlag();
     
-  protected:
-    /** Returns a message that can be sent from the given outlet. */
-    PdMessage *getNextOutgoingMessage(int outletIndex);
-    
-    /** Returns a new message for use at the given outlet. */
-    virtual PdMessage *newCanonicalMessage(int outletIndex);
+  protected:  
+    /** A pointer to the graph owning this object. */
+    PdGraph *graph;
   
-    PdGraph *graph;    
     int numMessageInlets;
     int numMessageOutlets;
     List **incomingMessageConnectionsListAtInlet;
     List **outgoingMessageConnectionsListAtOutlet;
-    List **messageOutletPools;
   
     /** A flag indicating that this object has already been considered when ordering the process tree. */
     bool isOrdered;
-  
-    /** A <code>PdMessage</code> used only to distribute an incoming message across inlets, when necessary. */
-    PdMessage *distributedMessage;
 };
 
 #endif // _MESSAGE_OBJECT_H_

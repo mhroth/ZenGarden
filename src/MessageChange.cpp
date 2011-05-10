@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -40,20 +40,19 @@ void MessageChange::processMessage(int inletIndex, PdMessage *message) {
       switch (message->getType(0)) {
         case FLOAT: {
           // output only if input is different than what is already there
-            if (message->getFloat(0) != prevValue) {
-              PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-              outgoingMessage->getElement(0)->setFloat(message->getFloat(0));
-              outgoingMessage->setTimestamp(message->getTimestamp());
-              prevValue = message->getFloat(0);
-              sendMessage(0, outgoingMessage);
-            }
-            break;
+          float messageValue = message->getFloat(0);
+          if (messageValue != prevValue) {
+            PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+            outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), messageValue);
+            prevValue = messageValue;
+            sendMessage(0, outgoingMessage);
+          }
+          break;
         }
         case BANG: {
           // force output
-          PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-          outgoingMessage->getElement(0)->setFloat(prevValue);
-          outgoingMessage->setTimestamp(message->getTimestamp());
+          PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+          outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), prevValue);
           sendMessage(0, outgoingMessage);
           break;
         }

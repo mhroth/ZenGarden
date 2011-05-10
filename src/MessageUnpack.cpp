@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -27,17 +27,18 @@ MessageUnpack::MessageUnpack(PdMessage *initMessage, PdGraph *graph) :
     MessageObject(1, (initMessage->getNumElements() < 2) ? 2 : initMessage->getNumElements(), graph) {
   if (initMessage->getNumElements() < 2) {
     // if unpack is not initialised with anything, assume two "anything" outputs
-    templateMessage = new PdMessage();
-    templateMessage->addElement((char *) "a");
-    templateMessage->addElement((char *) "a");
+    templateMessage = PD_MESSAGE_ON_STACK(2);
+    templateMessage->setAnything(0);
+    templateMessage->setAnything(1);
+    templateMessage = templateMessage->copyToHeap();
   } else {
-    templateMessage = initMessage->copy();
+    templateMessage = initMessage->copyToHeap();
+    templateMessage->resolveSymbolsToType();
   }
-  templateMessage->resolveSymbolsToType();
 }
 
 MessageUnpack::~MessageUnpack() {
-  delete templateMessage;
+  templateMessage->free();
 }
 
 const char *MessageUnpack::getObjectLabel() {
@@ -54,9 +55,8 @@ void MessageUnpack::processMessage(int inletIndex, PdMessage *message) {
     if (elementType == message->getType(i) || elementType == ANYTHING) {
       switch (elementType) {
         case FLOAT: {
-          PdMessage *outgoingMessage = getNextOutgoingMessage(i);
-          outgoingMessage->setFloat(0, message->getFloat(i));
-          outgoingMessage->setTimestamp(message->getTimestamp());
+          PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+          outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), message->getFloat(i));
           sendMessage(i, outgoingMessage);
           break;
         }
@@ -68,10 +68,10 @@ void MessageUnpack::processMessage(int inletIndex, PdMessage *message) {
           break;
         }
         case ANYTHING: {
-          PdMessage *outgoingMessage = getNextOutgoingMessage(i);
+          PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
           switch (message->getType(i)) {
             case FLOAT: {
-              outgoingMessage->setFloat(0, message->getFloat(i));
+              outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), message->getFloat(i));
               break;
             }
             case SYMBOL: {
@@ -82,7 +82,7 @@ void MessageUnpack::processMessage(int inletIndex, PdMessage *message) {
               break;
             }
           }
-          outgoingMessage->setTimestamp(message->getTimestamp());
+          //outgoingMessage->setTimestamp(message->getTimestamp());
           sendMessage(i, outgoingMessage);
         }
         default: {

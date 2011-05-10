@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -23,17 +23,7 @@
 #include "MessageRandom.h"
 
 MessageRandom::MessageRandom(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
-  if (initMessage->getNumElements() > 0 &&
-      initMessage->getElement(0)->getType() == FLOAT) {
-    max_inc = ((int) initMessage->getElement(0)->getFloat()) - 1;
-  } else {
-    max_inc = 1;
-  }
-  twister = new MTRand();
-}
-
-MessageRandom::MessageRandom(int N, PdGraph *graph) : MessageObject(2, 1, graph) {
-  this->max_inc = N-1;
+  max_inc = initMessage->isFloat(0) ? ((int) initMessage->getFloat(0))-1 : 1;
   twister = new MTRand();
 }
 
@@ -52,20 +42,16 @@ bool MessageRandom::shouldDistributeMessageToInlets() {
 void MessageRandom::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
-      MessageElement *messageElement = message->getElement(0);
-      switch (messageElement->getType()) {
+      switch (message->getType(0)) {
         case SYMBOL: {
-          if (strcmp(messageElement->getSymbol(), "seed") == 0 &&
-              message->getNumElements() > 1 &&
-              message->getElement(1)->getType() == FLOAT) {
-            twister->seed((int) message->getElement(1)->getFloat()); // reset the seed
+          if (message->isSymbol(0, "seed") && message->isFloat(1)) {
+            twister->seed((int) message->getFloat(1)); // reset the seed
           }
           break;
         }
         case BANG: {
-          PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-          outgoingMessage->setTimestamp(message->getTimestamp());
-          outgoingMessage->getElement(0)->setFloat((float) twister->randInt(max_inc));
+          PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+          outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), (float) twister->randInt(max_inc));
           sendMessage(0, outgoingMessage);
           break;
         }
@@ -76,8 +62,8 @@ void MessageRandom::processMessage(int inletIndex, PdMessage *message) {
       break;
     }
     case 1: {
-      if (message->getElement(0)->getType() == FLOAT) {
-        max_inc = ((int) message->getElement(0)->getFloat()) - 1;
+      if (message->isFloat(0)) {
+        max_inc = ((int) message->getFloat(0)) - 1;
       }
       break;
     }

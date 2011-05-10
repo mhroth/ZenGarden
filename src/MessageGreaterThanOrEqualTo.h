@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009, 2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef _MESSAGE_GreaterThanOrEqualToOREQUALTO_H_
-#define _MESSAGE_GreaterThanOrEqualToOREQUALTO_H_
+#ifndef _MESSAGE_GREATERTHANOREQUALTO_H_
+#define _MESSAGE_GREATERTHANOREQUALTO_H_
 
 #include "MessageObject.h"
 
@@ -30,7 +30,6 @@ class MessageGreaterThanOrEqualTo : public MessageObject {
 
   public:
     MessageGreaterThanOrEqualTo(PdMessage *initMessage, PdGraph *graph);
-    MessageGreaterThanOrEqualTo(float constant, PdGraph *graph);
     ~MessageGreaterThanOrEqualTo();
 
     const char *getObjectLabel();
@@ -43,4 +42,4 @@ class MessageGreaterThanOrEqualTo : public MessageObject {
     float lastOutput;
 };
 
-#endif // _MESSAGE_GreaterThanOrEqualToOREQUALTO_H_
+#endif // _MESSAGE_GREATERTHANOREQUALTO_H_

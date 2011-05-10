@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -30,7 +30,6 @@ class MessageFloat : public MessageObject {
     
   public:
     MessageFloat(PdMessage *initMessage, PdGraph *graph);
-    MessageFloat(float constant, PdGraph *graph);
     ~MessageFloat();
   
     const char *getObjectLabel();

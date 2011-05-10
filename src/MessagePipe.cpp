@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -57,9 +57,9 @@ void MessagePipe::processMessage(int inletIndex, PdMessage *message) {
             PdMessage *scheduledMessage = NULL;
             scheduledMessagesList->resetIterator();
             while ((scheduledMessage = (PdMessage *) scheduledMessagesList->getNext()) != NULL) {
-              graph->cancelMessage(this, 0, scheduledMessage);
               scheduledMessage->setTimestamp(message->getTimestamp());
               sendMessage(0, scheduledMessage);
+              graph->cancelMessage(this, 0, scheduledMessage); // cancel the scheduled message and free it from memory
             }
             break;
           } else if (message->isSymbol(0, "clear")) {
@@ -75,9 +75,11 @@ void MessagePipe::processMessage(int inletIndex, PdMessage *message) {
         }
         case FLOAT:
         case BANG: {
-          message->setTimestamp(message->getTimestamp() + delayMs);
-          scheduledMessagesList->add(message);
-          graph->scheduleMessage(this, 0, message);
+          // copy the message, update the timestamp, schedule it to be sent later
+          PdMessage *scheduledMessage = message->copyToHeap();
+          scheduledMessage->setTimestamp(message->getTimestamp() + delayMs);
+          scheduledMessagesList->add(graph->scheduleMessage(this, 0, scheduledMessage));
+          scheduledMessage->free();
           break;
         }
         default: {

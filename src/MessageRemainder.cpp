@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009, 2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -23,24 +23,11 @@
 #include "MessageRemainder.h"
 
 MessageRemainder::MessageRemainder(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
-  if (initMessage->getNumElements() > 0 &&
-      initMessage->getElement(0)->getType() == FLOAT) {
-    init(initMessage->getElement(0)->getFloat());
-  } else {
-    init(0.0f);
-  }
-}
-
-MessageRemainder::MessageRemainder(float constant, PdGraph *graph) : MessageObject(2, 1, graph) {
-  init(constant);
+  constant = initMessage->isFloat(0) ? (int) initMessage->getFloat(0) : 0;
 }
 
 MessageRemainder::~MessageRemainder() {
   // nothing to do
-}
-
-void MessageRemainder::init(float constant) {
-  this->constant = (int) constant;
 }
 
 const char *MessageRemainder::getObjectLabel() {
@@ -50,20 +37,17 @@ const char *MessageRemainder::getObjectLabel() {
 void MessageRemainder::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
-      MessageElement *messageElement = message->getElement(0);
-      if (messageElement->getType() == FLOAT) {
-        PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-        float remainder = (constant == 0.0f) ? 0.0f : (float) ((int) messageElement-> getFloat() % constant);
-        outgoingMessage->getElement(0)->setFloat(remainder);
-        outgoingMessage->setTimestamp(message->getTimestamp());
+      if (message->isFloat(0)) {
+        PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+        float remainder = (constant == 0.0f) ? 0.0f : (float) ((int) message->getFloat(0) % constant);
+        outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), remainder);
         sendMessage(0, outgoingMessage);
       }
       break;
     }
     case 1: {
-      MessageElement *messageElement = message->getElement(0);
-      if (messageElement->getType() == FLOAT) {
-        constant = (int) messageElement->getFloat();
+      if (message->isFloat(0)) {
+        constant = (int) message->getFloat(0);
       }
       break;
     }

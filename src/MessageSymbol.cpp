@@ -27,11 +27,6 @@ MessageSymbol::MessageSymbol(PdMessage *initMessage, PdGraph *graph) : MessageOb
   symbol->setSymbol(initMessage->isSymbol(0) ? initMessage->getSymbol(0) : (char *) "");
 }
 
-MessageSymbol::MessageSymbol(char *initSymbol, PdGraph *graph) : MessageObject(2, 1, graph) {
-  symbol = new MessageElement();
-  symbol->setSymbol((initSymbol != NULL) ? initSymbol : (char *) "");
-}
-
 MessageSymbol::~MessageSymbol() {
   delete symbol;
 }
@@ -49,9 +44,8 @@ void MessageSymbol::processMessage(int inletIndex, PdMessage *message) {
           // allow fallthrough
         }
         case BANG: {
-          PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-          outgoingMessage->setTimestamp(message->getTimestamp());
-          outgoingMessage->setSymbol(0, symbol->getSymbol());
+          PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+          outgoingMessage->initWithTimestampAndSymbol(message->getTimestamp(), symbol);
           sendMessage(0, outgoingMessage);
           break;
         }

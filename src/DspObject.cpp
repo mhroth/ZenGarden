@@ -209,10 +209,9 @@ void DspObject::receiveMessage(int inletIndex, PdMessage *message) {
   // Queue the message to be processed during the DSP round only if the graph is switched on.
   // Otherwise messages would begin to pile up because the graph is not processed.
   if (graph->isSwitchedOn()) {
-    // reserve the message so that it won't be reused by the issuing object.
+    // Copy to the message to the heap so that it is available to process later.
     // The message is released once it is consumed in processDsp().
-    message->reserve();
-    messageQueue->add(inletIndex, message);
+    messageQueue->add(inletIndex, message->copyToHeap());
     hasMessageToProcess = true;
   }
 }
@@ -292,8 +291,8 @@ void DspObject::processDsp() {
     while ((messageLetPair = (MessageLetPair *) messageQueue->pop()) != NULL) {
       message = messageLetPair->message;
       processMessage(messageLetPair->index, message);
-      message->unreserve(); // unreserve the message so that it can be reused by the issuing object
       blockIndexOfLastMessage = graph->getBlockIndex(message);
+      message->free(); // free the message from the head, the message has been consumed.
     }
     processDspWithIndex(blockIndexOfLastMessage, blockSizeFloat);
     blockIndexOfLastMessage = 0.0f; // reset the block index of the last received message

@@ -132,11 +132,16 @@ class PdContext {
   
     /**
      * Schedules a <code>PdMessage</code> to be sent by the <code>MessageObject</code> from the
-     * <code>outletIndex</code> at the specified <code>time</code>.
+     * <code>outletIndex</code> at the specified <code>time</code>. The message will be copied
+     * to the heap and the context will thereafter take over ownership and be responsible for
+     * freeing it. The pointer to the heap-message is returned.
      */
-    void scheduleMessage(MessageObject *messageObject, int outletIndex, PdMessage *message);
+    PdMessage *scheduleMessage(MessageObject *messageObject, int outletIndex, PdMessage *message);
   
-    /** Cancel a scheduled <code>PdMessage</code> according to its id. */
+    /**
+     * Cancel a scheduled <code>PdMessage</code> according to its id. The message memory will
+     * be freed.
+     */
     void cancelMessage(MessageObject *messageObject, int outletIndex, PdMessage *message);
   
     /** Receives and processes messages sent to the Pd system by sending to "pd". */
@@ -175,12 +180,6 @@ class PdContext {
   
     /** Create a new object based on its initialisation string. */
     MessageObject *newObject(char *objectType, char *objectLabel, PdMessage *initMessage, PdGraph *graph);
-  
-    /**
-     * This is an analog of MessageObject::getNextOutgoingMessage(), but strictly for use with the
-     * external messages.
-     */
-    PdMessage *getNextExternalMessage();
   
     List *externalMessagePool;
   

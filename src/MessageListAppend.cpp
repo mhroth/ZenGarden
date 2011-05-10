@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,11 +23,11 @@
 #include "MessageListAppend.h"
 
 MessageListAppend::MessageListAppend(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
-  appendMessage = initMessage->copy();
+  appendMessage = initMessage->copyToHeap();
 }
 
 MessageListAppend::~MessageListAppend() {
-  delete appendMessage;
+  appendMessage->free();
 }
 
 const char *MessageListAppend::getObjectLabel() {
@@ -41,37 +41,32 @@ bool MessageListAppend::shouldDistributeMessageToInlets() {
 void MessageListAppend::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
-      PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-      outgoingMessage->setTimestamp(message->getTimestamp());
-      outgoingMessage->clear();
-      if (!message->isBang(0)) {
-        // if the incoming message is a bang, then it is considered to be a list of length zero
-        int numElements = message->getNumElements();
-        for (int i = 0; i < numElements; i++) {
-          outgoingMessage->addElement(message->getElement(i));
-        }
+      // if the incoming message is a bang, then it is considered to be a list of length zero
+      int numMessageElements = (!message->isBang(0)) ? message->getNumElements() : 0;
+      int numAppendElements = appendMessage->getNumElements();
+      int numTotalElements = numMessageElements + numAppendElements;
+      if (numTotalElements > 0) {
+        PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(numTotalElements);
+        outgoingMessage->initWithTimestampAndNumElements(message->getTimestamp(), numTotalElements);
+        memcpy(outgoingMessage->getElement(0), message->getElement(0), numMessageElements*sizeof(MessageAtom));
+        memcpy(outgoingMessage->getElement(numMessageElements), appendMessage->getElement(0), numAppendElements*sizeof(MessageAtom));
+        sendMessage(0, outgoingMessage);
+      } else {
+        PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+        outgoingMessage->initWithTimestampAndBang(message->getTimestamp());
+        sendMessage(0, outgoingMessage);
       }
-      int numElements = appendMessage->getNumElements();
-      for (int i = 0; i < numElements; i++) {
-        outgoingMessage->addElement(appendMessage->getElement(i));
-      }
-      if (outgoingMessage->getNumElements() == 0) {
-        // this is how Pd works... if both the pre and append messages are bang (zero-length)
-        // then the output must have at least a bang
-        outgoingMessage->addElement();
-      }
-      sendMessage(0, outgoingMessage);
       break;
     }
     case 1: {
       if (message->isBang(0)) {
         // bangs are considered a list of size zero
-        appendMessage->clear();
+        appendMessage->free();
+        appendMessage = PD_MESSAGE_ON_STACK(0);
+        appendMessage->initWithTimestampAndNumElements(0.0, 0);
       } else {
-        // NOTE(mhroth): would be faster to copy in place rather than destroying and creating memory
-        // can change if it becomes a problem
-        delete appendMessage;
-        appendMessage = message->copy();
+        appendMessage->free();
+        appendMessage = message->copyToHeap();
       }
       break;
     }

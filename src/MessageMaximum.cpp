@@ -20,6 +20,7 @@
  *
  */
 
+#include <math.h>
 #include "MessageMaximum.h"
 
 MessageMaximum::MessageMaximum(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
@@ -29,10 +30,6 @@ MessageMaximum::MessageMaximum(PdMessage *initMessage, PdGraph *graph) : Message
 
 MessageMaximum::~MessageMaximum() {
   // nothing to do
-}
-
-void MessageMaximum::init(float constant) {
-  this->constant = constant;
 }
 
 const char *MessageMaximum::getObjectLabel() {
@@ -48,9 +45,8 @@ void MessageMaximum::processMessage(int inletIndex, PdMessage *message) {
           // allow fallthrough
         }
         case BANG: {
-          PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-          outgoingMessage->setFloat(0, lastOutput);
-          outgoingMessage->setTimestamp(message->getTimestamp());
+          PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+          outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), lastOutput);
           sendMessage(0, outgoingMessage);
           break;
         }

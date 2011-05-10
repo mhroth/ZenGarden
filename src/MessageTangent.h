@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009, 2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -31,7 +31,6 @@ class MessageTangent : public MessageObject {
 
   public:
     MessageTangent(PdMessage *initMessage, PdGraph *graph);
-    MessageTangent(PdGraph *graph);
     ~MessageTangent();
 
     const char *getObjectLabel();

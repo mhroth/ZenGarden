@@ -564,19 +564,17 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
         if (initMessage->isSymbol(0, "append") ||
             initMessage->isSymbol(0, "prepend") ||
             initMessage->isSymbol(0, "split")) {
-          PdMessage *newMessage = new PdMessage();
-          for (int i = 1; i < initMessage->getNumElements(); i++) {
-            newMessage->addElement(initMessage->getElement(i));
-          }
+          int numElements = initMessage->getNumElements()-1;
+          PdMessage *message = PD_MESSAGE_ON_STACK(numElements);
+          memcpy(message->getElement(0), initMessage->getElement(1), numElements*sizeof(MessageAtom));
           MessageObject *messageObject = NULL;
           if (initMessage->isSymbol(0, "append")) {
-            messageObject = new MessageListAppend(newMessage, graph);
+            messageObject = new MessageListAppend(message, graph);
           } else if (initMessage->isSymbol(0, "prepend")) {
-            messageObject = new MessageListPrepend(newMessage, graph);
+            messageObject = new MessageListPrepend(message, graph);
           } else if (initMessage->isSymbol(0, "split")) {
-            messageObject = new MessageListSplit(newMessage, graph);
+            messageObject = new MessageListSplit(message, graph);
           }
-          delete newMessage;
           return messageObject;
         } else if (initMessage->isSymbol(0, "trim")) {
           // trim and length do not act on the initMessage
@@ -667,7 +665,9 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
     } else if (strcmp(objectLabel, "vsl") == 0 ||
                strcmp(objectLabel, "hsl") == 0) {
       // gui sliders are represented as a float objects
-      return new MessageFloat(0.0f, graph);
+      PdMessage *message = PD_MESSAGE_ON_STACK(1);
+      message->initWithTimestampAndFloat(0.0, 1.0f);
+      return new MessageFloat(message, graph);
     } else if (strcmp(objectLabel, "wrap") == 0) {
       return new MessageWrap(initMessage, graph);
     } else if (strcmp(objectLabel, "+~") == 0) {
@@ -988,24 +988,23 @@ void PdContext::scheduleExternalMessageV(const char *receiverName, double timest
   lock(); // NOTE(mhroth): can reduce size of critical section?
   int receiverNameIndex = sendController->getNameIndex((char *) receiverName);
   if (receiverNameIndex >= 0) { // if the receiver exists
-    PdMessage *message = getNextExternalMessage();
-    message->setTimestamp(timestamp);
+    int numElements = strlen(messageFormat);
+    PdMessage *message = PD_MESSAGE_ON_STACK(numElements);
+    message->initWithTimestampAndNumElements(timestamp, numElements);
     
     // format message
-    message->clear();
-    int numElements = strlen(messageFormat);
     for (int i = 0; i < numElements; i++) {
       switch (messageFormat[i]) {
         case 'f': {
-          message->addElement((float) va_arg(ap, double));
+          message->setFloat(i, (float) va_arg(ap, double));
           break;
         }
         case 's': {
-          message->addElement((char *) va_arg(ap, char *));
+          message->setSymbol(i, (char *) va_arg(ap, char *));
           break;
         }
         case 'b': {
-          message->addElement();
+          message->setBang(i);
           break;
         }
         default: {
@@ -1019,33 +1018,21 @@ void PdContext::scheduleExternalMessageV(const char *receiverName, double timest
   unlock();
 }
 
-PdMessage *PdContext::getNextExternalMessage() {
-  int numMessages = externalMessagePool->size();
-  for (int i = 0; i < numMessages; i++) {
-    PdMessage *message = (PdMessage *) externalMessagePool->get(i);
-    if (!message->isReserved()) {
-      return message;
-    }
-  }
-  PdMessage *message = new PdMessage();
-  message->addElement(); // add one element to the message
-  externalMessagePool->add(message);
-  return message;
-}
-
 void PdContext::scheduleMessage(MessageObject *messageObject, int outletIndex, PdMessage *message) {
   // basic argument checking. It may happen that the message is NULL in case a cancel message
   // is sent multiple times to a particular object, when no message is pending
   if (message != NULL && outletIndex >= 0 && messageObject != NULL) {
-    message->reserve();
+    message = message->copyToHeap();
     messageCallbackQueue->insertMessage(messageObject, outletIndex, message);
+    return message;
   }
+  return NULL;
 }
 
 void PdContext::cancelMessage(MessageObject *messageObject, int outletIndex, PdMessage *message) {
   if (message != NULL && outletIndex >= 0 && messageObject != NULL) {
     messageCallbackQueue->removeMessage(messageObject, outletIndex, message);
-    message->unreserve();
+    message->free();
   }
 }
 

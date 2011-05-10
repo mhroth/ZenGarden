@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -36,16 +36,12 @@ const char *MessageStripNote::getObjectLabel() {
 
 void MessageStripNote::processMessage(int inletIndex, PdMessage *message) {
   if (inletIndex == 0) {
-    if (message->getNumElements() == 2 && message->isFloat(0) && message->isFloat(1) &&
-        message->getFloat(1) > 0.0f) {
-      PdMessage *outgoingMessage = getNextOutgoingMessage(1);
-      outgoingMessage->setTimestamp(message->getTimestamp());
-      outgoingMessage->setFloat(0, message->getFloat(1));
+    if (message->isFloat(0) && message->isFloat(1) && message->getFloat(1) > 0.0f) {
+      PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+      outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), message->getFloat(1));
       sendMessage(1, outgoingMessage);
-      
-      outgoingMessage = getNextOutgoingMessage(0);
-      outgoingMessage->setTimestamp(message->getTimestamp());
-      outgoingMessage->setFloat(0, message->getFloat(0));
+
+      outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), message->getFloat(0));
       sendMessage(0, outgoingMessage);
     }
   }

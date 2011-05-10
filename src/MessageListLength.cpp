@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -35,13 +35,9 @@ const char *MessageListLength::getObjectLabel() {
 }
 
 void MessageListLength::processMessage(int inletIndex, PdMessage *message) {
-  PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-  outgoingMessage->setTimestamp(message->getTimestamp());
-  if (message->isBang(0)) {
-    // bangs are not considered to add length to lists
-    outgoingMessage->getElement(0)->setFloat(0.0f);
-  } else {
-    outgoingMessage->getElement(0)->setFloat((float) message->getNumElements());
-  }
+  PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+  // bangs are not considered to add length to lists
+  outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(),
+      message->isBang(0) ? 0.0f : (float) message->getNumElements());
   sendMessage(0, outgoingMessage);
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,10 +23,22 @@
 #ifndef _PD_MESSAGE_H_
 #define _PD_MESSAGE_H_
 
+#define PD_MESSAGE_ON_STACK(_x) ((PdMessage *) (alloca(sizeof(PdMessage) + (((_x>0)?(_x-1):0) * sizeof(MessageAtom)))));
+
+#define PD_MESSAGE_SET_SYMBOL(_i, _s) alloca();
+
+#include <stdio.h>
 #include <stdarg.h>
-#include "List.h"
-#include "MessageElement.h"
-#include "ZGLinkedList.h"
+#include <string.h>
+#include "MessageElementType.h"
+
+typedef struct MessageAtom {
+  MessageElementType type;
+  union {
+    float constant;
+    char *symbol;
+  };
+} MessageAtom;
 
 class MessageObject;
 class PdGraph;
@@ -34,10 +46,7 @@ class PdGraph;
 /** Implements a Pd message. */
 class PdMessage {
   
-  public:
-    /** Creates an empty message. */
-    PdMessage();
-  
+  public:  
     /** Creates a new message by tokenizing the given string and creating floats and strings. */
     PdMessage(char *initString);
   
@@ -45,6 +54,8 @@ class PdMessage {
     PdMessage(char *initString, PdMessage *arguments);
   
     ~PdMessage();
+  
+    static int numInitTokens(char *initString);
   
     /**
      * Resolve the string using the arguments into the element. The string is expected to refer to
@@ -71,7 +82,14 @@ class PdMessage {
      */
     void resolveSymbolsToType();
   
-    MessageElement *getElement(int index);
+    void initWithTimestampAndNumElements(double aTimestamp, int numElem);
+    void initWithTimestampAndFloat(double aTimestamp, float constant);
+    void initWithTimestampAndBang(double aTimestamp);
+    void initWithTimestampAndSymbol(double aTimestamp, char *symbol);
+  
+    MessageAtom *getElement(unsigned int index);
+  
+    bool atomIsEqualTo(unsigned int index, MessageAtom *messageAtom);
   
     int getNumElements();
   
@@ -79,17 +97,16 @@ class PdMessage {
     double getTimestamp();
   
     /** Set the global timestamp of this message (in milliseconds). */
-    void setTimestamp(double timestamp);
+    void setTimestamp(double timestamp); // NOTE(mhroth): necessary?
   
-    bool isReserved();
-    void reserve();
-    void unreserve();
+    /**
+     * Returns a copy of the message to the heap. Messages usually only exist temporarily on the
+     * stack and should be copied to the heap if it should persist.
+     */
+    PdMessage *copyToHeap();
   
-    /** Returns a copy of the message. */
-    PdMessage *copy();
-  
-    /** The message is cleared of all MessageElements. Its length is 0. */
-    void clear();
+    /** The message memory is freed from the heap. */
+    void free();
     
     /**
      * Create a string representation of the message. Suitable for use by the print object.
@@ -97,43 +114,29 @@ class PdMessage {
      */
     char *toString();
   
-    /** Returns the message id, a globally unique identifier for this message. */ 
-    int getMessageId();
-  
     /** Convenience function to determine if a particular message element is a float. */
-    bool isFloat(int index);
-    bool isSymbol(int index);
-    bool isSymbol(int index, const char *test);
-    bool isBang(int index);
-    MessageElementType getType(int index);
+    bool isFloat(unsigned int index);
+    bool isSymbol(unsigned int index);
+    bool isSymbol(unsigned int index, const char *test);
+    bool isBang(unsigned int index);
+    MessageElementType getType(unsigned int index);
   
     /**
      * Convenience function to get the float value from a particular message element. The user
      * is responsible for checking that the indexed <code>MessageElement</code> is truly a float.
      * This function does not check for the existence of the message element.
      */
-    float getFloat(int index);
-    char *getSymbol(int index);
+    float getFloat(unsigned int index);
+    char *getSymbol(unsigned int index);
   
     /**
      * Convenience function to set a message element to a float value. This function does not check
      * for the existence of a message element.
      */
-    void setFloat(int index, float value);
-    void setSymbol(int index, char *symbol);
-    void setBang(int index);
-  
-    /** Add a new element to the message, making a copy of the value of the given element. */
-    void addElement(MessageElement *messageElement);
-  
-    /** Add a new float element. */
-    void addElement(float f);
-  
-    /** Add a new symbol element. */
-    void addElement(char *symbol);
-  
-    /** Add a new bang element. */
-    void addElement(); // bang
+    void setFloat(unsigned int index, float value);
+    void setSymbol(unsigned int index, char *symbol);
+    void setBang(unsigned int index);
+    void setAnything(unsigned int index);
 
   private:
     /**
@@ -143,15 +146,6 @@ class PdMessage {
      */
     void initWithString(char *initString);
   
-    /** Increment the reference count of the resolution buffer, also allocating it if necessary. */
-    void retainResBuffer();
-  
-    /** Decrement the reference count of the resolution buffer, also deallocating it if necessary. */
-    void releaseResBuffer();
-  
-    /** A global string buffer used for message resolution. */
-    static char *resolutionBuffer;
-  
     /**
      * The resolution buffer refernece counter. It is incremented when a new message is created, and
      * decremented when a message is destroyed. If the reference counter goes to zero then the
@@ -159,16 +153,9 @@ class PdMessage {
      */
     static int resBufferRefCount;
   
-    /**
-     * A variable keeping track of the current global message id. It is incremented whenever a new message
-     * is created.
-     */
-    static int globalMessageId;
-  
-    int messageId;
     double timestamp;
-    int reservationCount;
-    List *elementList;
+    int numElements;
+    MessageAtom messageAtom;
 };
 
 #endif // _PD_MESSAGE_H_

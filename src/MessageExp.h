@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009, 2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -31,7 +31,6 @@ class MessageExp : public MessageObject {
 
   public:
     MessageExp(PdMessage *initMessage, PdGraph *graph);
-    MessageExp(PdGraph *graph);
     ~MessageExp();
 
     const char *getObjectLabel();

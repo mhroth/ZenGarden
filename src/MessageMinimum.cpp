@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009, 2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -20,6 +20,7 @@
  *
  */
 
+#include <math.h>
 #include "MessageMinimum.h"
 
 MessageMinimum::MessageMinimum(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
@@ -29,10 +30,6 @@ MessageMinimum::MessageMinimum(PdMessage *initMessage, PdGraph *graph) : Message
 
 MessageMinimum::~MessageMinimum() {
   // nothing to do
-}
-
-void MessageMinimum::init(float constant) {
-  this->constant = constant;
 }
 
 const char *MessageMinimum::getObjectLabel() {
@@ -48,9 +45,8 @@ void MessageMinimum::processMessage(int inletIndex, PdMessage *message) {
           // allow fallthrough
         }
         case BANG: {
-          PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-          outgoingMessage->setFloat(0, lastOutput);
-          outgoingMessage->setTimestamp(message->getTimestamp());
+          PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+          outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), lastOutput);
           sendMessage(0, outgoingMessage);
           break;
         }
