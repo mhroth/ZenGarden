@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -60,7 +60,6 @@ class DspEnvelope : public DspObject {
   
     float *signalBuffer;
     float *hanningCoefficients;
-    float *rmsBuffer; // a working buffer for computing the RMS
 };
 
 #endif // _DSP_ENVELOPE_H_
