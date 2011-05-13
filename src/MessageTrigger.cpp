@@ -38,9 +38,8 @@ const char *MessageTrigger::getObjectLabel() {
 }
 
 void MessageTrigger::processMessage(int inletIndex, PdMessage *message) {
+  PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
   for (int i = numMessageOutlets-1; i >= 0; i--) { // send messages from outlets right-to-left
-    PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
-    
     // TODO(mhroth): There is currently no support for converting to a LIST type
     switch (message->getType(0)) { // converting from...
       case FLOAT: {
@@ -52,8 +51,7 @@ void MessageTrigger::processMessage(int inletIndex, PdMessage *message) {
             break;
           }
           case SYMBOL: {
-            outgoingMessage->setSymbol(0, "float");
-            outgoingMessage->setTimestamp(message->getTimestamp());
+            outgoingMessage->initWithTimestampAndSymbol(message->getTimestamp(), "float");
             sendMessage(i, outgoingMessage);
             break;
           }
@@ -77,8 +75,7 @@ void MessageTrigger::processMessage(int inletIndex, PdMessage *message) {
             break;
           }
           case ANYTHING: {
-            outgoingMessage->setSymbol(0, message->getSymbol(0));
-            outgoingMessage->setTimestamp(message->getTimestamp());
+            outgoingMessage->initWithTimestampAndSymbol(message->getTimestamp(), message->getSymbol(0));
             sendMessage(i, outgoingMessage);
             break;
           }
@@ -108,8 +105,7 @@ void MessageTrigger::processMessage(int inletIndex, PdMessage *message) {
             break;
           }
           case SYMBOL: {
-            outgoingMessage->setSymbol(0, "symbol");
-            outgoingMessage->setTimestamp(message->getTimestamp());
+            outgoingMessage->initWithTimestampAndSymbol(message->getTimestamp(), "symbol");
             sendMessage(i, outgoingMessage);
             break;
           }
