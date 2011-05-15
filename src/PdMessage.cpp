@@ -24,79 +24,113 @@
 #include "PdMessage.h"
 #include "StaticUtils.h"
 
-#define RES_BUFFER_LENGTH 1024
-
-
-PdMessage::PdMessage(char *initString) {
-  timestamp = 0.0;
+PdMessage *PdMessage::initWithStringAndArgumemts(unsigned int maxElements, char *initString, PdMessage *arguments) {
+  // resolve string
+#define RES_BUFFER_LENGTH 512
+  char buffer[RES_BUFFER_LENGTH];
+  int bufferPos = 0;
+  int initPos = 0;
+  char *argPos = NULL;
+  int numCharsWritten = 0;
+  int offset = 0;
   
-  // generate the elements by tokenizing the string
-  initWithString(initString);
+  if (initString == NULL) {
+    buffer[0] = '\0'; // a NULL string input yields a string of length zero
+  } else if (arguments == NULL) {
+    strcpy(buffer, initString); // NULL arguments returns the original string
+  } else {
+    int numArguments = arguments->getNumElements();
+    while ((argPos = strstr(initString + initPos, "\\$")) != NULL) {
+      int numCharsRead = argPos - initString - initPos;
+      memcpy(buffer + bufferPos, initString + initPos, numCharsRead);
+      bufferPos += numCharsRead;
+      initPos += numCharsRead + 3;
+      //int argumentIndex = argPos[2] - '0'; (equivalent to below, but below is more clear)
+      int argumentIndex = 0;
+      switch (argPos[2]) {
+        case '0': { argumentIndex = 0; break; }
+        case '1': { argumentIndex = 1; break; }
+        case '2': { argumentIndex = 2; break; }
+        case '3': { argumentIndex = 3; break; }
+        case '4': { argumentIndex = 4; break; }
+        case '5': { argumentIndex = 5; break; }
+        case '6': { argumentIndex = 6; break; }
+        case '7': { argumentIndex = 7; break; }
+        case '8': { argumentIndex = 8; break; }
+        case '9': { argumentIndex = 9; break; }
+        default: { continue; }
+      }
+      argumentIndex -= offset;
+      if (argumentIndex >= 0 && argumentIndex < numArguments) {
+        switch (arguments->getType(argumentIndex)) {
+          case FLOAT: {
+            numCharsWritten = snprintf(buffer + bufferPos, RES_BUFFER_LENGTH - bufferPos,
+                                       "%g", arguments->getFloat(argumentIndex));
+            bufferPos += numCharsWritten;
+            if (bufferPos >= RES_BUFFER_LENGTH-1) {
+              printf("WTF: %s", buffer);
+            }
+            break;
+          }
+          case SYMBOL: {
+            numCharsWritten = snprintf(buffer + bufferPos, RES_BUFFER_LENGTH - bufferPos,
+                                       "%s", arguments->getSymbol(argumentIndex));
+            bufferPos += numCharsWritten;
+            if (bufferPos >= RES_BUFFER_LENGTH-1) {
+              printf("WTF: %s", buffer);
+            }
+            break;
+          }
+          default: {
+            break;
+          }
+        }
+      }
+    }
+    
+    // no more arguments remaining. copy the remainder of the string including '\0'
+    strcpy(buffer + bufferPos, initString + initPos);
+  }
+  
+  initWithString(maxElements, buffer);
 }
 
-PdMessage::PdMessage(char *initString, PdMessage *arguments) {
+PdMessage *PdMessage::initWithString(unsigned int maxElements, char *initString) {
   timestamp = 0.0;
-
-  // resolve entire string with offset 0 (allow for $0)
-  char *buffer = PdMessage::resolveString(initString, arguments, 0);
+  numElements = maxElements;
   
-  // generate the elements by tokenizing the string
-  initWithString(buffer);
-}
-
-void PdMessage::initWithString(char *initString) {
-  int numElements = PdMessage::numInitTokens(initString);
-  PdMessage *message = PD_MESSAGE_ON_STACK(numElements);
-  message->initWithTimestampAndNumElements(0.0, numElements);
   int i = 0;
   char *token = strtok(initString, " ;");
   if (token != NULL) {
     do {
       if (StaticUtils::isNumeric(token)) {
-        message->setFloat(i, atof(token));
+        setFloat(i, atof(token));
       } else {
-        message->setSymbol(i, token); // element is symbolic
+        setSymbol(i, token); // element is symbolic
       }
       i++;
-    } while ((token = strtok(NULL, " ;")) != NULL);
+    } while (((token = strtok(NULL, " ;")) != NULL) && (i < maxElements));
   }
-}
-
-int PdMessage::numInitTokens(char *initString) {
-  int numTokens = 0;
-  char *token = strtok(initString, " ;");
-  if (token != NULL) {
-    do {
-      numTokens++;
-    } while ((token = strtok(NULL, " ;")) != NULL);
-  }
-  return numTokens;
+  
+  numElements = i;
 }
 
 PdMessage::~PdMessage() {
-  // delete the element list
-  MessageElement *messageElement = NULL;
-  int i = 0;
-  while ((messageElement = (MessageElement *) elementList->getFromBackingArray(i++)) != NULL) {
-    delete messageElement;
-  }
-  delete elementList;
-  
-  releaseResBuffer();
+  // nothing to do. Use free().
 }
-
+/*
 void PdMessage::resolveElement(char *templateString, PdMessage *arguments,
-    MessageElement *messageElement) {
+    MessageAtom *messageElement) {
   char *buffer = resolveString(templateString, arguments, 1);
   if (StaticUtils::isNumeric(buffer)) {
-    messageElement->setFloat(atof(buffer));
+    messageElement->constant = atof(buffer);
   } else {
-    messageElement->setSymbol(buffer);
+    messageElement->symbol = buffer;
   }
 }
 
-char *PdMessage::resolveString(char *initString, PdMessage *arguments, int offset) {
-  char buffer[RES_BUFFER_LENGTH];
+char *PdMessage::resolveStringToMessage(char *initString, PdMessage *arguments, int offset) {
+  char buffer[512];
   int bufferPos = 0;
   int initPos = 0;
   char *argPos = NULL;
@@ -113,7 +147,7 @@ char *PdMessage::resolveString(char *initString, PdMessage *arguments, int offse
       memcpy(buffer + bufferPos, initString + initPos, numCharsRead);
       bufferPos += numCharsRead;
       initPos += numCharsRead + 3;
-      //int argumentIndex = argPos[2] - '0'; (equivalient to below, but below more clear)
+      //int argumentIndex = argPos[2] - '0'; (equivalent to below, but below is more clear)
       int argumentIndex = 0;
       switch (argPos[2]) {
         case '0': { argumentIndex = 0; break; }
@@ -135,7 +169,7 @@ char *PdMessage::resolveString(char *initString, PdMessage *arguments, int offse
             numCharsWritten = snprintf(buffer + bufferPos, RES_BUFFER_LENGTH - bufferPos,
                 "%g", arguments->getFloat(argumentIndex));
             bufferPos += numCharsWritten;
-            if (bufferPos >= 1023) {
+            if (bufferPos >= RES_BUFFER_LENGTH-1) {
               printf("WTF: %s", buffer);
             }
             break;
@@ -144,7 +178,7 @@ char *PdMessage::resolveString(char *initString, PdMessage *arguments, int offse
             numCharsWritten = snprintf(buffer + bufferPos, RES_BUFFER_LENGTH - bufferPos,
                 "%s", arguments->getSymbol(argumentIndex));
             bufferPos += numCharsWritten;
-            if (bufferPos >= 1023) {
+            if (bufferPos >= RES_BUFFER_LENGTH-1) {
               printf("WTF: %s", buffer);
             }
             break;
@@ -162,7 +196,7 @@ char *PdMessage::resolveString(char *initString, PdMessage *arguments, int offse
   
   return buffer;
 }
-
+*/
 void PdMessage::resolveSymbolsToType() {
   for (int i = 0; i < numElements; i++) {
     if (isSymbol(i)) {
@@ -217,7 +251,7 @@ double PdMessage::getTimestamp() {
 #pragma mark -
 #pragma mark initWithTimestampeAnd
 
-void PdMessage::initWithTimestampAndNumElements(double aTimestamp, int numElem) {
+void PdMessage::initWithTimestampAndNumElements(double aTimestamp, unsigned int numElem) {
   timestamp = aTimestamp;
   numElements = numElem;
   setBang(0); // default value
@@ -309,7 +343,7 @@ char *PdMessage::getSymbol(unsigned int index) {
 
 void PdMessage::setSymbol(unsigned int index, char *symbol) {
   (&messageAtom)[index].type = SYMBOL;
-  (&messageAtom)[index].symbol = NULL;
+  (&messageAtom)[index].symbol = symbol;
 }
 
 void PdMessage::setBang(unsigned int index) {
@@ -318,6 +352,10 @@ void PdMessage::setBang(unsigned int index) {
 
 void PdMessage::setAnything(unsigned int index) {
   (&messageAtom)[index].type = ANYTHING;
+}
+
+void PdMessage::setList(unsigned int index) {
+  (&messageAtom)[index].type = LIST;
 }
 
 
@@ -344,13 +382,13 @@ PdMessage *PdMessage::copyToHeap() {
   int marker = numMessageBytes;
   for (int i = 0; i < numElements; i++) {
     memcpy(pdMessage+marker, getSymbol(i), numSymbolBytes[i]);
-    pdMessage->getElement(i)->symbol = pdMessage + marker; // correctly set the symbol pointers
+    pdMessage->setSymbol(i, (char *) (pdMessage + marker)); // correctly set the symbol pointers
     marker += numSymbolBytes[i];
   }
   return pdMessage;
 }
 
-void PdMessage::free() {
+void PdMessage::freeMessage() {
   free(this);
 }
 
@@ -360,8 +398,7 @@ void PdMessage::free() {
 
 char *PdMessage::toString() {
   // http://stackoverflow.com/questions/295013/using-sprintf-without-a-manually-allocated-buffer
-  int listlen = elementList->size();
-  int lengths[listlen]; // how long is the string of each atom
+  int lengths[numElements]; // how long is the string of each atom
   char *finalString; // the final buffer we will pass back after concatenating all strings - user should free it
   int size = 0; // the total length of our final buffer
   int pos = 0;
@@ -369,7 +406,7 @@ char *PdMessage::toString() {
   // loop through every element in our list of atoms
   // first loop figures out how long our buffer should be
   // chrism: apparently this might fail under MSVC because of snprintf(NULL) - do we care?
-  for (int i = 0; i < listlen; i++) {
+  for (int i = 0; i < numElements; i++) {
     lengths[i] = 0;
     switch (getType(i)) {
       case FLOAT: {
@@ -394,7 +431,7 @@ char *PdMessage::toString() {
   
   // now we do the piecewise concatenation into our final string
   finalString = (char *) malloc(size * sizeof(char));
-  for (int i = 0; i < listlen; i++) {
+  for (int i = 0; i < numElements; i++) {
     // first element doesn't have a space before it
     if (i > 0) {
       strncat(finalString, " ", 1);

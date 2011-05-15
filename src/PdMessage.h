@@ -25,8 +25,6 @@
 
 #define PD_MESSAGE_ON_STACK(_x) ((PdMessage *) (alloca(sizeof(PdMessage) + (((_x>0)?(_x-1):0) * sizeof(MessageAtom)))));
 
-#define PD_MESSAGE_SET_SYMBOL(_i, _s) alloca();
-
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
@@ -48,12 +46,10 @@ class PdMessage {
   
   public:  
     /** Creates a new message by tokenizing the given string and creating floats and strings. */
-    PdMessage(char *initString);
+    //PdMessage(char *initString);
   
     /** Creates a message by tokenizing the given string and immediately resolving it using the given arguments. */
     PdMessage(char *initString, PdMessage *arguments);
-  
-    ~PdMessage();
   
     static int numInitTokens(char *initString);
   
@@ -62,7 +58,7 @@ class PdMessage {
      * one message element only, i.e., it contains no spaces, though the underlying resolution
      * algorithm can handle any string.
      */
-    static void resolveElement(char *templateString, PdMessage *arguments, MessageElement *messageElement);
+    static void resolveElement(char *templateString, PdMessage *arguments, MessageAtom *messageElement);
   
     /**
      * Resolve arguments in a string with a given arugment list. The returned value is a pointer
@@ -82,10 +78,19 @@ class PdMessage {
      */
     void resolveSymbolsToType();
   
-    void initWithTimestampAndNumElements(double aTimestamp, int numElem);
+    void initWithTimestampAndNumElements(double aTimestamp, unsigned int numElem);
     void initWithTimestampAndFloat(double aTimestamp, float constant);
     void initWithTimestampAndBang(double aTimestamp);
     void initWithTimestampAndSymbol(double aTimestamp, char *symbol);
+  
+    PdMessage *initWithStringAndArgumemts(unsigned int maxElements, char *initString, PdMessage *arguments);
+  
+    /**
+     * Adds elements to the message by tokenizing the given string. Is a token is numeric then it is
+     * automatically resolved to a float. Otherwise the string is interpreted as a symbol.
+     * Meant for use in the constructor.
+     */
+    PdMessage *initWithString(unsigned int maxElements, char *initString);
   
     MessageAtom *getElement(unsigned int index);
   
@@ -106,7 +111,7 @@ class PdMessage {
     PdMessage *copyToHeap();
   
     /** The message memory is freed from the heap. */
-    void free();
+    void freeMessage();
     
     /**
      * Create a string representation of the message. Suitable for use by the print object.
@@ -137,14 +142,10 @@ class PdMessage {
     void setSymbol(unsigned int index, char *symbol);
     void setBang(unsigned int index);
     void setAnything(unsigned int index);
+    void setList(unsigned int index);
 
   private:
-    /**
-     * Adds elements to the message by tokenizing the given string. Is a token is numeric then it is
-     * automatically resolved to a float. Otherwise the string is interpreted as a symbol.
-     * Meant for use in the constructor.
-     */
-    void initWithString(char *initString);
+    ~PdMessage();
   
     /**
      * The resolution buffer refernece counter. It is incremented when a new message is created, and
