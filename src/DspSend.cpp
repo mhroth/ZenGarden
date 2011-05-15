@@ -59,6 +59,7 @@ float **DspSend::getBuffer() {
 void DspSend::processDspWithIndex(int fromIndex, int toIndex) {
   if (dspBufferAtInlet0 == NULL) {
     // TODO(mhroth): if inlet buffer is NULL, then point to zero buffer
+    buffer = DspObject::zeroBuffer; // TODO(mhroth): check implementation
   } else {
     if (numConnectionsToInlet0 > 1) {
       buffer = dspBufferAtOutlet0;

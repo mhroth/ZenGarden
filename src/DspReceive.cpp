@@ -60,6 +60,7 @@ void DspReceive::processDsp() {
   // sendBuffer may be null if there is no related send~
   if (sendBuffer == NULL) {
     // TODO(mhroth): if sendBuffer is null, point to a zero buffer
+    dspBufferAtOutlet0 = DspObject::zeroBuffer; // TODO(mhroth): check this implementation
   } else {
     dspBufferAtOutlet0 = *sendBuffer;
   }
