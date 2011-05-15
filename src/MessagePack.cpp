@@ -54,7 +54,11 @@ void MessagePack::processMessage(int inletIndex, PdMessage *message) {
     }
     case SYMBOL: {
       if (outgoingMessage->isSymbol(inletIndex)) {
-        outgoingMessage->setSymbol(inletIndex, message->getSymbol(0));
+        // NOTE(mhroth): this approach can lead to a lot of fragemented memory if symbols are
+        // replaced often
+        free(outgoingMessage->getSymbol(inletIndex)); // free the preexisting symbol on the heap
+        // create a new symbol on the heap and store it in the outgoing message
+        outgoingMessage->setSymbol(inletIndex, StaticUtils::copyString(message->getSymbol(0)));
         onBangAtInlet(inletIndex, message->getTimestamp());
       } else {
         graph->printErr("pack: type mismatch: %s expected but got %s at inlet %i.\n",
@@ -67,6 +71,7 @@ void MessagePack::processMessage(int inletIndex, PdMessage *message) {
     }
     case BANG: {
       onBangAtInlet(inletIndex, message->getTimestamp());
+      break;
     }
     default: {
       break;
