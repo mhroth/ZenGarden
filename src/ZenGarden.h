@@ -24,6 +24,7 @@
 #define _ZENGARDEN_H_
 
 #include "ZGCallbackFunction.h"
+#include "ConnectionType.h"
 
 /**
  * This header file defines the C interface to ZenGarden to the outside world. Include this header
@@ -97,7 +98,7 @@ extern "C" {
   void zg_remove_object(ZGGraph *graph, ZGObject *object);
   
   
-#pragma mark - Add/Remove Connection
+#pragma mark - Manage Connections
   
   /**
    * Add a connection between two objects, both of which are in the given graph. The new connection
@@ -111,6 +112,9 @@ extern "C" {
    * do not define a valid connection, then this function does nothing.
    */
   void zg_remove_connection(ZGGraph *graph, ZGObject *fromObject, int outletIndex, ZGObject *toObject, int inletIndex);
+  
+  /** Returns the ConnectionType of the outlet of the given object. */
+  ConnectionType zg_get_connection_type(ZGObject *object, unsigned int outletIndex);
   
   
 #pragma mark - Process

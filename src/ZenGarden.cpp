@@ -96,6 +96,14 @@ void zg_remove_connection(ZGObject *fromObject, int outletIndex, ZGObject *toObj
   //graph->removeConnection(fromObject, outletIndex, toObject, inletIndex);
 }
 
+ConnectionType zg_get_connection_type(ZGObject *object, unsigned int outletIndex) {
+  if (object != NULL) {
+    return object->getConnectionType(outletIndex);
+  } else {
+    return MESSAGE;
+  }
+}
+
 void zg_process(PdContext *context, float *inputBuffers, float *outputBuffers) {
   context->process(inputBuffers, outputBuffers);
 }
