@@ -43,10 +43,9 @@ void MessageSoundfiler::processMessage(int inletIndex, PdMessage *message) {
     bool shouldResizeTable = false;
     
     while (currentElementIndex < message->getNumElements()) {
-      MessageElement *messageElement = message->getElement(currentElementIndex++);
-      if (messageElement->isSymbol()) {
+      if (message->isSymbol(currentElementIndex)) {
         // only the -resize flag is supported for now
-        if (strcmp(messageElement->getSymbol(), "-resize") == 0) {
+        if (message->isSymbol(currentElementIndex++, "-resize")) {
           shouldResizeTable = true;
         } else {
           // all of the flags should have been seen now and now we expect the last two parameters,
