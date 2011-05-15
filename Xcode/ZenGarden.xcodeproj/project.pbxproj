@@ -71,7 +71,6 @@
 		90337C9311D0D847009FCC01 /* MessageDeclare.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337BBD11D0D847009FCC01 /* MessageDeclare.cpp */; };
 		90337C9411D0D847009FCC01 /* MessageDelay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337BBF11D0D847009FCC01 /* MessageDelay.cpp */; };
 		90337C9511D0D847009FCC01 /* MessageDivide.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337BC211D0D847009FCC01 /* MessageDivide.cpp */; };
-		90337C9611D0D847009FCC01 /* MessageElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337BC411D0D847009FCC01 /* MessageElement.cpp */; };
 		90337C9711D0D847009FCC01 /* MessageEqualsEquals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337BC711D0D847009FCC01 /* MessageEqualsEquals.cpp */; };
 		90337C9811D0D847009FCC01 /* MessageExp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337BC911D0D847009FCC01 /* MessageExp.cpp */; };
 		90337C9911D0D847009FCC01 /* MessageFloat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337BCB11D0D847009FCC01 /* MessageFloat.cpp */; };
@@ -232,8 +231,6 @@
 		90337D4B11D0D847009FCC01 /* MessageDestination.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337BC111D0D847009FCC01 /* MessageDestination.h */; };
 		90337D4C11D0D847009FCC01 /* MessageDivide.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337BC211D0D847009FCC01 /* MessageDivide.cpp */; };
 		90337D4D11D0D847009FCC01 /* MessageDivide.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337BC311D0D847009FCC01 /* MessageDivide.h */; };
-		90337D4E11D0D847009FCC01 /* MessageElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337BC411D0D847009FCC01 /* MessageElement.cpp */; };
-		90337D4F11D0D847009FCC01 /* MessageElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337BC511D0D847009FCC01 /* MessageElement.h */; };
 		90337D5011D0D847009FCC01 /* MessageElementType.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337BC611D0D847009FCC01 /* MessageElementType.h */; };
 		90337D5111D0D847009FCC01 /* MessageEqualsEquals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337BC711D0D847009FCC01 /* MessageEqualsEquals.cpp */; };
 		90337D5211D0D847009FCC01 /* MessageEqualsEquals.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337BC811D0D847009FCC01 /* MessageEqualsEquals.h */; };
@@ -465,8 +462,6 @@
 		90337E4F11D0D847009FCC01 /* MessageDestination.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337BC111D0D847009FCC01 /* MessageDestination.h */; };
 		90337E5011D0D847009FCC01 /* MessageDivide.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337BC211D0D847009FCC01 /* MessageDivide.cpp */; };
 		90337E5111D0D847009FCC01 /* MessageDivide.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337BC311D0D847009FCC01 /* MessageDivide.h */; };
-		90337E5211D0D847009FCC01 /* MessageElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337BC411D0D847009FCC01 /* MessageElement.cpp */; };
-		90337E5311D0D847009FCC01 /* MessageElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337BC511D0D847009FCC01 /* MessageElement.h */; };
 		90337E5411D0D847009FCC01 /* MessageElementType.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337BC611D0D847009FCC01 /* MessageElementType.h */; };
 		90337E5511D0D847009FCC01 /* MessageEqualsEquals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337BC711D0D847009FCC01 /* MessageEqualsEquals.cpp */; };
 		90337E5611D0D847009FCC01 /* MessageEqualsEquals.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337BC811D0D847009FCC01 /* MessageEqualsEquals.h */; };
@@ -838,8 +833,6 @@
 		90337BC111D0D847009FCC01 /* MessageDestination.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageDestination.h; path = ../src/MessageDestination.h; sourceTree = SOURCE_ROOT; };
 		90337BC211D0D847009FCC01 /* MessageDivide.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageDivide.cpp; path = ../src/MessageDivide.cpp; sourceTree = SOURCE_ROOT; };
 		90337BC311D0D847009FCC01 /* MessageDivide.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageDivide.h; path = ../src/MessageDivide.h; sourceTree = SOURCE_ROOT; };
-		90337BC411D0D847009FCC01 /* MessageElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageElement.cpp; path = ../src/MessageElement.cpp; sourceTree = SOURCE_ROOT; };
-		90337BC511D0D847009FCC01 /* MessageElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageElement.h; path = ../src/MessageElement.h; sourceTree = SOURCE_ROOT; };
 		90337BC611D0D847009FCC01 /* MessageElementType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageElementType.h; path = ../src/MessageElementType.h; sourceTree = SOURCE_ROOT; };
 		90337BC711D0D847009FCC01 /* MessageEqualsEquals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageEqualsEquals.cpp; path = ../src/MessageEqualsEquals.cpp; sourceTree = SOURCE_ROOT; };
 		90337BC811D0D847009FCC01 /* MessageEqualsEquals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageEqualsEquals.h; path = ../src/MessageEqualsEquals.h; sourceTree = SOURCE_ROOT; };
@@ -1185,8 +1178,6 @@
 				90337BC111D0D847009FCC01 /* MessageDestination.h */,
 				90337BC211D0D847009FCC01 /* MessageDivide.cpp */,
 				90337BC311D0D847009FCC01 /* MessageDivide.h */,
-				90337BC411D0D847009FCC01 /* MessageElement.cpp */,
-				90337BC511D0D847009FCC01 /* MessageElement.h */,
 				90337BC611D0D847009FCC01 /* MessageElementType.h */,
 				90337BC711D0D847009FCC01 /* MessageEqualsEquals.cpp */,
 				90337BC811D0D847009FCC01 /* MessageEqualsEquals.h */,
@@ -1439,7 +1430,6 @@
 				90337D4A11D0D847009FCC01 /* MessageDelay.h in Headers */,
 				90337D4B11D0D847009FCC01 /* MessageDestination.h in Headers */,
 				90337D4D11D0D847009FCC01 /* MessageDivide.h in Headers */,
-				90337D4F11D0D847009FCC01 /* MessageElement.h in Headers */,
 				90337D5011D0D847009FCC01 /* MessageElementType.h in Headers */,
 				90337D5211D0D847009FCC01 /* MessageEqualsEquals.h in Headers */,
 				90337D5411D0D847009FCC01 /* MessageExp.h in Headers */,
@@ -1595,7 +1585,6 @@
 				90337E4E11D0D847009FCC01 /* MessageDelay.h in Headers */,
 				90337E4F11D0D847009FCC01 /* MessageDestination.h in Headers */,
 				90337E5111D0D847009FCC01 /* MessageDivide.h in Headers */,
-				90337E5311D0D847009FCC01 /* MessageElement.h in Headers */,
 				90337E5411D0D847009FCC01 /* MessageElementType.h in Headers */,
 				90337E5611D0D847009FCC01 /* MessageEqualsEquals.h in Headers */,
 				90337E5811D0D847009FCC01 /* MessageExp.h in Headers */,
@@ -1826,7 +1815,6 @@
 				90337C9311D0D847009FCC01 /* MessageDeclare.cpp in Sources */,
 				90337C9411D0D847009FCC01 /* MessageDelay.cpp in Sources */,
 				90337C9511D0D847009FCC01 /* MessageDivide.cpp in Sources */,
-				90337C9611D0D847009FCC01 /* MessageElement.cpp in Sources */,
 				90337C9711D0D847009FCC01 /* MessageEqualsEquals.cpp in Sources */,
 				90337C9811D0D847009FCC01 /* MessageExp.cpp in Sources */,
 				90337C9911D0D847009FCC01 /* MessageFloat.cpp in Sources */,
@@ -1970,7 +1958,6 @@
 				90337D4711D0D847009FCC01 /* MessageDeclare.cpp in Sources */,
 				90337D4911D0D847009FCC01 /* MessageDelay.cpp in Sources */,
 				90337D4C11D0D847009FCC01 /* MessageDivide.cpp in Sources */,
-				90337D4E11D0D847009FCC01 /* MessageElement.cpp in Sources */,
 				90337D5111D0D847009FCC01 /* MessageEqualsEquals.cpp in Sources */,
 				90337D5311D0D847009FCC01 /* MessageExp.cpp in Sources */,
 				90337D5511D0D847009FCC01 /* MessageFloat.cpp in Sources */,
@@ -2113,7 +2100,6 @@
 				90337E4B11D0D847009FCC01 /* MessageDeclare.cpp in Sources */,
 				90337E4D11D0D847009FCC01 /* MessageDelay.cpp in Sources */,
 				90337E5011D0D847009FCC01 /* MessageDivide.cpp in Sources */,
-				90337E5211D0D847009FCC01 /* MessageElement.cpp in Sources */,
 				90337E5511D0D847009FCC01 /* MessageEqualsEquals.cpp in Sources */,
 				90337E5711D0D847009FCC01 /* MessageExp.cpp in Sources */,
 				90337E5911D0D847009FCC01 /* MessageFloat.cpp in Sources */,
