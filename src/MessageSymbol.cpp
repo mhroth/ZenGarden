@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,16 +23,28 @@
 #include "MessageSymbol.h"
 
 MessageSymbol::MessageSymbol(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
-  symbol = new MessageElement();
-  symbol->setSymbol(initMessage->isSymbol(0) ? initMessage->getSymbol(0) : (char *) "");
+  if (initMessage->isSymbol(0)) {
+    copyString(initMessage->getSymbol(0));
+  } else {
+    memset(symbol, 0, SYMBOL_BUFFER_LENGTH * sizeof(char));
+  }
 }
 
 MessageSymbol::~MessageSymbol() {
-  delete symbol;
+  // nothing to do
 }
 
 const char *MessageSymbol::getObjectLabel() {
   return "symbol";
+}
+
+bool MessageSymbol::copyString(char *s) {
+  if (strlen(s) < SYMBOL_BUFFER_LENGTH) {
+    strcpy(symbol, s);
+    return true;
+  } else {
+    return false;
+  }
 }
 
 void MessageSymbol::processMessage(int inletIndex, PdMessage *message) {
@@ -40,7 +52,7 @@ void MessageSymbol::processMessage(int inletIndex, PdMessage *message) {
     case 0: {
       switch (message->getType(0)) {
         case SYMBOL: {
-          symbol->setSymbol(message->getSymbol(0));
+          copyString(message->getSymbol(0));
           // allow fallthrough
         }
         case BANG: {
@@ -57,7 +69,7 @@ void MessageSymbol::processMessage(int inletIndex, PdMessage *message) {
     }
     case 1: {
       if (message->isSymbol(0)) {
-        symbol->setSymbol(message->getSymbol(1));
+        copyString(message->getSymbol(0));
       }
       break;
     }
