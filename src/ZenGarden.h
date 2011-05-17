@@ -80,7 +80,7 @@ extern "C" {
    * initialisation string (e.g. "5", "hello", or "f f f"). The object must be added to the same
    * context and graph as given to this function.
    */
-  ZGObject *zg_new_object(ZGContext *context, ZGGraph *graph, char *objectLabel, char *initString);
+  ZGObject *zg_new_object(ZGContext *context, ZGGraph *graph, char *objectString);
   
   /**
    * Add an object to a graph. If the graph is currently attached then audio may be interrupted
@@ -115,6 +115,10 @@ extern "C" {
   
   /** Returns the ConnectionType of the outlet of the given object. */
   ConnectionType zg_get_connection_type(ZGObject *object, unsigned int outletIndex);
+  
+  unsigned int zg_get_num_inlets(ZGObject *object);
+  
+  unsigned int zg_get_num_outlets(ZGObject *object);
   
   
 #pragma mark - Process

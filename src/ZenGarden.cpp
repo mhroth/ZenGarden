@@ -56,7 +56,9 @@ void zg_remove_graph(PdContext *context, PdGraph *graph) {
 }
 */
 
-ZGObject *zg_new_object(ZGContext *context, ZGGraph *graph, char *objectLabel, char *initString) {
+ZGObject *zg_new_object(ZGContext *context, ZGGraph *graph, char *objectString) {
+  char *objectLabel = strtok(objectString, " ;");
+  char *initString = strtok(NULL, ";");
   PdMessage *initMessage = new PdMessage(initString, graph->getArguments());
   MessageObject *messageObject = context->newObject("obj", objectLabel, initMessage, graph);
   delete initMessage;
@@ -102,6 +104,14 @@ ConnectionType zg_get_connection_type(ZGObject *object, unsigned int outletIndex
   } else {
     return MESSAGE;
   }
+}
+
+unsigned int zg_get_num_inlets(ZGObject *object) {
+  return 0; // TODO(mhroth)
+}
+
+unsigned int zg_get_num_outlets(ZGObject *object) {
+  return 0; // TODO(mhroth)
 }
 
 void zg_process(PdContext *context, float *inputBuffers, float *outputBuffers) {
