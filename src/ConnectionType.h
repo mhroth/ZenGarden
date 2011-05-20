@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -24,9 +24,9 @@
 #define _CONNECTION_TYPE_H_
 
 /** An enumeration of the types of information that a connection provides. */
-enum ConnectionType {
+typedef enum {
   DSP,    // describes an audio connnection
   MESSAGE // describes a message connection
-};
+} ConnectionType;
 
 #endif // _CONNECTION_TYPE_H_
