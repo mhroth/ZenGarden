@@ -30,7 +30,7 @@ MessagePack::MessagePack(PdMessage *initMessage, PdGraph *graph) :
 }
 
 MessagePack::~MessagePack() {
-  outgoingMessage->free();
+  outgoingMessage->freeMessage();
 }
 
 const char *MessagePack::getObjectLabel() {

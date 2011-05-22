@@ -27,7 +27,7 @@ MessageListPrepend::MessageListPrepend(PdMessage *initMessage, PdGraph *graph) :
 }
 
 MessageListPrepend::~MessageListPrepend() {
-  prependMessage->free();
+  prependMessage->freeMessage();
 }
 
 const char *MessageListPrepend::getObjectLabel() {
@@ -50,7 +50,7 @@ void MessageListPrepend::processMessage(int inletIndex, PdMessage *message) {
     case 1: {
       // NOTE(mhroth): would be faster to copy in place rather than destroying and creating memory
       // can change if it becomes a problem
-      prependMessage->free();
+      prependMessage->freeMessage();
       prependMessage = message->copyToHeap();
       break;
     }

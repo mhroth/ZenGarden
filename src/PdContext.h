@@ -136,7 +136,7 @@ class PdContext {
      * to the heap and the context will thereafter take over ownership and be responsible for
      * freeing it. The pointer to the heap-message is returned.
      */
-    PdMessage *scheduleMessage(MessageObject *messageObject, int outletIndex, PdMessage *message);
+    PdMessage *scheduleMessage(MessageObject *messageObject, unsigned int outletIndex, PdMessage *message);
   
     /**
      * Cancel a scheduled <code>PdMessage</code> according to its id. The message memory will
@@ -180,8 +180,6 @@ class PdContext {
   
     /** Create a new object based on its initialisation string. */
     MessageObject *newObject(char *objectType, char *objectLabel, PdMessage *initMessage, PdGraph *graph);
-  
-    List *externalMessagePool;
   
     int numInputChannels;
     int numOutputChannels;

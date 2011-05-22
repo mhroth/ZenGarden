@@ -77,28 +77,25 @@ bool MessageObject::shouldDistributeMessageToInlets() {
 }
 
 void MessageObject::receiveMessage(int inletIndex, PdMessage *message) {
-  if (shouldDistributeMessageToInlets() &&
-      inletIndex == 0 &&
+  if (inletIndex == 0 &&
       numMessageInlets > 1 &&
-      message->getNumElements() > 1) {
+      message->getNumElements() > 1 &&
+      shouldDistributeMessageToInlets()) {
     // if the message should be distributed across the inlets
     int maxInletToDistribute = (message->getNumElements() < numMessageInlets)
         ? message->getNumElements() : numMessageInlets;
     for (int i = maxInletToDistribute-1; i >= 0; i--) { // send to right-most inlet first
-      PdMessage *distributedMessage = NULL;
+      PdMessage *distributedMessage = PD_MESSAGE_ON_STACK(1);
       switch (message->getType(i)) {
         case FLOAT: {
-          distributedMessage = PD_MESSAGE_ON_STACK(1);
           distributedMessage->initWithTimestampAndFloat(message->getTimestamp(), message->getFloat(i));
           break;
         }
         case SYMBOL: {
-          distributedMessage = PD_MESSAGE_ON_STACK(1);
-          // TODO(mhroth): properly init symbol on stack
+          distributedMessage->initWithTimestampAndSymbol(message->getTimestamp(), message->getSymbol(i));
           break;
         }
         case BANG: {
-          distributedMessage = PD_MESSAGE_ON_STACK(1);
           distributedMessage->initWithTimestampAndBang(message->getTimestamp());
           break;
         }

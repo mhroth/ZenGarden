@@ -28,7 +28,7 @@ MessageRoute::MessageRoute(PdMessage *initMessage, PdGraph *graph) :
 }
 
 MessageRoute::~MessageRoute() {
-  routeMessage->free();
+  routeMessage->freeMessage();
 }
 
 const char *MessageRoute::getObjectLabel() {

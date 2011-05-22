@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -51,8 +51,9 @@ MessageMessageBox::MessageMessageBox(char *initString, PdGraph *graph) :
     // StaticUtils::tokenizeString does not remove the trailing ";" from the
     // original string. We should not process it because it will result in an empty message. 
     if (strcmp(initString, ";") != 0) {
-      PdMessage *message = new PdMessage(initString);
-      localMessageList->add(message);
+      PdMessage *message = PD_MESSAGE_ON_STACK(16);
+      message->initWithString(16, initString);
+      localMessageList->add(message->copyToHeap());
     }
   }
   StaticUtils::destroyTokenizedStringList(messageInitList);
@@ -66,7 +67,9 @@ MessageMessageBox::MessageMessageBox(char *initString, PdGraph *graph) :
           (MessageNamedDestination *) malloc(sizeof(MessageNamedDestination));
       // NOTE(mhroth): name string is not resolved
       namedDestination->name = StaticUtils::copyString(strtok(initString, " "));
-      namedDestination->message = new PdMessage(strtok(NULL, ";"));
+      PdMessage *message = PD_MESSAGE_ON_STACK(16);
+      message->initWithString(16, strtok(NULL, ";"));
+      namedDestination->message = message->copyToHeap();
       remoteMessageList->add(namedDestination);
     }
   }
@@ -78,7 +81,7 @@ MessageMessageBox::~MessageMessageBox() {
   // delete the message list and all of the messages in it
   for (int i = 0; i < localMessageList->size(); i++) {
     PdMessage *message = (PdMessage *) localMessageList->get(i);
-    delete message;
+    message->freeMessage();
   }
   delete localMessageList;
   
@@ -87,7 +90,7 @@ MessageMessageBox::~MessageMessageBox() {
     MessageNamedDestination *namedDestination =
         (MessageNamedDestination *) remoteMessageList->get(i);
     free(namedDestination->name);
-    delete namedDestination->message;
+    namedDestination->message->freeMessage();
     free(namedDestination);
   }
   delete remoteMessageList;
@@ -98,7 +101,7 @@ const char *MessageMessageBox::getObjectLabel() {
 }
 
 void MessageMessageBox::processMessage(int inletIndex, PdMessage *message) {
-  
+/*
   // send local messages
   int objMessageIndex = 0;
   for (int i = 0; i < localMessageList->size(); i++, objMessageIndex++) {
@@ -116,11 +119,12 @@ void MessageMessageBox::processMessage(int inletIndex, PdMessage *message) {
     char *resolvedName = PdMessage::resolveString(namedDestination->name, message, 1);
     graph->sendMessageToNamedReceivers(resolvedName, outgoingMessage);
   }
+*/
 }
 
 PdMessage *MessageMessageBox::getNextResolvedMessage(int objMessageIndex,
     PdMessage *templateMessage, PdMessage *incomingMessage) {
-  
+/*
   PdMessage *outgoingMessage = getNextOutgoingMessage(objMessageIndex);
   outgoingMessage->setTimestamp(incomingMessage->getTimestamp());
   for (int i = 0; i < templateMessage->getNumElements(); i++) {
@@ -131,18 +135,6 @@ PdMessage *MessageMessageBox::getNextResolvedMessage(int objMessageIndex,
   }
   
   return outgoingMessage;
-}
-
-PdMessage *MessageMessageBox::newCanonicalMessage(int outletIndex) {
-  // outletIndex in this case is actually the objMessageIndex
-  PdMessage *message = NULL;
-  if (outletIndex < localMessageList->size()) {
-    message = (PdMessage *) localMessageList->get(outletIndex);
-  } else {
-    outletIndex -= localMessageList->size();
-    MessageNamedDestination *namedDestination =
-        (MessageNamedDestination *) remoteMessageList->get(outletIndex);
-    message = namedDestination->message;
-  }
-  return message->copy();
+*/
+  return NULL;
 }

@@ -38,7 +38,7 @@ MessageUnpack::MessageUnpack(PdMessage *initMessage, PdGraph *graph) :
 }
 
 MessageUnpack::~MessageUnpack() {
-  templateMessage->free();
+  templateMessage->freeMessage();
 }
 
 const char *MessageUnpack::getObjectLabel() {

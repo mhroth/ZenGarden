@@ -167,8 +167,6 @@ PdContext::PdContext(int numInputChannels, int numOutputChannels, int blockSize,
   globalDspInputBuffers = (float *) calloc(blockSize * numInputChannels, sizeof(float));
   globalDspOutputBuffers = (float *) calloc(blockSize * numOutputChannels, sizeof(float));
   
-  externalMessagePool = new List();
-  
   sendController = new MessageSendController(this);
   
   graphList = new ZGLinkedList();
@@ -200,11 +198,6 @@ PdContext::~PdContext() {
   while ((graph = (PdGraph *) graphList->getNext()) != NULL) {
     delete graph;
   }
-  for (int i = 0; i < externalMessagePool->size(); i++) {
-    PdMessage *message = (PdMessage *) externalMessagePool->get(i);
-    delete message;
-  }
-  delete externalMessagePool;
   delete graphList;
   delete dspReceiveList;
   delete dspSendList;
@@ -374,21 +367,20 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
         int canvasY = atoi(strtok(NULL, " ")); // read the second canvas coordinate
         char *objectLabel = strtok(NULL, " ;"); // delimit with " " or ";"
         char *objectInitString = strtok(NULL, ";"); // get the object initialisation string
-        PdMessage *initMessage = new PdMessage(objectInitString, graph->getArguments());
+        PdMessage *initMessage = PD_MESSAGE_ON_STACK(16);
+        initMessage->initWithStringAndArgumemts(16, objectInitString, graph->getArguments());
         MessageObject *messageObject = newObject(objectType, objectLabel, initMessage, graph);
         if (messageObject == NULL) {
           char *filename = StaticUtils::concatStrings(objectLabel, ".pd");
           char *directory = graph->findFilePath(filename);
           if (directory == NULL) {
             free(filename);
-            delete initMessage;
             printErr("Unknown object or abstraction \"%s\".", objectLabel);
             return false;
           }
           messageObject = newGraph(directory, filename, initMessage, graph);
           free(filename);
         }
-        delete initMessage;
 
         // add the object to the local graph and make any necessary registrations
         graph->addObject(canvasX, canvasY, messageObject);
@@ -437,7 +429,6 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
         } else {
           printErr("declare \"%s\" flag is not supported.", initMessage->getSymbol(0));
         }
-        delete initMessage;
       } else if (strcmp(objectType, "array") == 0) {
         // creates a new table
         // objectInitString should contain both name and buffer length
@@ -448,7 +439,6 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
         MessageTable *table = new MessageTable(initMessage, graph);
         int bufferLength = 0;
         float *buffer = table->getBuffer(&bufferLength);
-        delete initMessage;
         graph->addObject(0, 0, table);
         
         // next many lines should be elements of that array
@@ -456,12 +446,9 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
         while (strcmp(strtok(line = fileParser->nextMessage(), " ;"), "#A") == 0) {
           int index = atoi(strtok(NULL, " ;"));
           char *nextNumber = NULL;
-          while ((nextNumber = strtok(NULL, " ;")) != NULL) {
-            if (index >= bufferLength) {
-              break; // ensure that file does not attempt to write more than stated numbers
-            } else {
-              buffer[index++] = atof(nextNumber);
-            }
+          // ensure that file does not attempt to write more than stated numbers
+          while (((nextNumber = strtok(NULL, " ;")) != NULL) && (index < bufferLength)) {
+            buffer[index++] = atof(nextNumber);
           }
         }
         // ignore the #X coords line
@@ -1031,10 +1018,10 @@ void PdContext::scheduleExternalMessageV(const char *receiverName, double timest
   unlock();
 }
 
-PdMessage *PdContext::scheduleMessage(MessageObject *messageObject, int outletIndex, PdMessage *message) {
+PdMessage *PdContext::scheduleMessage(MessageObject *messageObject, unsigned int outletIndex, PdMessage *message) {
   // basic argument checking. It may happen that the message is NULL in case a cancel message
   // is sent multiple times to a particular object, when no message is pending
-  if (message != NULL && outletIndex >= 0 && messageObject != NULL) {
+  if (message != NULL && messageObject != NULL) {
     message = message->copyToHeap();
     messageCallbackQueue->insertMessage(messageObject, outletIndex, message);
     return message;

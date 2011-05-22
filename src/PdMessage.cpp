@@ -24,7 +24,7 @@
 #include "PdMessage.h"
 #include "StaticUtils.h"
 
-PdMessage *PdMessage::initWithStringAndArgumemts(unsigned int maxElements, char *initString, PdMessage *arguments) {
+void PdMessage::initWithStringAndArgumemts(unsigned int maxElements, char *initString, PdMessage *arguments) {
   // resolve string
 #define RES_BUFFER_LENGTH 512
   char buffer[RES_BUFFER_LENGTH];
@@ -95,7 +95,7 @@ PdMessage *PdMessage::initWithStringAndArgumemts(unsigned int maxElements, char 
   initWithString(maxElements, buffer);
 }
 
-PdMessage *PdMessage::initWithString(unsigned int maxElements, char *initString) {
+void PdMessage::initWithString(unsigned int maxElements, char *initString) {
   timestamp = 0.0;
   numElements = maxElements;
   
@@ -104,11 +104,10 @@ PdMessage *PdMessage::initWithString(unsigned int maxElements, char *initString)
   if (token != NULL) {
     do {
       if (StaticUtils::isNumeric(token)) {
-        setFloat(i, atof(token));
+        setFloat(i++, atof(token));
       } else {
-        setSymbol(i, token); // element is symbolic
+        setSymbol(i++, token); // element is symbolic
       }
-      i++;
     } while (((token = strtok(NULL, " ;")) != NULL) && (i < maxElements));
   }
   
@@ -362,33 +361,26 @@ void PdMessage::setList(unsigned int index) {
 #pragma mark -
 #pragma mark copy/free
 
-// When the PdMessage is copied to the heap, it is formatted as one single block of reserved
-// memory. The message itself is at the beginning of the block, and all strings are copied
-// serially thereafter
 PdMessage *PdMessage::copyToHeap() {
   int numMessageBytes = sizeof(PdMessage) + ((numElements-1)*sizeof(MessageAtom));
-  int numSymbolBytes[numElements];
-  int totalSymbolBytes = 0;
+  PdMessage *pdMessage = (PdMessage *) malloc(numMessageBytes);
+  pdMessage->initWithTimestampAndNumElements(timestamp, numElements);
+  // copy all message type and float info (but symbol pointers must be replaced)
+  memcpy(pdMessage->getElement(0), getElement(0), numElements * sizeof(MessageAtom));
   for (int i = 0; i < numElements; i++) {
     if (isSymbol(i)) {
-      numSymbolBytes[i] = (strlen(getSymbol(i))+1) * sizeof(char);
-      totalSymbolBytes += numSymbolBytes[i];
-    } else {
-      numSymbolBytes[i] = 0;
+      pdMessage->setSymbol(i, StaticUtils::copyString(getSymbol(i)));
     }
-  }
-  PdMessage *pdMessage = (PdMessage *) malloc(numMessageBytes + totalSymbolBytes);
-  memcpy(pdMessage, this, numMessageBytes);
-  int marker = numMessageBytes;
-  for (int i = 0; i < numElements; i++) {
-    memcpy(pdMessage+marker, getSymbol(i), numSymbolBytes[i]);
-    pdMessage->setSymbol(i, (char *) (pdMessage + marker)); // correctly set the symbol pointers
-    marker += numSymbolBytes[i];
   }
   return pdMessage;
 }
 
 void PdMessage::freeMessage() {
+  for (int i = 0; i < numElements; i++) {
+    if (isSymbol(i)) {
+      free(getSymbol(i));
+    }
+  }
   free(this);
 }
 

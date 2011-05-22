@@ -37,7 +37,7 @@ const char *MessageDbToRms::getObjectLabel() {
 void MessageDbToRms::processMessage(int inletIndex, PdMessage *message) {
   if (message->isFloat(0)) {
     float dbToRms = (message->getFloat(0) <= 0.0f) ? 0.0f :
-        0.00001f * powf(10.0f, message->getElement(0)->getFloat() / 20.0f);
+        0.00001f * powf(10.0f, message->getFloat(0) / 20.0f);
     PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
     outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), dbToRms);
     sendMessage(0, outgoingMessage);

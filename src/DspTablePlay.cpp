@@ -105,10 +105,10 @@ void DspTablePlay::playTable(int startIndex, int duration, double startTime) {
       if (endTableIndex > bufferLength) {
         endTableIndex = bufferLength;
       }
-      outgoingMessage = getNextOutgoingMessage(1);
       double durationMs = 1000.0 * ((double) (endTableIndex-startIndex)) / (double) graph->getSampleRate();
-      outgoingMessage->setTimestamp(startTime + durationMs);
-      graph->scheduleMessage(this, 1, outgoingMessage);
+      outgoingMessage = PD_MESSAGE_ON_STACK(1);
+      outgoingMessage->initWithTimestampAndBang(startTime + durationMs);
+      outgoingMessage = graph->scheduleMessage(this, 1, outgoingMessage);
     } else {
       currentTableIndex = bufferLength;
     }

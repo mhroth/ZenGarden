@@ -38,6 +38,7 @@ const char *MessageSoundfiler::getObjectLabel() {
 }
 
 void MessageSoundfiler::processMessage(int inletIndex, PdMessage *message) {
+/*
   if (message->isSymbol(0, "read")) {
     int currentElementIndex = 1;
     bool shouldResizeTable = false;
@@ -127,4 +128,5 @@ void MessageSoundfiler::processMessage(int inletIndex, PdMessage *message) {
     // TODO(mhroth): not supported yet
     graph->printErr("The \"write\" command to soundfiler is not supported.");
   }
+*/
 }

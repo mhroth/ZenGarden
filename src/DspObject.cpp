@@ -292,7 +292,7 @@ void DspObject::processDsp() {
       message = messageLetPair->message;
       processMessage(messageLetPair->index, message);
       blockIndexOfLastMessage = graph->getBlockIndex(message);
-      message->free(); // free the message from the head, the message has been consumed.
+      message->freeMessage(); // free the message from the head, the message has been consumed.
     }
     processDspWithIndex(blockIndexOfLastMessage, blockSizeFloat);
     blockIndexOfLastMessage = 0.0f; // reset the block index of the last received message

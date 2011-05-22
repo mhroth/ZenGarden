@@ -79,7 +79,7 @@ void MessagePipe::processMessage(int inletIndex, PdMessage *message) {
           PdMessage *scheduledMessage = message->copyToHeap();
           scheduledMessage->setTimestamp(message->getTimestamp() + delayMs);
           scheduledMessagesList->add(graph->scheduleMessage(this, 0, scheduledMessage));
-          scheduledMessage->free();
+          scheduledMessage->freeMessage();
           break;
         }
         default: {

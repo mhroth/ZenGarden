@@ -30,7 +30,7 @@ MessageSelect::MessageSelect(PdMessage *initMessage, PdGraph *graph) :
 }
 
 MessageSelect::~MessageSelect() {
-  selectorMessage->free();
+  selectorMessage->freeMessage();
 }
 
 const char *MessageSelect::getObjectLabel() {

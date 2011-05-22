@@ -27,7 +27,7 @@ MessageListAppend::MessageListAppend(PdMessage *initMessage, PdGraph *graph) : M
 }
 
 MessageListAppend::~MessageListAppend() {
-  appendMessage->free();
+  appendMessage->freeMessage();
 }
 
 const char *MessageListAppend::getObjectLabel() {
@@ -61,11 +61,11 @@ void MessageListAppend::processMessage(int inletIndex, PdMessage *message) {
     case 1: {
       if (message->isBang(0)) {
         // bangs are considered a list of size zero
-        appendMessage->free();
+        appendMessage->freeMessage();
         appendMessage = PD_MESSAGE_ON_STACK(0);
         appendMessage->initWithTimestampAndNumElements(0.0, 0);
       } else {
-        appendMessage->free();
+        appendMessage->freeMessage();
         appendMessage = message->copyToHeap();
       }
       break;

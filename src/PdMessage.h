@@ -23,12 +23,14 @@
 #ifndef _PD_MESSAGE_H_
 #define _PD_MESSAGE_H_
 
-#define PD_MESSAGE_ON_STACK(_x) ((PdMessage *) (alloca(sizeof(PdMessage) + (((_x>0)?(_x-1):0) * sizeof(MessageAtom)))));
-
-#include <stdio.h>
+#include <alloca.h>
 #include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "MessageElementType.h"
+
+#define PD_MESSAGE_ON_STACK(_x) ((PdMessage *) (alloca(sizeof(PdMessage) + (((_x>0)?(_x-1):0) * sizeof(MessageAtom)))));
 
 typedef struct MessageAtom {
   MessageElementType type;
@@ -49,16 +51,14 @@ class PdMessage {
     //PdMessage(char *initString);
   
     /** Creates a message by tokenizing the given string and immediately resolving it using the given arguments. */
-    PdMessage(char *initString, PdMessage *arguments);
-  
-    static int numInitTokens(char *initString);
+    //PdMessage(char *initString, PdMessage *arguments);
   
     /**
      * Resolve the string using the arguments into the element. The string is expected to refer to
      * one message element only, i.e., it contains no spaces, though the underlying resolution
      * algorithm can handle any string.
      */
-    static void resolveElement(char *templateString, PdMessage *arguments, MessageAtom *messageElement);
+    //static void resolveElement(char *templateString, PdMessage *arguments, MessageAtom *messageElement);
   
     /**
      * Resolve arguments in a string with a given arugment list. The returned value is a pointer
@@ -69,7 +69,7 @@ class PdMessage {
      * to the first (0th) element of the argument. The offset is used to distinguish between these
      * cases, by offsetting the argument index resolution.
      */
-    static char *resolveString(char *initString, PdMessage *arguments, int offset);
+    //static char *resolveString(char *initString, PdMessage *arguments, int offset);
   
     /**
      * Converts symbolic elements referring to message element types (e.g., float or f) to those
@@ -83,14 +83,14 @@ class PdMessage {
     void initWithTimestampAndBang(double aTimestamp);
     void initWithTimestampAndSymbol(double aTimestamp, char *symbol);
   
-    PdMessage *initWithStringAndArgumemts(unsigned int maxElements, char *initString, PdMessage *arguments);
+    void initWithStringAndArgumemts(unsigned int maxElements, char *initString, PdMessage *arguments);
   
     /**
      * Adds elements to the message by tokenizing the given string. Is a token is numeric then it is
      * automatically resolved to a float. Otherwise the string is interpreted as a symbol.
      * Meant for use in the constructor.
      */
-    PdMessage *initWithString(unsigned int maxElements, char *initString);
+    void initWithString(unsigned int maxElements, char *initString);
   
     MessageAtom *getElement(unsigned int index);
   
@@ -106,7 +106,8 @@ class PdMessage {
   
     /**
      * Returns a copy of the message to the heap. Messages usually only exist temporarily on the
-     * stack and should be copied to the heap if it should persist.
+     * stack and should be copied to the heap if it should persist. Symbol pointers are copied
+     * independently to the heap.
      */
     PdMessage *copyToHeap();
   

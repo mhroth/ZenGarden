@@ -40,9 +40,8 @@ ConnectionType DspBang::getConnectionType(int outletIndex) {
 }
 
 void DspBang::processDsp() {
-  PdMessage *outgoingMessage = getNextOutgoingMessage(0);
   // message will be automatically rescheduled for beginning of next block
-  outgoingMessage->setTimestamp(0.0);
-  outgoingMessage->setBang(0);
+  PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+  outgoingMessage->initWithTimestampAndBang(0.0);
   graph->scheduleMessage(this, 0, outgoingMessage);
 }

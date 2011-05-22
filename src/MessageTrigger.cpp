@@ -30,7 +30,7 @@ MessageTrigger::MessageTrigger(PdMessage *initMessage, PdGraph *graph) :
 }
 
 MessageTrigger::~MessageTrigger() {
-  castMessage->free();
+  castMessage->freeMessage();
 }
 
 const char *MessageTrigger::getObjectLabel() {

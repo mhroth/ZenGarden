@@ -59,13 +59,14 @@ PdGraph::PdGraph(PdMessage *initMessage, PdGraph *parentGraph, PdContext *contex
   graphArguments->initWithTimestampAndNumElements(0.0, numInitElements+1);
   graphArguments->setFloat(0, (float) graphId); // $0
   memcpy(graphArguments->getElement(1), initMessage->getElement(0), numInitElements * sizeof(MessageAtom));
+  graphArguments = graphArguments->copyToHeap();
 }
 
 PdGraph::~PdGraph() {
   delete dspNodeList;
   delete inletList;
   delete outletList;
-  delete graphArguments;
+  graphArguments->freeMessage();
   delete declareList;
 
   // delete all constituent nodes
