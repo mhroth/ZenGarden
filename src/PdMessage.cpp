@@ -55,7 +55,8 @@ void PdMessage::initWithString(unsigned int maxElements, char *initString) {
   }
 }
 
-void PdMessage::resolveString(char *initString, PdMessage *arguments, unsigned int offset, char *buffer, unsigned int bufferLength) {
+void PdMessage::resolveString(char *initString, PdMessage *arguments, unsigned int offset,
+    char *buffer, unsigned int bufferLength) {
   int bufferPos = 0;
   int initPos = 0;
   char *argPos = NULL;
@@ -121,87 +122,9 @@ void PdMessage::resolveString(char *initString, PdMessage *arguments, unsigned i
 }
 
 PdMessage::~PdMessage() {
-  // nothing to do. Use free().
-}
-/*
-void PdMessage::resolveElement(char *templateString, PdMessage *arguments,
-    MessageAtom *messageElement) {
-  char *buffer = resolveString(templateString, arguments, 1);
-  if (StaticUtils::isNumeric(buffer)) {
-    messageElement->constant = atof(buffer);
-  } else {
-    messageElement->symbol = buffer;
-  }
+  // nothing to do. Use freeMessage().
 }
 
-char *PdMessage::resolveStringToMessage(char *initString, PdMessage *arguments, int offset) {
-  char buffer[512];
-  int bufferPos = 0;
-  int initPos = 0;
-  char *argPos = NULL;
-  int numCharsWritten = 0;
-  
-  if (initString == NULL) {
-    buffer[0] = '\0'; // a NULL string input yields a string of length zero
-  } else if (arguments == NULL) {
-    strcpy(buffer, initString); // NULL arguments returns the original string
-  } else {
-    int numArguments = arguments->getNumElements();
-    while ((argPos = strstr(initString + initPos, "\\$")) != NULL) {
-      int numCharsRead = argPos - initString - initPos;
-      memcpy(buffer + bufferPos, initString + initPos, numCharsRead);
-      bufferPos += numCharsRead;
-      initPos += numCharsRead + 3;
-      //int argumentIndex = argPos[2] - '0'; (equivalent to below, but below is more clear)
-      int argumentIndex = 0;
-      switch (argPos[2]) {
-        case '0': { argumentIndex = 0; break; }
-        case '1': { argumentIndex = 1; break; }
-        case '2': { argumentIndex = 2; break; }
-        case '3': { argumentIndex = 3; break; }
-        case '4': { argumentIndex = 4; break; }
-        case '5': { argumentIndex = 5; break; }
-        case '6': { argumentIndex = 6; break; }
-        case '7': { argumentIndex = 7; break; }
-        case '8': { argumentIndex = 8; break; }
-        case '9': { argumentIndex = 9; break; }
-        default: { continue; }
-      }
-      argumentIndex -= offset;
-      if (argumentIndex >= 0 && argumentIndex < numArguments) {
-        switch (arguments->getType(argumentIndex)) {
-          case FLOAT: {
-            numCharsWritten = snprintf(buffer + bufferPos, RES_BUFFER_LENGTH - bufferPos,
-                "%g", arguments->getFloat(argumentIndex));
-            bufferPos += numCharsWritten;
-            if (bufferPos >= RES_BUFFER_LENGTH-1) {
-              printf("WTF: %s", buffer);
-            }
-            break;
-          }
-          case SYMBOL: {
-            numCharsWritten = snprintf(buffer + bufferPos, RES_BUFFER_LENGTH - bufferPos,
-                "%s", arguments->getSymbol(argumentIndex));
-            bufferPos += numCharsWritten;
-            if (bufferPos >= RES_BUFFER_LENGTH-1) {
-              printf("WTF: %s", buffer);
-            }
-            break;
-          }
-          default: {
-            break;
-          }
-        }
-      }
-    }
-    
-    // no more arguments remaining. copy the remainder of the string including '\0'
-    strcpy(buffer + bufferPos, initString + initPos);
-  }
-  
-  return buffer;
-}
-*/
 void PdMessage::resolveSymbolsToType() {
   for (int i = 0; i < numElements; i++) {
     if (isSymbol(i)) {

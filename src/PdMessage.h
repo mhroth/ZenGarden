@@ -47,29 +47,15 @@ class PdGraph;
 class PdMessage {
   
   public:  
-    /** Creates a new message by tokenizing the given string and creating floats and strings. */
-    //PdMessage(char *initString);
-  
-    /** Creates a message by tokenizing the given string and immediately resolving it using the given arguments. */
-    //PdMessage(char *initString, PdMessage *arguments);
-  
     /**
-     * Resolve the string using the arguments into the element. The string is expected to refer to
-     * one message element only, i.e., it contains no spaces, though the underlying resolution
-     * algorithm can handle any string.
-     */
-    //static void resolveElement(char *templateString, PdMessage *arguments, MessageAtom *messageElement);
-  
-    /**
-     * Resolve arguments in a string with a given arugment list. The returned value is a pointer
-     * to the global resolution buffer. This buffer should NOT be freed by the user.
+     * Resolve arguments in a string with a given argument list into the given <code>buffer</code>
+     * with <code>bufferLength</code>. 
      * The <code>offset</code> parameter adjusts the resolution of the <code>$</code> argument.
      * In the case of message boxes, <code>$0</code> refers to the graph id, which is the first
      * argument in a graph's list of arguments. For all other objects, <code>$1</code> refers
      * to the first (0th) element of the argument. The offset is used to distinguish between these
      * cases, by offsetting the argument index resolution.
      */
-    //static char *resolveString(char *initString, PdMessage *arguments, int offset);
     static void resolveString(char *initString, PdMessage *arguments, unsigned int offset, char *buffer, unsigned int bufferLength);
   
     /**
@@ -89,7 +75,6 @@ class PdMessage {
     /**
      * Adds elements to the message by tokenizing the given string. Is a token is numeric then it is
      * automatically resolved to a float. Otherwise the string is interpreted as a symbol.
-     * Meant for use in the constructor.
      */
     void initWithString(unsigned int maxElements, char *initString);
   
@@ -112,7 +97,7 @@ class PdMessage {
      */
     PdMessage *copyToHeap();
   
-    /** The message memory is freed from the heap. */
+    /** The message memory is freed from the heap, including symbols. */
     void freeMessage();
     
     /**
@@ -147,6 +132,7 @@ class PdMessage {
     void setList(unsigned int index);
 
   private:
+    PdMessage();
     ~PdMessage();
   
     /**
