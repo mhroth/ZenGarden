@@ -35,11 +35,8 @@
  * C) The most complex case is where messages in the form of A) are separated by a semicolon (';').
  * The first symbol is the name of a message receiver. The remainder of the string is converted
  * into a message.
- *
- * NOTE(mhroth): MessageBoxes can only support up to 32 total messages.
  */
-MessageMessageBox::MessageMessageBox(char *initString, PdGraph *graph) :
-    MessageObject(1, 128, graph) {
+MessageMessageBox::MessageMessageBox(char *initString, PdGraph *graph) : MessageObject(1, 1, graph) {
   // parse the entire initialisation string
   List *messageInitListAll = StaticUtils::tokenizeString(initString, "\\;");
   
@@ -73,7 +70,6 @@ MessageMessageBox::MessageMessageBox(char *initString, PdGraph *graph) :
       remoteMessageList->add(namedDestination);
     }
   }
-      
   StaticUtils::destroyTokenizedStringList(messageInitListAll);
 }
 
@@ -101,40 +97,46 @@ const char *MessageMessageBox::getObjectLabel() {
 }
 
 void MessageMessageBox::processMessage(int inletIndex, PdMessage *message) {
-/*
   // send local messages
-  int objMessageIndex = 0;
-  for (int i = 0; i < localMessageList->size(); i++, objMessageIndex++) {
+  for (int i = 0; i < localMessageList->size(); i++) {
     PdMessage *messageTemplate = (PdMessage *) localMessageList->get(i);
-    PdMessage *outgoingMessage = getNextResolvedMessage(objMessageIndex, messageTemplate, message);
+    int numElements = messageTemplate->getNumElements();
+    PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(numElements);
+    outgoingMessage->initWithTimestampAndNumElements(message->getTimestamp(), numElements);
+    memcpy(outgoingMessage->getElement(0), messageTemplate->getElement(0), numElements*sizeof(MessageAtom));
+#define RES_BUFFER_LENGTH 64
+    for (int i = 0; i < numElements; i++) {
+      if (messageTemplate->isSymbol(i)) {
+        char *buffer = (char *) alloca(RES_BUFFER_LENGTH * sizeof(char)); // will be released when function returns
+        // TODO(mhroth): resolve string, but may be in stack buffer
+        PdMessage::resolveString(messageTemplate->getSymbol(i), message, 1, buffer, RES_BUFFER_LENGTH);
+        outgoingMessage->setSymbol(i, buffer);
+      }
+    }
     sendMessage(0, outgoingMessage);
   }
-  
+
   // send remote messages
-  for (int i = 0; i < remoteMessageList->size(); i++, objMessageIndex++) {
+  for (int i = 0; i < remoteMessageList->size(); i++) {
     MessageNamedDestination *namedDestination =
         (MessageNamedDestination *) remoteMessageList->get(i);
-    PdMessage *outgoingMessage = getNextResolvedMessage(objMessageIndex,
-        namedDestination->message, message);
-    char *resolvedName = PdMessage::resolveString(namedDestination->name, message, 1);
+
+    char resolvedName[RES_BUFFER_LENGTH];
+    PdMessage::resolveString(namedDestination->name, message, 1, resolvedName, RES_BUFFER_LENGTH);
+    
+    PdMessage *messageTemplate = namedDestination->message;
+    int numElements = messageTemplate->getNumElements();
+    PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(numElements);
+    outgoingMessage->initWithTimestampAndNumElements(message->getTimestamp(), numElements);
+    memcpy(outgoingMessage->getElement(0), messageTemplate->getElement(0), numElements*sizeof(MessageAtom));
+    for (int i = 0; i < numElements; i++) {
+      if (messageTemplate->isSymbol(i)) {
+        char *buffer = (char *) alloca(RES_BUFFER_LENGTH * sizeof(char)); // will be released when function returns
+        // TODO(mhroth): resolve string, but may be in stack buffer
+        PdMessage::resolveString(messageTemplate->getSymbol(i), message, 1, buffer, RES_BUFFER_LENGTH);
+        outgoingMessage->setSymbol(i, buffer);
+      }
+    }
     graph->sendMessageToNamedReceivers(resolvedName, outgoingMessage);
   }
-*/
-}
-
-PdMessage *MessageMessageBox::getNextResolvedMessage(int objMessageIndex,
-    PdMessage *templateMessage, PdMessage *incomingMessage) {
-/*
-  PdMessage *outgoingMessage = getNextOutgoingMessage(objMessageIndex);
-  outgoingMessage->setTimestamp(incomingMessage->getTimestamp());
-  for (int i = 0; i < templateMessage->getNumElements(); i++) {
-    if (templateMessage->isSymbol(i)) {
-      PdMessage::resolveElement(templateMessage->getSymbol(i), incomingMessage,
-          outgoingMessage->getElement(i));
-    }
-  }
-  
-  return outgoingMessage;
-*/
-  return NULL;
 }

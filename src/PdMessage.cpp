@@ -24,15 +24,42 @@
 #include "PdMessage.h"
 #include "StaticUtils.h"
 
-void PdMessage::initWithStringAndArgumemts(unsigned int maxElements, char *initString, PdMessage *arguments) {
+void PdMessage::initWithStringAndArguments(unsigned int maxElements, char *initString, PdMessage *arguments) {  
   // resolve string
 #define RES_BUFFER_LENGTH 512
-  char buffer[RES_BUFFER_LENGTH];
+  char buffer[RES_BUFFER_LENGTH]; // message is resolved into this buffer
+  resolveString(initString, arguments, 0, buffer, RES_BUFFER_LENGTH);
+  initWithString(maxElements, buffer);
+}
+
+void PdMessage::initWithString(unsigned int maxElements, char *initString) {
+  timestamp = 0.0;
+  numElements = maxElements;
+  
+  int i = 0;
+  char *token = strtok(initString, " ;");
+  if (token != NULL) {
+    do {
+      if (StaticUtils::isNumeric(token)) {
+        setFloat(i++, atof(token));
+      } else {
+        setSymbol(i++, token); // element is symbolic
+      }
+    } while (((token = strtok(NULL, " ;")) != NULL) && (i < maxElements));
+  }
+  
+  numElements = i;
+  
+  if (numElements == 0) {
+    initWithTimestampAndBang(0.0); // just in case, there is always at least one element in a message
+  }
+}
+
+void PdMessage::resolveString(char *initString, PdMessage *arguments, unsigned int offset, char *buffer, unsigned int bufferLength) {
   int bufferPos = 0;
   int initPos = 0;
   char *argPos = NULL;
   int numCharsWritten = 0;
-  int offset = 0;
   
   if (initString == NULL) {
     buffer[0] = '\0'; // a NULL string input yields a string of length zero
@@ -64,19 +91,19 @@ void PdMessage::initWithStringAndArgumemts(unsigned int maxElements, char *initS
       if (argumentIndex >= 0 && argumentIndex < numArguments) {
         switch (arguments->getType(argumentIndex)) {
           case FLOAT: {
-            numCharsWritten = snprintf(buffer + bufferPos, RES_BUFFER_LENGTH - bufferPos,
-                                       "%g", arguments->getFloat(argumentIndex));
+            numCharsWritten = snprintf(buffer + bufferPos, bufferLength - bufferPos,
+                "%g", arguments->getFloat(argumentIndex));
             bufferPos += numCharsWritten;
-            if (bufferPos >= RES_BUFFER_LENGTH-1) {
+            if (bufferPos >= bufferLength-1) {
               printf("WTF: %s", buffer);
             }
             break;
           }
           case SYMBOL: {
-            numCharsWritten = snprintf(buffer + bufferPos, RES_BUFFER_LENGTH - bufferPos,
-                                       "%s", arguments->getSymbol(argumentIndex));
+            numCharsWritten = snprintf(buffer + bufferPos, bufferLength - bufferPos,
+                "%s", arguments->getSymbol(argumentIndex));
             bufferPos += numCharsWritten;
-            if (bufferPos >= RES_BUFFER_LENGTH-1) {
+            if (bufferPos >= bufferLength-1) {
               printf("WTF: %s", buffer);
             }
             break;
@@ -91,27 +118,6 @@ void PdMessage::initWithStringAndArgumemts(unsigned int maxElements, char *initS
     // no more arguments remaining. copy the remainder of the string including '\0'
     strcpy(buffer + bufferPos, initString + initPos);
   }
-  
-  initWithString(maxElements, buffer);
-}
-
-void PdMessage::initWithString(unsigned int maxElements, char *initString) {
-  timestamp = 0.0;
-  numElements = maxElements;
-  
-  int i = 0;
-  char *token = strtok(initString, " ;");
-  if (token != NULL) {
-    do {
-      if (StaticUtils::isNumeric(token)) {
-        setFloat(i++, atof(token));
-      } else {
-        setSymbol(i++, token); // element is symbolic
-      }
-    } while (((token = strtok(NULL, " ;")) != NULL) && (i < maxElements));
-  }
-  
-  numElements = i;
 }
 
 PdMessage::~PdMessage() {
@@ -296,9 +302,9 @@ bool PdMessage::isSymbol(unsigned int index) {
 
 bool PdMessage::isSymbol(unsigned int index, const char *test) {
   if (index < numElements) {
-    MessageAtom messageAtom = (&messageAtom)[index];
-    if (messageAtom.type == SYMBOL) {
-      return !strcmp(messageAtom.symbol, test);
+    MessageAtom messageElement = (&messageAtom)[index];
+    if (messageElement.type == SYMBOL) {
+      return !strcmp(messageElement.symbol, test);
     } else {
       return false;
     }
@@ -347,6 +353,7 @@ void PdMessage::setSymbol(unsigned int index, char *symbol) {
 
 void PdMessage::setBang(unsigned int index) {
   (&messageAtom)[index].type = BANG;
+  (&messageAtom)[index].constant = 0.0f;
 }
 
 void PdMessage::setAnything(unsigned int index) {

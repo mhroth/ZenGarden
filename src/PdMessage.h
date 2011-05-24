@@ -70,6 +70,7 @@ class PdMessage {
      * cases, by offsetting the argument index resolution.
      */
     //static char *resolveString(char *initString, PdMessage *arguments, int offset);
+    static void resolveString(char *initString, PdMessage *arguments, unsigned int offset, char *buffer, unsigned int bufferLength);
   
     /**
      * Converts symbolic elements referring to message element types (e.g., float or f) to those
@@ -83,7 +84,7 @@ class PdMessage {
     void initWithTimestampAndBang(double aTimestamp);
     void initWithTimestampAndSymbol(double aTimestamp, char *symbol);
   
-    void initWithStringAndArgumemts(unsigned int maxElements, char *initString, PdMessage *arguments);
+    void initWithStringAndArguments(unsigned int maxElements, char *initString, PdMessage *arguments);
   
     /**
      * Adds elements to the message by tokenizing the given string. Is a token is numeric then it is
