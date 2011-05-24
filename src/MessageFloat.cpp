@@ -44,7 +44,7 @@ void MessageFloat::processMessage(int inletIndex, PdMessage *message) {
         }
         case BANG: {
           PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
-          outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), message->getFloat(0));
+          outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), constant);
           sendMessage(0, outgoingMessage);
           break;
         }
