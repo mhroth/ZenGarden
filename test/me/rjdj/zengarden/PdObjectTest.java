@@ -351,7 +351,6 @@ public class PdObjectTest implements ZenGardenListener {
     genericMessageTest("MessageToggle.pd");
   }
   
-  
   @Test
   public void testMessageTrigger() {
     genericMessageTest("MessageTrigger.pd");
