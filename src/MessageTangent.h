@@ -23,7 +23,6 @@
 #ifndef _MESSAGE_TANGENT_H_
 #define _MESSAGE_TANGENT_H_
 
-#include <math.h>
 #include "MessageObject.h"
 
 /** [tan] */
