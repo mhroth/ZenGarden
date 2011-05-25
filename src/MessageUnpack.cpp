@@ -28,6 +28,7 @@ MessageUnpack::MessageUnpack(PdMessage *initMessage, PdGraph *graph) :
   if (initMessage->getNumElements() < 2) {
     // if unpack is not initialised with anything, assume two "anything" outputs
     templateMessage = PD_MESSAGE_ON_STACK(2);
+    templateMessage->initWithTimestampAndNumElements(0.0, 2);
     templateMessage->setAnything(0);
     templateMessage->setAnything(1);
     templateMessage = templateMessage->copyToHeap();
