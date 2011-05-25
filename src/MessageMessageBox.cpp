@@ -110,7 +110,7 @@ void MessageMessageBox::processMessage(int inletIndex, PdMessage *message) {
         char *buffer = (char *) alloca(RES_BUFFER_LENGTH * sizeof(char)); // will be released when function returns
         // TODO(mhroth): resolve string, but may be in stack buffer
         PdMessage::resolveString(messageTemplate->getSymbol(i), message, 1, buffer, RES_BUFFER_LENGTH);
-        outgoingMessage->setSymbol(i, buffer);
+        outgoingMessage->setFloatOrSymbol(i, buffer); // buffer is resolved to float or string
       }
     }
     sendMessage(0, outgoingMessage);
