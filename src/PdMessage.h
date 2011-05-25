@@ -40,8 +40,6 @@ typedef struct MessageAtom {
   };
 } MessageAtom;
 
-class MessageObject;
-class PdGraph;
 
 /** Implements a Pd message. */
 class PdMessage {
@@ -56,7 +54,8 @@ class PdMessage {
      * to the first (0th) element of the argument. The offset is used to distinguish between these
      * cases, by offsetting the argument index resolution.
      */
-    static void resolveString(char *initString, PdMessage *arguments, unsigned int offset, char *buffer, unsigned int bufferLength);
+    static void resolveString(char *initString, PdMessage *arguments, unsigned int offset,
+        char *buffer, unsigned int bufferLength);
   
     /**
      * Converts symbolic elements referring to message element types (e.g., float or f) to those
@@ -134,14 +133,7 @@ class PdMessage {
   private:
     PdMessage();
     ~PdMessage();
-  
-    /**
-     * The resolution buffer refernece counter. It is incremented when a new message is created, and
-     * decremented when a message is destroyed. If the reference counter goes to zero then the
-     * resolution buffer is freed.
-     */
-    static int resBufferRefCount;
-  
+
     double timestamp;
     int numElements;
     MessageAtom messageAtom;

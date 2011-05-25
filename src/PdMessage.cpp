@@ -20,7 +20,6 @@
  *
  */
 
-#include "PdGraph.h"
 #include "PdMessage.h"
 #include "StaticUtils.h"
 
@@ -276,15 +275,17 @@ void PdMessage::setSymbol(unsigned int index, char *symbol) {
 
 void PdMessage::setBang(unsigned int index) {
   (&messageAtom)[index].type = BANG;
-  (&messageAtom)[index].constant = 0.0f;
+  (&messageAtom)[index].symbol = NULL;
 }
 
 void PdMessage::setAnything(unsigned int index) {
   (&messageAtom)[index].type = ANYTHING;
+  (&messageAtom)[index].symbol = NULL;
 }
 
 void PdMessage::setList(unsigned int index) {
   (&messageAtom)[index].type = LIST;
+  (&messageAtom)[index].symbol = NULL;
 }
 
 
@@ -292,7 +293,7 @@ void PdMessage::setList(unsigned int index) {
 #pragma mark copy/free
 
 PdMessage *PdMessage::copyToHeap() {
-  int numMessageBytes = sizeof(PdMessage) + ((numElements-1)*sizeof(MessageAtom));
+  int numMessageBytes = sizeof(PdMessage) + ((numElements <= 1 ? 0 : numElements-1)*sizeof(MessageAtom));
   PdMessage *pdMessage = (PdMessage *) malloc(numMessageBytes);
   pdMessage->initWithTimestampAndNumElements(timestamp, numElements);
   // copy all message type and float info (but symbol pointers must be replaced)
