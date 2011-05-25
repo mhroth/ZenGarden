@@ -45,8 +45,8 @@ void MessageTimer::processMessage(int inletIndex, PdMessage *message) {
     case 1: {
       if (message->isBang(0)) {
         PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
-        double currentTimestamp = message->getTimestamp();
-        outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), (float) (currentTimestamp - timestampStart));
+        outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(),
+            (float) (message->getTimestamp() - timestampStart));
         sendMessage(0, outgoingMessage);
       }
       break;
