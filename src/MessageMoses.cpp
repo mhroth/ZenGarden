@@ -38,15 +38,7 @@ void MessageMoses::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
       if (message->isFloat(0)) {
-        if (message->getFloat(0) < constant) {
-          PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
-          outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), message->getFloat(0));
-          sendMessage(0, outgoingMessage); // send a message from outlet 0
-        } else {
-          PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
-          outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), message->getFloat(0));
-          sendMessage(1, outgoingMessage); // send a message from outlet 1
-        }
+        sendMessage((message->getFloat(0) < constant) ? 0 : 1, message);
       }
       break;
     }
