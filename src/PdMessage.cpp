@@ -54,6 +54,14 @@ void PdMessage::initWithString(unsigned int maxElements, char *initString) {
   }
 }
 
+void PdMessage::setFloatOrSymbol(unsigned int index, char *initString) {
+  if (StaticUtils::isNumeric(initString)) {
+    setFloat(index, atof(initString));
+  } else {
+    setSymbol(index, initString); // element is symbolic
+  }
+}
+
 void PdMessage::resolveString(char *initString, PdMessage *arguments, unsigned int offset,
     char *buffer, unsigned int bufferLength) {
   int bufferPos = 0;
