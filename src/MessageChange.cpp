@@ -35,36 +35,28 @@ const char *MessageChange::getObjectLabel() {
 }
 
 void MessageChange::processMessage(int inletIndex, PdMessage *message) {
-  switch (inletIndex) {
-    case 0: {
-      switch (message->getType(0)) {
-        case FLOAT: {
-          // output only if input is different than what is already there
-          float messageValue = message->getFloat(0);
-          if (messageValue != prevValue) {
-            PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
-            outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), messageValue);
-            prevValue = messageValue;
-            sendMessage(0, outgoingMessage);
-          }
-          break;
-        }
-        case BANG: {
-          // force output
-          PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
-          outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), prevValue);
-          sendMessage(0, outgoingMessage);
-          break;
-        }
-        case SYMBOL: {
-          if (message->isSymbol(0, "set") && message->isFloat(1)) {
-            prevValue = message->getFloat(1);
-          }
-          break;
-        }
-        default: {
-          break;
-        }
+  switch (message->getType(0)) {
+    case FLOAT: {
+      // output only if input is different than what is already there
+      float messageValue = message->getFloat(0);
+      if (messageValue != prevValue) {
+        PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+        outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), messageValue);
+        prevValue = messageValue;
+        sendMessage(0, outgoingMessage);
+      }
+      break;
+    }
+    case BANG: {
+      // force output
+      PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+      outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), prevValue);
+      sendMessage(0, outgoingMessage);
+      break;
+    }
+    case SYMBOL: {
+      if (message->isSymbol(0, "set") && message->isFloat(1)) {
+        prevValue = message->getFloat(1);
       }
       break;
     }
