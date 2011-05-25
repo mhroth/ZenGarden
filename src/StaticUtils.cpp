@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -117,21 +117,12 @@ void StaticUtils::destroyTokenizedStringList(List *list) {
 
 const char *StaticUtils::messageElementTypeToString(MessageElementType type) {
   switch (type) {
-    case FLOAT: {
-      return "FLOAT";
-    }
-    case SYMBOL: {
-      return "SYMBOL";
-    }
-    case BANG: {
-      return "BANG";
-    }
-    case ANYTHING: {
-      return "ANYTHING";
-    }
-    default: {
-      return "UNKNOWN TYPE";
-    }
+    case FLOAT: return "FLOAT";
+    case SYMBOL: return "SYMBOL";
+    case BANG: return "BANG";
+    case ANYTHING: return "ANYTHING";
+    case LIST: return "LIST";
+    default: return "UNKNOWN TYPE";
   }
 }
 
