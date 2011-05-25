@@ -20,7 +20,6 @@
  *
  */
 
-#include <math.h>
 #include "MessageWrap.h"
 
 MessageWrap::MessageWrap(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
@@ -102,8 +101,3 @@ void MessageWrap::processMessage(int inletIndex, PdMessage *message) {
     }
   }
 }
-        
-       
-    
-
-  
