@@ -62,8 +62,9 @@ void MessageListAppend::processMessage(int inletIndex, PdMessage *message) {
       if (message->isBang(0)) {
         // bangs are considered a list of size zero
         appendMessage->freeMessage();
-        appendMessage = PD_MESSAGE_ON_STACK(0);
-        appendMessage->initWithTimestampAndNumElements(0.0, 0);
+        PdMessage *message = PD_MESSAGE_ON_STACK(0);
+        message->initWithTimestampAndNumElements(0.0, 0);
+        appendMessage = message->copyToHeap();
       } else {
         appendMessage->freeMessage();
         appendMessage = message->copyToHeap();
