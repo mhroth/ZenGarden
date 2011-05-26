@@ -25,8 +25,14 @@
 
 MessageTrigger::MessageTrigger(PdMessage *initMessage, PdGraph *graph) :
     MessageObject(1, initMessage->getNumElements(), graph) {
-  castMessage = initMessage->copyToHeap();
-  castMessage->resolveSymbolsToType();
+  // resolve the symbols to type in a copy of the original message on the stack. That way the
+  // symbol pointers don't get lost when replace with new MessageAtom types.
+  int numElements = initMessage->getNumElements();
+  PdMessage *message = PD_MESSAGE_ON_STACK(numElements);
+  message->initWithTimestampAndNumElements(0.0, numElements);
+  memcpy(message->getElement(0), initMessage->getElement(0), numElements*sizeof(MessageAtom));
+  message->resolveSymbolsToType();
+  castMessage = message->copyToHeap();
 }
 
 MessageTrigger::~MessageTrigger() {
