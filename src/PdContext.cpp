@@ -343,6 +343,9 @@ PdGraph *PdContext::newGraph(char *directory, char *filename, PdMessage *initMes
 bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser *fileParser) {
   PdGraph *graph = emptyGraph;
 
+#define INIT_MESSAGE_MAX_ELEMENTS 32
+  PdMessage *initMessage = PD_MESSAGE_ON_STACK(INIT_MESSAGE_MAX_ELEMENTS);
+  
   // configure the graph based on the messages
   char *line = NULL;
   while ((line = fileParser->nextMessage()) != NULL) {
@@ -367,8 +370,8 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
         int canvasY = atoi(strtok(NULL, " ")); // read the second canvas coordinate
         char *objectLabel = strtok(NULL, " ;"); // delimit with " " or ";"
         char *objectInitString = strtok(NULL, ";"); // get the object initialisation string
-        PdMessage *initMessage = PD_MESSAGE_ON_STACK(16);
-        initMessage->initWithStringAndArguments(16, objectInitString, graph->getArguments());
+        initMessage->initWithStringAndArguments(INIT_MESSAGE_MAX_ELEMENTS,
+            objectInitString, graph->getArguments());
         MessageObject *messageObject = newObject(objectType, objectLabel, initMessage, graph);
         if (messageObject == NULL) {
           char *filename = StaticUtils::concatStrings(objectLabel, ".pd");
@@ -398,14 +401,12 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
       } else if (strcmp(objectType, "floatatom") == 0) {
         int canvasX = atoi(strtok(NULL, " ")); // read the first canvas coordinate
         int canvasY = atoi(strtok(NULL, " ")); // read the second canvas coordinate
-        PdMessage *initMessage = PD_MESSAGE_ON_STACK(1);
         initMessage->initWithTimestampAndFloat(0.0, 0.0f);
         graph->addObject(canvasX, canvasY, new MessageFloat(initMessage, graph)); // defines a number box
       } else if (strcmp(objectType, "symbolatom") == 0) {
         int canvasX = atoi(strtok(NULL, " ")); // read the first canvas coordinate
         int canvasY = atoi(strtok(NULL, " ")); // read the second canvas coordinate
-        PdMessage *initMessage = PD_MESSAGE_ON_STACK(1);
-        initMessage->initWithTimestampAndSymbol(0.0, "");
+        initMessage->initWithTimestampAndSymbol(0.0, NULL);
         graph->addObject(canvasX, canvasY, new MessageSymbol(initMessage, graph)); // defines a symbol box
       } else if (strcmp(objectType, "restore") == 0) {
         // the graph is finished being defined
@@ -419,7 +420,6 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
       } else if (strcmp(objectType, "declare") == 0) {
         // set environment for loading patch
         char *objectInitString = strtok(NULL, ";"); // get the arguments to declare
-        PdMessage *initMessage = PD_MESSAGE_ON_STACK(2);
         initMessage->initWithString(2, objectInitString); // parse them
         if (initMessage->isSymbol(0, "-path")) {
           if (initMessage->isSymbol(1)) {
@@ -434,7 +434,6 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
         // objectInitString should contain both name and buffer length
         char *objectInitString = strtok(NULL, ";"); // get the object initialisation string
         //PdMessage *initMessage = new PdMessage(objectInitString, graph->getArguments());
-        PdMessage *initMessage = PD_MESSAGE_ON_STACK(4);
         initMessage->initWithStringAndArguments(4, objectInitString, graph->getArguments());
         MessageTable *table = new MessageTable(initMessage, graph);
         int bufferLength = 0;
