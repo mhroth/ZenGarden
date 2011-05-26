@@ -20,7 +20,6 @@
  *
  */
 
-#include <math.h>
 #include "MessageTangent.h"
 
 MessageTangent::MessageTangent(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {

@@ -23,7 +23,6 @@
 #ifndef _MESSAGE_CLIP_H_
 #define _MESSAGE_CLIP_H_
 
-#include <math.h>
 #include "MessageObject.h"
 
 /** [clip], [clip float], [clip float float] */

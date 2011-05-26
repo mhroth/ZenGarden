@@ -23,7 +23,6 @@
 #ifndef _MESSAGE_POW_H_
 #define _MESSAGE_POW_H_
 
-#include <math.h>
 #include "MessageObject.h"
 
 /** [pow], [pow float]  */

@@ -20,7 +20,6 @@
  *
  */
 
-#include <math.h>
 #include "MessageLog.h"
 
 MessageLog::MessageLog(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {

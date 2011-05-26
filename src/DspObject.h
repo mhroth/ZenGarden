@@ -23,7 +23,6 @@
 #ifndef _DSP_OBJECT_H_
 #define _DSP_OBJECT_H_
 
-#include <math.h>
 #include "DspMessagePresedence.h"
 #include "MessageLetPair.h"
 #include "MessageObject.h"

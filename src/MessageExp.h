@@ -23,7 +23,6 @@
 #ifndef _MESSAGE_EXP_H_
 #define _MESSAGE_EXP_H_
 
-#include <math.h>
 #include "MessageObject.h"
 
 /** [exp] */

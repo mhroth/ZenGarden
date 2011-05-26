@@ -23,6 +23,7 @@
 #ifndef _MESSAGE_OBJECT_H_
 #define _MESSAGE_OBJECT_H_
 
+#include <math.h>
 #include "ConnectionType.h"
 #include "ObjectLetPair.h"
 #include "ObjectType.h"

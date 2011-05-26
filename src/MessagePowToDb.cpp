@@ -20,7 +20,6 @@
  *
  */
 
-#include <math.h>
 #include "MessagePowToDb.h"
 
 MessagePowToDb::MessagePowToDb(PdGraph *graph) : MessageObject(1, 1, graph) {

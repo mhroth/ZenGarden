@@ -20,7 +20,6 @@
  *
  */
 
-#include <math.h>
 #include "MessageInteger.h"
 
 MessageInteger::MessageInteger(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {

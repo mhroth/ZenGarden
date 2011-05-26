@@ -23,7 +23,6 @@
 #ifndef _MESSAGE_ABSOLUTEVALUE_H_
 #define _MESSAGE_ABSOLUTEVALUE_H_
 
-#include <math.h>
 #include "MessageObject.h"
 
 /** [abs] */

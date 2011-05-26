@@ -20,7 +20,6 @@
  *
  */
 
-#include <math.h>
 #include "MessageFrequencyToMidi.h"
 
 MessageFrequencyToMidi::MessageFrequencyToMidi(PdGraph *graph) : MessageObject(1, 1, graph) {

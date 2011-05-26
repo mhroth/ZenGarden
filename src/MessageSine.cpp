@@ -20,7 +20,6 @@
  *
  */
 
-#include <math.h>
 #include "MessageSine.h"
 
 MessageSine::MessageSine(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {

@@ -23,7 +23,6 @@
 #ifndef _MESSAGE_COSINE_H_
 #define _MESSAGE_COSINE_H_
 
-#include <math.h>
 #include "MessageObject.h"
 
 /** [cos] */

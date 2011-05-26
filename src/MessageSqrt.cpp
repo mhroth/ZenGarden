@@ -20,7 +20,6 @@
  *
  */
 
-#include <math.h>
 #include "MessageSqrt.h"
 
 MessageSqrt::MessageSqrt(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {

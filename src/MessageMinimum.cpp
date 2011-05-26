@@ -20,7 +20,6 @@
  *
  */
 
-#include <math.h>
 #include "MessageMinimum.h"
 
 MessageMinimum::MessageMinimum(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
