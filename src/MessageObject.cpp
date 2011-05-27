@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -84,8 +84,8 @@ void MessageObject::receiveMessage(int inletIndex, PdMessage *message) {
     // if the message should be distributed across the inlets
     int maxInletToDistribute = (message->getNumElements() < numMessageInlets)
         ? message->getNumElements() : numMessageInlets;
+    PdMessage *distributedMessage = PD_MESSAGE_ON_STACK(1);
     for (int i = maxInletToDistribute-1; i >= 0; i--) { // send to right-most inlet first
-      PdMessage *distributedMessage = PD_MESSAGE_ON_STACK(1);
       switch (message->getType(i)) {
         case FLOAT: {
           distributedMessage->initWithTimestampAndFloat(message->getTimestamp(), message->getFloat(i));
