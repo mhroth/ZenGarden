@@ -22,6 +22,7 @@
 
 #include "MessageWrap.h"
 
+// TODO(mhroth): This object is almost definitely NOT working correctly
 MessageWrap::MessageWrap(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
   switch (initMessage->getNumElements()) {
     case 0: {
@@ -31,14 +32,14 @@ MessageWrap::MessageWrap(PdMessage *initMessage, PdGraph *graph) : MessageObject
     }
     case 1: {
       lower = 0.0f;
-      upper = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
+      upper = initMessage->isFloat(0) ? initMessage->getFloat(0) : 1.0f;
       break;
     }
     case 2: {
       lower = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
-      upper = initMessage->isFloat(1) ? initMessage->getFloat(1) : 0.0f;
+      upper = initMessage->isFloat(1) ? initMessage->getFloat(1) : 1.0f;
       if (upper < lower) {
-        upper = temp;
+        float temp = upper;
         upper = lower;
         lower = temp;
       }
@@ -89,7 +90,7 @@ void MessageWrap::processMessage(int inletIndex, PdMessage *message) {
           upper = message->getFloat(1);
         }
         if (upper < lower) {
-          temp = upper;
+          float temp = upper;
           upper = lower;
           lower = temp;
         }

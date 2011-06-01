@@ -37,7 +37,7 @@ class MessageWrap : public MessageObject {
   private:
     void processMessage(int inletIndex, PdMessage *message);
     
-    float lower,upper,range,temp,value;
+    float lower,upper,range,value;
 }; 
 
 #endif // _MESSAGE_WRAP_H_
