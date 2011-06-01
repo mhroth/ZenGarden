@@ -23,34 +23,25 @@
 #include "PdMessage.h"
 #include "StaticUtils.h"
 
-void PdMessage::initWithStringAndArguments(unsigned int maxElements, char *initString, PdMessage *arguments) {  
-  // resolve string
-#define RES_BUFFER_LENGTH 512
-  char buffer[RES_BUFFER_LENGTH]; // message is resolved into this buffer
-  resolveString(initString, arguments, 0, buffer, RES_BUFFER_LENGTH);
+void PdMessage::initWithSARb(unsigned int maxElements, char *initString, PdMessage *arguments,
+    char *buffer, unsigned int bufferLength) {
+  resolveString(initString, arguments, 0, buffer, bufferLength); // resolve string
   initWithString(maxElements, buffer);
 }
 
 void PdMessage::initWithString(unsigned int maxElements, char *initString) {
   timestamp = 0.0;
-  numElements = maxElements;
   
-  int i = 0;
   char *token = strtok(initString, " ;");
-  if (token != NULL) {
-    do {
-      if (StaticUtils::isNumeric(token)) {
-        setFloat(i++, atof(token));
-      } else {
-        setSymbol(i++, token); // element is symbolic
-      }
-    } while (((token = strtok(NULL, " ;")) != NULL) && (i < maxElements));
-  }
-  
-  numElements = i;
-  
-  if (numElements == 0) {
+  if (token == NULL) {
     initWithTimestampAndBang(0.0); // just in case, there is always at least one element in a message
+  } else {
+    int i = 0;
+    do {
+      setFloatOrSymbol(i++, token);
+    } while (((token = strtok(NULL, " ;")) != NULL) && (i < maxElements));
+    
+    numElements = i;
   }
 }
 

@@ -343,6 +343,7 @@ PdGraph *PdContext::newGraph(char *directory, char *filename, PdMessage *initMes
 bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser *fileParser) {
   PdGraph *graph = emptyGraph;
 
+#define RESOLUTION_BUFFER_LENGTH 512
 #define INIT_MESSAGE_MAX_ELEMENTS 32
   PdMessage *initMessage = PD_MESSAGE_ON_STACK(INIT_MESSAGE_MAX_ELEMENTS);
   
@@ -370,8 +371,9 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
         int canvasY = atoi(strtok(NULL, " ")); // read the second canvas coordinate
         char *objectLabel = strtok(NULL, " ;"); // delimit with " " or ";"
         char *objectInitString = strtok(NULL, ";"); // get the object initialisation string
-        initMessage->initWithStringAndArguments(INIT_MESSAGE_MAX_ELEMENTS,
-            objectInitString, graph->getArguments());
+        char resBuffer[RESOLUTION_BUFFER_LENGTH];
+        initMessage->initWithSARb(INIT_MESSAGE_MAX_ELEMENTS, objectInitString, graph->getArguments(),
+            resBuffer, RESOLUTION_BUFFER_LENGTH);
         MessageObject *messageObject = newObject(objectType, objectLabel, initMessage, graph);
         if (messageObject == NULL) {
           char *filename = StaticUtils::concatStrings(objectLabel, ".pd");
@@ -433,8 +435,8 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
         // creates a new table
         // objectInitString should contain both name and buffer length
         char *objectInitString = strtok(NULL, ";"); // get the object initialisation string
-        //PdMessage *initMessage = new PdMessage(objectInitString, graph->getArguments());
-        initMessage->initWithStringAndArguments(4, objectInitString, graph->getArguments());
+        char resBuffer[RESOLUTION_BUFFER_LENGTH];
+        initMessage->initWithSARb(4, objectInitString, graph->getArguments(), resBuffer, RESOLUTION_BUFFER_LENGTH);
         MessageTable *table = new MessageTable(initMessage, graph);
         int bufferLength = 0;
         float *buffer = table->getBuffer(&bufferLength);

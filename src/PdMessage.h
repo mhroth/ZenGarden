@@ -69,7 +69,14 @@ class PdMessage {
     void initWithTimestampAndBang(double aTimestamp);
     void initWithTimestampAndSymbol(double aTimestamp, char *symbol);
   
-    void initWithStringAndArguments(unsigned int maxElements, char *initString, PdMessage *arguments);
+    /**
+     * Initialise the message with a string, arguments, and a resolution buffer. The string will
+     * be resolved into the buffer using the arguments. Any resolved strings in the message will
+     * point into the resolution buffer. The buffer is generally intended to be a temporary storage
+     * for such strings while objects are created.
+     */
+    void initWithSARb(unsigned int maxElements, char *initString, PdMessage *arguments, char *buffer,
+        unsigned int bufferLength);
   
     /**
      * Adds elements to the message by tokenizing the given string. Is a token is numeric then it is
