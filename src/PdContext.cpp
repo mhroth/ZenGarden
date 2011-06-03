@@ -140,6 +140,7 @@
 #include "DspTableRead4.h"
 #include "DspThrow.h"
 #include "DspVariableDelay.h"
+#include "DspVCF.h"
 #include "DspWrap.h"
 
 #include "PdContext.h"
@@ -752,6 +753,8 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
       return new DspTableRead4(initMessage, graph);
     } else if (strcmp(objectLabel, "throw~") == 0) {
       return new DspThrow(initMessage, graph);
+    } else if (strcmp(objectLabel, "vcf~") == 0) {
+      return new DspVCF(initMessage, graph);
     } else if (strcmp(objectLabel, "vd~") == 0) {
       return new DspVariableDelay(initMessage, graph);
     } else if (strcmp(objectLabel, "wrap~") == 0) {

@@ -17,6 +17,7 @@
 		9017BE6A1205E2CA0044C9B4 /* MessageListPrepend.h in Headers */ = {isa = PBXBuildFile; fileRef = 9017BE661205E2CA0044C9B4 /* MessageListPrepend.h */; };
 		9017BE6B1205E2CA0044C9B4 /* MessageListPrepend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9017BE671205E2CA0044C9B4 /* MessageListPrepend.cpp */; };
 		9017BE6C1205E2CA0044C9B4 /* MessageListPrepend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9017BE671205E2CA0044C9B4 /* MessageListPrepend.cpp */; };
+		901F57FD1398E808009781F0 /* DspVCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 901F57FB1398E808009781F0 /* DspVCF.cpp */; };
 		90251D3A12042F38000EAF40 /* MessageOpenPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90251D3912042F38000EAF40 /* MessageOpenPanel.cpp */; };
 		90251D3B12042F38000EAF40 /* MessageOpenPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 90251D3812042F38000EAF40 /* MessageOpenPanel.h */; };
 		90251D3C12042F38000EAF40 /* MessageOpenPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90251D3912042F38000EAF40 /* MessageOpenPanel.cpp */; };
@@ -740,6 +741,8 @@
 		9017567411DFDD4B00A22517 /* DspTablePlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspTablePlay.h; path = ../src/DspTablePlay.h; sourceTree = SOURCE_ROOT; };
 		9017BE661205E2CA0044C9B4 /* MessageListPrepend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageListPrepend.h; path = ../src/MessageListPrepend.h; sourceTree = SOURCE_ROOT; };
 		9017BE671205E2CA0044C9B4 /* MessageListPrepend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageListPrepend.cpp; path = ../src/MessageListPrepend.cpp; sourceTree = SOURCE_ROOT; };
+		901F57FB1398E808009781F0 /* DspVCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspVCF.cpp; path = ../src/DspVCF.cpp; sourceTree = "<group>"; };
+		901F57FC1398E808009781F0 /* DspVCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspVCF.h; path = ../src/DspVCF.h; sourceTree = "<group>"; };
 		90251D3812042F38000EAF40 /* MessageOpenPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageOpenPanel.h; path = ../src/MessageOpenPanel.h; sourceTree = SOURCE_ROOT; };
 		90251D3912042F38000EAF40 /* MessageOpenPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageOpenPanel.cpp; path = ../src/MessageOpenPanel.cpp; sourceTree = SOURCE_ROOT; };
 		90251D5512043445000EAF40 /* DspSignal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspSignal.cpp; path = ../src/DspSignal.cpp; sourceTree = SOURCE_ROOT; };
@@ -1160,6 +1163,8 @@
 				90337B8B11D0D847009FCC01 /* DspThrow.h */,
 				90337B8C11D0D847009FCC01 /* DspVariableDelay.cpp */,
 				90337B8D11D0D847009FCC01 /* DspVariableDelay.h */,
+				901F57FB1398E808009781F0 /* DspVCF.cpp */,
+				901F57FC1398E808009781F0 /* DspVCF.h */,
 				90337B9011D0D847009FCC01 /* DspWrap.cpp */,
 				90337B9111D0D847009FCC01 /* DspWrap.h */,
 				90337B9211D0D847009FCC01 /* List.cpp */,
@@ -1928,6 +1933,7 @@
 				907B1F54129965D900B263E2 /* DspBang.cpp in Sources */,
 				90CCEBE51299CD7D009D36DF /* DspReciprocalSqrt.cpp in Sources */,
 				90869070129AC67B00D3BD5D /* DspSqrt.cpp in Sources */,
+				901F57FD1398E808009781F0 /* DspVCF.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

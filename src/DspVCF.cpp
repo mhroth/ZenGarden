@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -20,25 +20,22 @@
  *
  */
 
-#include <math.h>
+#include "ArrayArithmetic.h"
 #include "DspVCF.h"
+#include "PdGraph.h"
 
-DspVCF::DspVCF(int blockSize, int sampleRate, char *initString) : 
-    DspMessageInputDspOutputObject(3, 1, blockSize, initString) {
-  this->sampleRate = (float) sampleRate;
+DspVCF::DspVCF(PdMessage *initMessage, PdGraph *graph) : DspObject(3, 3, 0, 2, graph) {
+  sampleRate = graph->getSampleRate();
   calculateFilterCoefficients(this->sampleRate/2.0f, 1.0f); // initialise the filter completely open
-  tap_0 = tap_1 = 0.0f;
-}
-
-DspVCF::DspVCF(float q, int blockSize, int sampleRate, char *initString) : 
-    DspMessageInputDspOutputObject(3, 1, blockSize, initString) {
-  this->sampleRate = (float) sampleRate;
-  calculateFilterCoefficients(this->sampleRate/2.0f, q);
   tap_0 = tap_1 = 0.0f;
 }
 
 DspVCF::~DspVCF() {
   // nothing to do
+}
+
+const char *DspVCF::getObjectLabel() {
+  return "vcf~";
 }
 
 void DspVCF::calculateFilterCoefficients(float f, float q) {
@@ -66,44 +63,23 @@ float DspVCF::sigbp_qcos(float f) {
   }
 }
 
-inline void DspVCF::processMessage(int inletIndex, PdMessage *message) {
-  switch (inletIndex) {
-    case 0: {
-      MessageElement *messageElement = message->getElement(0);
-      if (messageElement != NULL && messageElement->getType() == SYMBOL) {
-        // TODO(mhroth): how to handle filter resets? What type of message is this?
-        tap_0 = tap_1 = 0.0f;
-      }
-      break;
-    }
-    case 2: {
-      // update the filter resonance
-      MessageElement *messageElement = message->getElement(0);
-      if (messageElement != NULL && messageElement->getType() == FLOAT) {
-        processDspToIndex(message->getBlockIndex());
-        calculateFilterCoefficients(centerFrequency, messageElement->getFloat());
-        blockIndexOfLastMessage = message->getBlockIndex();
-      }
-      break;
-    }
-    default: {
-      break;
+void DspVCF::processMessage(int inletIndex, PdMessage *message) {
+  // not sure what the other inlets do wrt messages
+  if (inletIndex == 2) {
+    if (message->isFloat(0)) {
+      processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
+      q = message->getFloat(0); // update the resonance (q)
     }
   }
 }
 
-inline void DspVCF::processDspToIndex(int newBlockIndex) {
-  // DspVCF only supports signalPresedence == DSP_DSP
-  if (signalPresedence == DSP_DSP) {
-    float *inputBuffer0 = localDspBufferAtInlet[0];
-    float *inputBuffer1 = localDspBufferAtInlet[1];
-    float *outputBuffer = localDspBufferAtOutlet[0];
-    for (int i = blockIndexOfLastMessage; i < newBlockIndex; i++) {
-      calculateFilterCoefficients(inputBuffer1[i], q);
-      outputBuffer[i] = inputBuffer0[i] + (coef1 * tap_0) + (coef2 * tap_1);
-      tap_1 = tap_0;
-      tap_0 = outputBuffer[i];
-      outputBuffer[i] *= gain;
-    }
+void DspVCF::processDspWithIndex(int fromIndex, int toIndex) {
+  for (int i = fromIndex; i < toIndex; i++) {
+    calculateFilterCoefficients(dspBufferAtInlet1[i], q);
+    dspBufferAtOutlet0[i] = dspBufferAtInlet0[i] + (coef1 * tap_0) + (coef2 * tap_1);
+    tap_1 = tap_0;
+    tap_0 = dspBufferAtOutlet0[i];
   }
+  // dspBufferAtOutlet0[i] *= gain;
+  ArrayArithmetic::multiply(dspBufferAtOutlet0, gain, dspBufferAtOutlet0, fromIndex, toIndex);
 }
