@@ -41,7 +41,7 @@ void MessageModulus::processMessage(int inletIndex, PdMessage *message) {
       switch (message->getType(0)) {
         case FLOAT: {
           float remainder = (constant == 0.0f) ? 0.0f : (int) message-> getFloat(0) % (int) constant;
-          lastOutput = (remainder < 0) ? remainder + abs(constant) : remainder;
+          lastOutput = (remainder < 0) ? remainder + fabsf(constant) : remainder;
           // allow fallthrough
         }
         case BANG: {
