@@ -22,8 +22,8 @@
 
 #include "MessageText.h"
 
-MessageText::MessageText(char *comment, PdGraph *graph) : MessageObject(0, 0, graph) {
-  comment = StaticUtils::copyString(comment);
+MessageText::MessageText(char *initString, PdGraph *graph) : MessageObject(0, 0, graph) {
+  comment = StaticUtils::copyString(initString);
 }
 
 MessageText::~MessageText() {
