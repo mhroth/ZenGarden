@@ -32,38 +32,30 @@ MessageObject::MessageObject(int numMessageInlets, int numMessageOutlets, PdGrap
   // initialise incoming connections list
   // while malloc(0) does work well with free(), it also seems to use some small amount of memory.
   // thus numMessageInlets is manually checked for zero and a NULL pointer is returned.
-  incomingMessageConnectionsListAtInlet =
-      (numMessageInlets > 0) ? (List **) malloc(numMessageInlets * sizeof(List *)) : NULL;
+  incomingMessageConnectionsListAtInlet = 
+      (numMessageInlets > 0) ? (vector<ObjectLetPair> **) malloc(numMessageInlets * sizeof(vector<ObjectLetPair> *)) : NULL;
   for (int i = 0; i < numMessageInlets; i++) {
-    incomingMessageConnectionsListAtInlet[i] = new List();
+    incomingMessageConnectionsListAtInlet[i] = new vector<ObjectLetPair>;
   }
 
   // initialise outgoing connections list
-  outgoingMessageConnectionsListAtOutlet =
-      (numMessageOutlets > 0) ? (List **) malloc(numMessageOutlets * sizeof(List *)) : NULL;
+  outgoingMessageConnectionsListAtOutlet = 
+      (numMessageOutlets > 0) ? (vector<ObjectLetPair> **) malloc(numMessageOutlets * sizeof(vector<ObjectLetPair> *)) : NULL;
   for (int i = 0; i < numMessageOutlets; i++) {
-    outgoingMessageConnectionsListAtOutlet[i] = new List();
+    outgoingMessageConnectionsListAtOutlet[i] = new vector<ObjectLetPair>;
   }
 }
 
 MessageObject::~MessageObject() {
   // delete incoming connections list
   for (int i = 0; i < numMessageInlets; i++) {
-    List *list = incomingMessageConnectionsListAtInlet[i];
-    for (int j = 0; j < list->size(); j++) {
-      free(list->get(j));
-    }
-    delete list;
+    delete incomingMessageConnectionsListAtInlet[i];
   }
   free(incomingMessageConnectionsListAtInlet);
-
+  
   // delete outgoing connections list
   for (int i = 0; i < numMessageOutlets; i++) {
-    List *list = outgoingMessageConnectionsListAtOutlet[i];
-    for (int j = 0; j < list->size(); j++) {
-      free(list->get(j));
-    }
-    delete list;
+    delete outgoingMessageConnectionsListAtOutlet[i];
   }
   free(outgoingMessageConnectionsListAtOutlet);
 }
@@ -112,11 +104,10 @@ void MessageObject::receiveMessage(int inletIndex, PdMessage *message) {
 }
 
 void MessageObject::sendMessage(int outletIndex, PdMessage *message) {
-  List *outgoingMessageConnectionsList = outgoingMessageConnectionsListAtOutlet[outletIndex];
-  int numConnectionsAtOutlet = outgoingMessageConnectionsList->size();
-  for (int i = 0; i < numConnectionsAtOutlet; i++) {
-    ObjectLetPair *objectLetPair = (ObjectLetPair *) outgoingMessageConnectionsList->get(i);
-    objectLetPair->object->receiveMessage(objectLetPair->index, message);
+  vector<ObjectLetPair> *connections = outgoingMessageConnectionsListAtOutlet[outletIndex];
+  for (int i = 0; i < connections->size(); i++) {
+    ObjectLetPair objectLetPair = connections->at(i);
+    objectLetPair.first->receiveMessage(objectLetPair.second, message);
   }
 }
 
@@ -130,22 +121,18 @@ bool MessageObject::doesProcessAudio() {
 
 void MessageObject::addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex) {
   if (messageObject->getConnectionType(outletIndex) == MESSAGE) {
-    List *incomingMessageConnectionsList = incomingMessageConnectionsListAtInlet[inletIndex];
-    ObjectLetPair *objectLetPair = (ObjectLetPair *) malloc(sizeof(ObjectLetPair));
-    objectLetPair->object = messageObject;
-    objectLetPair->index = outletIndex;
-    incomingMessageConnectionsList->add(objectLetPair);
+    vector<ObjectLetPair> *connections = incomingMessageConnectionsListAtInlet[inletIndex];
+    ObjectLetPair objectLetPair = make_pair(messageObject, outletIndex);
+    connections->push_back(objectLetPair);
   }
 }
 
 void MessageObject::addConnectionToObjectFromOutlet(MessageObject *messageObject, int inletIndex, int outletIndex) {
   // TODO(mhroth): it is assumed here that the input connection type of the destination object is MESSAGE. Correct?
   if (getConnectionType(outletIndex) == MESSAGE) {
-    List *outgoingMessageConnectionsList = outgoingMessageConnectionsListAtOutlet[outletIndex];
-    ObjectLetPair *objectLetPair = (ObjectLetPair *) malloc(sizeof(ObjectLetPair));
-    objectLetPair->object = messageObject;
-    objectLetPair->index = inletIndex;
-    outgoingMessageConnectionsList->add(objectLetPair);
+    vector<ObjectLetPair> *connections = outgoingMessageConnectionsListAtOutlet[outletIndex];
+    ObjectLetPair objectLetPair = make_pair(messageObject, inletIndex);
+    connections->push_back(objectLetPair);
   }
 }
 
@@ -155,9 +142,7 @@ ObjectType MessageObject::getObjectType() {
 
 bool MessageObject::isLeafNode() {
   for (int i = 0; i < numMessageOutlets; i++) {
-    if (outgoingMessageConnectionsListAtOutlet[i]->size() > 0) {
-      return false;
-    }
+    if (!outgoingMessageConnectionsListAtOutlet[i]->empty()) return false;
   }
   return true;
 }
@@ -171,8 +156,8 @@ List *MessageObject::getProcessOrder() {
     List *processList = new List();
     for (int i = 0; i < numMessageInlets; i++) {
       for (int j = 0; j < incomingMessageConnectionsListAtInlet[i]->size(); j++) {
-        ObjectLetPair *objectLetPair = (ObjectLetPair *) incomingMessageConnectionsListAtInlet[i]->get(j);
-        List *parentProcessList = objectLetPair->object->getProcessOrder();
+        ObjectLetPair objectLetPair = incomingMessageConnectionsListAtInlet[i]->at(j);
+        List *parentProcessList = objectLetPair.first->getProcessOrder();
         processList->add(parentProcessList);
         delete parentProcessList;
       }
@@ -188,9 +173,9 @@ void MessageObject::resetOrderedFlag() {
 
 void MessageObject::updateIncomingMessageConnection(MessageObject *messageObject, int oldOutletIndex,
     int inletIndex, int newOutletIndex) {
-  List *incomingMessageConnectionsList = (List *) incomingMessageConnectionsListAtInlet[inletIndex];
-  int numConnections = incomingMessageConnectionsList->size();
-  for (int i = 0; i < numConnections; i++) {
+  /*
+  vector<ObjectLetPair> incomingMessageConnectionsList = incomingMessageConnectionsListAtInlet[inletIndex];
+  for (int i = 0; i < incomingMessageConnectionsList.size(); i++) {
     ObjectLetPair *objectLetPair = (ObjectLetPair *) incomingMessageConnectionsList->get(i);
     if (objectLetPair->object == messageObject &&
         objectLetPair->index == oldOutletIndex) {
@@ -198,10 +183,12 @@ void MessageObject::updateIncomingMessageConnection(MessageObject *messageObject
       return;
     }
   }
+  */
 }
 
 void MessageObject::updateOutgoingMessageConnection(MessageObject *messageObject, int oldInletIndex,
       int outletIndex, int newInletIndex) {
+  /*
   List *outgoingMessageConnectionsList = (List *) outgoingMessageConnectionsListAtOutlet[outletIndex];
   int numConnections = outgoingMessageConnectionsList->size();
   for (int i = 0; i < numConnections; i++) {
@@ -212,4 +199,5 @@ void MessageObject::updateOutgoingMessageConnection(MessageObject *messageObject
       return;
     }
   }
+  */
 }

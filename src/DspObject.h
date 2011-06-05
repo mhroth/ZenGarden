@@ -124,10 +124,10 @@ class DspObject : public MessageObject {
     int numConnectionsToInlet1;
   
     /** List of all dsp objects connecting to this object at each inlet. */
-    List **incomingDspConnectionsListAtInlet;
+    vector<ObjectLetPair> **incomingDspConnectionsListAtInlet;
   
     /** List of all dsp objects to which this object connects at each outlet. */
-    List **outgoingDspConnectionsListAtOutlet;
+    vector<ObjectLetPair> **outgoingDspConnectionsListAtOutlet;
   
     static float *zeroBuffer;
     static int zeroBufferCount;

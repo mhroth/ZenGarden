@@ -59,10 +59,10 @@ List *DspInlet::getProcessOrder() {
 
 List *DspInlet::getProcessOrderFromInlet() {
   List *processList = new List();
-  List *incomingDspConnections = incomingDspConnectionsListAtInlet[0];
-  for (int i = 0; i < incomingDspConnections->size(); i++) {
-    ObjectLetPair *objectLetPair = (ObjectLetPair *) incomingDspConnections->get(i);
-    List *parentProcessList = objectLetPair->object->getProcessOrder();
+  vector<ObjectLetPair> *connections = incomingDspConnectionsListAtInlet[0];
+  for (int i = 0; i < connections->size(); i++) {
+    ObjectLetPair objectLetPair = connections->at(i);
+    List *parentProcessList = objectLetPair.first->getProcessOrder();
     processList->add(parentProcessList);
     delete parentProcessList;
   }

@@ -347,7 +347,6 @@
 		90337DC911D0D847009FCC01 /* MessageUntil.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C3F11D0D847009FCC01 /* MessageUntil.h */; };
 		90337DCA11D0D847009FCC01 /* MessageWrap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C4011D0D847009FCC01 /* MessageWrap.cpp */; };
 		90337DCB11D0D847009FCC01 /* MessageWrap.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C4111D0D847009FCC01 /* MessageWrap.h */; };
-		90337DCC11D0D847009FCC01 /* ObjectLetPair.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C4211D0D847009FCC01 /* ObjectLetPair.h */; };
 		90337DCD11D0D847009FCC01 /* OrderedMessageQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C4311D0D847009FCC01 /* OrderedMessageQueue.cpp */; };
 		90337DCE11D0D847009FCC01 /* OrderedMessageQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C4411D0D847009FCC01 /* OrderedMessageQueue.h */; };
 		90337DCF11D0D847009FCC01 /* PdFileParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C4511D0D847009FCC01 /* PdFileParser.cpp */; };
@@ -578,7 +577,6 @@
 		90337ECD11D0D847009FCC01 /* MessageUntil.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C3F11D0D847009FCC01 /* MessageUntil.h */; };
 		90337ECE11D0D847009FCC01 /* MessageWrap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C4011D0D847009FCC01 /* MessageWrap.cpp */; };
 		90337ECF11D0D847009FCC01 /* MessageWrap.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C4111D0D847009FCC01 /* MessageWrap.h */; };
-		90337ED011D0D847009FCC01 /* ObjectLetPair.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C4211D0D847009FCC01 /* ObjectLetPair.h */; };
 		90337ED111D0D847009FCC01 /* OrderedMessageQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C4311D0D847009FCC01 /* OrderedMessageQueue.cpp */; };
 		90337ED211D0D847009FCC01 /* OrderedMessageQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C4411D0D847009FCC01 /* OrderedMessageQueue.h */; };
 		90337ED311D0D847009FCC01 /* PdFileParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C4511D0D847009FCC01 /* PdFileParser.cpp */; };
@@ -949,7 +947,6 @@
 		90337C3F11D0D847009FCC01 /* MessageUntil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageUntil.h; path = ../src/MessageUntil.h; sourceTree = SOURCE_ROOT; };
 		90337C4011D0D847009FCC01 /* MessageWrap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageWrap.cpp; path = ../src/MessageWrap.cpp; sourceTree = SOURCE_ROOT; };
 		90337C4111D0D847009FCC01 /* MessageWrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageWrap.h; path = ../src/MessageWrap.h; sourceTree = SOURCE_ROOT; };
-		90337C4211D0D847009FCC01 /* ObjectLetPair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ObjectLetPair.h; path = ../src/ObjectLetPair.h; sourceTree = SOURCE_ROOT; };
 		90337C4311D0D847009FCC01 /* OrderedMessageQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OrderedMessageQueue.cpp; path = ../src/OrderedMessageQueue.cpp; sourceTree = SOURCE_ROOT; };
 		90337C4411D0D847009FCC01 /* OrderedMessageQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OrderedMessageQueue.h; path = ../src/OrderedMessageQueue.h; sourceTree = SOURCE_ROOT; };
 		90337C4511D0D847009FCC01 /* PdFileParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PdFileParser.cpp; path = ../src/PdFileParser.cpp; sourceTree = SOURCE_ROOT; };
@@ -1320,7 +1317,6 @@
 				90EC947A120EDF2A00F65F49 /* MessageValue.h */,
 				90337C4011D0D847009FCC01 /* MessageWrap.cpp */,
 				90337C4111D0D847009FCC01 /* MessageWrap.h */,
-				90337C4211D0D847009FCC01 /* ObjectLetPair.h */,
 				90BB31C811FE3F62008A0628 /* ObjectType.h */,
 				90337C4311D0D847009FCC01 /* OrderedMessageQueue.cpp */,
 				90337C4411D0D847009FCC01 /* OrderedMessageQueue.h */,
@@ -1490,7 +1486,6 @@
 				90337DC711D0D847009FCC01 /* MessageUnpack.h in Headers */,
 				90337DC911D0D847009FCC01 /* MessageUntil.h in Headers */,
 				90337DCB11D0D847009FCC01 /* MessageWrap.h in Headers */,
-				90337DCC11D0D847009FCC01 /* ObjectLetPair.h in Headers */,
 				90337DCE11D0D847009FCC01 /* OrderedMessageQueue.h in Headers */,
 				90337DD011D0D847009FCC01 /* PdFileParser.h in Headers */,
 				90337DD211D0D847009FCC01 /* PdGraph.h in Headers */,
@@ -1645,7 +1640,6 @@
 				90337ECB11D0D847009FCC01 /* MessageUnpack.h in Headers */,
 				90337ECD11D0D847009FCC01 /* MessageUntil.h in Headers */,
 				90337ECF11D0D847009FCC01 /* MessageWrap.h in Headers */,
-				90337ED011D0D847009FCC01 /* ObjectLetPair.h in Headers */,
 				90337ED211D0D847009FCC01 /* OrderedMessageQueue.h in Headers */,
 				90337ED411D0D847009FCC01 /* PdFileParser.h in Headers */,
 				90337ED611D0D847009FCC01 /* PdGraph.h in Headers */,

@@ -46,10 +46,10 @@ void MessageInlet::processMessage(int inletIndex, PdMessage *message) {
 
 List *MessageInlet::getProcessOrderFromInlet() {
   List *processList = new List();
-  List *incomingMessageConnections = incomingMessageConnectionsListAtInlet[0];
-  for (int i = 0; i < incomingMessageConnections->size(); i++) {
-    ObjectLetPair *objectLetPair = (ObjectLetPair *) incomingMessageConnections->get(i);
-    List *parentProcessList = objectLetPair->object->getProcessOrder();
+  vector<ObjectLetPair> *connections = incomingMessageConnectionsListAtInlet[0];
+  for (int i = 0; i < connections->size(); i++) {
+    ObjectLetPair objectLetPair = connections->at(i);
+    List *parentProcessList = objectLetPair.first->getProcessOrder();
     processList->add(parentProcessList);
     delete parentProcessList;
   }

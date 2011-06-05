@@ -23,14 +23,18 @@
 #ifndef _MESSAGE_OBJECT_H_
 #define _MESSAGE_OBJECT_H_
 
+#include <vector>
 #include <math.h>
 #include "ConnectionType.h"
-#include "ObjectLetPair.h"
 #include "ObjectType.h"
 #include "PdMessage.h"
 #include "StaticUtils.h"
+using namespace std;
 
 class PdGraph;
+class MessageObject;
+
+typedef std::pair<MessageObject *, unsigned int> ObjectLetPair;
 
 class MessageObject {
   
@@ -119,8 +123,8 @@ class MessageObject {
   
     int numMessageInlets;
     int numMessageOutlets;
-    List **incomingMessageConnectionsListAtInlet;
-    List **outgoingMessageConnectionsListAtOutlet;
+    vector<ObjectLetPair> **incomingMessageConnectionsListAtInlet;
+    vector<ObjectLetPair> **outgoingMessageConnectionsListAtOutlet;
   
     /** A flag indicating that this object has already been considered when ordering the process tree. */
     bool isOrdered;

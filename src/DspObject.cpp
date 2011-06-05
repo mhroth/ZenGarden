@@ -62,16 +62,16 @@ void DspObject::init(int numDspInlets, int numDspOutlets, int blockSize) {
   
   // initialise the incoming dsp connections list
   incomingDspConnectionsListAtInlet =
-      (numDspInlets > 0) ? (List **) malloc(numDspInlets * sizeof(List *)) : NULL;
+      (numDspInlets > 0) ? (vector<ObjectLetPair> **) malloc(numDspInlets * sizeof(vector<ObjectLetPair> *)) : NULL;
   for (int i = 0; i < numDspInlets; i++) {
-    incomingDspConnectionsListAtInlet[i] = new List();
+    incomingDspConnectionsListAtInlet[i] = new vector<ObjectLetPair>;
   }
   
   // initialise the outgoing dsp connections list
   outgoingDspConnectionsListAtOutlet =
-      (numDspOutlets > 0) ? (List **) malloc(numDspOutlets * sizeof(List *)) : NULL;
+      (numDspOutlets > 0) ? (vector<ObjectLetPair> **) malloc(numDspOutlets * sizeof(vector<ObjectLetPair> *)) : NULL;
   for (int i = 0; i < numDspOutlets; i++) {
-    outgoingDspConnectionsListAtOutlet[i] = new List();
+    outgoingDspConnectionsListAtOutlet[i] = new vector<ObjectLetPair>;
   }
   
   dspBufferAtInlet = (numDspInlets > 2) ? (float **) calloc(numDspInlets, sizeof(float *)) : NULL;
@@ -114,21 +114,13 @@ DspObject::~DspObject() {
   
   // free the incoming dsp connections list
   for (int i = 0; i < numDspInlets; i++) {
-    List *list = incomingDspConnectionsListAtInlet[i];
-    for (int j = 0; j < list->size(); j++) {
-      free(list->get(j));
-    }
-    delete list;
+    delete incomingDspConnectionsListAtInlet[i];
   }
   free(incomingDspConnectionsListAtInlet);
   
   // free the outgoing dsp connections list
   for (int i = 0; i < numDspOutlets; i++) {
-    List *list = outgoingDspConnectionsListAtOutlet[i];
-    for (int j = 0; j < list->size(); j++) {
-      free(list->get(j));
-    }
-    delete list;
+    delete outgoingDspConnectionsListAtOutlet[i];
   }
   free(outgoingDspConnectionsListAtOutlet);
   
@@ -164,11 +156,9 @@ void DspObject::addConnectionFromObjectToInlet(MessageObject *messageObject, int
   MessageObject::addConnectionFromObjectToInlet(messageObject, outletIndex, inletIndex);
   
   if (messageObject->getConnectionType(outletIndex) == DSP) {
-    List *incomingDspConnectionsList = incomingDspConnectionsListAtInlet[inletIndex];
-    ObjectLetPair *objectLetPair = (ObjectLetPair *) malloc(sizeof(ObjectLetPair));
-    objectLetPair->object = messageObject;
-    objectLetPair->index = outletIndex;
-    incomingDspConnectionsList->add(objectLetPair);
+    vector<ObjectLetPair> *connections = incomingDspConnectionsListAtInlet[inletIndex];
+    ObjectLetPair objectLetPair = make_pair(messageObject, outletIndex);
+    connections->push_back(objectLetPair);
     
     // set signal precedence
     signalPrecedence = (DspMessagePresedence) (signalPrecedence | (0x1 << inletIndex));
@@ -193,11 +183,9 @@ void DspObject::addConnectionToObjectFromOutlet(MessageObject *messageObject, in
   
   // TODO(mhroth): it is assumed here that the input connection type of the destination object is DSP. Correct?
   if (getConnectionType(outletIndex) == DSP) {
-    List *outgoingDspConnectionsList = outgoingDspConnectionsListAtOutlet[outletIndex];
-    ObjectLetPair *objectLetPair = (ObjectLetPair *) malloc(sizeof(ObjectLetPair));
-    objectLetPair->object = messageObject;
-    objectLetPair->index = inletIndex;
-    outgoingDspConnectionsList->add(objectLetPair);
+    vector<ObjectLetPair> *connections = outgoingDspConnectionsListAtOutlet[outletIndex];
+    ObjectLetPair objectLetPair = make_pair(messageObject, inletIndex);
+    connections->push_back(objectLetPair);
   }
 }
 
@@ -349,16 +337,16 @@ List *DspObject::getProcessOrder() {
     List *processList = new List();
     for (int i = 0; i < numMessageInlets; i++) {
       for (int j = 0; j < incomingMessageConnectionsListAtInlet[i]->size(); j++) {
-        ObjectLetPair *objectLetPair = (ObjectLetPair *) incomingMessageConnectionsListAtInlet[i]->get(j);
-        List *parentProcessList = objectLetPair->object->getProcessOrder();
+        ObjectLetPair objectLetPair = incomingMessageConnectionsListAtInlet[i]->at(j);
+        List *parentProcessList = objectLetPair.first->getProcessOrder();
         processList->add(parentProcessList);
         delete parentProcessList;
       }
     }
     for (int i = 0; i < numDspInlets; i++) {
       for (int j = 0; j < incomingDspConnectionsListAtInlet[i]->size(); j++) {
-        ObjectLetPair *objectLetPair = (ObjectLetPair *) incomingDspConnectionsListAtInlet[i]->get(j);
-        List *parentProcessList = objectLetPair->object->getProcessOrder();
+        ObjectLetPair objectLetPair = incomingDspConnectionsListAtInlet[i]->at(j);
+        List *parentProcessList = objectLetPair.first->getProcessOrder();
         processList->add(parentProcessList);
         delete parentProcessList;
       }
