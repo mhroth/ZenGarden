@@ -24,7 +24,6 @@
 #define _PD_CONTEXT_H_
 
 #include <pthread.h>
-
 #include "OrderedMessageQueue.h"
 #include "PdGraph.h"
 #include "ZGCallbackFunction.h"
@@ -190,7 +189,7 @@ class PdContext {
     static int globalGraphId;
   
     /** A list of all top-level graphs in this context. */
-    ZGLinkedList *graphList;
+    vector<PdGraph *> graphList;
   
     /** A thread lock used to access critical sections of this context. */
     pthread_mutex_t contextLock;

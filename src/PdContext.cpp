@@ -169,7 +169,6 @@ PdContext::PdContext(int numInputChannels, int numOutputChannels, int blockSize,
   
   sendController = new MessageSendController(this);
   
-  graphList = new ZGLinkedList();
   dspReceiveList = new ZGLinkedList();
   dspSendList = new ZGLinkedList();
   delaylineList = new ZGLinkedList();
@@ -179,7 +178,7 @@ PdContext::PdContext(int numInputChannels, int numOutputChannels, int blockSize,
   tableList = new ZGLinkedList();
   tableReceiverList = new ZGLinkedList();
   
-  // lock is recursive
+  // configure the context lock, which is recursive
   pthread_mutexattr_t mta;
   pthread_mutexattr_init(&mta);
   pthread_mutexattr_settype(&mta, PTHREAD_MUTEX_RECURSIVE);
@@ -193,12 +192,11 @@ PdContext::~PdContext() {
   delete messageCallbackQueue;
   delete sendController;
   
-  PdGraph *graph = NULL;
-  graphList->resetIterator();
-  while ((graph = (PdGraph *) graphList->getNext()) != NULL) {
-    delete graph;
+  // delete all of the PdGraphs in the graph list
+  for (int i = 0; i < graphList.size(); i++) {
+    delete graphList[i];
   }
-  delete graphList;
+  
   delete dspReceiveList;
   delete dspSendList;
   delete delaylineList;
@@ -288,11 +286,10 @@ void PdContext::process(float *inputBuffers, float *outputBuffers) {
     message->freeMessage();
   }
   
-  PdGraph *graph = NULL;
-  graphList->resetIterator();
-  while ((graph = (PdGraph *) graphList->getNext()) != NULL) {
-    graph->processDsp();
+  for (int i = 0; i < graphList.size(); i++) {
+    graphList[i]->processDsp();
   }
+  
   
   blockStartTimestamp = nextBlockStartTimestamp;
   
@@ -470,7 +467,7 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
 
 void PdContext::attachGraph(PdGraph *graph) {
   lock();
-  graphList->add(graph);
+  graphList.push_back(graph);
   graph->attachToContext(true);
   unlock();
 }

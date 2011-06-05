@@ -44,7 +44,6 @@ PdGraph::PdGraph(PdMessage *initMessage, PdGraph *parentGraph, PdContext *contex
   this->parentGraph = parentGraph; // == NULL if this is a root graph
   this->context = context;
   nodeList = new ZGLinkedList();
-  dspNodeList = new List();
   inletList = new ZGLinkedList();
   outletList = new ZGLinkedList();
   declareList = new DeclareList();
@@ -63,7 +62,6 @@ PdGraph::PdGraph(PdMessage *initMessage, PdGraph *parentGraph, PdContext *contex
 }
 
 PdGraph::~PdGraph() {
-  delete dspNodeList;
   delete inletList;
   delete outletList;
   graphArguments->freeMessage();
@@ -381,14 +379,12 @@ void PdGraph::processDsp() {
     
     // process all dsp objects
     // DSP processing elements are only executed if the graph is switched on
-    int numNodes = dspNodeList->numElements;
-    DspObject **dspNodeArray = (DspObject **) dspNodeList->arrayList;
+    
     //for (int i = 0; i < 1; i++) { // TODO(mhroth): iterate depending on local blocksize relative to parent
     // execute all nodes which process audio
-    while (numNodes--) {
-      (*dspNodeArray++)->processDsp();
-    }    
-    //}
+    for (int i = 0; i < dspNodeList.size(); ++i) {
+      dspNodeList[i]->processDsp();
+    }
   }
 }
 
@@ -518,12 +514,12 @@ void PdGraph::computeLocalDspProcessOrder() {
   delete leafNodeList;
 
   // add only those nodes which process audio to the final list
-  dspNodeList->clear(); // reset the dsp node list
+  dspNodeList.clear(); // reset the dsp node list
   for (int i = 0; i < processList->size(); i++) {
     // reverse order of process list such that the dsp elements at the top of the graph are processed first
     object = (MessageObject *) processList->get(i);
     if (object->doesProcessAudio()) {
-      dspNodeList->add(object);
+      dspNodeList.push_back((DspObject *) object);
     }
   }
 
@@ -605,7 +601,7 @@ ConnectionType PdGraph::getConnectionType(int outletIndex) {
 bool PdGraph::doesProcessAudio() {
   // This graph processes audio if it contains any nodes which process audio.
   // This works because graph objects are only created after they have been filled with objects.
-  return (dspNodeList->size() > 0);
+  return (dspNodeList.size() > 0);
 }
 
 void PdGraph::setBlockSize(int blockSize) {
