@@ -213,10 +213,10 @@ class PdContext {
     MessageSendController *sendController;
   
     /** A global list of all [send~] objects. */
-    ZGLinkedList *dspSendList;
+    list<DspSend *> dspSendList;
     
     /** A global list of all [receive~] objects. */
-    ZGLinkedList *dspReceiveList;
+    list<DspReceive *> dspReceiveList;
     
     /** A global list of all [delwite~] objects. */
     ZGLinkedList *delaylineList;
@@ -225,13 +225,13 @@ class PdContext {
     ZGLinkedList *delayReceiverList;
     
     /** A global list of all [throw~] objects. */
-    ZGLinkedList *throwList;
+    list<DspThrow *> throwList;
     
     /** A global list of all [catch~] objects. */
-    ZGLinkedList *catchList;
+    list<DspCatch *> catchList;
     
     /** A global list of all [table] objects. */
-    ZGLinkedList *tableList;
+    list<MessageTable *> tableList;
     
     /** A global list of all table receivers ([tabread4~] and [tabplay~]) */
     ZGLinkedList *tableReceiverList;

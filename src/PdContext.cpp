@@ -169,13 +169,8 @@ PdContext::PdContext(int numInputChannels, int numOutputChannels, int blockSize,
   
   sendController = new MessageSendController(this);
   
-  dspReceiveList = new ZGLinkedList();
-  dspSendList = new ZGLinkedList();
   delaylineList = new ZGLinkedList();
   delayReceiverList = new ZGLinkedList();
-  throwList = new ZGLinkedList();
-  catchList = new ZGLinkedList();
-  tableList = new ZGLinkedList();
   tableReceiverList = new ZGLinkedList();
   
   // configure the context lock, which is recursive
@@ -197,13 +192,8 @@ PdContext::~PdContext() {
     delete graphList[i];
   }
   
-  delete dspReceiveList;
-  delete dspSendList;
   delete delaylineList;
   delete delayReceiverList;
-  delete throwList;
-  delete catchList;
-  delete tableList;
   delete tableReceiverList;
 
   pthread_mutex_destroy(&contextLock);
@@ -818,7 +808,7 @@ void PdContext::registerRemoteMessageReceiver(RemoteMessageReceiver *receiver) {
 }
 
 void PdContext::registerDspReceive(DspReceive *dspReceive) {
-  dspReceiveList->add(dspReceive);
+  dspReceiveList.push_back(dspReceive);
   
   // connect receive~ to associated send~
   DspSend *dspSend = getDspSend(dspReceive->getName());
@@ -833,25 +823,19 @@ void PdContext::registerDspSend(DspSend *dspSend) {
     printErr("Duplicate send~ object found with name \"%s\".", dspSend->getName());
     return;
   }
-  dspSendList->add(dspSend);
+  dspSendList.push_back(dspSend);
   
   // connect associated receive~s to send~.
-  DspReceive *dspReceive = NULL;
-  dspReceiveList->resetIterator();
-  while ((dspReceive = (DspReceive *) dspReceiveList->getNext()) != NULL) {
-    if (strcmp(dspReceive->getName(), dspSend->getName()) == 0) {
-      dspReceive->setBuffer(dspSend->getBuffer());
+  for (list<DspReceive *>::iterator it = dspReceiveList.begin(); it != dspReceiveList.end(); it++) {
+    if (!strcmp((*it)->getName(), dspSend->getName())) {
+      (*it)->setBuffer(dspSend->getBuffer());
     }
   }
 }
 
 DspSend *PdContext::getDspSend(char *name) {
-  DspSend *dspSend = NULL;
-  dspSendList->resetIterator();
-  while ((dspSend = (DspSend *) dspSendList->getNext()) != NULL) {
-    if (strcmp(dspSend->getName(), name) == 0) {
-      return dspSend;
-    }
+  for (list<DspSend *>::iterator it = dspSendList.begin(); it != dspSendList.end(); it++) {
+    if (!strcmp((*it)->getName(), name)) return (*it);
   }
   return NULL;
 }
@@ -894,7 +878,7 @@ DspDelayWrite *PdContext::getDelayline(char *name) {
 }
 
 void PdContext::registerDspThrow(DspThrow *dspThrow) {
-  throwList->add(dspThrow);
+  throwList.push_back(dspThrow);
   
   DspCatch *dspCatch = getDspCatch(dspThrow->getName());
   if (dspCatch != NULL) {
@@ -908,34 +892,27 @@ void PdContext::registerDspCatch(DspCatch *dspCatch) {
     printErr("catch~ with duplicate name \"%s\" already exists.", dspCatch->getName());
     return;
   }
-  catchList->add(dspCatch);
+  catchList.push_back(dspCatch);
   
   // connect catch~ to all associated throw~s
-  DspThrow *dspThrow = NULL;
-  throwList->resetIterator();
-  while ((dspThrow = (DspThrow *) throwList->getNext()) != NULL) {
-    dspCatch->addThrow(dspThrow);
+  for (list<DspThrow *>::iterator it = throwList.begin(); it != throwList.end(); it++) {
+    if (!strcmp((*it)->getName(), dspCatch->getName())) dspCatch->addThrow((*it));
   }
 }
 
 DspCatch *PdContext::getDspCatch(char *name) {
-  DspCatch *dspCatch = NULL;
-  catchList->resetIterator();
-  while ((dspCatch = (DspCatch *) catchList->getNext()) != NULL) {
-    if (strcmp(dspCatch->getName(), name) == 0) {
-      return dspCatch;
-    }
+  for (list<DspCatch *>::iterator it = catchList.begin(); it != catchList.end(); it++) {
+    if (!strcmp((*it)->getName(), name)) return (*it);
   }
   return NULL;
 }
 
-void PdContext::registerTable(MessageTable *table) {
+void PdContext::registerTable(MessageTable *table) {  
   if (getTable(table->getName()) != NULL) {
     printErr("Table with name \"%s\" already exists.", table->getName());
     return;
   }
-  
-  tableList->add(table);
+  tableList.push_back(table);
   
   TableReceiverInterface *receiver = NULL;
   tableReceiverList->resetIterator();
@@ -947,12 +924,8 @@ void PdContext::registerTable(MessageTable *table) {
 }
 
 MessageTable *PdContext::getTable(char *name) {
-  MessageTable *table = NULL;
-  tableList->resetIterator();
-  while ((table = (MessageTable *) tableList->getNext()) != NULL) {
-    if (strcmp(table->getName(), name) == 0) {
-      return table;
-    }
+  for (list<MessageTable *>::iterator it = tableList.begin(); it != tableList.end(); it++) {
+    if (!strcmp((*it)->getName(), name)) return (*it);
   }
   return NULL;
 }
