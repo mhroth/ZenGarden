@@ -41,33 +41,28 @@ MessageMessageBox::MessageMessageBox(char *initString, PdGraph *graph) : Message
   List *messageInitListAll = StaticUtils::tokenizeString(initString, "\\;");
   
   // parse the first "message" for individual messages that should be sent from the outlet 
-  localMessageList = new List();
   List *messageInitList = StaticUtils::tokenizeString((char *) messageInitListAll->get(0), "\\,");
+  PdMessage *message = PD_MESSAGE_ON_STACK(16);
   for (int i = 0; i < messageInitList->size(); i++) {
     char *initString = (char *) messageInitList->get(i);
     // StaticUtils::tokenizeString does not remove the trailing ";" from the
     // original string. We should not process it because it will result in an empty message. 
     if (strcmp(initString, ";") != 0) {
-      PdMessage *message = PD_MESSAGE_ON_STACK(16);
       message->initWithString(16, initString);
-      localMessageList->add(message->copyToHeap());
+      localMessageList.push_back(message->copyToHeap());
     }
   }
   StaticUtils::destroyTokenizedStringList(messageInitList);
   
   // parse the remainder of the init list for all remote messages
-  remoteMessageList = new List();
   for (int i = 1; i < messageInitListAll->size(); i++) {
     char *initString = (char *) messageInitListAll->get(i);
     if (strcmp(initString, ";") != 0) {
-      MessageNamedDestination *namedDestination =
-          (MessageNamedDestination *) malloc(sizeof(MessageNamedDestination));
       // NOTE(mhroth): name string is not resolved
-      namedDestination->name = StaticUtils::copyString(strtok(initString, " "));
-      PdMessage *message = PD_MESSAGE_ON_STACK(16);
       message->initWithString(16, strtok(NULL, ";"));
-      namedDestination->message = message->copyToHeap();
-      remoteMessageList->add(namedDestination);
+      MessageNamedDestination namedDestination = 
+          make_pair(StaticUtils::copyString(strtok(initString, " ")), message->copyToHeap());
+      remoteMessageList.push_back(namedDestination);
     }
   }
   StaticUtils::destroyTokenizedStringList(messageInitListAll);
@@ -75,21 +70,16 @@ MessageMessageBox::MessageMessageBox(char *initString, PdGraph *graph) : Message
 
 MessageMessageBox::~MessageMessageBox() {
   // delete the message list and all of the messages in it
-  for (int i = 0; i < localMessageList->size(); i++) {
-    PdMessage *message = (PdMessage *) localMessageList->get(i);
-    message->freeMessage();
+  for (int i = 0; i < localMessageList.size(); i++) {
+    localMessageList.at(i)->freeMessage();
   }
-  delete localMessageList;
   
   // delete the remote message list
-  for (int i = 0; i < remoteMessageList->size(); i++) {
-    MessageNamedDestination *namedDestination =
-        (MessageNamedDestination *) remoteMessageList->get(i);
-    free(namedDestination->name);
-    namedDestination->message->freeMessage();
-    free(namedDestination);
+  for (int i = 0; i < remoteMessageList.size(); i++) {
+    MessageNamedDestination namedDestination = remoteMessageList.at(i);
+    free(namedDestination.first);
+    namedDestination.second->freeMessage();
   }
-  delete remoteMessageList;
 }
 
 const char *MessageMessageBox::getObjectLabel() {
@@ -97,17 +87,22 @@ const char *MessageMessageBox::getObjectLabel() {
 }
 
 void MessageMessageBox::processMessage(int inletIndex, PdMessage *message) {
+#define RES_BUFFER_LENGTH 64
+  char resolvedName[RES_BUFFER_LENGTH]; // resolution buffer for named destination
+  
+  // NOTE(mhroth): there are a lot of PdMessages being created on the stack here. Is this really
+  // necessary?
+  
   // send local messages
-  for (int i = 0; i < localMessageList->size(); i++) {
-    PdMessage *messageTemplate = (PdMessage *) localMessageList->get(i);
+  for (int i = 0; i < localMessageList.size(); i++) {
+    PdMessage *messageTemplate = localMessageList.at(i);
     int numElements = messageTemplate->getNumElements();
     PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(numElements);
     outgoingMessage->initWithTimestampAndNumElements(message->getTimestamp(), numElements);
     memcpy(outgoingMessage->getElement(0), messageTemplate->getElement(0), numElements*sizeof(MessageAtom));
-#define RES_BUFFER_LENGTH 64
     for (int i = 0; i < numElements; i++) {
       if (messageTemplate->isSymbol(i)) {
-        char *buffer = (char *) alloca(RES_BUFFER_LENGTH * sizeof(char)); // will be released when function returns
+        char *buffer = (char *) alloca(RES_BUFFER_LENGTH * sizeof(char));
         // TODO(mhroth): resolve string, but may be in stack buffer
         PdMessage::resolveString(messageTemplate->getSymbol(i), message, 1, buffer, RES_BUFFER_LENGTH);
         outgoingMessage->setFloatOrSymbol(i, buffer); // buffer is resolved to float or string
@@ -117,21 +112,19 @@ void MessageMessageBox::processMessage(int inletIndex, PdMessage *message) {
   }
 
   // send remote messages
-  for (int i = 0; i < remoteMessageList->size(); i++) {
-    MessageNamedDestination *namedDestination =
-        (MessageNamedDestination *) remoteMessageList->get(i);
+  for (int i = 0; i < remoteMessageList.size(); i++) {
+    MessageNamedDestination namedDestination = remoteMessageList.at(i);
 
-    char resolvedName[RES_BUFFER_LENGTH];
-    PdMessage::resolveString(namedDestination->name, message, 1, resolvedName, RES_BUFFER_LENGTH);
+    PdMessage::resolveString(namedDestination.first, message, 1, resolvedName, RES_BUFFER_LENGTH);
     
-    PdMessage *messageTemplate = namedDestination->message;
+    PdMessage *messageTemplate = namedDestination.second;
     int numElements = messageTemplate->getNumElements();
     PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(numElements);
     outgoingMessage->initWithTimestampAndNumElements(message->getTimestamp(), numElements);
     memcpy(outgoingMessage->getElement(0), messageTemplate->getElement(0), numElements*sizeof(MessageAtom));
     for (int i = 0; i < numElements; i++) {
       if (messageTemplate->isSymbol(i)) {
-        char *buffer = (char *) alloca(RES_BUFFER_LENGTH * sizeof(char)); // will be released when function returns
+        char *buffer = (char *) alloca(RES_BUFFER_LENGTH * sizeof(char));
         // TODO(mhroth): resolve string, but may be in stack buffer
         PdMessage::resolveString(messageTemplate->getSymbol(i), message, 1, buffer, RES_BUFFER_LENGTH);
         outgoingMessage->setSymbol(i, buffer);
