@@ -23,6 +23,7 @@
 #ifndef _MESSAGE_OBJECT_H_
 #define _MESSAGE_OBJECT_H_
 
+#include <list>
 #include <vector>
 #include <math.h>
 #include "ConnectionType.h"

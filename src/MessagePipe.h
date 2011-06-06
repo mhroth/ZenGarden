@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -25,8 +25,6 @@
 
 #include "MessageObject.h"
 
-class ZGLinkedList;
-
 class MessagePipe : public MessageObject {
   
   public:
@@ -45,7 +43,7 @@ class MessagePipe : public MessageObject {
     void processMessage(int inletIndex, PdMessage *message);
   
     double delayMs; // the delay in milliseconds
-    ZGLinkedList *scheduledMessagesList;
+    list<PdMessage *> scheduledMessagesList;
 };
 
 #endif // _MESSAGE_PIPE_H_
