@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -28,17 +28,14 @@
 DspCatch::DspCatch(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 0, 0, 1, graph) {
   if (initMessage->isSymbol(0)) {
     name = StaticUtils::copyString(initMessage->getSymbol(0));
-    throwList = new List();
   } else {
     name = NULL;
-    throwList = NULL;
     graph->printErr("catch~ must be initialised with a name.");
   }
 }
 
 DspCatch::~DspCatch() {
   free(name);
-  delete throwList;
 }
 
 const char *DspCatch::getObjectLabel() {
@@ -54,39 +51,33 @@ char *DspCatch::getName() {
 }
 
 void DspCatch::addThrow(DspThrow *dspThrow) {
-  if (strcmp(dspThrow->getName(), name) == 0) {
-    throwList->add(dspThrow);
+  if (!strcmp(dspThrow->getName(), name)) {
+    throwList.push_back(dspThrow); // NOTE(mhroth): no dupicate detection
   }
 }
 
 void DspCatch::removeThrow(DspThrow *dspThrow) {
-  for (int i = 0; i < throwList->size(); i++) {
-    DspThrow *throwObject = (DspThrow *) throwList->get(i);
-    if (dspThrow == throwObject) {
-      throwList->remove(i);
-      return;
-    }
-  }
+  throwList.remove(dspThrow);
 }
 
 void DspCatch::processDsp() {
-  int numConnections = throwList->size();
-  switch (numConnections) {
+  switch (throwList.size()) {
     case 0: {
       memset(dspBufferAtOutlet0, 0, numBytesInBlock);
       break;
     }
     case 1: {
-      DspThrow *dspThrow = (DspThrow *) throwList->get(0);
+      DspThrow *dspThrow = throwList.front();
       memcpy(dspBufferAtOutlet0, dspThrow->getBuffer(), numBytesInBlock);
       break;
     }
     default: {
-      DspThrow *dspThrow = (DspThrow *) throwList->get(0);
+      DspThrow *dspThrow = throwList.front();
       memcpy(dspBufferAtOutlet0, dspThrow->getBuffer(), numBytesInBlock);
       
-      for (int i = 1; i < numConnections; i++) {
-        dspThrow = (DspThrow *) throwList->get(i);
+      list<DspThrow *>::iterator it = throwList.begin(); it++; // start from second element
+      for (; it != throwList.end(); it++) {
+        dspThrow = (*it);
         ArrayArithmetic::add(dspBufferAtOutlet0, dspThrow->getBuffer(), dspBufferAtOutlet0,
             0, blockSizeInt);
       }
