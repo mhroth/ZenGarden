@@ -23,10 +23,11 @@
 #ifndef _DSP_OBJECT_H_
 #define _DSP_OBJECT_H_
 
+#include <queue>
 #include "DspMessagePresedence.h"
-#include "MessageLetPair.h"
 #include "MessageObject.h"
-#include "MessageQueue.h"
+
+typedef std::pair<PdMessage *, unsigned int> MessageLetPair;
 
 /**
  * A <code>DspObject</code> is the abstract superclass of any object which processes audio.
@@ -91,7 +92,7 @@ class DspObject : public MessageObject {
     float blockIndexOfLastMessage;
   
     /** The local message queue. Messages that are pending for the next block. */
-    MessageQueue *messageQueue;
+    queue<MessageLetPair> messageQueue;
   
     /** Indicates if messages or signals should take precedence on two inlet <code>DspObject</code>s. */
     DspMessagePresedence signalPrecedence;
@@ -142,8 +143,6 @@ class DspObject : public MessageObject {
      * This is a helper function for <code>processDsp()</code>.
      */
     inline void resolveInputBuffers(int inletIndex, float *localInputBuffer);
-
-    bool hasMessageToProcess;
 };
 
 #endif // _DSP_OBJECT_H_

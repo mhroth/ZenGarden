@@ -46,8 +46,6 @@ void DspObject::init(int numDspInlets, int numDspOutlets, int blockSize) {
   blockIndexOfLastMessage = 0.0f;
   signalPrecedence = MESSAGE_MESSAGE; // default
   numBytesInBlock = blockSizeInt * sizeof(float);
-  messageQueue = new MessageQueue();
-  hasMessageToProcess = false;
   dspBufferRefAtInlet0 = NULL;
   dspBufferRefAtInlet1 = NULL;
   numConnectionsToInlet0 = 0;
@@ -103,9 +101,7 @@ void DspObject::init(int numDspInlets, int numDspOutlets, int blockSize) {
   }
 }
 
-DspObject::~DspObject() {
-  delete messageQueue;
-  
+DspObject::~DspObject() {  
   if (--zeroBufferCount == 0) {
     free(zeroBuffer);
     zeroBuffer = NULL;
@@ -197,10 +193,9 @@ void DspObject::receiveMessage(int inletIndex, PdMessage *message) {
   // Queue the message to be processed during the DSP round only if the graph is switched on.
   // Otherwise messages would begin to pile up because the graph is not processed.
   if (graph->isSwitchedOn()) {
-    // Copy to the message to the heap so that it is available to process later.
+    // Copy the message to the heap so that it is available to process later.
     // The message is released once it is consumed in processDsp().
-    messageQueue->add(inletIndex, message->copyToHeap());
-    hasMessageToProcess = true;
+    messageQueue.push(make_pair(message->copyToHeap(), inletIndex));
   }
 }
 
@@ -273,20 +268,22 @@ void DspObject::processDsp() {
   }
   
   // process all pending messages in this block
-  if (hasMessageToProcess) {
-    MessageLetPair *messageLetPair = NULL;
-    PdMessage *message = NULL;
-    while ((messageLetPair = (MessageLetPair *) messageQueue->pop()) != NULL) {
-      message = messageLetPair->message;
-      processMessage(messageLetPair->index, message);
-      blockIndexOfLastMessage = graph->getBlockIndex(message);
+  if (messageQueue.empty()) {
+    processDspWithIndex(0, blockSizeInt);
+  } else {
+    do { // there is at least one message
+      MessageLetPair messageLetPair = messageQueue.front();
+      PdMessage *message = messageLetPair.first;
+      unsigned int inletIndex = messageLetPair.second;
+      
+      processMessage(inletIndex, message);
       message->freeMessage(); // free the message from the head, the message has been consumed.
-    }
+      messageQueue.pop();
+      
+      blockIndexOfLastMessage = graph->getBlockIndex(message);
+    } while (!messageQueue.empty());
     processDspWithIndex(blockIndexOfLastMessage, blockSizeFloat);
     blockIndexOfLastMessage = 0.0f; // reset the block index of the last received message
-    hasMessageToProcess = false; // reset flag
-  } else {
-    processDspWithIndex(0, blockSizeInt);
   }
 }
 
