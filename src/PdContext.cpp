@@ -168,10 +168,7 @@ PdContext::PdContext(int numInputChannels, int numOutputChannels, int blockSize,
   globalDspOutputBuffers = (float *) calloc(blockSize * numOutputChannels, sizeof(float));
   
   sendController = new MessageSendController(this);
-  
-  delaylineList = new ZGLinkedList();
-  delayReceiverList = new ZGLinkedList();
-  
+    
   // configure the context lock, which is recursive
   pthread_mutexattr_t mta;
   pthread_mutexattr_init(&mta);
@@ -190,9 +187,6 @@ PdContext::~PdContext() {
   for (int i = 0; i < graphList.size(); i++) {
     delete graphList[i];
   }
-  
-  delete delaylineList;
-  delete delayReceiverList;
 
   pthread_mutex_destroy(&contextLock);
 }
@@ -843,21 +837,16 @@ void PdContext::registerDelayline(DspDelayWrite *delayline) {
     printErr("delwrite~ with duplicate name \"%s\" registered.", delayline->getName());
     return;
   }
-  
-  delaylineList->add(delayline);
+  delaylineList.push_back(delayline);
   
   // connect this delayline to all same-named delay receivers
-  DelayReceiver *delayReceiver = NULL;
-  delayReceiverList->resetIterator();
-  while ((delayReceiver = (DelayReceiver *) delayReceiverList->getNext()) != NULL) {
-    if (strcmp(delayReceiver->getName(), delayline->getName()) == 0) {
-      delayReceiver->setDelayline(delayline);
-    }
+  for (list<DelayReceiver *>::iterator it = delayReceiverList.begin(); it != delayReceiverList.end(); it++) {
+    if (!strcmp((*it)->getName(), delayline->getName())) (*it)->setDelayline(delayline);
   }
 }
 
 void PdContext::registerDelayReceiver(DelayReceiver *delayReceiver) {
-  delayReceiverList->add(delayReceiver);
+  delayReceiverList.push_back(delayReceiver);
   
   // connect the delay receiver to the named delayline
   DspDelayWrite *delayline = getDelayline(delayReceiver->getName());
@@ -865,12 +854,8 @@ void PdContext::registerDelayReceiver(DelayReceiver *delayReceiver) {
 }
 
 DspDelayWrite *PdContext::getDelayline(char *name) {
-  DspDelayWrite *delayline = NULL;
-  delaylineList->resetIterator();
-  while ((delayline = (DspDelayWrite *) delaylineList->getNext()) != NULL) {
-    if (strcmp(delayline->getName(), name) == 0) {
-      return delayline;
-    }
+  for (list<DspDelayWrite *>::iterator it = delaylineList.begin(); it != delaylineList.end(); it++) {
+    if (!strcmp((*it)->getName(), name)) return *it;
   }
   return NULL;
 }

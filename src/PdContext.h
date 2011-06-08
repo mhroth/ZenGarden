@@ -218,11 +218,11 @@ class PdContext {
     /** A global list of all [receive~] objects. */
     list<DspReceive *> dspReceiveList;
     
-    /** A global list of all [delwite~] objects. */
-    ZGLinkedList *delaylineList;
+    /** A global list of all [delwrite~] objects. */
+    list<DspDelayWrite *> delaylineList;
     
     /** A global list of all [delread~] and [vd~] objects. */
-    ZGLinkedList *delayReceiverList;
+    list<DelayReceiver *> delayReceiverList;
     
     /** A global list of all [throw~] objects. */
     list<DspThrow *> throwList;
