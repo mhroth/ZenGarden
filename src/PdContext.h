@@ -233,8 +233,8 @@ class PdContext {
     /** A global list of all [table] objects. */
     list<MessageTable *> tableList;
     
-    /** A global list of all table receivers ([tabread4~] and [tabplay~]) */
-    ZGLinkedList *tableReceiverList;
+    /** A global list of all table receivers (e.g., [tabread4~] and [tabplay~]) */
+    list<TableReceiverInterface *> tableReceiverList;
   
     /** The registered callback function for sending data outside of the graph. */
     void (*callbackFunction)(ZGCallbackFunction, void *, void *);

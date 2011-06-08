@@ -171,7 +171,6 @@ PdContext::PdContext(int numInputChannels, int numOutputChannels, int blockSize,
   
   delaylineList = new ZGLinkedList();
   delayReceiverList = new ZGLinkedList();
-  tableReceiverList = new ZGLinkedList();
   
   // configure the context lock, which is recursive
   pthread_mutexattr_t mta;
@@ -194,7 +193,6 @@ PdContext::~PdContext() {
   
   delete delaylineList;
   delete delayReceiverList;
-  delete tableReceiverList;
 
   pthread_mutex_destroy(&contextLock);
 }
@@ -914,12 +912,9 @@ void PdContext::registerTable(MessageTable *table) {
   }
   tableList.push_back(table);
   
-  TableReceiverInterface *receiver = NULL;
-  tableReceiverList->resetIterator();
-  while ((receiver = (TableReceiverInterface *) tableReceiverList->getNext()) != NULL) {
-    if (strcmp(receiver->getName(), table->getName()) == 0) {
-      receiver->setTable(table);
-    }
+  for (list<TableReceiverInterface *>::iterator it = tableReceiverList.begin();
+      it != tableReceiverList.end(); it++) {
+    if (!strcmp((*it)->getName(), table->getName())) (*it)->setTable(table);
   }
 }
 
@@ -931,7 +926,7 @@ MessageTable *PdContext::getTable(char *name) {
 }
 
 void PdContext::registerTableReceiver(TableReceiverInterface *tableReceiver) {
-  tableReceiverList->add(tableReceiver); // add the new receiver
+  tableReceiverList.push_back(tableReceiver); // add the new receiver
   
   MessageTable *table = getTable(tableReceiver->getName());
   tableReceiver->setTable(table); // set table whether it is NULL or not
