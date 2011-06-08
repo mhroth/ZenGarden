@@ -26,6 +26,7 @@
 #include "MessageArcTangent2.h"
 #include "MessageBang.h"
 #include "MessageCosine.h"
+#include "MessageCputime.h"
 #include "MessageChange.h"
 #include "MessageClip.h"
 #include "MessageDeclare.h"
@@ -532,6 +533,8 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
       return new MessageChange(initMessage, graph);
     } else if (strcmp(objectLabel, "cos") == 0) {
       return new MessageCosine(initMessage, graph);
+    } else if (strcmp(objectLabel, "cputime") == 0) {
+      return new MessageCputime(initMessage, graph);
     } else if (strcmp(objectLabel, "clip") == 0) {
       return new MessageClip(initMessage, graph);
     } else if (strcmp(objectLabel, "declare") == 0) {

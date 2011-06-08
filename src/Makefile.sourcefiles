@@ -51,6 +51,7 @@ LOCAL_SRC_FILES := \
 ./MessageChange.cpp \
 ./MessageClip.cpp \
 ./MessageCosine.cpp \
+./MessageCputime.cpp \
 ./MessageDbToPow.cpp \
 ./MessageDbToRms.cpp \
 ./MessageDeclare.cpp \
