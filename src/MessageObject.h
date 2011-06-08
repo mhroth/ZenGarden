@@ -112,6 +112,9 @@ class MessageObject {
      * recompute the process order.
      */
     void resetOrderedFlag();
+  
+    virtual unsigned int numInlets();
+    virtual unsigned int numOutlets();
     
   protected:  
     /** A pointer to the graph owning this object. */

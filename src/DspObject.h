@@ -70,6 +70,9 @@ class DspObject : public MessageObject {
   
     virtual bool isLeafNode();
     List *getProcessOrder();
+  
+    virtual unsigned int numInlets();
+    virtual unsigned int numOutlets();
     
   protected: 
     /* IMPORTANT: one of these two functions MUST be overridden (or processDsp()) */

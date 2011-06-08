@@ -68,6 +68,14 @@ MessageObject::~MessageObject() {
   free(outgoingMessageConnectionsListAtOutlet);
 }
 
+unsigned int MessageObject::numInlets() {
+  return numMessageInlets;
+}
+
+unsigned int MessageObject::numOutlets() {
+  return numMessageOutlets;
+}
+
 ConnectionType MessageObject::getConnectionType(int outletIndex) {
   return MESSAGE;
 }

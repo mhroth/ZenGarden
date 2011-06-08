@@ -156,6 +156,14 @@ float **DspObject::getDspBufferRefAtOutlet(int outletIndex) {
   }
 }
 
+unsigned int DspObject::numInlets() {
+  return (numMessageInlets > numDspInlets) ? numMessageInlets : numDspInlets;
+}
+
+unsigned int DspObject::numOutlets() {
+  return (numMessageOutlets > numDspOutlets) ? numMessageOutlets : numDspOutlets;
+}
+
 bool DspObject::doesProcessAudio() {
   return true;
 }
