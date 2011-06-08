@@ -43,7 +43,6 @@ PdGraph::PdGraph(PdMessage *initMessage, PdGraph *parentGraph, PdContext *contex
     DspObject(0, 0, 0, 0, (parentGraph == NULL) ? context->getBlockSize() : parentGraph->getBlockSize(), parentGraph) {
   this->parentGraph = parentGraph; // == NULL if this is a root graph
   this->context = context;
-  nodeList = new ZGLinkedList();
   inletList = new ZGLinkedList();
   outletList = new ZGLinkedList();
   declareList = new DeclareList();
@@ -68,12 +67,9 @@ PdGraph::~PdGraph() {
   delete declareList;
 
   // delete all constituent nodes
-  nodeList->resetIterator();
-  MessageObject *messageObject = NULL;
-  while ((messageObject = (MessageObject *) nodeList->getNext()) != NULL) {
-    delete messageObject;
+  for (int i = 0; i < nodeList.size(); i++) {
+    delete nodeList[i];
   }
-  delete nodeList;
 }
 
 const char *PdGraph::getObjectLabel() {
@@ -105,7 +101,7 @@ void PdGraph::unlockContextIfAttached() {
 void PdGraph::addObject(int canvasX, int canvasY, MessageObject *messageObject) {
   lockContextIfAttached();
   
-  nodeList->add(messageObject); // all nodes are added to the node list regardless
+  nodeList.push_back(messageObject); // all nodes are added to the node list regardless
   
   switch (messageObject->getObjectType()) {
     case MESSAGE_INLET: {
@@ -195,8 +191,8 @@ void PdGraph::addConnection(MessageObject *fromObject, int outletIndex, MessageO
 }
 
 void PdGraph::addConnection(int fromObjectIndex, int outletIndex, int toObjectIndex, int inletIndex) {
-  MessageObject *fromObject = (MessageObject *) nodeList->get(fromObjectIndex);
-  MessageObject *toObject = (MessageObject *) nodeList->get(toObjectIndex);
+  MessageObject *fromObject = nodeList[fromObjectIndex];
+  MessageObject *toObject = nodeList[toObjectIndex];
   addConnection(fromObject, outletIndex, toObject, inletIndex);
 }
 
@@ -205,9 +201,8 @@ void PdGraph::attachToContext(bool isAttached) {
   if (isAttachedToContext != isAttached) {
     isAttachedToContext = isAttached;
     // ensure that all subgraphs know if they are attached or not
-    nodeList->resetIterator();
-    MessageObject *messageObject = NULL;
-    while ((messageObject = (MessageObject *) nodeList->getNext()) != NULL) {
+    for (int i = 0; i < nodeList.size(); i++) {
+      MessageObject *messageObject = nodeList[i];
       if (isAttachedToContext) {
         registerObjectIfRequiresRegistration(messageObject);
       } else {
@@ -493,9 +488,9 @@ void PdGraph::computeLocalDspProcessOrder() {
 
   // generate the leafnode list
   List *leafNodeList = new List();
-  MessageObject *object = NULL;
-  nodeList->resetIterator();
-  while ((object = (MessageObject *) nodeList->getNext()) != NULL) {
+  for (int i = 0; i < nodeList.size(); i++) {
+    MessageObject *object = nodeList[i];
+    
     object->resetOrderedFlag(); // reset the ordered flag on all local objects
     if (object->isLeafNode()) { // isLeafNode() takes into account send/~ and throw~ objects
       leafNodeList->add(object);
@@ -505,7 +500,7 @@ void PdGraph::computeLocalDspProcessOrder() {
   // for all leaf nodes, order the tree
   List *processList = new List();
   for (int i = 0; i < leafNodeList->size(); i++) {
-    object = (MessageObject *) leafNodeList->get(i);
+    MessageObject *object = (MessageObject *) leafNodeList->get(i);
     List *processSubList = object->getProcessOrder();
     processList->add(processSubList);
     delete processSubList;
@@ -517,7 +512,7 @@ void PdGraph::computeLocalDspProcessOrder() {
   dspNodeList.clear(); // reset the dsp node list
   for (int i = 0; i < processList->size(); i++) {
     // reverse order of process list such that the dsp elements at the top of the graph are processed first
-    object = (MessageObject *) processList->get(i);
+    MessageObject *object = (MessageObject *) processList->get(i);
     if (object->doesProcessAudio()) {
       dspNodeList.push_back((DspObject *) object);
     }

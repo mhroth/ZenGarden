@@ -214,7 +214,7 @@ class PdGraph : public DspObject {
     PdGraph *parentGraph;
   
     /** A list of <i>all</i> <code>MessageObject</code>s in this subgraph.  */
-    ZGLinkedList *nodeList;
+    vector<MessageObject *> nodeList;
     
     /**
      * A list of all <code>DspObject</code>s in this graph, in the order in which they should be
