@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -37,9 +37,9 @@ const char *MessageUntil::getObjectLabel() {
 void MessageUntil::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
-      switch (message->getElement(0)->getType()) {
+      switch (message->getType(0)) {
         case FLOAT: {
-          maxIterations = (unsigned int) message->getElement(0)->getFloat();
+          maxIterations = (unsigned int) message->getFloat(0);
           break;
         }
         case BANG: {
@@ -51,16 +51,16 @@ void MessageUntil::processMessage(int inletIndex, PdMessage *message) {
         }
       }
       
+      PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+      outgoingMessage->initWithTimestampAndBang(message->getTimestamp());
       for (unsigned int i = 0; i < maxIterations; i++) {
-        PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-        outgoingMessage->setTimestamp(message->getTimestamp());
         sendMessage(0, outgoingMessage);
       }
       
       break;
     }
     case 1: {
-      if (message->getElement(0)->getType() == BANG) {
+      if (message->isBang(0)) {
         maxIterations = 0; // stops the for loop
       }
       break;

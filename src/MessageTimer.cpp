@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -44,10 +44,9 @@ void MessageTimer::processMessage(int inletIndex, PdMessage *message) {
     }
     case 1: {
       if (message->isBang(0)) {
-        PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-        double currentTimestamp = message->getTimestamp();
-        outgoingMessage->setTimestamp(currentTimestamp);
-        outgoingMessage->getElement(0)->setFloat((float) (currentTimestamp - timestampStart));
+        PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+        outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(),
+            (float) (message->getTimestamp() - timestampStart));
         sendMessage(0, outgoingMessage);
       }
       break;

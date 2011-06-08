@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -25,12 +25,18 @@
 
 MessageTrigger::MessageTrigger(PdMessage *initMessage, PdGraph *graph) :
     MessageObject(1, initMessage->getNumElements(), graph) {
-  castMessage = initMessage->copy();
-  castMessage->resolveSymbolsToType();
+  // resolve the symbols to type in a copy of the original message on the stack. That way the
+  // symbol pointers don't get lost when replace with new MessageAtom types.
+  int numElements = initMessage->getNumElements();
+  PdMessage *message = PD_MESSAGE_ON_STACK(numElements);
+  message->initWithTimestampAndNumElements(0.0, numElements);
+  memcpy(message->getElement(0), initMessage->getElement(0), numElements*sizeof(MessageAtom));
+  message->resolveSymbolsToType();
+  castMessage = message->copyToHeap();
 }
 
 MessageTrigger::~MessageTrigger() {
-  delete castMessage;
+  castMessage->freeMessage();
 }
 
 const char *MessageTrigger::getObjectLabel() {
@@ -38,35 +44,30 @@ const char *MessageTrigger::getObjectLabel() {
 }
 
 void MessageTrigger::processMessage(int inletIndex, PdMessage *message) {
+  PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
   for (int i = numMessageOutlets-1; i >= 0; i--) { // send messages from outlets right-to-left
-    PdMessage *outgoingMessage = getNextOutgoingMessage(i);
-    
     // TODO(mhroth): There is currently no support for converting to a LIST type
     switch (message->getType(0)) { // converting from...
       case FLOAT: {
         switch (castMessage->getType(i)) { // converting to...
           case ANYTHING:
           case FLOAT: {
-            outgoingMessage->setFloat(0, message->getFloat(0));
-            outgoingMessage->setTimestamp(message->getTimestamp());
+            outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), message->getFloat(0));
             sendMessage(i, outgoingMessage);
             break;
           }
           case SYMBOL: {
-            outgoingMessage->setSymbol(0, "float");
-            outgoingMessage->setTimestamp(message->getTimestamp());
+            outgoingMessage->initWithTimestampAndSymbol(message->getTimestamp(), "float");
             sendMessage(i, outgoingMessage);
             break;
           }
           case BANG: {
-            outgoingMessage->getElement(0)->setBang();
-            outgoingMessage->setTimestamp(message->getTimestamp());
+            outgoingMessage->initWithTimestampAndBang(message->getTimestamp());
             sendMessage(i, outgoingMessage);
             break;
           } default: {
             // send bang
-            outgoingMessage->getElement(0)->setBang();
-            outgoingMessage->setTimestamp(message->getTimestamp());
+            outgoingMessage->initWithTimestampAndBang(message->getTimestamp());
             sendMessage(i, outgoingMessage);
             break;
           }
@@ -80,8 +81,7 @@ void MessageTrigger::processMessage(int inletIndex, PdMessage *message) {
             break;
           }
           case ANYTHING: {
-            outgoingMessage->setSymbol(0, message->getSymbol(0));
-            outgoingMessage->setTimestamp(message->getTimestamp());
+            outgoingMessage->initWithTimestampAndSymbol(message->getTimestamp(), message->getSymbol(0));
             sendMessage(i, outgoingMessage);
             break;
           }
@@ -90,15 +90,13 @@ void MessageTrigger::processMessage(int inletIndex, PdMessage *message) {
             break;
           }
           case BANG: {
-            outgoingMessage->getElement(0)->setBang();
-            outgoingMessage->setTimestamp(message->getTimestamp());
+            outgoingMessage->initWithTimestampAndBang(message->getTimestamp());
             sendMessage(i, outgoingMessage);
             break;
           }
           default: {
             // send bang
-            outgoingMessage->getElement(0)->setBang();
-            outgoingMessage->setTimestamp(message->getTimestamp());
+            outgoingMessage->initWithTimestampAndBang(message->getTimestamp());
             sendMessage(i, outgoingMessage);
             break;
           }
@@ -108,28 +106,24 @@ void MessageTrigger::processMessage(int inletIndex, PdMessage *message) {
       case BANG: {
         switch (castMessage->getType(i)) {
           case FLOAT: {
-            outgoingMessage->setFloat(0, 0.0f);
-            outgoingMessage->setTimestamp(message->getTimestamp());
+            outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), 0.0f);
             sendMessage(i, outgoingMessage);
             break;
           }
           case SYMBOL: {
-            outgoingMessage->setSymbol(0, "symbol");
-            outgoingMessage->setTimestamp(message->getTimestamp());
+            outgoingMessage->initWithTimestampAndSymbol(message->getTimestamp(), "symbol");
             sendMessage(i, outgoingMessage);
             break;
           }
           case ANYTHING:
           case BANG: {
-            outgoingMessage->getElement(0)->setBang();
-            outgoingMessage->setTimestamp(message->getTimestamp());
+            outgoingMessage->initWithTimestampAndBang(message->getTimestamp());
             sendMessage(i, outgoingMessage);
             break;
           }
           default: {
             // send bang, error
-            outgoingMessage->getElement(0)->setBang();
-            outgoingMessage->setTimestamp(message->getTimestamp());
+            outgoingMessage->initWithTimestampAndBang(message->getTimestamp());
             sendMessage(i, outgoingMessage);
             break;
           }
@@ -138,8 +132,7 @@ void MessageTrigger::processMessage(int inletIndex, PdMessage *message) {
       }
       default: {
         // produce a bang if the input type is unknown (error)
-        outgoingMessage->getElement(0)->setBang();
-        outgoingMessage->setTimestamp(message->getTimestamp());
+        outgoingMessage->initWithTimestampAndBang(message->getTimestamp());
         sendMessage(i, outgoingMessage);
         break;
       }

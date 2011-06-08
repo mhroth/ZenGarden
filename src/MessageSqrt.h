@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009, 2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -23,7 +23,6 @@
 #ifndef _MESSAGE_SQRT_H_
 #define _MESSAGE_SQRT_H_
 
-#include <math.h>
 #include "MessageObject.h"
 
 /** [sqrt] */

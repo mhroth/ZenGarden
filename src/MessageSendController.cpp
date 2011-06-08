@@ -22,6 +22,7 @@
 
 #include "MessageSendController.h"
 #include "PdContext.h"
+#include "ZGLinkedList.h"
 
 // it might nice if this class were implemented using a hashtable with receiver name as the key
 // and Lists as the value.

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -20,106 +20,41 @@
  *
  */
 
-#include <stdio.h>
-#include "PdGraph.h"
 #include "PdMessage.h"
 #include "StaticUtils.h"
 
-#define RES_BUFFER_LENGTH 1024
+void PdMessage::initWithSARb(unsigned int maxElements, char *initString, PdMessage *arguments,
+    char *buffer, unsigned int bufferLength) {
+  resolveString(initString, arguments, 0, buffer, bufferLength); // resolve string
+  initWithString(maxElements, buffer);
+}
 
-char *PdMessage::resolutionBuffer = NULL;
-int PdMessage::resBufferRefCount = 0;
-int PdMessage::globalMessageId = 0;
-
-PdMessage::PdMessage() {
-  elementList = new List();
-  messageId = globalMessageId++;
+void PdMessage::initWithString(unsigned int maxElements, char *initString) {
   timestamp = 0.0;
-  reservationCount = 0;
   
-  retainResBuffer();
-}
-
-PdMessage::PdMessage(char *initString) {
-  elementList = new List();
-  messageId = globalMessageId++;
-  timestamp = 0.0;
-  reservationCount = 0;
-  
-  retainResBuffer();
-  
-  // generate the elements by tokenizing the string
-  initWithString(initString);
-}
-
-PdMessage::PdMessage(char *initString, PdMessage *arguments) {
-  elementList = new List();
-  messageId = globalMessageId++;
-  timestamp = 0.0;
-  reservationCount = 0;
-  
-  retainResBuffer();
-  
-  // resolve entire string with offset 0 (allow for $0)
-  char *buffer = PdMessage::resolveString(initString, arguments, 0);
-  
-  // generate the elements by tokenizing the string
-  initWithString(buffer);
-}
-
-void PdMessage::retainResBuffer() {
-  PdMessage::resBufferRefCount++;
-  if (PdMessage::resolutionBuffer == NULL) {
-    PdMessage::resolutionBuffer = (char *) calloc(RES_BUFFER_LENGTH, sizeof(char));
-  }
-}
-
-void PdMessage::releaseResBuffer() {
-  PdMessage::resBufferRefCount--;
-  if (PdMessage::resBufferRefCount == 0) {
-    free(PdMessage::resolutionBuffer);
-    PdMessage::resolutionBuffer = NULL;
-  }
-}
-
-void PdMessage::initWithString(char *initString) {
   char *token = strtok(initString, " ;");
-  if (token != NULL) {
-    do {
-      if (StaticUtils::isNumeric(token)) {
-        addElement(atof(token));
-      } else {
-        // element is symbolic
-        addElement(token);
-      }
-    } while ((token = strtok(NULL, " ;")) != NULL);
-  }
-}
-
-PdMessage::~PdMessage() {
-  // delete the element list
-  MessageElement *messageElement = NULL;
-  int i = 0;
-  while ((messageElement = (MessageElement *) elementList->getFromBackingArray(i++)) != NULL) {
-    delete messageElement;
-  }
-  delete elementList;
-  
-  releaseResBuffer();
-}
-
-void PdMessage::resolveElement(char *templateString, PdMessage *arguments,
-    MessageElement *messageElement) {
-  char *buffer = resolveString(templateString, arguments, 1);
-  if (StaticUtils::isNumeric(buffer)) {
-    messageElement->setFloat(atof(buffer));
+  if (token == NULL) {
+    initWithTimestampAndBang(0.0); // just in case, there is always at least one element in a message
   } else {
-    messageElement->setSymbol(buffer);
+    int i = 0;
+    do {
+      setFloatOrSymbol(i++, token);
+    } while (((token = strtok(NULL, " ;")) != NULL) && (i < maxElements));
+    
+    numElements = i;
   }
 }
 
-char *PdMessage::resolveString(char *initString, PdMessage *arguments, int offset) {
-  char *buffer = PdMessage::resolutionBuffer;
+void PdMessage::setFloatOrSymbol(unsigned int index, char *initString) {
+  if (StaticUtils::isNumeric(initString)) {
+    setFloat(index, atof(initString));
+  } else {
+    setSymbol(index, initString); // element is symbolic
+  }
+}
+
+void PdMessage::resolveString(char *initString, PdMessage *arguments, unsigned int offset,
+    char *buffer, unsigned int bufferLength) {
   int bufferPos = 0;
   int initPos = 0;
   char *argPos = NULL;
@@ -136,7 +71,7 @@ char *PdMessage::resolveString(char *initString, PdMessage *arguments, int offse
       memcpy(buffer + bufferPos, initString + initPos, numCharsRead);
       bufferPos += numCharsRead;
       initPos += numCharsRead + 3;
-      //int argumentIndex = argPos[2] - '0';
+      //int argumentIndex = argPos[2] - '0'; (equivalent to below, but below is more clear)
       int argumentIndex = 0;
       switch (argPos[2]) {
         case '0': { argumentIndex = 0; break; }
@@ -155,19 +90,19 @@ char *PdMessage::resolveString(char *initString, PdMessage *arguments, int offse
       if (argumentIndex >= 0 && argumentIndex < numArguments) {
         switch (arguments->getType(argumentIndex)) {
           case FLOAT: {
-            numCharsWritten = snprintf(buffer + bufferPos, RES_BUFFER_LENGTH - bufferPos,
+            numCharsWritten = snprintf(buffer + bufferPos, bufferLength - bufferPos,
                 "%g", arguments->getFloat(argumentIndex));
             bufferPos += numCharsWritten;
-            if (bufferPos >= 1023) {
+            if (bufferPos >= bufferLength-1) {
               printf("WTF: %s", buffer);
             }
             break;
           }
           case SYMBOL: {
-            numCharsWritten = snprintf(buffer + bufferPos, RES_BUFFER_LENGTH - bufferPos,
+            numCharsWritten = snprintf(buffer + bufferPos, bufferLength - bufferPos,
                 "%s", arguments->getSymbol(argumentIndex));
             bufferPos += numCharsWritten;
-            if (bufferPos >= 1023) {
+            if (bufferPos >= bufferLength-1) {
               printf("WTF: %s", buffer);
             }
             break;
@@ -182,43 +117,52 @@ char *PdMessage::resolveString(char *initString, PdMessage *arguments, int offse
     // no more arguments remaining. copy the remainder of the string including '\0'
     strcpy(buffer + bufferPos, initString + initPos);
   }
-  
-  return buffer;
+}
+
+PdMessage::~PdMessage() {
+  // nothing to do. Use freeMessage().
 }
 
 void PdMessage::resolveSymbolsToType() {
-  int numElements = elementList->size();
   for (int i = 0; i < numElements; i++) {
-    MessageElement *messageElement = (MessageElement *) elementList->get(i);
-    if (messageElement->isSymbol()) {
-      if (messageElement->isSymbolSymbolOrS()) {
+    if (isSymbol(i)) {
+      if (isSymbol(i, "symbol") || isSymbol(i, "s")) {
         // do nothing, but leave the symbol as is
-      } else if (messageElement->isSymbolAnythingOrA()) {
-        messageElement->setAnything();
-      } else if (messageElement->isSymbolBangOrB()) {
-        messageElement->setBang();
-      } else if (messageElement->isSymbolFloatOrF()) {
-        messageElement->setFloat(0.0f);
-      } else if (messageElement->isSymbolListOrL()) {
-        messageElement->setList();
+      } else if (isSymbol(i, "anything") || isSymbol(i, "a")) {
+        setAnything(i);
+      } else if (isSymbol(i, "bang") || isSymbol(i, "b")) {
+        setBang(i);
+      } else if (isSymbol(i, "float") || isSymbol(i, "f")) {
+        setFloat(i, 0.0f);
+      } else if (isSymbol(i, "list") || isSymbol(i, "l")) {
+        setList(i);
       } else {
         // if the symbol string is unknown, leave is as ANYTHING
-        messageElement->setAnything();
+        setAnything(i);
       }
     }
   }
 }
 
-int PdMessage::getMessageId() {
-  return messageId;
-}
-
 int PdMessage::getNumElements() {
-  return elementList->size();
+  return numElements;
 }
 
-MessageElement *PdMessage::getElement(int index) {
-  return (MessageElement *) elementList->get(index);
+MessageAtom *PdMessage::getElement(unsigned int index) {
+  return (&messageAtom)+index;
+}
+
+bool PdMessage::atomIsEqualTo(unsigned int index, MessageAtom *messageAtom) {
+  MessageAtom *atom = getElement(index);
+  if (atom->type == messageAtom->type) {
+    switch (atom->type) {
+      case FLOAT: return (atom->constant == messageAtom->constant);
+      case SYMBOL: return !strcmp(atom->symbol, messageAtom->symbol);
+      case BANG: return true;
+      default: return false;
+    }
+  }
+  return false;
 }
 
 void PdMessage::setTimestamp(double timestamp) {
@@ -229,30 +173,59 @@ double PdMessage::getTimestamp() {
   return timestamp;
 }
 
+
+#pragma mark -
+#pragma mark initWithTimestampeAnd
+
+void PdMessage::initWithTimestampAndNumElements(double aTimestamp, unsigned int numElem) {
+  timestamp = aTimestamp;
+  numElements = numElem;
+  setBang(0); // default value
+}
+
+void PdMessage::initWithTimestampAndFloat(double aTimestamp, float constant) {
+  timestamp = aTimestamp;
+  numElements = 1;
+  setFloat(0, constant);
+}
+
+void PdMessage::initWithTimestampAndBang(double aTimestamp) {
+  timestamp = aTimestamp;
+  numElements = 1;
+  setBang(0);
+}
+
+void PdMessage::initWithTimestampAndSymbol(double aTimestamp, char *symbol) {
+  timestamp = aTimestamp;
+  numElements = 1;
+  setSymbol(0, symbol);
+}
+
+
 #pragma mark -
 #pragma mark isElement
 
-bool PdMessage::isFloat(int index) {
-  if (index >= 0 && index < elementList->size()) {
-    return getElement(index)->isFloat();
+bool PdMessage::isFloat(unsigned int index) {
+  if (index < numElements) {
+    return ((&messageAtom)[index].type == FLOAT);
   } else {
     return false;
   }
 }
 
-bool PdMessage::isSymbol(int index) {
-  if (index >= 0 && index < elementList->size()) {
-    return getElement(index)->isSymbol();
+bool PdMessage::isSymbol(unsigned int index) {
+  if (index < numElements) {
+    return ((&messageAtom)[index].type == SYMBOL);
   } else {
     return false;
   }
 }
 
-bool PdMessage::isSymbol(int index, const char *test) {
-  if (index >= 0 && index < elementList->size()) {
-    MessageElement *messageElement = getElement(index);
-    if (messageElement->isSymbol()) {
-      return (strcmp(messageElement->getSymbol(), test) == 0);
+bool PdMessage::isSymbol(unsigned int index, const char *test) {
+  if (index < numElements) {
+    MessageAtom messageElement = (&messageAtom)[index];
+    if (messageElement.type == SYMBOL) {
+      return !strcmp(messageElement.symbol, test);
     } else {
       return false;
     }
@@ -261,83 +234,93 @@ bool PdMessage::isSymbol(int index, const char *test) {
   }
 }
 
-bool PdMessage::isBang(int index) {
-  if (index >= 0 && index < elementList->size()) {
-    return getElement(index)->isBang();
+bool PdMessage::isBang(unsigned int index) {
+  if (index < numElements) {
+    return ((&messageAtom)[index].type == BANG);
   } else {
     return false;
   }
 }
 
-MessageElementType PdMessage::getType(int index) {
-  if (index >= 0 && index < elementList->size()) {
-    return getElement(index)->getType();
+MessageElementType PdMessage::getType(unsigned int index) {
+  if (index < numElements) {
+    return (&messageAtom)[index].type;
   } else {
     return ANYTHING;
   }
 }
 
+
 #pragma mark -
 #pragma mark get/setElement
 
-float PdMessage::getFloat(int index) {
-  return getElement(index)->getFloat();
+float PdMessage::getFloat(unsigned int index) {
+  return (&messageAtom)[index].constant;
 }
 
-void PdMessage::setFloat(int index, float value) {
-  getElement(index)->setFloat(value);
+void PdMessage::setFloat(unsigned int index, float value) {
+  (&messageAtom)[index].type = FLOAT;
+  (&messageAtom)[index].constant = value;
 }
 
-char *PdMessage::getSymbol(int index) {
-  return getElement(index)->getSymbol();
+char *PdMessage::getSymbol(unsigned int index) {
+  return (&messageAtom)[index].symbol;
 }
 
-void PdMessage::setSymbol(int index, char *symbol) {
-  getElement(index)->setSymbol(symbol);
+void PdMessage::setSymbol(unsigned int index, char *symbol) {
+  (&messageAtom)[index].type = SYMBOL;
+  (&messageAtom)[index].symbol = symbol;
 }
 
-void PdMessage::setBang(int index) {
-  getElement(index)->setBang();
+void PdMessage::setBang(unsigned int index) {
+  (&messageAtom)[index].type = BANG;
+  (&messageAtom)[index].symbol = NULL;
 }
+
+void PdMessage::setAnything(unsigned int index) {
+  (&messageAtom)[index].type = ANYTHING;
+  (&messageAtom)[index].symbol = NULL;
+}
+
+void PdMessage::setList(unsigned int index) {
+  (&messageAtom)[index].type = LIST;
+  (&messageAtom)[index].symbol = NULL;
+}
+
 
 #pragma mark -
-#pragma mark reserve/unreserve
+#pragma mark copy/free
 
-void PdMessage::reserve() {
-  reservationCount++;
-}
-
-void PdMessage::unreserve() {
-  reservationCount--;
-}
-
-bool PdMessage::isReserved() {
-  return (reservationCount > 0);
-}
-
-#pragma mark -
-#pragma mark copy/clear
-
-PdMessage *PdMessage::copy() {
-  PdMessage *messageCopy = new PdMessage();
-  for (int i = 0; i < elementList->size(); i++) {
-    MessageElement *messageElement = (MessageElement *) elementList->get(i);
-    messageCopy->addElement(messageElement);
+PdMessage *PdMessage::copyToHeap() {
+  int numMessageBytes = sizeof(PdMessage) + ((numElements <= 1 ? 0 : numElements-1)*sizeof(MessageAtom));
+  PdMessage *pdMessage = (PdMessage *) malloc(numMessageBytes);
+  pdMessage->initWithTimestampAndNumElements(timestamp, numElements);
+  // copy all message type and float info (but symbol pointers must be replaced)
+  memcpy(pdMessage->getElement(0), getElement(0), numElements * sizeof(MessageAtom));
+  for (int i = 0; i < numElements; i++) {
+    if (isSymbol(i)) {
+      pdMessage->setSymbol(i, StaticUtils::copyString(getSymbol(i)));
+    }
   }
-  return messageCopy;
+  return pdMessage;
 }
 
-void PdMessage::clear() {
-  elementList->clear();
+void PdMessage::freeMessage() {
+  for (int i = 0; i < numElements; i++) {
+    if (isSymbol(i)) {
+      free(getSymbol(i));
+    }
+  }
+  free(this);
 }
+
 
 #pragma mark -
 #pragma mark toString
 
 char *PdMessage::toString() {
   // http://stackoverflow.com/questions/295013/using-sprintf-without-a-manually-allocated-buffer
-  int listlen = elementList->size();
-  int lengths[listlen]; // how long is the string of each atom
+  int lengths[numElements]; // how long is the string of each atom
   char *finalString; // the final buffer we will pass back after concatenating all strings - user should free it
   int size = 0; // the total length of our final buffer
   int pos = 0;
@@ -345,7 +328,7 @@ char *PdMessage::toString() {
   // loop through every element in our list of atoms
   // first loop figures out how long our buffer should be
   // chrism: apparently this might fail under MSVC because of snprintf(NULL) - do we care?
-  for (int i = 0; i < listlen; i++) {
+  for (int i = 0; i < numElements; i++) {
     lengths[i] = 0;
     switch (getType(i)) {
       case FLOAT: {
@@ -353,7 +336,7 @@ char *PdMessage::toString() {
         break;
       }
       case BANG: {
-        lengths[i] = 4; // snprintf(NULL, 0, "%s", "bang");
+        lengths[i] = snprintf(NULL, 0, "%s", "bang");
         break;
       }
       case SYMBOL: {
@@ -369,8 +352,8 @@ char *PdMessage::toString() {
   }
   
   // now we do the piecewise concatenation into our final string
-  finalString = (char *)malloc(size);
-  for (int i = 0; i < listlen; i++) {
+  finalString = (char *) malloc(size * sizeof(char));
+  for (int i = 0; i < numElements; i++) {
     // first element doesn't have a space before it
     if (i > 0) {
       strncat(finalString, " ", 1);
@@ -397,60 +380,4 @@ char *PdMessage::toString() {
     pos += lengths[i];
   }
   return finalString;
-}
-
-#pragma mark -
-#pragma mark addElement
-
-void PdMessage::addElement(float f) {
-  int numElements = elementList->size();
-  MessageElement *messageElement = (MessageElement *) elementList->getFromBackingArray(numElements);
-  if (messageElement == NULL) {
-    messageElement = new MessageElement(f);
-  } else {
-    messageElement->setFloat(f);
-  }
-  elementList->add(messageElement);
-}
-
-void PdMessage::addElement(char *symbol) {
-  int numElements = elementList->size();
-  MessageElement *messageElement = (MessageElement *) elementList->getFromBackingArray(numElements);
-  if (messageElement == NULL) {
-    messageElement = new MessageElement(symbol);
-  } else {
-    messageElement->setSymbol(symbol);
-  }
-  elementList->add(messageElement);
-}
-
-void PdMessage::addElement() {
-  int numElements = elementList->size();
-  MessageElement *messageElement = (MessageElement *) elementList->getFromBackingArray(numElements);
-  if (messageElement == NULL) {
-    messageElement = new MessageElement();
-  } else {
-    messageElement->setBang();
-  }
-  elementList->add(messageElement);
-}
-
-void PdMessage::addElement(MessageElement *messageElement) {
-  switch (messageElement->getType()) {
-    case FLOAT: {
-      addElement(messageElement->getFloat());
-      break;
-    }
-    case SYMBOL: {
-      addElement(messageElement->getSymbol());
-      break;
-    }
-    case BANG: {
-      addElement();
-      break;
-    }
-    default: {
-      break;
-    }
-  }
 }

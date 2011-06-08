@@ -42,7 +42,7 @@ void DspSqrt::processDspWithIndex(int fromIndex, int toIndex) {
   float *outBuff = dspBufferAtOutlet0;
   float32x4_t inVec, outVec;
   float32x4_t zeroVec = vdupq_n_f32(0.0f);
-  int n = toIndex - fromIndex;
+  int n = blockSizeInt;
   int n4 = n & 0xFFFFFFFC;
   while (n4) {
     inVec = vld1q_f32(inBuff);
@@ -66,7 +66,7 @@ void DspSqrt::processDspWithIndex(int fromIndex, int toIndex) {
   float *outBuff = dspBufferAtOutlet0;
   __m128 inVec, outVec;
   __m128 zeroVec = _mm_set1_ps(0.0f);
-  int n = toIndex - fromIndex;
+  int n = blockSizeInt;
   int n4 = n & 0xFFFFFFFC;
   while (n4) {
     inVec = _mm_loadu_ps(inBuff);

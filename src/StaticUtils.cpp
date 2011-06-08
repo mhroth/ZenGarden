@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -49,18 +49,7 @@ bool StaticUtils::isNumeric(char *str) {
   bool foundSign = str[0] == '+' || str[0] == '-';
   bool foundDecimal = false;
   for (int i = foundSign ? 1 : 0; i < length; i++) {
-    if (str[i] == '0' ||
-        str[i] == '1' ||
-        str[i] == '2' ||
-        str[i] == '3' ||
-        str[i] == '4' ||
-        str[i] == '5' ||
-        str[i] == '6' ||
-        str[i] == '7' ||
-        str[i] == '8' ||
-        str[i] == '9') {
-      continue;
-    }
+    if (str[i]-'0' >= 0 && str[i]-'0' <= 9) continue;
     if (str[i] == '.' && foundDecimal) {
       return false;
     } else if (str[i] == '.' && !foundDecimal) {
@@ -128,21 +117,12 @@ void StaticUtils::destroyTokenizedStringList(List *list) {
 
 const char *StaticUtils::messageElementTypeToString(MessageElementType type) {
   switch (type) {
-    case FLOAT: {
-      return "FLOAT";
-    }
-    case SYMBOL: {
-      return "SYMBOL";
-    }
-    case BANG: {
-      return "BANG";
-    }
-    case ANYTHING: {
-      return "ANYTHING";
-    }
-    default: {
-      return "UNKNOWN TYPE";
-    }
+    case FLOAT: return "FLOAT";
+    case SYMBOL: return "SYMBOL";
+    case BANG: return "BANG";
+    case ANYTHING: return "ANYTHING";
+    case LIST: return "LIST";
+    default: return "UNKNOWN TYPE";
   }
 }
 

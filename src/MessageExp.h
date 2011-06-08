@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009, 2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -23,7 +23,6 @@
 #ifndef _MESSAGE_EXP_H_
 #define _MESSAGE_EXP_H_
 
-#include <math.h>
 #include "MessageObject.h"
 
 /** [exp] */
@@ -31,7 +30,6 @@ class MessageExp : public MessageObject {
 
   public:
     MessageExp(PdMessage *initMessage, PdGraph *graph);
-    MessageExp(PdGraph *graph);
     ~MessageExp();
 
     const char *getObjectLabel();

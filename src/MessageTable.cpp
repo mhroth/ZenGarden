@@ -20,6 +20,7 @@
  *
  */
 
+#include "ArrayArithmetic.h"
 #include "MessageTable.h"
 #include "PdGraph.h"
 
@@ -79,17 +80,26 @@ void MessageTable::processMessage(int inletIndex, PdMessage *message) {
     // write the contents of the table to file
   } else if (message->isSymbol(0, "normalize")) {
     // normalise the contents of the table to the given value. Default to 1.
-    float total = 0.0f;
-    for (int i = 0; i < bufferLength; i++) {
-      total += buffer[i];
+    #if __APPLE__
+    float sum = 0.0f;
+    vDSP_sve(buffer, 1, &sum, bufferLength);
+    if (sum != 0.0f) {
+      // ensure that element do not change sign during normalisation
+      sum = fabsf(sum) / (message->isFloat(1) ? message->getFloat(1) : 1.0f);
+      vDSP_vsdiv(buffer, 1, &sum, buffer, 1, bufferLength);
     }
-    if (total != 0.0f) {
-      float normalisedTotal = message->isFloat(1) ? message->getFloat(1) : 1.0f;
-      total /= normalisedTotal;
+    #else
+    float sum = 0.0f;
+    for (int i = 0; i < bufferLength; i++) {
+      sum += buffer[i];
+    }
+    if (sum != 0.0f) {
+      sum = fabsf(sum) / (message->isFloat(1) ? message->getFloat(1) : 1.0f);
       for (int i = 0; i < bufferLength; i++) {
-        buffer[i] /= total;
+        buffer[i] /= sum;
       }
     }
+    #endif
   } else if (message->isSymbol(0, "resize")) {
     if (message->isFloat(1)) {
       int newBufferLength = (int) message->getFloat(1);

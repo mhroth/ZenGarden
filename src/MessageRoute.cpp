@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -24,11 +24,11 @@
 
 MessageRoute::MessageRoute(PdMessage *initMessage, PdGraph *graph) : 
     MessageObject(1, initMessage->getNumElements()+1, graph) {
-  routeMessage = initMessage->copy();
+  routeMessage = initMessage->copyToHeap();
 }
 
 MessageRoute::~MessageRoute() {
-  delete routeMessage;
+  routeMessage->freeMessage();
 }
 
 const char *MessageRoute::getObjectLabel() {
@@ -37,11 +37,11 @@ const char *MessageRoute::getObjectLabel() {
 
 void MessageRoute::processMessage(int inletIndex, PdMessage *message) {
   int numRouteChecks = routeMessage->getNumElements();
-  MessageElement *messageElement = message->getElement(0);
   int outletIndex = numRouteChecks; // by default, send the message out of the right outlet
   // find which indicator that message matches
+  MessageAtom *messageAtom = message->getElement(0);
   for (int i = 0; i < numRouteChecks; i++) {
-    if (routeMessage->getElement(i)->equals(messageElement)) {
+    if (routeMessage->atomIsEqualTo(i, messageAtom)) {
       outletIndex = i;
       break;
     }
@@ -52,13 +52,10 @@ void MessageRoute::processMessage(int inletIndex, PdMessage *message) {
     sendMessage(outletIndex, message);
   } else {
     // construct a new message to send from the given outlet
-    PdMessage *outgoingMessage = getNextOutgoingMessage(outletIndex);
-    outgoingMessage->setTimestamp(message->getTimestamp());
-    outgoingMessage->clear();
-    int numElements = message->getNumElements();
-    for (int i = 1; i < numElements; i++) {
-      outgoingMessage->addElement(message->getElement(i));
-    }
+    int numElements = message->getNumElements() - 1;
+    PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(numElements);
+    outgoingMessage->initWithTimestampAndNumElements(message->getTimestamp(), numElements);
+    memcpy(outgoingMessage->getElement(0), message->getElement(1), numElements*sizeof(MessageAtom));
     sendMessage(outletIndex, outgoingMessage);
   }
 }

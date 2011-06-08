@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009, 2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -35,18 +35,11 @@ const char *MessageDbToRms::getObjectLabel() {
 }
 
 void MessageDbToRms::processMessage(int inletIndex, PdMessage *message) {
-  if (message->getElement(0)->getType() == FLOAT) {
-    if (message->getElement(0)->getFloat() <= 0) {
-      PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-      outgoingMessage->getElement(0)->setFloat(0);
-      outgoingMessage->setTimestamp(message->getTimestamp());
-      sendMessage(0, outgoingMessage);
-    }
-    else if (message->getElement(0)->getFloat() > 0) {
-      PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-      outgoingMessage->getElement(0)->setFloat(0.00001f * powf(10.0f, message->getElement(0)->getFloat() / 20.0f));
-      outgoingMessage->setTimestamp(message->getTimestamp());
-      sendMessage(0, outgoingMessage); // send a message from outlet 0
-    }
+  if (message->isFloat(0)) {
+    float dbToRms = (message->getFloat(0) <= 0.0f) ? 0.0f :
+        0.00001f * powf(10.0f, message->getFloat(0) / 20.0f);
+    PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+    outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), dbToRms);
+    sendMessage(0, outgoingMessage);
   }
 }

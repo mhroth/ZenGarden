@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -29,9 +29,6 @@ MessageObject::MessageObject(int numMessageInlets, int numMessageOutlets, PdGrap
   this->graph = graph;
   this->isOrdered = false;
 
-  distributedMessage = new PdMessage();
-  distributedMessage->addElement();
-
   // initialise incoming connections list
   // while malloc(0) does work well with free(), it also seems to use some small amount of memory.
   // thus numMessageInlets is manually checked for zero and a NULL pointer is returned.
@@ -47,18 +44,9 @@ MessageObject::MessageObject(int numMessageInlets, int numMessageOutlets, PdGrap
   for (int i = 0; i < numMessageOutlets; i++) {
     outgoingMessageConnectionsListAtOutlet[i] = new List();
   }
-
-  // initialise outgoing message pool
-  messageOutletPools =
-      (numMessageOutlets > 0) ? (List **) malloc(numMessageOutlets * sizeof(List *)) : NULL;
-  for (int i = 0; i < numMessageOutlets; i++) {
-    messageOutletPools[i] = new List();
-  }
 }
 
 MessageObject::~MessageObject() {
-  delete distributedMessage;
-
   // delete incoming connections list
   for (int i = 0; i < numMessageInlets; i++) {
     List *list = incomingMessageConnectionsListAtInlet[i];
@@ -78,18 +66,6 @@ MessageObject::~MessageObject() {
     delete list;
   }
   free(outgoingMessageConnectionsListAtOutlet);
-
-  // delete outgoing message pools
-  for (int i = 0; i < numMessageOutlets; i++) {
-    List *messageOutletPool = (List *) messageOutletPools[i];
-    // delete the contents of the pool
-    for (int j = 0; j < messageOutletPool->size(); j++) {
-      PdMessage *message = (PdMessage *) messageOutletPool->get(j);
-      delete message;
-    }
-    delete messageOutletPools[i];
-  }
-  free(messageOutletPools);
 }
 
 ConnectionType MessageObject::getConnectionType(int outletIndex) {
@@ -101,26 +77,26 @@ bool MessageObject::shouldDistributeMessageToInlets() {
 }
 
 void MessageObject::receiveMessage(int inletIndex, PdMessage *message) {
-  if (shouldDistributeMessageToInlets() &&
-      inletIndex == 0 &&
+  if (inletIndex == 0 &&
       numMessageInlets > 1 &&
-      message->getNumElements() > 1) {
+      message->getNumElements() > 1 &&
+      shouldDistributeMessageToInlets()) {
     // if the message should be distributed across the inlets
-    distributedMessage->setTimestamp(message->getTimestamp());
     int maxInletToDistribute = (message->getNumElements() < numMessageInlets)
         ? message->getNumElements() : numMessageInlets;
+    PdMessage *distributedMessage = PD_MESSAGE_ON_STACK(1);
     for (int i = maxInletToDistribute-1; i >= 0; i--) { // send to right-most inlet first
       switch (message->getType(i)) {
         case FLOAT: {
-          distributedMessage->setFloat(0, message->getFloat(i));
+          distributedMessage->initWithTimestampAndFloat(message->getTimestamp(), message->getFloat(i));
           break;
         }
         case SYMBOL: {
-          distributedMessage->setSymbol(0, message->getSymbol(i));
+          distributedMessage->initWithTimestampAndSymbol(message->getTimestamp(), message->getSymbol(i));
           break;
         }
         case BANG: {
-          distributedMessage->getElement(0)->setBang();
+          distributedMessage->initWithTimestampAndBang(message->getTimestamp());
           break;
         }
         default: {
@@ -136,17 +112,12 @@ void MessageObject::receiveMessage(int inletIndex, PdMessage *message) {
 }
 
 void MessageObject::sendMessage(int outletIndex, PdMessage *message) {
-  // this object reserves and unreserves the message in case this object is retriggered while
-  // this message is outstanding. It should not be reused in case the retrigger causes
-  // another message to be sent from this object.
-  message->reserve();
   List *outgoingMessageConnectionsList = outgoingMessageConnectionsListAtOutlet[outletIndex];
   int numConnectionsAtOutlet = outgoingMessageConnectionsList->size();
   for (int i = 0; i < numConnectionsAtOutlet; i++) {
     ObjectLetPair *objectLetPair = (ObjectLetPair *) outgoingMessageConnectionsList->get(i);
     objectLetPair->object->receiveMessage(objectLetPair->index, message);
   }
-  message->unreserve();
 }
 
 void MessageObject::processMessage(int inletIndex, PdMessage *message) {
@@ -180,28 +151,6 @@ void MessageObject::addConnectionToObjectFromOutlet(MessageObject *messageObject
 
 ObjectType MessageObject::getObjectType() {
   return OBJECT_UNKNOWN;
-}
-
-PdMessage *MessageObject::getNextOutgoingMessage(int outletIndex) {
-  List *messageOutletPool = messageOutletPools[outletIndex];
-  int numMessagesInPool = messageOutletPool->size();
-  PdMessage *message = NULL;
-  for (int i = 0; i < numMessagesInPool; i++) {
-    message = (PdMessage *) messageOutletPool->get(i);
-    if (!message->isReserved()) {
-      return message;
-    }
-  }
-  message = newCanonicalMessage(outletIndex);
-  messageOutletPool->add(message);
-  return message;
-}
-
-PdMessage *MessageObject::newCanonicalMessage(int outletIndex) {
-  // default implementation returns a message with one element
-  PdMessage *outgoingMessage = new PdMessage();
-  outgoingMessage->addElement();
-  return outgoingMessage;
 }
 
 bool MessageObject::isLeafNode() {

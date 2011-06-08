@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -55,9 +55,9 @@ void MessageDelay::processMessage(int inletIndex, PdMessage *message) {
             graph->cancelMessage(this, 0, scheduledMessage);
             scheduledMessage = NULL;
           }
-          scheduledMessage = getNextOutgoingMessage(0);
-          scheduledMessage->setTimestamp(message->getTimestamp() + delayMs);
-          graph->scheduleMessage(this, 0, scheduledMessage);
+          scheduledMessage = PD_MESSAGE_ON_STACK(1);
+          scheduledMessage->initWithTimestampAndBang(message->getTimestamp() + delayMs);
+          scheduledMessage = graph->scheduleMessage(this, 0, scheduledMessage);
           break;
         }
         default: {

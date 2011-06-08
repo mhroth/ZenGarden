@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,46 +23,39 @@
 #ifndef _PD_MESSAGE_H_
 #define _PD_MESSAGE_H_
 
+#include <alloca.h>
 #include <stdarg.h>
-#include "List.h"
-#include "MessageElement.h"
-#include "ZGLinkedList.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "MessageElementType.h"
 
-class MessageObject;
-class PdGraph;
+#define PD_MESSAGE_ON_STACK(_x) ((PdMessage *) (alloca(sizeof(PdMessage) + (((_x>0)?(_x-1):0) * sizeof(MessageAtom)))));
+
+typedef struct MessageAtom {
+  MessageElementType type;
+  union {
+    float constant;
+    char *symbol;
+  };
+} MessageAtom;
+
 
 /** Implements a Pd message. */
 class PdMessage {
   
-  public:
-    /** Creates an empty message. */
-    PdMessage();
-  
-    /** Creates a new message by tokenizing the given string and creating floats and strings. */
-    PdMessage(char *initString);
-  
-    /** Creates a message by tokenizing the given string and immediately resolving it using the given arguments. */
-    PdMessage(char *initString, PdMessage *arguments);
-  
-    ~PdMessage();
-  
+  public:  
     /**
-     * Resolve the string using the arguments into the element. The string is expected to refer to
-     * one message element only, i.e., it contains no spaces, though the underlying resolution
-     * algorithm can handle any string.
-     */
-    static void resolveElement(char *templateString, PdMessage *arguments, MessageElement *messageElement);
-  
-    /**
-     * Resolve arguments in a string with a given arugment list. The returned value is a pointer
-     * to the global resolution buffer. This buffer should NOT be freed by the user.
+     * Resolve arguments in a string with a given argument list into the given <code>buffer</code>
+     * with <code>bufferLength</code>. 
      * The <code>offset</code> parameter adjusts the resolution of the <code>$</code> argument.
      * In the case of message boxes, <code>$0</code> refers to the graph id, which is the first
      * argument in a graph's list of arguments. For all other objects, <code>$1</code> refers
      * to the first (0th) element of the argument. The offset is used to distinguish between these
      * cases, by offsetting the argument index resolution.
      */
-    static char *resolveString(char *initString, PdMessage *arguments, int offset);
+    static void resolveString(char *initString, PdMessage *arguments, unsigned int offset,
+        char *buffer, unsigned int bufferLength);
   
     /**
      * Converts symbolic elements referring to message element types (e.g., float or f) to those
@@ -71,7 +64,32 @@ class PdMessage {
      */
     void resolveSymbolsToType();
   
-    MessageElement *getElement(int index);
+    void initWithTimestampAndNumElements(double aTimestamp, unsigned int numElem);
+    void initWithTimestampAndFloat(double aTimestamp, float constant);
+    void initWithTimestampAndBang(double aTimestamp);
+    void initWithTimestampAndSymbol(double aTimestamp, char *symbol);
+  
+    /**
+     * Initialise the message with a string, arguments, and a resolution buffer. The string will
+     * be resolved into the buffer using the arguments. Any resolved strings in the message will
+     * point into the resolution buffer. The buffer is generally intended to be a temporary storage
+     * for such strings while objects are created.
+     */
+    void initWithSARb(unsigned int maxElements, char *initString, PdMessage *arguments, char *buffer,
+        unsigned int bufferLength);
+  
+    /**
+     * Adds elements to the message by tokenizing the given string. Is a token is numeric then it is
+     * automatically resolved to a float. Otherwise the string is interpreted as a symbol.
+     */
+    void initWithString(unsigned int maxElements, char *initString);
+  
+    /** Sets the given message element to a FLOAT or SYMBOL depending on contents of string. */
+    void setFloatOrSymbol(unsigned int index, char *initString);
+  
+    MessageAtom *getElement(unsigned int index);
+  
+    bool atomIsEqualTo(unsigned int index, MessageAtom *messageAtom);
   
     int getNumElements();
   
@@ -79,17 +97,17 @@ class PdMessage {
     double getTimestamp();
   
     /** Set the global timestamp of this message (in milliseconds). */
-    void setTimestamp(double timestamp);
+    void setTimestamp(double timestamp); // NOTE(mhroth): necessary?
   
-    bool isReserved();
-    void reserve();
-    void unreserve();
+    /**
+     * Returns a copy of the message to the heap. Messages usually only exist temporarily on the
+     * stack and should be copied to the heap if it should persist. Symbol pointers are copied
+     * independently to the heap.
+     */
+    PdMessage *copyToHeap();
   
-    /** Returns a copy of the message. */
-    PdMessage *copy();
-  
-    /** The message is cleared of all MessageElements. Its length is 0. */
-    void clear();
+    /** The message memory is freed from the heap, including symbols. */
+    void freeMessage();
     
     /**
      * Create a string representation of the message. Suitable for use by the print object.
@@ -97,78 +115,38 @@ class PdMessage {
      */
     char *toString();
   
-    /** Returns the message id, a globally unique identifier for this message. */ 
-    int getMessageId();
-  
     /** Convenience function to determine if a particular message element is a float. */
-    bool isFloat(int index);
-    bool isSymbol(int index);
-    bool isSymbol(int index, const char *test);
-    bool isBang(int index);
-    MessageElementType getType(int index);
+    bool isFloat(unsigned int index);
+    bool isSymbol(unsigned int index);
+    bool isSymbol(unsigned int index, const char *test);
+    bool isBang(unsigned int index);
+    MessageElementType getType(unsigned int index);
   
     /**
      * Convenience function to get the float value from a particular message element. The user
      * is responsible for checking that the indexed <code>MessageElement</code> is truly a float.
      * This function does not check for the existence of the message element.
      */
-    float getFloat(int index);
-    char *getSymbol(int index);
+    float getFloat(unsigned int index);
+    char *getSymbol(unsigned int index);
   
     /**
      * Convenience function to set a message element to a float value. This function does not check
      * for the existence of a message element.
      */
-    void setFloat(int index, float value);
-    void setSymbol(int index, char *symbol);
-    void setBang(int index);
-  
-    /** Add a new element to the message, making a copy of the value of the given element. */
-    void addElement(MessageElement *messageElement);
-  
-    /** Add a new float element. */
-    void addElement(float f);
-  
-    /** Add a new symbol element. */
-    void addElement(char *symbol);
-  
-    /** Add a new bang element. */
-    void addElement(); // bang
+    void setFloat(unsigned int index, float value);
+    void setSymbol(unsigned int index, char *symbol);
+    void setBang(unsigned int index);
+    void setAnything(unsigned int index);
+    void setList(unsigned int index);
 
   private:
-    /**
-     * Adds elements to the message by tokenizing the given string. Is a token is numeric then it is
-     * automatically resolved to a float. Otherwise the string is interpreted as a symbol.
-     * Meant for use in the constructor.
-     */
-    void initWithString(char *initString);
-  
-    /** Increment the reference count of the resolution buffer, also allocating it if necessary. */
-    void retainResBuffer();
-  
-    /** Decrement the reference count of the resolution buffer, also deallocating it if necessary. */
-    void releaseResBuffer();
-  
-    /** A global string buffer used for message resolution. */
-    static char *resolutionBuffer;
-  
-    /**
-     * The resolution buffer refernece counter. It is incremented when a new message is created, and
-     * decremented when a message is destroyed. If the reference counter goes to zero then the
-     * resolution buffer is freed.
-     */
-    static int resBufferRefCount;
-  
-    /**
-     * A variable keeping track of the current global message id. It is incremented whenever a new message
-     * is created.
-     */
-    static int globalMessageId;
-  
-    int messageId;
+    PdMessage();
+    ~PdMessage();
+
     double timestamp;
-    int reservationCount;
-    List *elementList;
+    int numElements;
+    MessageAtom messageAtom;
 };
 
 #endif // _PD_MESSAGE_H_

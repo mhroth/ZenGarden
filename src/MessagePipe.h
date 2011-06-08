@@ -25,6 +25,8 @@
 
 #include "MessageObject.h"
 
+class ZGLinkedList;
+
 class MessagePipe : public MessageObject {
   
   public:

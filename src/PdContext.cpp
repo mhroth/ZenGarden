@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -168,8 +168,6 @@ PdContext::PdContext(int numInputChannels, int numOutputChannels, int blockSize,
   globalDspInputBuffers = (float *) calloc(blockSize * numInputChannels, sizeof(float));
   globalDspOutputBuffers = (float *) calloc(blockSize * numOutputChannels, sizeof(float));
   
-  externalMessagePool = new List();
-  
   sendController = new MessageSendController(this);
   
   graphList = new ZGLinkedList();
@@ -201,11 +199,6 @@ PdContext::~PdContext() {
   while ((graph = (PdGraph *) graphList->getNext()) != NULL) {
     delete graph;
   }
-  for (int i = 0; i < externalMessagePool->size(); i++) {
-    PdMessage *message = (PdMessage *) externalMessagePool->get(i);
-    delete message;
-  }
-  delete externalMessagePool;
   delete graphList;
   delete dspReceiveList;
   delete dspSendList;
@@ -258,6 +251,7 @@ int PdContext::getNextGraphId() {
   return ++globalGraphId;
 }
 
+
 #pragma mark -
 #pragma mark process
 
@@ -292,7 +286,7 @@ void PdContext::process(float *inputBuffers, float *outputBuffers) {
     // in the case the reserving object is retriggered during the execution of sendMessage()
     // However, also, sendMessage reserves the message anyway. But this unreserve is needed
     // in any case in order to balance the reserve() called in scheduleMessage()
-    message->unreserve();
+    message->freeMessage();
   }
   
   PdGraph *graph = NULL;
@@ -308,6 +302,7 @@ void PdContext::process(float *inputBuffers, float *outputBuffers) {
   
   unlock(); // unlock the context
 }
+
 
 #pragma mark -
 #pragma mark New Graph
@@ -349,6 +344,10 @@ PdGraph *PdContext::newGraph(char *directory, char *filename, PdMessage *initMes
 bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser *fileParser) {
   PdGraph *graph = emptyGraph;
 
+#define RESOLUTION_BUFFER_LENGTH 512
+#define INIT_MESSAGE_MAX_ELEMENTS 32
+  PdMessage *initMessage = PD_MESSAGE_ON_STACK(INIT_MESSAGE_MAX_ELEMENTS);
+  
   // configure the graph based on the messages
   char *line = NULL;
   while ((line = fileParser->nextMessage()) != NULL) {
@@ -373,28 +372,28 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
         int canvasY = atoi(strtok(NULL, " ")); // read the second canvas coordinate
         char *objectLabel = strtok(NULL, " ;"); // delimit with " " or ";"
         char *objectInitString = strtok(NULL, ";"); // get the object initialisation string
-        PdMessage *initMessage = new PdMessage(objectInitString, graph->getArguments());
+        char resBuffer[RESOLUTION_BUFFER_LENGTH];
+        initMessage->initWithSARb(INIT_MESSAGE_MAX_ELEMENTS, objectInitString, graph->getArguments(),
+            resBuffer, RESOLUTION_BUFFER_LENGTH);
         MessageObject *messageObject = newObject(objectType, objectLabel, initMessage, graph);
         if (messageObject == NULL) {
           char *filename = StaticUtils::concatStrings(objectLabel, ".pd");
           char *directory = graph->findFilePath(filename);
           if (directory == NULL) {
             free(filename);
-            delete initMessage;
             printErr("Unknown object or abstraction \"%s\".", objectLabel);
             return false;
           }
           messageObject = newGraph(directory, filename, initMessage, graph);
           free(filename);
         }
-        delete initMessage;
 
         // add the object to the local graph and make any necessary registrations
         graph->addObject(canvasX, canvasY, messageObject);
       } else if (strcmp(objectType, "msg") == 0) {
         int canvasX = atoi(strtok(NULL, " ")); // read the first canvas coordinate
         int canvasY = atoi(strtok(NULL, " ")); // read the second canvas coordinate
-        char *objectInitString = strtok(NULL, ""); // get the message initialisation string
+        char *objectInitString = strtok(NULL, ";"); // get the message initialisation string
         graph->addObject(canvasX, canvasY ,new MessageMessageBox(objectInitString, graph));
       } else if (strcmp(objectType, "connect") == 0) {
         int fromObjectIndex = atoi(strtok(NULL, " "));
@@ -405,11 +404,13 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
       } else if (strcmp(objectType, "floatatom") == 0) {
         int canvasX = atoi(strtok(NULL, " ")); // read the first canvas coordinate
         int canvasY = atoi(strtok(NULL, " ")); // read the second canvas coordinate
-        graph->addObject(canvasX, canvasY, new MessageFloat(0.0f, graph)); // defines a number box
+        initMessage->initWithTimestampAndFloat(0.0, 0.0f);
+        graph->addObject(canvasX, canvasY, new MessageFloat(initMessage, graph)); // defines a number box
       } else if (strcmp(objectType, "symbolatom") == 0) {
         int canvasX = atoi(strtok(NULL, " ")); // read the first canvas coordinate
         int canvasY = atoi(strtok(NULL, " ")); // read the second canvas coordinate
-        graph->addObject(canvasX, canvasY, new MessageSymbol("", graph)); // defines a symbol box
+        initMessage->initWithTimestampAndSymbol(0.0, NULL);
+        graph->addObject(canvasX, canvasY, new MessageSymbol(initMessage, graph)); // defines a symbol box
       } else if (strcmp(objectType, "restore") == 0) {
         // the graph is finished being defined
         graph = graph->getParentGraph(); // pop the graph stack to the parent graph
@@ -422,7 +423,7 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
       } else if (strcmp(objectType, "declare") == 0) {
         // set environment for loading patch
         char *objectInitString = strtok(NULL, ";"); // get the arguments to declare
-        PdMessage *initMessage = new PdMessage(objectInitString); // parse them
+        initMessage->initWithString(2, objectInitString); // parse them
         if (initMessage->isSymbol(0, "-path")) {
           if (initMessage->isSymbol(1)) {
             // add symbol to declare directories
@@ -431,16 +432,15 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
         } else {
           printErr("declare \"%s\" flag is not supported.", initMessage->getSymbol(0));
         }
-        delete initMessage;
       } else if (strcmp(objectType, "array") == 0) {
         // creates a new table
         // objectInitString should contain both name and buffer length
         char *objectInitString = strtok(NULL, ";"); // get the object initialisation string
-        PdMessage *initMessage = new PdMessage(objectInitString, graph->getArguments());
+        char resBuffer[RESOLUTION_BUFFER_LENGTH];
+        initMessage->initWithSARb(4, objectInitString, graph->getArguments(), resBuffer, RESOLUTION_BUFFER_LENGTH);
         MessageTable *table = new MessageTable(initMessage, graph);
         int bufferLength = 0;
         float *buffer = table->getBuffer(&bufferLength);
-        delete initMessage;
         graph->addObject(0, 0, table);
         
         // next many lines should be elements of that array
@@ -448,12 +448,9 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
         while (strcmp(strtok(line = fileParser->nextMessage(), " ;"), "#A") == 0) {
           int index = atoi(strtok(NULL, " ;"));
           char *nextNumber = NULL;
-          while ((nextNumber = strtok(NULL, " ;")) != NULL) {
-            if (index >= bufferLength) {
-              break; // ensure that file does not attempt to write more than stated numbers
-            } else {
-              buffer[index++] = atof(nextNumber);
-            }
+          // ensure that file does not attempt to write more than stated numbers
+          while (((nextNumber = strtok(NULL, " ;")) != NULL) && (index < bufferLength)) {
+            buffer[index++] = atof(nextNumber);
           }
         }
         // ignore the #X coords line
@@ -552,7 +549,9 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
     } else if (strcmp(objectLabel, "mtof") == 0) {
       return new MessageMidiToFrequency(graph);
     } else if (StaticUtils::isNumeric(objectLabel)){
-      return new MessageFloat(atof(objectLabel), graph);
+      PdMessage *initMessage = PD_MESSAGE_ON_STACK(1);
+      initMessage->initWithTimestampAndFloat(0.0, atof(objectLabel));
+      return new MessageFloat(initMessage, graph);
     } else if (strcmp(objectLabel, "inlet") == 0) {
       return new MessageInlet(graph);
     } else if (strcmp(objectLabel, "int") == 0 ||
@@ -565,19 +564,18 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
         if (initMessage->isSymbol(0, "append") ||
             initMessage->isSymbol(0, "prepend") ||
             initMessage->isSymbol(0, "split")) {
-          PdMessage *newMessage = new PdMessage();
-          for (int i = 1; i < initMessage->getNumElements(); i++) {
-            newMessage->addElement(initMessage->getElement(i));
-          }
+          int numElements = initMessage->getNumElements()-1;
+          PdMessage *message = PD_MESSAGE_ON_STACK(numElements);
+          message->initWithTimestampAndNumElements(0.0, numElements);
+          memcpy(message->getElement(0), initMessage->getElement(1), numElements*sizeof(MessageAtom));
           MessageObject *messageObject = NULL;
           if (initMessage->isSymbol(0, "append")) {
-            messageObject = new MessageListAppend(newMessage, graph);
+            messageObject = new MessageListAppend(message, graph);
           } else if (initMessage->isSymbol(0, "prepend")) {
-            messageObject = new MessageListPrepend(newMessage, graph);
+            messageObject = new MessageListPrepend(message, graph);
           } else if (initMessage->isSymbol(0, "split")) {
-            messageObject = new MessageListSplit(newMessage, graph);
+            messageObject = new MessageListSplit(message, graph);
           }
-          delete newMessage;
           return messageObject;
         } else if (initMessage->isSymbol(0, "trim")) {
           // trim and length do not act on the initMessage
@@ -668,7 +666,9 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
     } else if (strcmp(objectLabel, "vsl") == 0 ||
                strcmp(objectLabel, "hsl") == 0) {
       // gui sliders are represented as a float objects
-      return new MessageFloat(0.0f, graph);
+      PdMessage *message = PD_MESSAGE_ON_STACK(1);
+      message->initWithTimestampAndFloat(0.0, 1.0f);
+      return new MessageFloat(message, graph);
     } else if (strcmp(objectLabel, "wrap") == 0) {
       return new MessageWrap(initMessage, graph);
     } else if (strcmp(objectLabel, "+~") == 0) {
@@ -979,6 +979,7 @@ float PdContext::getValueForName(char *name) {
   return 0.0f;
 }
 
+
 #pragma mark -
 #pragma mark Manage Messages
 
@@ -991,24 +992,23 @@ void PdContext::scheduleExternalMessageV(const char *receiverName, double timest
   lock(); // NOTE(mhroth): can reduce size of critical section?
   int receiverNameIndex = sendController->getNameIndex((char *) receiverName);
   if (receiverNameIndex >= 0) { // if the receiver exists
-    PdMessage *message = getNextExternalMessage();
-    message->setTimestamp(timestamp);
+    int numElements = strlen(messageFormat);
+    PdMessage *message = PD_MESSAGE_ON_STACK(numElements);
+    message->initWithTimestampAndNumElements(timestamp, numElements);
     
     // format message
-    message->clear();
-    int numElements = strlen(messageFormat);
     for (int i = 0; i < numElements; i++) {
       switch (messageFormat[i]) {
         case 'f': {
-          message->addElement((float) va_arg(ap, double));
+          message->setFloat(i, (float) va_arg(ap, double));
           break;
         }
         case 's': {
-          message->addElement((char *) va_arg(ap, char *));
+          message->setSymbol(i, (char *) va_arg(ap, char *));
           break;
         }
         case 'b': {
-          message->addElement();
+          message->setBang(i);
           break;
         }
         default: {
@@ -1022,33 +1022,21 @@ void PdContext::scheduleExternalMessageV(const char *receiverName, double timest
   unlock();
 }
 
-PdMessage *PdContext::getNextExternalMessage() {
-  int numMessages = externalMessagePool->size();
-  for (int i = 0; i < numMessages; i++) {
-    PdMessage *message = (PdMessage *) externalMessagePool->get(i);
-    if (!message->isReserved()) {
-      return message;
-    }
-  }
-  PdMessage *message = new PdMessage();
-  message->addElement(); // add one element to the message
-  externalMessagePool->add(message);
-  return message;
-}
-
-void PdContext::scheduleMessage(MessageObject *messageObject, int outletIndex, PdMessage *message) {
+PdMessage *PdContext::scheduleMessage(MessageObject *messageObject, unsigned int outletIndex, PdMessage *message) {
   // basic argument checking. It may happen that the message is NULL in case a cancel message
   // is sent multiple times to a particular object, when no message is pending
-  if (message != NULL && outletIndex >= 0 && messageObject != NULL) {
-    message->reserve();
+  if (message != NULL && messageObject != NULL) {
+    message = message->copyToHeap();
     messageCallbackQueue->insertMessage(messageObject, outletIndex, message);
+    return message;
   }
+  return NULL;
 }
 
 void PdContext::cancelMessage(MessageObject *messageObject, int outletIndex, PdMessage *message) {
   if (message != NULL && outletIndex >= 0 && messageObject != NULL) {
     messageCallbackQueue->removeMessage(messageObject, outletIndex, message);
-    message->unreserve();
+    message->freeMessage();
   }
 }
 

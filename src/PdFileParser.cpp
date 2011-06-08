@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -21,6 +21,8 @@
  */
 
 #include "PdFileParser.h"
+
+#define LINE_LENGTH 256
 
 PdFileParser::PdFileParser(char *filePath) {
   fp = fopen(filePath, "r");

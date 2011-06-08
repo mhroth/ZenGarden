@@ -20,7 +20,6 @@
  *
  */
 
-#include <math.h>
 #include "DspLog.h"
 #include "PdGraph.h"
 

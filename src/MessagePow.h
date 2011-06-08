@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009, 2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -23,7 +23,6 @@
 #ifndef _MESSAGE_POW_H_
 #define _MESSAGE_POW_H_
 
-#include <math.h>
 #include "MessageObject.h"
 
 /** [pow], [pow float]  */
@@ -31,13 +30,11 @@ class MessagePow : public MessageObject {
 
   public:
     MessagePow(PdMessage *initMessage, PdGraph *graph);
-    MessagePow(float constant, PdGraph *graph);
     ~MessagePow();
 
     const char *getObjectLabel();
 
   private:
-    void init(float constant);
     void processMessage(int inletIndex, PdMessage *message);
 
     float constant;

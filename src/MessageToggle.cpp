@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -39,20 +39,16 @@ void MessageToggle::processMessage(int inletIndex, PdMessage *message) {
   switch (message->getType(0)) {
     case FLOAT: {
       isOn = (message->getFloat(0) != 0.0f);
-      if (isOn) {
-        lastOutput = message->getFloat(0);
-      }
-      PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-      outgoingMessage->setTimestamp(message->getTimestamp());
-      outgoingMessage->setFloat(0, isOn ? message->getFloat(0) : 0.0f);
+      if (isOn) lastOutput = message->getFloat(0);
+      PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+      outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), isOn ? message->getFloat(0) : 0.0f);
       sendMessage(0, outgoingMessage);
       break;
     }
     case BANG: {
       isOn = !isOn;
-      PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-      outgoingMessage->setTimestamp(message->getTimestamp());
-      outgoingMessage->setFloat(0, isOn ? lastOutput : 0.0f);
+      PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+      outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), isOn ? lastOutput : 0.0f);
       sendMessage(0, outgoingMessage);
       break;
     }
@@ -63,6 +59,7 @@ void MessageToggle::processMessage(int inletIndex, PdMessage *message) {
           isOn = (message->getFloat(1) != 0.0f);
         }
       }
+      break;
     }
     default: {
       break;

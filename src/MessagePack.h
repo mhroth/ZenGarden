@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -36,12 +36,10 @@ class MessagePack : public MessageObject {
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage(int outletIndex);
   
     /** A helper function for processMessage(). */
-    void onBangAtLeftInlet(int inletIndex, double timestamp);
+    void onBangAtInlet(int inletIndex, double timestamp);
   
-    PdMessage *templateMessage;
     PdMessage *outgoingMessage;
 };
 

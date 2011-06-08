@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -30,7 +30,7 @@ MessageMetro::MessageMetro(PdMessage *initMessage, PdGraph *graph) : MessageObje
 }
 
 MessageMetro::~MessageMetro() {
-  // nothing to do
+  // nothign to do. pendingMessage object is owned by context.
 }
 
 const char *MessageMetro::getObjectLabel() {
@@ -77,9 +77,9 @@ void MessageMetro::processMessage(int inletIndex, PdMessage *message) {
 void MessageMetro::sendMessage(int outletIndex, PdMessage *message) {
   // schedule the pending message before the current one is sent so that if a stop message
   // arrives at this object while in this function, then the next message can be cancelled
-  pendingMessage = getNextOutgoingMessage(0);
-  pendingMessage->setTimestamp(message->getTimestamp() + intervalInMs);
-  graph->scheduleMessage(this, 0, pendingMessage);
+  pendingMessage = PD_MESSAGE_ON_STACK(1);
+  pendingMessage->initWithTimestampAndBang(message->getTimestamp() + intervalInMs);
+  pendingMessage = graph->scheduleMessage(this, 0, pendingMessage);
   
   MessageObject::sendMessage(outletIndex, message);
 }
@@ -90,13 +90,9 @@ void MessageMetro::startMetro(double timestamp) {
   // recently received bang.
   stopMetro();
   
-  PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-  outgoingMessage->setTimestamp(timestamp);
-  // reserve and unreserve the outgoing message such that this message is not used as the pending
-  // message which is scheduled in MessageMetro::sendMessage()
-  outgoingMessage->reserve();
+  PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+  outgoingMessage->initWithTimestampAndBang(timestamp);
   sendMessage(0, outgoingMessage);
-  outgoingMessage->unreserve();
 }
 
 void MessageMetro::stopMetro() {

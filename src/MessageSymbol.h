@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,24 +23,24 @@
 #ifndef _MESSAGE_SYMBOL_H_
 #define _MESSAGE_SYMBOL_H_
 
+#define SYMBOL_BUFFER_LENGTH 256
+
 #include "MessageObject.h"
 
 class MessageSymbol : public MessageObject {
   
   public:
     MessageSymbol(PdMessage *initMessage, PdGraph *graph);
-    MessageSymbol(char *initSymbol, PdGraph *graph);
     ~MessageSymbol();
   
     const char *getObjectLabel();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
+  
+    bool copyString(char *s);
 
-    // a MessageElement is used to store the symbol instead of a normal char array because MessageElement
-    // will easily (and slightly more efficiently because it does not reallocate any buffers) store
-    // a char array. It is mainly a matter of preference.
-    MessageElement *symbol;
+    char symbol[SYMBOL_BUFFER_LENGTH];
 };
 
 #endif // _MESSAGE_SYMBOL_H_

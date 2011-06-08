@@ -23,8 +23,6 @@
 #ifndef _MESSAGE_DBTORMS_H_
 #define _MESSAGE_DBTORMS_H_
 
-
-#include "math.h"
 #include "MessageObject.h"
 
 /** [dbtorms] */

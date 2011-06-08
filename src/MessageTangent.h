@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009, 2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -23,7 +23,6 @@
 #ifndef _MESSAGE_TANGENT_H_
 #define _MESSAGE_TANGENT_H_
 
-#include <math.h>
 #include "MessageObject.h"
 
 /** [tan] */
@@ -31,7 +30,6 @@ class MessageTangent : public MessageObject {
 
   public:
     MessageTangent(PdMessage *initMessage, PdGraph *graph);
-    MessageTangent(PdGraph *graph);
     ~MessageTangent();
 
     const char *getObjectLabel();

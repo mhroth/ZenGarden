@@ -55,7 +55,7 @@ class DspTablePlay : public DspObject, public TableReceiverInterface {
      */
     void playTable(int startIndex, int duration, double startTime);
   
-    // the message which is scheduled to be issues when the sample finishes playing
+    // the message which is scheduled to be issued when the sample finishes playing
     PdMessage *outgoingMessage;
     int currentTableIndex; // the current index 
     int endTableIndex; // the index to play to

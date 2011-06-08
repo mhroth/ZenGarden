@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -20,7 +20,6 @@
  *
  */
 
-#include <math.h>
 #include "MessageInteger.h"
 
 MessageInteger::MessageInteger(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
@@ -41,11 +40,11 @@ void MessageInteger::processMessage(int inletIndex, PdMessage *message) {
       switch (message->getType(0)) {
         case FLOAT: {
           constant = truncf(message->getFloat(0));
+          // allow fallthrough
         }
         case BANG: {
-          PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-          outgoingMessage->getElement(0)->setFloat(constant);
-          outgoingMessage->setTimestamp(message->getTimestamp());
+          PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+          outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), constant);
           sendMessage(0, outgoingMessage);
           break;
         }

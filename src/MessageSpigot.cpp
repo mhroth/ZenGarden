@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009, 2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -38,18 +38,18 @@ void MessageSpigot::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
       if (constant != 0.0f) {
-        // if the spigot is on, pass on the message
-        sendMessage(0, message);
+        sendMessage(0, message); // if the spigot is on, pass on the message
       }
-      case 1: {
-        if (message->isFloat(0)) {
-          constant = message->getFloat(0);
-        }
-        break;
+      break;
+    }
+    case 1: {
+      if (message->isFloat(0)) {
+        constant = message->getFloat(0);
       }
-      default: {
-        break;
-      }
+      break;
+    }
+    default: {
+      break;
     }
   }
 }

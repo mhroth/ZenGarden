@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -26,11 +26,11 @@
 MessageSelect::MessageSelect(PdMessage *initMessage, PdGraph *graph) : 
     MessageObject((initMessage->getNumElements() < 2) ? 2 : 1, 
                   (initMessage->getNumElements() < 2) ? 2 : initMessage->getNumElements()+1, graph) {
-  selectorMessage = initMessage->copy();
+  selectorMessage = initMessage->copyToHeap();
 }
 
 MessageSelect::~MessageSelect() {
-  delete selectorMessage;
+  selectorMessage->freeMessage();
 }
 
 const char *MessageSelect::getObjectLabel() {
@@ -40,14 +40,13 @@ const char *MessageSelect::getObjectLabel() {
 void MessageSelect::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
-      MessageElement *messageElement = message->getElement(0);
+      MessageAtom *messageElement = message->getElement(0);
       int numSelectors = selectorMessage->getNumElements();
       for (int i = 0; i < numSelectors; i++) {
-        MessageElement *selector = selectorMessage->getElement(i);
-        if (messageElement->equals(selector)) {
+        if (selectorMessage->atomIsEqualTo(i, messageElement)) {
           // send bang from matching outlet
-          PdMessage *outgoingMessage = getNextOutgoingMessage(i);
-          outgoingMessage->setTimestamp(message->getTimestamp());
+          PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+          outgoingMessage->initWithTimestampAndBang(message->getTimestamp());
           sendMessage(i, outgoingMessage);
           return;
         }
@@ -58,7 +57,7 @@ void MessageSelect::processMessage(int inletIndex, PdMessage *message) {
       break;
     }
     case 1: {
-      // TODO(mhroth): be able to set the selctor
+      // TODO(mhroth): be able to set the selector
       graph->printErr("select currently does not support setting the selector via the right inlet.\n");
       break;
     }

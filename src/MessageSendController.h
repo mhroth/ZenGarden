@@ -27,6 +27,7 @@
 #include "RemoteMessageReceiver.h"
 
 class PdContext;
+class ZGLinkedList;
 
 /**
  * Because of features such as external message injection and implicit message sending from message

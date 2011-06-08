@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -29,13 +29,12 @@ DspHighpassFilter::DspHighpassFilter(PdMessage *initMessage, PdGraph *graph) : D
   sampleRate = graph->getSampleRate();
   tapIn = 0.0f;
   tapOut = 0.0f;
-  coefficients = (float *) calloc(5, sizeof(float));
   // by default, the filter is initialised completely open
   calculateFilterCoefficients(initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f);
 }
 
 DspHighpassFilter::~DspHighpassFilter() {
-  free(coefficients);
+  // nothing to do
 }
 
 const char *DspHighpassFilter::getObjectLabel() {

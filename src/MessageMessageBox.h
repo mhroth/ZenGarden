@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -37,8 +37,6 @@ class MessageMessageBox : public MessageObject {
   
   private:
     void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage(int outletIndex);
-    PdMessage *getNextResolvedMessage(int objMessageIndex, PdMessage *templateMessage, PdMessage *incomingMessage);
   
     List *localMessageList;
     List *remoteMessageList;

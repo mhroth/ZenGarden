@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -26,10 +26,6 @@ MessageFloat::MessageFloat(PdMessage *initMessage, PdGraph *graph) : MessageObje
   constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
 }
 
-MessageFloat::MessageFloat(float constant, PdGraph *graph) : MessageObject(2, 1, graph) {
-  this->constant = constant;
-}
-
 MessageFloat::~MessageFloat() {
   // nothing to do
 }
@@ -47,9 +43,8 @@ void MessageFloat::processMessage(int inletIndex, PdMessage *message) {
           // allow fallthrough
         }
         case BANG: {
-          PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-          outgoingMessage->getElement(0)->setFloat(constant);
-          outgoingMessage->setTimestamp(message->getTimestamp());
+          PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+          outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), constant);
           sendMessage(0, outgoingMessage);
           break;
         }

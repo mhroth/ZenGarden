@@ -54,18 +54,19 @@ PdGraph::PdGraph(PdMessage *initMessage, PdGraph *parentGraph, PdContext *contex
       
   // initialise the graph arguments
   this->graphId = graphId;
-  graphArguments = new PdMessage();
-  graphArguments->addElement((float) graphId); // $0
-  for (int i = 0; i < initMessage->getNumElements(); i++) {
-    graphArguments->addElement(initMessage->getElement(i));
-  }
+  int numInitElements = initMessage->getNumElements();
+  graphArguments = PD_MESSAGE_ON_STACK(numInitElements+1);
+  graphArguments->initWithTimestampAndNumElements(0.0, numInitElements+1);
+  graphArguments->setFloat(0, (float) graphId); // $0
+  memcpy(graphArguments->getElement(1), initMessage->getElement(0), numInitElements * sizeof(MessageAtom));
+  graphArguments = graphArguments->copyToHeap();
 }
 
 PdGraph::~PdGraph() {
   delete dspNodeList;
   delete inletList;
   delete outletList;
-  delete graphArguments;
+  graphArguments->freeMessage();
   delete declareList;
 
   // delete all constituent nodes
@@ -354,8 +355,8 @@ void PdGraph::addDeclarePath(char *path) {
 #pragma mark -
 #pragma mark Manage Messages
 
-void PdGraph::scheduleMessage(MessageObject *messageObject, int outletIndex, PdMessage *message) {
-  context->scheduleMessage(messageObject, outletIndex, message);
+PdMessage *PdGraph::scheduleMessage(MessageObject *messageObject, int outletIndex, PdMessage *message) {
+  return context->scheduleMessage(messageObject, outletIndex, message);
 }
 
 void PdGraph::cancelMessage(MessageObject *messageObject, int outletIndex, PdMessage *message) {

@@ -53,7 +53,7 @@ class PdGraph : public DspObject {
      * Schedules a <code>PdMessage</code> to be sent by the <code>MessageObject</code> from the
      * <code>outletIndex</code> at the specified <code>time</code>.
      */
-    void scheduleMessage(MessageObject *messageObject, int outletIndex, PdMessage *message);
+    PdMessage *scheduleMessage(MessageObject *messageObject, int outletIndex, PdMessage *message);
   
     /** Cancel a scheduled <code>PdMessage</code> according to its id. */
     void cancelMessage(MessageObject *messageObject, int outletIndex, PdMessage *message);
