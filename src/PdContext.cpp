@@ -28,6 +28,7 @@
 #include "MessageCosine.h"
 #include "MessageChange.h"
 #include "MessageClip.h"
+#include "MessageCputime.h"
 #include "MessageDeclare.h"
 #include "MessageDelay.h"
 #include "MessageDivide.h"
@@ -510,6 +511,8 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
       return new MessageChange(initMessage, graph);
     } else if (strcmp(objectLabel, "cos") == 0) {
       return new MessageCosine(initMessage, graph);
+    } else if (strcmp(objectLabel, "cputime") == 0) {
+      return new MessageCputime(initMessage, graph);
     } else if (strcmp(objectLabel, "clip") == 0) {
       return new MessageClip(initMessage, graph);
     } else if (strcmp(objectLabel, "declare") == 0) {
