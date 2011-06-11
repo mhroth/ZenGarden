@@ -262,16 +262,18 @@ void DspObject::processDsp() {
   }
 }
 
+// it is known here that there are at least 2 connections at the given inlet
 void DspObject::resolveInputBuffers(int inletIndex, float *localInputBuffer) {
   vector<float **> *dspBufferRefList = dspBufferRefListAtInlet[inletIndex];
   
-  // copy the first connection's output buffer to the input buffer
+  // prepare the vector iterator
   vector<float **>::iterator it = dspBufferRefList->begin();
-  memcpy(localInputBuffer, *(*it++), numBytesInBlock);
-
+  vector<float **>::iterator end = dspBufferRefList->end();
+  
+  // add the first two connections together into the input buffer
+  ArrayArithmetic::add(*(*it++), *(*it++), localInputBuffer, 0, blockSizeInt);
   
   // add the remaining output buffers to the input buffer
-  vector<float **>::iterator end = dspBufferRefList->end();
   while (it != end) {
     ArrayArithmetic::add(localInputBuffer, *(*it++), localInputBuffer, 0, blockSizeInt);
   }
