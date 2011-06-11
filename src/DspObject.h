@@ -114,7 +114,7 @@ class DspObject : public MessageObject {
 
     float **dspBufferRefAtInlet0;
     float **dspBufferRefAtInlet1;
-    List **dspBufferRefListAtInlet;
+    vector<vector<float **> *> dspBufferRefListAtInlet;
     float *dspBufferAtOutlet0;
     float **dspBufferAtOutlet;
   
@@ -143,6 +143,12 @@ class DspObject : public MessageObject {
      * This is a helper function for <code>processDsp()</code>.
      */
     inline void resolveInputBuffers(int inletIndex, float *localInputBuffer);
+  
+    /**
+     * true if messages exist to process, false otherwise. Faster to look up this variable
+     * than to call function messageQueue.empty().
+     */
+    bool hasMessagesToProcess;
 };
 
 #endif // _DSP_OBJECT_H_
