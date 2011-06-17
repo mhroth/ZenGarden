@@ -47,9 +47,9 @@ class DspInlet : public DspObject {
     List *getProcessOrder();
     List *getProcessOrderFromInlet();
   
-  private:
-    void processDspWithIndex(int fromIndex, int toIndex);
+    void processDsp();
   
+  private:  
     int canvasX;
 };
 

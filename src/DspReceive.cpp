@@ -31,7 +31,7 @@ DspReceive::DspReceive(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 0,
     graph->printErr("receive~ not initialised with a name.\n");
   }
   sendBuffer = NULL;
-  memset(localDspOutletBuffers, 0, blockSizeInt * sizeof(float));
+  //memset(localDspOutletBuffers, 0, blockSizeInt * sizeof(float));
 }
 
 DspReceive::~DspReceive() {

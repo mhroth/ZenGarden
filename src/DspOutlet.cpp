@@ -23,7 +23,8 @@
 #include "DspOutlet.h"
 
 DspOutlet::DspOutlet(PdGraph *graph) : DspObject(0, 1, 0, 1, graph) {
-  numDspOutlets = 0;
+  // NOTE(mhroth): check this
+  numDspOutlets = 0; // set numDspOutlets to zero in order all leaves to be correctly detected
   canvasX = 0;
 }
 
@@ -47,11 +48,11 @@ void DspOutlet::setCanvasPosition(int pos) {
   canvasX = pos;
 }
 
-void DspOutlet::processDspWithIndex(int fromIndex, int toIndex) {
+void DspOutlet::processDsp() {
   if (numConnectionsToInlet0 > 1) {
-    dspBufferAtOutlet0 = localDspOutletBuffers;
-    memcpy(dspBufferAtOutlet0, dspBufferAtInlet0, numBytesInBlock);
+    // if there are many connections, resolve directly to the ouput buffer
+    resolveInputBuffers(0, dspBufferAtOutlet0);
   } else {
-    dspBufferAtOutlet0 = dspBufferAtInlet0;
+    memcpy(dspBufferAtOutlet0, dspBufferAtInlet0, numBytesInBlock);
   }
 }

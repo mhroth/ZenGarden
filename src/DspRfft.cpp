@@ -50,7 +50,7 @@ void DspRfft::processDspWithIndex(int fromIndex, int toIndex) {
   inputVector.imagp = DspObject::zeroBuffer;
   DSPSplitComplex outputVector;
   outputVector.realp = dspBufferAtOutlet0;
-  outputVector.imagp = dspBufferAtOutlet[1];
+  outputVector.imagp = getDspBufferRefAtOutlet(1);
   vDSP_fft_zop(fftSetup, &inputVector, 1, &outputVector, 1, log2n, kFFTDirection_Forward);
   
   // NOTE(mhroth): vDSP_fft_zop outputs the entire series of symmetric coefficients.

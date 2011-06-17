@@ -69,11 +69,10 @@ void DspDelayRead::processDspWithIndex(int fromIndex, int toIndex) {
     }
     if (delayIndex > bufferLength - blockSizeInt) {
       int samplesInBuffer = bufferLength - delayIndex; // samples remaining in the buffer that belong in this block
-      dspBufferAtOutlet0 = localDspOutletBuffers;
       memcpy(dspBufferAtOutlet0, buffer + delayIndex, samplesInBuffer * sizeof(float));
       memcpy(dspBufferAtOutlet0 + samplesInBuffer, buffer, (blockSizeInt - samplesInBuffer) * sizeof(float));
     } else {
-      dspBufferAtOutlet0 = buffer + delayIndex;
+      memcpy(dspBufferAtOutlet0, buffer + delayIndex, numBytesInBlock);
     }
   } else {
     /*

@@ -69,11 +69,19 @@ List *DspInlet::getProcessOrderFromInlet() {
   return processList;
 }
 
-void DspInlet::processDspWithIndex(int fromIndex, int toIndex) {
-  if (numConnectionsToInlet0 > 1) {
-    dspBufferAtOutlet0 = localDspOutletBuffers;
-    memcpy(dspBufferAtOutlet0, dspBufferAtInlet0, numBytesInBlock);
-  } else {
-    dspBufferAtOutlet0 = dspBufferAtInlet0;
+void DspInlet::processDsp() {
+  switch (numConnectionsToInlet0) {
+    case 0: {
+      ArrayArithmetic::fill(dspBufferAtOutlet0, 0.0f, 0, blockSizeInt);
+      break;
+    }
+    case 1: {
+      memcpy(dspBufferAtOutlet0, dspBufferAtInlet0, numBytesInBlock);
+      break;
+    }
+    default: {
+      resolveInputBuffers(0, dspBufferAtOutlet0);
+      break;
+    }
   }
 }

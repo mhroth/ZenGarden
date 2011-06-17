@@ -31,12 +31,11 @@ DspAdc::DspAdc(PdGraph *graph) : DspObject(0, 0, 0, graph->getNumInputChannels()
    * <code>DspObject</code>s can continue to refer to <code>localDspBufferAtOutlet</code>
    * and still get access to the global audio input buffers.
    */
-  free(localDspOutletBuffers);
-  localDspOutletBuffers = NULL;
+  free(dspBufferAtOutlet0);
+  dspBufferAtOutlet0 = NULL;
+  
+  // both dspBufferAtOutlet0 and input buffers are concatinated buffers, so this works :)
   dspBufferAtOutlet0 = graph->getGlobalDspBufferAtInlet(0);
-  for (int i = 1; i < numDspOutlets; i++) {
-    dspBufferAtOutlet[i] = graph->getGlobalDspBufferAtInlet(i);
-  }
 }
 
 DspAdc::~DspAdc() {

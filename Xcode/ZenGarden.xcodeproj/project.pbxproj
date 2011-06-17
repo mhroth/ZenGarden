@@ -697,6 +697,11 @@
 		90F4C19C12328CFC001182CF /* MessageLogicalOr.h in Headers */ = {isa = PBXBuildFile; fileRef = 90F4C19912328CFC001182CF /* MessageLogicalOr.h */; };
 		90F4C19D12328CFC001182CF /* MessageLogicalOr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90F4C19812328CFC001182CF /* MessageLogicalOr.cpp */; };
 		90F4C19E12328CFC001182CF /* MessageLogicalOr.h in Headers */ = {isa = PBXBuildFile; fileRef = 90F4C19912328CFC001182CF /* MessageLogicalOr.h */; };
+		90F6E69613A028580073F1EF /* MessageCputime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90F6E69413A028580073F1EF /* MessageCputime.cpp */; };
+		90F6E69713A028580073F1EF /* MessageCputime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90F6E69413A028580073F1EF /* MessageCputime.cpp */; };
+		90F6E69813A028580073F1EF /* MessageCputime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90F6E69413A028580073F1EF /* MessageCputime.cpp */; };
+		90F6E69913A028580073F1EF /* MessageCputime.h in Headers */ = {isa = PBXBuildFile; fileRef = 90F6E69513A028580073F1EF /* MessageCputime.h */; };
+		90F6E69A13A028580073F1EF /* MessageCputime.h in Headers */ = {isa = PBXBuildFile; fileRef = 90F6E69513A028580073F1EF /* MessageCputime.h */; };
 		90FA78281208B8300043EBBA /* MessageTableRead.h in Headers */ = {isa = PBXBuildFile; fileRef = 90FA78261208B8300043EBBA /* MessageTableRead.h */; };
 		90FA78291208B8300043EBBA /* MessageTableRead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90FA78271208B8300043EBBA /* MessageTableRead.cpp */; };
 		90FA782A1208B8300043EBBA /* MessageTableRead.h in Headers */ = {isa = PBXBuildFile; fileRef = 90FA78261208B8300043EBBA /* MessageTableRead.h */; };
@@ -1002,6 +1007,8 @@
 		90F4C18C12328AC1001182CF /* MessageLogicalAnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageLogicalAnd.h; path = ../src/MessageLogicalAnd.h; sourceTree = SOURCE_ROOT; };
 		90F4C19812328CFC001182CF /* MessageLogicalOr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageLogicalOr.cpp; path = ../src/MessageLogicalOr.cpp; sourceTree = SOURCE_ROOT; };
 		90F4C19912328CFC001182CF /* MessageLogicalOr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageLogicalOr.h; path = ../src/MessageLogicalOr.h; sourceTree = SOURCE_ROOT; };
+		90F6E69413A028580073F1EF /* MessageCputime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageCputime.cpp; path = ../src/MessageCputime.cpp; sourceTree = "<group>"; };
+		90F6E69513A028580073F1EF /* MessageCputime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageCputime.h; path = ../src/MessageCputime.h; sourceTree = "<group>"; };
 		90F84D49120EC9100011407E /* libzengarden.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libzengarden.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		90F84D4A120EC9100011407E /* libzengarden.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libzengarden.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		90FA78261208B8300043EBBA /* MessageTableRead.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageTableRead.h; path = ../src/MessageTableRead.h; sourceTree = SOURCE_ROOT; };
@@ -1161,6 +1168,8 @@
 				90337BB611D0D847009FCC01 /* MessageClip.h */,
 				90337BB711D0D847009FCC01 /* MessageCosine.cpp */,
 				90337BB811D0D847009FCC01 /* MessageCosine.h */,
+				90F6E69413A028580073F1EF /* MessageCputime.cpp */,
+				90F6E69513A028580073F1EF /* MessageCputime.h */,
 				90337BB911D0D847009FCC01 /* MessageDbToPow.cpp */,
 				90337BBA11D0D847009FCC01 /* MessageDbToPow.h */,
 				90337BBB11D0D847009FCC01 /* MessageDbToRms.cpp */,
@@ -1517,6 +1526,7 @@
 				907B1F52129965D900B263E2 /* DspBang.h in Headers */,
 				90CCEBE31299CD7D009D36DF /* DspReciprocalSqrt.h in Headers */,
 				9086906C129AC67B00D3BD5D /* DspSqrt.h in Headers */,
+				90F6E69913A028580073F1EF /* MessageCputime.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1670,6 +1680,7 @@
 				907B1F55129965D900B263E2 /* DspBang.h in Headers */,
 				90CCEBE61299CD7D009D36DF /* DspReciprocalSqrt.h in Headers */,
 				9086906E129AC67B00D3BD5D /* DspSqrt.h in Headers */,
+				90F6E69A13A028580073F1EF /* MessageCputime.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1894,6 +1905,7 @@
 				907B1F54129965D900B263E2 /* DspBang.cpp in Sources */,
 				90CCEBE51299CD7D009D36DF /* DspReciprocalSqrt.cpp in Sources */,
 				90869070129AC67B00D3BD5D /* DspSqrt.cpp in Sources */,
+				90F6E69613A028580073F1EF /* MessageCputime.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2035,6 +2047,7 @@
 				907B1F53129965D900B263E2 /* DspBang.cpp in Sources */,
 				90CCEBE41299CD7D009D36DF /* DspReciprocalSqrt.cpp in Sources */,
 				9086906D129AC67B00D3BD5D /* DspSqrt.cpp in Sources */,
+				90F6E69713A028580073F1EF /* MessageCputime.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2177,6 +2190,7 @@
 				907B1F56129965D900B263E2 /* DspBang.cpp in Sources */,
 				90CCEBE71299CD7D009D36DF /* DspReciprocalSqrt.cpp in Sources */,
 				9086906F129AC67B00D3BD5D /* DspSqrt.cpp in Sources */,
+				90F6E69813A028580073F1EF /* MessageCputime.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2188,7 +2202,6 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
-				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
@@ -2200,7 +2213,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../libs/Darwin\"",
 				);
-				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = ZenGarden;
 				VALID_ARCHS = "i386 x86_64";
@@ -2215,7 +2227,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = /usr/local/include;
@@ -2224,10 +2236,8 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../libs/Darwin\"",
 				);
-				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = ZenGarden;
-				STRIP_INSTALLED_PRODUCT = NO;
 				VALID_ARCHS = "i386 x86_64";
 			};
 			name = Release;
@@ -2251,6 +2261,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;

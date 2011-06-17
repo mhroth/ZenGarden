@@ -176,7 +176,7 @@ void PdGraph::addLetObjectToLetList(MessageObject *inletObject, int newPosition,
   letList->add(inletObject);
 }
 
-float **PdGraph::getDspBufferRefAtOutlet(int outletIndex) {
+float *PdGraph::getDspBufferRefAtOutlet(int outletIndex) {
   DspObject *dspOutlet = (DspObject *) outletList->get(outletIndex);
   return dspOutlet->getDspBufferRefAtOutlet(0);
 }
@@ -377,7 +377,8 @@ void PdGraph::processDsp() {
     
     //for (int i = 0; i < 1; i++) { // TODO(mhroth): iterate depending on local blocksize relative to parent
     // execute all nodes which process audio
-    for (int i = 0; i < dspNodeList.size(); ++i) {
+    int numNodes = dspNodeList.size();
+    for (int i = 0; i < numNodes; ++i) {
       dspNodeList[i]->processDsp();
     }
   }

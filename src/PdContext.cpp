@@ -273,7 +273,6 @@ void PdContext::process(float *inputBuffers, float *outputBuffers) {
     graphList[i]->processDsp();
   }
   
-  
   blockStartTimestamp = nextBlockStartTimestamp;
   
   // copy the output audio to the given buffer

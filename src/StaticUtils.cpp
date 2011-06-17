@@ -45,23 +45,39 @@ char *StaticUtils::copyString(char *str) {
 }
 
 bool StaticUtils::isNumeric(char *str) {
-  int length = strlen(str);
-  bool foundSign = str[0] == '+' || str[0] == '-';
-  bool foundDecimal = false;
-  for (int i = foundSign ? 1 : 0; i < length; i++) {
-    if (str[i]-'0' >= 0 && str[i]-'0' <= 9) continue;
-    if (str[i] == '.' && foundDecimal) {
-      return false;
-    } else if (str[i] == '.' && !foundDecimal) {
-      foundDecimal = true;
-      continue;
-    }
-    if (str[i] == '+' || str[i] == '-') {
-      return false;
-    }
+  float f = atof(str);
+  if (f != 0.0f) {
+    return true;
+  } else {
+    // the string is probably not a float, but may be 0
+    if (!strcmp(str, "0")) return true;
+    if (!strcmp(str, "+0")) return true;
+    if (!strcmp(str, "-0")) return true;
+    if (!strcmp(str, "0.")) return true;
+    if (!strcmp(str, "0.0")) return true;
+    if (!strcmp(str, "+0.0")) return true;
+    if (!strcmp(str, "-0.0")) return true;
     return false;
-  }  
-  return true;
+  }
+  /*
+   int length = strlen(str);
+   bool foundSign = str[0] == '+' || str[0] == '-';
+   bool foundDecimal = false;
+   for (int i = foundSign ? 1 : 0; i < length; i++) {
+   if (str[i]-'0' >= 0 && str[i]-'0' <= 9) continue;
+   if (str[i] == '.' && foundDecimal) {
+   return false;
+   } else if (str[i] == '.' && !foundDecimal) {
+   foundDecimal = true;
+   continue;
+   }
+   if (str[i] == '+' || str[i] == '-') {
+   return false;
+   }
+   return false;
+   }  
+   return true;
+   */
 }
 
 char *StaticUtils::concatStrings(const char *path0, const char *path1) {

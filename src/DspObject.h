@@ -61,7 +61,7 @@ class DspObject : public MessageObject {
     /** Returns the connection type of the given outlet. */
     virtual ConnectionType getConnectionType(int outletIndex);
 
-    virtual float **getDspBufferRefAtOutlet(int outletIndex);
+    virtual float *getDspBufferRefAtOutlet(int outletIndex);
   
     virtual void addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex);
       
@@ -76,6 +76,12 @@ class DspObject : public MessageObject {
     /* IMPORTANT: one of these two functions MUST be overridden (or processDsp()) */
     virtual void processDspWithIndex(float fromIndex, float toIndex);
     virtual void processDspWithIndex(int fromIndex, int toIndex);
+  
+    /**
+     * Prepares the input buffer at the given inlet index.
+     * This is a helper function for <code>processDsp()</code>.
+     */
+    void resolveInputBuffers(int inletIndex, float *localInputBuffer);
     
     /** The number of dsp inlets of this object. */
     int numDspInlets;
@@ -100,9 +106,6 @@ class DspObject : public MessageObject {
     /** The number of bytes in a single dsp block. == blockSize * sizeof(float) */
     int numBytesInBlock;
   
-    /** Permanent pointer to the local output buffers. */
-    float *localDspOutletBuffers;
-  
     float *dspBufferAtInlet0;
     float *dspBufferAtInlet1;
   
@@ -112,11 +115,10 @@ class DspObject : public MessageObject {
      */
     float **dspBufferAtInlet;
 
-    float **dspBufferRefAtInlet0;
-    float **dspBufferRefAtInlet1;
-    vector<vector<float **> *> dspBufferRefListAtInlet;
+    vector<vector<float *> > dspBufferRefListAtInlet;
+  
+    /** Points to a concatinated array of all output buffers. Permanent pointer to the local output buffers. */
     float *dspBufferAtOutlet0;
-    float **dspBufferAtOutlet;
   
     /** True if there is more than one connection arriving at inlet 0. False otherwise. */
     int numConnectionsToInlet0;
@@ -137,12 +139,6 @@ class DspObject : public MessageObject {
   private:
     /** This function encapsulates the common code between the two constructors. */
     void init(int numDspInlets, int numDspOutlets, int blockSize);
-  
-    /**
-     * Prepares the input buffer at the given inlet index.
-     * This is a helper function for <code>processDsp()</code>.
-     */
-    inline void resolveInputBuffers(int inletIndex, float *localInputBuffer);
   
     /**
      * true if messages exist to process, false otherwise. Faster to look up this variable
