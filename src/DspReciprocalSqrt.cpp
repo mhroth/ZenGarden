@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -21,6 +21,7 @@
  */
 
 #include <float.h>
+#include "ArrayArithmetic.h"
 #include "DspReciprocalSqrt.h"
 #include "PdGraph.h"
 
@@ -36,14 +37,16 @@ const char *DspReciprocalSqrt::getObjectLabel() {
   return "rsqrt~";
 }
 
-void DspReciprocalSqrt::processDspWithIndex(int fromIndex, int toIndex) {
+void DspReciprocalSqrt::processDsp() {
   // [rsqrt~] takes no messages, so the full block will be computed every time
+  RESOLVE_DSPINLET0_IF_NECESSARY();
+  
   #if __ARM_NEON__
   float *inBuff = dspBufferAtInlet0;
   float *outBuff = dspBufferAtOutlet0;
   float32x4_t inVec, outVec;
   float32x4_t zeroVec = vdupq_n_f32(FLT_MIN);
-  int n = toIndex - fromIndex;
+  int n = blockSizeInt;
   int n4 = n & 0xFFFFFFFC;
   while (n4) {
     inVec = vld1q_f32(inBuff);
@@ -66,7 +69,7 @@ void DspReciprocalSqrt::processDspWithIndex(int fromIndex, int toIndex) {
   float *outBuff = dspBufferAtOutlet0;
   __m128 inVec, outVec;
   __m128 zeroVec = _mm_set1_ps(FLT_MIN);
-  int n = toIndex - fromIndex;
+  int n = blockSizeInt;
   int n4 = n & 0xFFFFFFFC;
   while (n4) {
     inVec = _mm_loadu_ps(inBuff); // unaligned load must be used because inBuff could point anywhere
@@ -89,7 +92,7 @@ void DspReciprocalSqrt::processDspWithIndex(int fromIndex, int toIndex) {
   // http://en.wikipedia.org/wiki/Fast_inverse_square_root
   int j;
   float y;
-  for (int i = fromIndex; i < toIndex; ++i) {
+  for (int i = 0; i < blockSizeInt; ++i) {
     float f = dspBufferAtInlet0[i];
     if (f <= 0.0f) {
       dspBufferAtOutlet0[i] = 0.0f;
