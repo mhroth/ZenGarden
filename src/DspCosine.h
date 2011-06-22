@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -34,8 +34,7 @@ class DspCosine : public DspObject {
 
     const char *getObjectLabel();
 
-  protected:
-    void processDspWithIndex(int fromIndex, int toIndex);
+    void processDsp();
 
   private:
     float sampleRate;
