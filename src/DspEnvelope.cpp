@@ -24,6 +24,9 @@
 #include "DspEnvelope.h"
 #include "PdGraph.h"
 
+/** By default, the analysis window size is 1024 samples. */
+#define DEFAULT_WINDOW_SIZE 1024
+
 DspEnvelope::DspEnvelope(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 1, 0, graph) {
   if (initMessage->isFloat(0)) {
     if (initMessage->isFloat(1)) {
@@ -109,7 +112,9 @@ void DspEnvelope::initBuffers() {
 }
 
 // windowSize and windowInterval are constrained to be multiples of the block size
-void DspEnvelope::processDspWithIndex(int fromIndex, int toIndex) {
+void DspEnvelope::processDsp() {
+  RESOLVE_DSPINLET0_IF_NECESSARY();
+  
   // copy the input into the signal buffer
   memcpy(signalBuffer + numSamplesReceived, dspBufferAtInlet0, numBytesInBlock);
   numSamplesReceived += blockSizeInt;

@@ -41,16 +41,14 @@ class DspEnvelope : public DspObject {
     const char *getObjectLabel();
 
     ConnectionType getConnectionType(int outletIndex);
+  
+    void processDsp();
     
   private:
-    void processDspWithIndex(int fromIndex, int toIndex);
   
     /** Initialise the analysis buffers. */
     void initBuffers();
     void setWindowInterval(int newInterval);
-  
-    /** By default, the analysis window size is 1024 samples. */
-    const static int DEFAULT_WINDOW_SIZE = 1024;
   
     int windowSize;
     int windowInterval;
