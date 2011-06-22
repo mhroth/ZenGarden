@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -35,20 +35,19 @@ const char *DspWrap::getObjectLabel() {
   return "wrap~";
 }
 
-void DspWrap::processDspWithIndex(int fromIndex, int toIndex) {
+void DspWrap::processDsp() {
+  RESOLVE_DSPINLET0_IF_NECESSARY();
+  
   #if __APPLE__
-  float *inputBuffer = dspBufferAtInlet0 + fromIndex;
-  float *outputBuffer = dspBufferAtOutlet0 + fromIndex;
-  int duration = toIndex-fromIndex;
   float one = 1.0f;
   // get fractional part of all input
-  vDSP_vfrac(inputBuffer, 1, outputBuffer, 1, duration);
+  vDSP_vfrac(dspBufferAtInlet0, 1, dspBufferAtOutlet0, 1, blockSizeInt);
   // add one to all fractions (making negative fractions positive)
-  vDSP_vsadd(outputBuffer, 1, &one, outputBuffer, 1, duration);
+  vDSP_vsadd(dspBufferAtOutlet0, 1, &one, dspBufferAtOutlet0, 1, blockSizeInt);
   // take fractional part again, removing positive results greater than one
-  vDSP_vfrac(outputBuffer, 1, outputBuffer, 1, duration);
+  vDSP_vfrac(dspBufferAtOutlet0, 1, dspBufferAtOutlet0, 1, blockSizeInt);
   #else
-  for (int i = fromIndex; i < toIndex; i++) {
+  for (int i = 0; i < blockSizeInt; i++) {
     float f = dspBufferAtInlet0[i];
     dspBufferAtOutlet0[i] = f - floorf(f);
   }
