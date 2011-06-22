@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -35,8 +35,11 @@ const char *DspSqrt::getObjectLabel() {
   return "sqrt~";
 }
 
-void DspSqrt::processDspWithIndex(int fromIndex, int toIndex) {
+void DspSqrt::processDsp() {
   // [sqrt~] takes no messages, so the full block will be computed every time
+  
+  RESOLVE_DSPINLET0_IF_NECESSARY();
+  
   #if __ARM_NEON__
   float *inBuff = dspBufferAtInlet0;
   float *outBuff = dspBufferAtOutlet0;
