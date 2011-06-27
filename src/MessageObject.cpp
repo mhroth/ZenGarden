@@ -30,10 +30,10 @@ MessageObject::MessageObject(int numMessageInlets, int numMessageOutlets, PdGrap
   this->isOrdered = false;
 
   // initialise incoming connections list
-  incomingMessageConnectionsListAtInlet = vector<list<ObjectLetPair> >(numMessageInlets);
+  incomingMessageConnections = vector<list<ObjectLetPair> >(numMessageInlets);
   
   // initialise outgoing connections list
-  outgoingMessageConnectionsListAtOutlet = vector<list<ObjectLetPair> >(numMessageOutlets);
+  outgoingMessageConnections = vector<list<ObjectLetPair> >(numMessageOutlets);
 }
 
 MessageObject::~MessageObject() {
@@ -84,8 +84,8 @@ void MessageObject::receiveMessage(int inletIndex, PdMessage *message) {
 }
 
 void MessageObject::sendMessage(int outletIndex, PdMessage *message) {
-  list<ObjectLetPair>::iterator it = outgoingMessageConnectionsListAtOutlet[outletIndex].begin();
-  list<ObjectLetPair>::iterator end = outgoingMessageConnectionsListAtOutlet[outletIndex].end();
+  list<ObjectLetPair>::iterator it = outgoingMessageConnections[outletIndex].begin();
+  list<ObjectLetPair>::iterator end = outgoingMessageConnections[outletIndex].end();
   while (it != end) {
     ObjectLetPair objectLetPair = *it++;
     objectLetPair.first->receiveMessage(objectLetPair.second, message);
@@ -102,7 +102,7 @@ bool MessageObject::doesProcessAudio() {
 
 void MessageObject::addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex) {
   if (messageObject->getConnectionType(outletIndex) == MESSAGE) {
-    list<ObjectLetPair> *connections = &incomingMessageConnectionsListAtInlet[inletIndex];
+    list<ObjectLetPair> *connections = &incomingMessageConnections[inletIndex];
     ObjectLetPair objectLetPair = make_pair(messageObject, outletIndex);
     connections->push_back(objectLetPair);
   }
@@ -111,7 +111,7 @@ void MessageObject::addConnectionFromObjectToInlet(MessageObject *messageObject,
 void MessageObject::addConnectionToObjectFromOutlet(MessageObject *messageObject, int inletIndex, int outletIndex) {
   // TODO(mhroth): it is assumed here that the input connection type of the destination object is MESSAGE. Correct?
   if (getConnectionType(outletIndex) == MESSAGE) {
-    list<ObjectLetPair> *connections = &outgoingMessageConnectionsListAtOutlet[outletIndex];
+    list<ObjectLetPair> *connections = &outgoingMessageConnections[outletIndex];
     ObjectLetPair objectLetPair = make_pair(messageObject, inletIndex);
     connections->push_back(objectLetPair);
   }
@@ -123,7 +123,7 @@ ObjectType MessageObject::getObjectType() {
 
 bool MessageObject::isLeafNode() {
   for (int i = 0; i < numMessageOutlets; i++) {
-    if (!outgoingMessageConnectionsListAtOutlet[i].empty()) return false;
+    if (!outgoingMessageConnections[i].empty()) return false;
   }
   return true;
 }
@@ -136,8 +136,8 @@ List *MessageObject::getProcessOrder() {
     isOrdered = true;
     List *processList = new List();
     for (int i = 0; i < numMessageInlets; i++) {
-      list<ObjectLetPair>::iterator it = incomingMessageConnectionsListAtInlet[i].begin();
-      list<ObjectLetPair>::iterator end = incomingMessageConnectionsListAtInlet[i].end();
+      list<ObjectLetPair>::iterator it = incomingMessageConnections[i].begin();
+      list<ObjectLetPair>::iterator end = incomingMessageConnections[i].end();
       while (it != end) {
         ObjectLetPair objectLetPair = *it++;
         List *parentProcessList = objectLetPair.first->getProcessOrder();
@@ -157,7 +157,7 @@ void MessageObject::resetOrderedFlag() {
 void MessageObject::updateIncomingMessageConnection(MessageObject *messageObject, int oldOutletIndex,
     int inletIndex, int newOutletIndex) {
   /*
-  vector<ObjectLetPair> incomingMessageConnectionsList = incomingMessageConnectionsListAtInlet[inletIndex];
+  vector<ObjectLetPair> incomingMessageConnectionsList = incomingMessageConnections[inletIndex];
   for (int i = 0; i < incomingMessageConnectionsList.size(); i++) {
     ObjectLetPair *objectLetPair = (ObjectLetPair *) incomingMessageConnectionsList->get(i);
     if (objectLetPair->object == messageObject &&
@@ -172,7 +172,7 @@ void MessageObject::updateIncomingMessageConnection(MessageObject *messageObject
 void MessageObject::updateOutgoingMessageConnection(MessageObject *messageObject, int oldInletIndex,
       int outletIndex, int newInletIndex) {
   /*
-  List *outgoingMessageConnectionsList = (List *) outgoingMessageConnectionsListAtOutlet[outletIndex];
+  List *outgoingMessageConnectionsList = (List *) outgoingMessageConnections[outletIndex];
   int numConnections = outgoingMessageConnectionsList->size();
   for (int i = 0; i < numConnections; i++) {
     ObjectLetPair *objectLetPair = (ObjectLetPair *) outgoingMessageConnectionsList->get(i);

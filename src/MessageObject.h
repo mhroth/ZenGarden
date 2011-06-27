@@ -123,9 +123,9 @@ class MessageObject {
     PdGraph *graph;
   
     int numMessageInlets; // TODO(mhroth): remove these class vars. They are no longer explicitly needed.
-    int numMessageOutlets; // They are implicitly encoded in the length of e.g. incomingMessageConnectionsListAtInlet
-    vector<list<ObjectLetPair> >incomingMessageConnectionsListAtInlet;
-    vector<list<ObjectLetPair> >outgoingMessageConnectionsListAtOutlet;
+    int numMessageOutlets; // They are implicitly encoded in the length of e.g. incomingMessageConnections
+    vector<list<ObjectLetPair> >incomingMessageConnections;
+    vector<list<ObjectLetPair> >outgoingMessageConnections;
   
     /** A flag indicating that this object has already been considered when ordering the process tree. */
     bool isOrdered;

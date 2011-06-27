@@ -46,8 +46,8 @@ void MessageInlet::processMessage(int inletIndex, PdMessage *message) {
 
 List *MessageInlet::getProcessOrderFromInlet() {
   List *processList = new List();
-  list<ObjectLetPair>::iterator it = incomingMessageConnectionsListAtInlet[0].begin();
-  list<ObjectLetPair>::iterator end = incomingMessageConnectionsListAtInlet[0].end();
+  list<ObjectLetPair>::iterator it = incomingMessageConnections[0].begin();
+  list<ObjectLetPair>::iterator end = incomingMessageConnections[0].end();
   while (it != end) {
     ObjectLetPair objectLetPair = *it++;
     List *parentProcessList = objectLetPair.first->getProcessOrder();
