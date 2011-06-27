@@ -30,34 +30,14 @@ MessageObject::MessageObject(int numMessageInlets, int numMessageOutlets, PdGrap
   this->isOrdered = false;
 
   // initialise incoming connections list
-  // while malloc(0) does work well with free(), it also seems to use some small amount of memory.
-  // thus numMessageInlets is manually checked for zero and a NULL pointer is returned.
-  incomingMessageConnectionsListAtInlet = 
-      (numMessageInlets > 0) ? (vector<ObjectLetPair> **) malloc(numMessageInlets * sizeof(vector<ObjectLetPair> *)) : NULL;
-  for (int i = 0; i < numMessageInlets; i++) {
-    incomingMessageConnectionsListAtInlet[i] = new vector<ObjectLetPair>;
-  }
-
+  incomingMessageConnectionsListAtInlet = vector<list<ObjectLetPair> >(numMessageInlets);
+  
   // initialise outgoing connections list
-  outgoingMessageConnectionsListAtOutlet = 
-      (numMessageOutlets > 0) ? (vector<ObjectLetPair> **) malloc(numMessageOutlets * sizeof(vector<ObjectLetPair> *)) : NULL;
-  for (int i = 0; i < numMessageOutlets; i++) {
-    outgoingMessageConnectionsListAtOutlet[i] = new vector<ObjectLetPair>;
-  }
+  outgoingMessageConnectionsListAtOutlet = vector<list<ObjectLetPair> >(numMessageOutlets);
 }
 
 MessageObject::~MessageObject() {
-  // delete incoming connections list
-  for (int i = 0; i < numMessageInlets; i++) {
-    delete incomingMessageConnectionsListAtInlet[i];
-  }
-  free(incomingMessageConnectionsListAtInlet);
-  
-  // delete outgoing connections list
-  for (int i = 0; i < numMessageOutlets; i++) {
-    delete outgoingMessageConnectionsListAtOutlet[i];
-  }
-  free(outgoingMessageConnectionsListAtOutlet);
+  // nothing to do
 }
 
 ConnectionType MessageObject::getConnectionType(int outletIndex) {
@@ -104,9 +84,10 @@ void MessageObject::receiveMessage(int inletIndex, PdMessage *message) {
 }
 
 void MessageObject::sendMessage(int outletIndex, PdMessage *message) {
-  vector<ObjectLetPair> *connections = outgoingMessageConnectionsListAtOutlet[outletIndex];
-  for (int i = 0; i < connections->size(); i++) {
-    ObjectLetPair objectLetPair = connections->at(i);
+  list<ObjectLetPair>::iterator it = outgoingMessageConnectionsListAtOutlet[outletIndex].begin();
+  list<ObjectLetPair>::iterator end = outgoingMessageConnectionsListAtOutlet[outletIndex].end();
+  while (it != end) {
+    ObjectLetPair objectLetPair = *it++;
     objectLetPair.first->receiveMessage(objectLetPair.second, message);
   }
 }
@@ -121,7 +102,7 @@ bool MessageObject::doesProcessAudio() {
 
 void MessageObject::addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex) {
   if (messageObject->getConnectionType(outletIndex) == MESSAGE) {
-    vector<ObjectLetPair> *connections = incomingMessageConnectionsListAtInlet[inletIndex];
+    list<ObjectLetPair> *connections = &incomingMessageConnectionsListAtInlet[inletIndex];
     ObjectLetPair objectLetPair = make_pair(messageObject, outletIndex);
     connections->push_back(objectLetPair);
   }
@@ -130,7 +111,7 @@ void MessageObject::addConnectionFromObjectToInlet(MessageObject *messageObject,
 void MessageObject::addConnectionToObjectFromOutlet(MessageObject *messageObject, int inletIndex, int outletIndex) {
   // TODO(mhroth): it is assumed here that the input connection type of the destination object is MESSAGE. Correct?
   if (getConnectionType(outletIndex) == MESSAGE) {
-    vector<ObjectLetPair> *connections = outgoingMessageConnectionsListAtOutlet[outletIndex];
+    list<ObjectLetPair> *connections = &outgoingMessageConnectionsListAtOutlet[outletIndex];
     ObjectLetPair objectLetPair = make_pair(messageObject, inletIndex);
     connections->push_back(objectLetPair);
   }
@@ -142,7 +123,7 @@ ObjectType MessageObject::getObjectType() {
 
 bool MessageObject::isLeafNode() {
   for (int i = 0; i < numMessageOutlets; i++) {
-    if (!outgoingMessageConnectionsListAtOutlet[i]->empty()) return false;
+    if (!outgoingMessageConnectionsListAtOutlet[i].empty()) return false;
   }
   return true;
 }
@@ -155,8 +136,10 @@ List *MessageObject::getProcessOrder() {
     isOrdered = true;
     List *processList = new List();
     for (int i = 0; i < numMessageInlets; i++) {
-      for (int j = 0; j < incomingMessageConnectionsListAtInlet[i]->size(); j++) {
-        ObjectLetPair objectLetPair = incomingMessageConnectionsListAtInlet[i]->at(j);
+      list<ObjectLetPair>::iterator it = incomingMessageConnectionsListAtInlet[i].begin();
+      list<ObjectLetPair>::iterator end = incomingMessageConnectionsListAtInlet[i].end();
+      while (it != end) {
+        ObjectLetPair objectLetPair = *it++;
         List *parentProcessList = objectLetPair.first->getProcessOrder();
         processList->add(parentProcessList);
         delete parentProcessList;

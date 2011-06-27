@@ -122,10 +122,10 @@ class MessageObject {
     /** A pointer to the graph owning this object. */
     PdGraph *graph;
   
-    int numMessageInlets;
-    int numMessageOutlets;
-    vector<ObjectLetPair> **incomingMessageConnectionsListAtInlet;
-    vector<ObjectLetPair> **outgoingMessageConnectionsListAtOutlet;
+    int numMessageInlets; // TODO(mhroth): remove these class vars. They are no longer explicitly needed.
+    int numMessageOutlets; // They are implicitly encoded in the length of e.g. incomingMessageConnectionsListAtInlet
+    vector<list<ObjectLetPair> >incomingMessageConnectionsListAtInlet;
+    vector<list<ObjectLetPair> >outgoingMessageConnectionsListAtOutlet;
   
     /** A flag indicating that this object has already been considered when ordering the process tree. */
     bool isOrdered;

@@ -46,9 +46,10 @@ void MessageInlet::processMessage(int inletIndex, PdMessage *message) {
 
 List *MessageInlet::getProcessOrderFromInlet() {
   List *processList = new List();
-  vector<ObjectLetPair> *connections = incomingMessageConnectionsListAtInlet[0];
-  for (int i = 0; i < connections->size(); i++) {
-    ObjectLetPair objectLetPair = connections->at(i);
+  list<ObjectLetPair>::iterator it = incomingMessageConnectionsListAtInlet[0].begin();
+  list<ObjectLetPair>::iterator end = incomingMessageConnectionsListAtInlet[0].end();
+  while (it != end) {
+    ObjectLetPair objectLetPair = *it++;
     List *parentProcessList = objectLetPair.first->getProcessOrder();
     processList->add(parentProcessList);
     delete parentProcessList;
