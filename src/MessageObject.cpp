@@ -49,6 +49,7 @@ bool MessageObject::shouldDistributeMessageToInlets() {
 }
 
 void MessageObject::receiveMessage(int inletIndex, PdMessage *message) {
+  int numMessageInlets = incomingMessageConnections.size();
   if (inletIndex == 0 &&
       numMessageInlets > 1 &&
       message->getNumElements() > 1 &&
@@ -122,7 +123,7 @@ ObjectType MessageObject::getObjectType() {
 }
 
 bool MessageObject::isLeafNode() {
-  for (int i = 0; i < numMessageOutlets; i++) {
+  for (int i = 0; i < outgoingMessageConnections.size(); i++) {
     if (!outgoingMessageConnections[i].empty()) return false;
   }
   return true;
@@ -135,7 +136,7 @@ list<MessageObject *> *MessageObject::getProcessOrder() {
   } else {
     isOrdered = true;
     list<MessageObject *> *processList = new list<MessageObject *>();
-    for (int i = 0; i < numMessageInlets; i++) {
+    for (int i = 0; i < incomingMessageConnections.size(); i++) {
       list<ObjectLetPair>::iterator it = incomingMessageConnections[i].begin();
       list<ObjectLetPair>::iterator end = incomingMessageConnections[i].end();
       while (it != end) {
