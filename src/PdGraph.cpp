@@ -377,9 +377,12 @@ void PdGraph::processDsp() {
     
     //for (int i = 0; i < 1; i++) { // TODO(mhroth): iterate depending on local blocksize relative to parent
     // execute all nodes which process audio
+    
+    // http://fastcpp.blogspot.com/2011/03/fast-iteration-over-stl-vector-elements.html
     int numNodes = dspNodeList.size();
+    DspObject **dspObjects = (numNodes > 0) ? &dspNodeList.front() : NULL;
     for (int i = 0; i < numNodes; ++i) {
-      dspNodeList[i]->processDsp();
+      dspObjects[i]->processDsp();
     }
   }
 }
@@ -432,27 +435,27 @@ void PdGraph::addConnectionToObjectFromOutlet(MessageObject *messageObject, int 
   }
 }
 
-List *PdGraph::getProcessOrder() {
+list<MessageObject *> *PdGraph::getProcessOrder() {
   if (isOrdered) {
-    return new List();
+    return new list<MessageObject *>();
   } else {
     isOrdered = true;
-    List *processOrder = new List();
+    list<MessageObject *> *processOrder = new list<MessageObject *>();
     MessageObject *messageObject = NULL;
     inletList->resetIterator();
     while ((messageObject = (MessageObject *) inletList->getNext()) != NULL) {
       switch (messageObject->getObjectType()) {
         case MESSAGE_INLET: {
           MessageInlet *messgeInlet = (MessageInlet *) messageObject;
-          List *inletProcessOrder = messgeInlet->getProcessOrderFromInlet();
-          processOrder->add(inletProcessOrder);
+          list<MessageObject *> *inletProcessOrder = messgeInlet->getProcessOrderFromInlet();
+          processOrder->splice(processOrder->end(), *inletProcessOrder);
           delete inletProcessOrder;
           break;
         }
         case DSP_INLET: {
           DspInlet *dspInlet = (DspInlet *) messageObject;
-          List *inletProcessOrder = dspInlet->getProcessOrderFromInlet();
-          processOrder->add(inletProcessOrder);
+          list<MessageObject *> *inletProcessOrder = dspInlet->getProcessOrderFromInlet();
+          processOrder->splice(processOrder->end(), *inletProcessOrder);
           delete inletProcessOrder;
           break;
         }
@@ -461,7 +464,7 @@ List *PdGraph::getProcessOrder() {
         }
       }
     }
-    processOrder->add(this);
+    processOrder->push_back(this);
     return processOrder;
   }
 }
@@ -488,38 +491,34 @@ void PdGraph::computeLocalDspProcessOrder() {
    */
 
   // generate the leafnode list
-  List *leafNodeList = new List();
+  list<MessageObject *> leafNodeList;
   for (int i = 0; i < nodeList.size(); i++) {
     MessageObject *object = nodeList[i];
     
     object->resetOrderedFlag(); // reset the ordered flag on all local objects
     if (object->isLeafNode()) { // isLeafNode() takes into account send/~ and throw~ objects
-      leafNodeList->add(object);
+      leafNodeList.push_back(object);
     }
   }
 
   // for all leaf nodes, order the tree
-  List *processList = new List();
-  for (int i = 0; i < leafNodeList->size(); i++) {
-    MessageObject *object = (MessageObject *) leafNodeList->get(i);
-    List *processSubList = object->getProcessOrder();
-    processList->add(processSubList);
+  list<MessageObject *> processList;
+  for (list<MessageObject *>::iterator it = leafNodeList.begin(); it != leafNodeList.end(); it++) {
+    MessageObject *object = *it;
+    list<MessageObject *> *processSubList = object->getProcessOrder();
+    processList.splice(processList.end(), *processSubList);
     delete processSubList;
   }
 
-  delete leafNodeList;
-
   // add only those nodes which process audio to the final list
   dspNodeList.clear(); // reset the dsp node list
-  for (int i = 0; i < processList->size(); i++) {
+  for (list<MessageObject *>::iterator it = processList.begin(); it != processList.end(); it++) {
     // reverse order of process list such that the dsp elements at the top of the graph are processed first
-    MessageObject *object = (MessageObject *) processList->get(i);
+    MessageObject *object = *it;
     if (object->doesProcessAudio()) {
       dspNodeList.push_back((DspObject *) object);
     }
   }
-
-  delete processList;
   
   /* print out process order of local dsp objects (for debugging) */
   /*

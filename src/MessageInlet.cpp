@@ -44,14 +44,14 @@ void MessageInlet::processMessage(int inletIndex, PdMessage *message) {
   sendMessage(0, message);
 }
 
-List *MessageInlet::getProcessOrderFromInlet() {
-  List *processList = new List();
+list<MessageObject *> *MessageInlet::getProcessOrderFromInlet() {
+  list<MessageObject *> *processList = new list<MessageObject *>();
   list<ObjectLetPair>::iterator it = incomingMessageConnections[0].begin();
   list<ObjectLetPair>::iterator end = incomingMessageConnections[0].end();
   while (it != end) {
     ObjectLetPair objectLetPair = *it++;
-    List *parentProcessList = objectLetPair.first->getProcessOrder();
-    processList->add(parentProcessList);
+    list<MessageObject *> *parentProcessList = objectLetPair.first->getProcessOrder();
+    processList->splice(processList->end(), *parentProcessList);
     delete parentProcessList;
   }
   return processList;

@@ -128,24 +128,24 @@ bool MessageObject::isLeafNode() {
   return true;
 }
 
-List *MessageObject::getProcessOrder() {
+list<MessageObject *> *MessageObject::getProcessOrder() {
   if (isOrdered) {
     // if this object has already been ordered, then move on
-    return new List();
+    return new list<MessageObject *>();
   } else {
     isOrdered = true;
-    List *processList = new List();
+    list<MessageObject *> *processList = new list<MessageObject *>();
     for (int i = 0; i < numMessageInlets; i++) {
       list<ObjectLetPair>::iterator it = incomingMessageConnections[i].begin();
       list<ObjectLetPair>::iterator end = incomingMessageConnections[i].end();
       while (it != end) {
         ObjectLetPair objectLetPair = *it++;
-        List *parentProcessList = objectLetPair.first->getProcessOrder();
-        processList->add(parentProcessList);
+        list<MessageObject *> *parentProcessList = objectLetPair.first->getProcessOrder();
+        processList->splice(processList->end(), *parentProcessList); // append parentProcessList to processList
         delete parentProcessList;
       }
     }
-    processList->add(this);
+    processList->push_back(this);
     return processList;
   }
 }

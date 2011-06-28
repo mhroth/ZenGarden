@@ -122,7 +122,7 @@ class PdGraph : public DspObject {
     /** (Re-)Computes the local tree and node processing ordering for dsp nodes. */
     void computeLocalDspProcessOrder();
   
-    List *getProcessOrder();
+    list<MessageObject *> *getProcessOrder();
     bool isLeafNode();
   
     /**

@@ -48,22 +48,23 @@ void DspInlet::setCanvasPosition(int pos) {
   canvasX = pos;
 }
 
-List *DspInlet::getProcessOrder() {
-  List *processOrder = new List();
+list<MessageObject *> *DspInlet::getProcessOrder() {
+  list<MessageObject *> *processOrder = new list<MessageObject *>();
   if (!isOrdered) {
     isOrdered = true;
-    processOrder->add(this);
+    processOrder->push_back(this);
   }
   return processOrder;
 }
 
-List *DspInlet::getProcessOrderFromInlet() {
-  List *processList = new List();
-  vector<ObjectLetPair> *connections = incomingDspConnectionsListAtInlet[0];
-  for (int i = 0; i < connections->size(); i++) {
-    ObjectLetPair objectLetPair = connections->at(i);
-    List *parentProcessList = objectLetPair.first->getProcessOrder();
-    processList->add(parentProcessList);
+list<MessageObject *> *DspInlet::getProcessOrderFromInlet() {
+  list<MessageObject *> *processList = new list<MessageObject *>();
+  list<ObjectLetPair>::iterator it = incomingDspConnectionsListAtInlet[0].begin();
+  list<ObjectLetPair>::iterator end = incomingDspConnectionsListAtInlet[0].end();
+  while (it != end) {
+    ObjectLetPair objectLetPair = *it++;
+    list<MessageObject *> *parentProcessList = objectLetPair.first->getProcessOrder();
+    processList->splice(processList->end(), *parentProcessList);
     delete parentProcessList;
   }
   return processList;

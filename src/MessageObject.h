@@ -110,7 +110,7 @@ class MessageObject {
     virtual bool isLeafNode();
   
     /** Returns an ordered list of all parent objects of this object. */
-    virtual List *getProcessOrder();
+    virtual list<MessageObject *> *getProcessOrder();
   
     /**
      * Reset the <code>isOrdered</code> flag to <code>false</code>. This is necessary in order to

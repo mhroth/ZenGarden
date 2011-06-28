@@ -44,8 +44,8 @@ class DspInlet : public DspObject {
     void setCanvasPosition(int pos);
     int getCanvasPosition();
   
-    List *getProcessOrder();
-    List *getProcessOrderFromInlet();
+    list<MessageObject *> *getProcessOrder();
+    list<MessageObject *> *getProcessOrderFromInlet();
   
     void processDsp();
   
