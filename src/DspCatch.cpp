@@ -71,14 +71,12 @@ void DspCatch::processDsp() {
       memcpy(dspBufferAtOutlet0, dspThrow->getBuffer(), numBytesInBlock);
       break;
     }
-    default: {
-      DspThrow *dspThrow = throwList.front();
-      memcpy(dspBufferAtOutlet0, dspThrow->getBuffer(), numBytesInBlock);
-      
-      list<DspThrow *>::iterator it = throwList.begin(); it++; // start from second element
-      for (; it != throwList.end(); it++) {
-        dspThrow = (*it);
-        ArrayArithmetic::add(dspBufferAtOutlet0, dspThrow->getBuffer(), dspBufferAtOutlet0,
+    default: { // throwList.size() > 1
+      list<DspThrow *>::iterator it = throwList.begin();
+      list<DspThrow *>::iterator end = throwList.end();
+      ArrayArithmetic::add((*it++)->getBuffer(), (*it++)->getBuffer(), dspBufferAtOutlet0, 0, blockSizeInt);
+      while (it != end) {
+        ArrayArithmetic::add(dspBufferAtOutlet0, (*it++)->getBuffer(), dspBufferAtOutlet0,
             0, blockSizeInt);
       }
       break;
