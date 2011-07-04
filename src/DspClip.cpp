@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -27,6 +27,7 @@
 DspClip::DspClip(PdMessage *initMessage, PdGraph *graph) : DspObject(3, 1, 0, 1, graph) {
   lowerBound = initMessage->isFloat(0) ? initMessage->getFloat(0) : -1.0f;
   upperBound = initMessage->isFloat(1) ? initMessage->getFloat(1) : 1.0f;
+  codePath = DSP_CLIP_DEFAULT;
 }
 
 DspClip::~DspClip() {
@@ -35,6 +36,18 @@ DspClip::~DspClip() {
 
 const char *DspClip::getObjectLabel() {
   return "clip~";
+}
+
+void DspClip::addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex) {
+  DspObject::addConnectionFromObjectToInlet(messageObject, outletIndex, inletIndex);
+  
+  if (incomingMessageConnections[1].size() == 0 &&
+      incomingMessageConnections[2].size() == 0) {
+    // use the simple case if no message connections to the object exist
+    codePath = DSP_CLIP_DSPX_MESSAGE0;
+  } else {
+    codePath = DSP_CLIP_DEFAULT; // use DspObject infrastructure
+  }
 }
 
 void DspClip::processMessage(int inletIndex, PdMessage *message) {
@@ -54,6 +67,20 @@ void DspClip::processMessage(int inletIndex, PdMessage *message) {
       break;
     }
     default: {
+      break;
+    }
+  }
+}
+
+void DspClip::processDsp() {
+  switch (codePath) {
+    case DSP_CLIP_DSPX_MESSAGE0: {
+      RESOLVE_DSPINLET0_IF_NECESSARY();
+      vDSP_vclip(dspBufferAtInlet0, 1, &lowerBound, &upperBound, dspBufferAtOutlet0, 1, blockSizeInt);
+      break;
+    }
+    default: {
+      DspObject::processDsp();
       break;
     }
   }
