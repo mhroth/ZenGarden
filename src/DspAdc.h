@@ -33,7 +33,7 @@ class DspAdc : public DspObject {
   
     const char *getObjectLabel();
   
-    void processDsp();
+    bool doesProcessAudio();
 };
 
 #endif // _DSP_ADC_H_

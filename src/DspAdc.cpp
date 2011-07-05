@@ -39,13 +39,16 @@ DspAdc::DspAdc(PdGraph *graph) : DspObject(0, 0, 0, graph->getNumInputChannels()
 }
 
 DspAdc::~DspAdc() {
-  // nothing to do
+  // reset dspBufferAtOutlet0 to NULL so that the global input buffer is not freed
+  dspBufferAtOutlet0 = NULL;
 }
 
 const char *DspAdc::getObjectLabel() {
   return "adc~";
 }
 
-void DspAdc::processDsp() {
-  // nothing to do
+bool DspAdc::doesProcessAudio() {
+  // This object doesn't do anything with audio, it only provides buffers. It should not be included
+  // in the dsp list
+  return false;
 }
