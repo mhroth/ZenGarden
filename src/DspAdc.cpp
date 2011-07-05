@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -39,7 +39,7 @@ DspAdc::DspAdc(PdGraph *graph) : DspObject(0, 0, 0, graph->getNumInputChannels()
 }
 
 DspAdc::~DspAdc() {
-  // reset dspBufferAtOutlet0 to NULL so that the global input buffer is not freed
+  // reset dspBufferAtOutlet0 to NULL so that the global input buffer is not freed (possibly multiple times)
   dspBufferAtOutlet0 = NULL;
 }
 
