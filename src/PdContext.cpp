@@ -261,16 +261,13 @@ void PdContext::process(float *inputBuffers, float *outputBuffers) {
     // message (e.g., when a new message is scheduled).
     PdMessage *message = destination->message;
     destination->object->sendMessage(destination->index, message);
-    
-    // unreserve() is called after sendMessage() in order to prevent the message from being resused
-    // in the case the reserving object is retriggered during the execution of sendMessage()
-    // However, also, sendMessage reserves the message anyway. But this unreserve is needed
-    // in any case in order to balance the reserve() called in scheduleMessage()
-    message->freeMessage();
+    message->freeMessage(); // free the message now that it was been sent and processed
   }
   
-  for (int i = 0; i < graphList.size(); i++) {
-    graphList[i]->processDsp();
+  int numGraphs = graphList.size();
+  PdGraph **graph = (numGraphs > 0) ? &graphList.front() : NULL;
+  for (int i = 0; i < numGraphs; ++i) {
+    graph[i]->processDsp();
   }
   
   blockStartTimestamp = nextBlockStartTimestamp;
