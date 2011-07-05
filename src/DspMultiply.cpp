@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -27,6 +27,7 @@
 DspMultiply::DspMultiply(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
   constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
   inputConstant = 0.0f;
+  codePath = DSP_MULTIPLY_DEFAULT; // default
 }
 
 DspMultiply::~DspMultiply() {
@@ -35,6 +36,27 @@ DspMultiply::~DspMultiply() {
 
 const char *DspMultiply::getObjectLabel() {
   return "*~";
+}
+
+void DspMultiply::addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex) {
+  DspObject::addConnectionFromObjectToInlet(messageObject, outletIndex, inletIndex);
+  
+  // attempt to resolve common code paths for increased efficiency
+  if (incomingDspConnectionsListAtInlet[0].size() > 0) {
+    if (incomingDspConnectionsListAtInlet[1].size() == 0) {
+      if (incomingMessageConnections[1].size() == 0) {
+        codePath = DSP_MULTIPLY_DSPX_MESSAGE0;
+      } else {
+        codePath = DSP_MULTIPLY_DSPX_MESSAGEX;
+      }
+    } else if (incomingDspConnectionsListAtInlet[1].size() == 1) {
+      codePath = DSP_MULTIPLY_DSPX_DSP1;
+    } else {
+      codePath = DSP_MULTIPLY_DSPX_DSPX;
+    }
+  } else {
+    codePath = DSP_MULTIPLY_DEFAULT; // use DspObject infrastructure    
+  }
 }
 
 void DspMultiply::processMessage(int inletIndex, PdMessage *message) {
@@ -59,25 +81,52 @@ void DspMultiply::processMessage(int inletIndex, PdMessage *message) {
   }
 }
 
+void DspMultiply::processDsp() {
+  switch (codePath) {
+    case DSP_MULTIPLY_DSPX_MESSAGE0: {
+      RESOLVE_DSPINLET0_IF_NECESSARY();
+      ArrayArithmetic::multiply(dspBufferAtInlet0, constant, dspBufferAtOutlet0, 0, blockSizeInt);
+      break;
+    }
+    case DSP_MULTIPLY_DSPX_DSP1: {
+      RESOLVE_DSPINLET0_IF_NECESSARY();
+      ArrayArithmetic::multiply(dspBufferAtInlet0, dspBufferAtInlet1, dspBufferAtOutlet0,
+          0, blockSizeInt);
+      break;
+    }
+    default: {
+      // default. Resolve right dsp inlet and/or process messages
+      DspObject::processDsp();
+      break;
+    }
+  }
+}
+
 void DspMultiply::processDspWithIndex(int fromIndex, int toIndex) {
   switch (signalPrecedence) {
+    /*
+     * NOTE(mhroth): not sure what to do in this case
     case MESSAGE_DSP: {
       ArrayArithmetic::fill(dspBufferAtInlet0, inputConstant, fromIndex, toIndex);
       // allow fallthrough
     }
-    case DSP_DSP: {
+    */
+    case DSP_MULTIPLY_DSPX_DSPX: {
       ArrayArithmetic::multiply(dspBufferAtInlet0, dspBufferAtInlet1, dspBufferAtOutlet0,
           fromIndex, toIndex);
       break;
     }
-    case DSP_MESSAGE: {
+    case DSP_MULTIPLY_DSPX_MESSAGEX: {
       ArrayArithmetic::multiply(dspBufferAtInlet0, constant, dspBufferAtOutlet0, fromIndex, toIndex);
       break;
     }
+    /*
+     * NOTE(mhroth): not sure what to do in this case
     case MESSAGE_MESSAGE: {
       ArrayArithmetic::fill(dspBufferAtOutlet0, inputConstant*constant, fromIndex, toIndex);
       break;
     }
+    */
     default: {
       break; // nothing to do
     }
