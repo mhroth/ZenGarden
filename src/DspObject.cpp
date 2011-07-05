@@ -58,18 +58,10 @@ void DspObject::init(int numDspInlets, int numDspOutlets, int blockSize) {
   zeroBufferCount++;
   
   // initialise the incoming dsp connections list
-  incomingDspConnectionsListAtInlet =
-      (numDspInlets > 0) ? (vector<ObjectLetPair> **) malloc(numDspInlets * sizeof(vector<ObjectLetPair> *)) : NULL;
-  for (int i = 0; i < numDspInlets; i++) {
-    incomingDspConnectionsListAtInlet[i] = new vector<ObjectLetPair>;
-  }
+  incomingDspConnectionsListAtInlet = vector<list<ObjectLetPair> >(numDspInlets);
   
   // initialise the outgoing dsp connections list
-  outgoingDspConnectionsListAtOutlet =
-      (numDspOutlets > 0) ? (vector<ObjectLetPair> **) malloc(numDspOutlets * sizeof(vector<ObjectLetPair> *)) : NULL;
-  for (int i = 0; i < numDspOutlets; i++) {
-    outgoingDspConnectionsListAtOutlet[i] = new vector<ObjectLetPair>;
-  }
+  outgoingDspConnectionsListAtOutlet = vector<list<ObjectLetPair> >(numDspOutlets);
   
   dspBufferAtInlet = (numDspInlets > 2) ? (float **) calloc(numDspInlets, sizeof(float *)) : NULL;
   dspBufferRefListAtInlet = vector<vector<float *> >(numDspInlets);
@@ -84,18 +76,6 @@ DspObject::~DspObject() {
     zeroBuffer = NULL;
     zeroBufferSize = 0;
   }
-  
-  // free the incoming dsp connections list
-  for (int i = 0; i < numDspInlets; i++) {
-    delete incomingDspConnectionsListAtInlet[i];
-  }
-  free(incomingDspConnectionsListAtInlet);
-  
-  // free the outgoing dsp connections list
-  for (int i = 0; i < numDspOutlets; i++) {
-    delete outgoingDspConnectionsListAtOutlet[i];
-  }
-  free(outgoingDspConnectionsListAtOutlet);
 
   free(dspBufferAtInlet);
   
@@ -120,7 +100,7 @@ void DspObject::addConnectionFromObjectToInlet(MessageObject *messageObject, int
   MessageObject::addConnectionFromObjectToInlet(messageObject, outletIndex, inletIndex);
   
   if (messageObject->getConnectionType(outletIndex) == DSP) {
-    vector<ObjectLetPair> *connections = incomingDspConnectionsListAtInlet[inletIndex];
+    list<ObjectLetPair> *connections = &incomingDspConnectionsListAtInlet[inletIndex];
     ObjectLetPair objectLetPair = make_pair(messageObject, outletIndex);
     connections->push_back(objectLetPair);
     
@@ -148,7 +128,7 @@ void DspObject::addConnectionToObjectFromOutlet(MessageObject *messageObject, in
   
   // TODO(mhroth): it is assumed here that the input connection type of the destination object is DSP. Correct?
   if (getConnectionType(outletIndex) == DSP) {
-    vector<ObjectLetPair> *connections = outgoingDspConnectionsListAtOutlet[outletIndex];
+    list<ObjectLetPair> *connections = &outgoingDspConnectionsListAtOutlet[outletIndex];
     ObjectLetPair objectLetPair = make_pair(messageObject, inletIndex);
     connections->push_back(objectLetPair);
   }
@@ -173,6 +153,16 @@ void DspObject::processDsp() {
   // take care of common special cases giving a good increase in speed. Most objects have only one
   // or two inlets. And most objects usually have only one (or none!) DSP connection per inlet.
   switch (numDspInlets) {
+    default: {
+      for (int i = 2; i < numDspInlets; i++) {
+        vector<float *> *dspBufferRefList = &(*(dspBufferRefListAtInlet.begin() + i));
+        if (dspBufferRefList->size() > 1) {
+          dspBufferAtInlet[i] = (float *) alloca(numBytesInBlock);
+          resolveInputBuffers(i, dspBufferAtInlet[i]);
+        }
+      }
+      // allow fallthrough
+    }
     case 2: {
       if (numConnectionsToInlet1 > 1) {
         dspBufferAtInlet1 = (float *) alloca(numBytesInBlock);
@@ -181,31 +171,10 @@ void DspObject::processDsp() {
       // allow fallthrough
     }
     case 1: {
-      if (numConnectionsToInlet0 > 1) {
-        dspBufferAtInlet0 = (float *) alloca(numBytesInBlock);
-        resolveInputBuffers(0, dspBufferAtInlet0);
-      }
+      RESOLVE_DSPINLET0_IF_NECESSARY();
       // allow fallthrough
     }
     case 0: break;
-    default: { // numDspInlets > 2
-      for (int i = 2; i < numDspInlets; i++) {
-        vector<float *> *dspBufferRefList = &(*(dspBufferRefListAtInlet.begin() + i));
-        if (dspBufferRefList->size() > 1) {
-          dspBufferAtInlet[i] = (float *) alloca(numBytesInBlock);
-          resolveInputBuffers(i, dspBufferAtInlet[i]);
-        }
-      }
-      if (numConnectionsToInlet1 > 1) {
-        dspBufferAtInlet1 = (float *) alloca(numBytesInBlock);
-        resolveInputBuffers(1, dspBufferAtInlet1);
-      }
-      if (numConnectionsToInlet0 > 1) {
-        dspBufferAtInlet0 = (float *) alloca(numBytesInBlock);
-        resolveInputBuffers(0, dspBufferAtInlet0);
-      }
-      break;
-    }
   }
   
   if (hasMessagesToProcess) {
@@ -228,23 +197,6 @@ void DspObject::processDsp() {
   }
 }
 
-// it is known here that there are at least 2 connections at the given inlet
-void DspObject::resolveInputBuffers(int inletIndex, float *localInputBuffer) {
-  vector<float *> *dspBufferRefList = &(*(dspBufferRefListAtInlet.begin() + inletIndex));
-  
-  // prepare the vector iterator
-  vector<float *>::iterator it = dspBufferRefList->begin();
-  vector<float *>::iterator end = dspBufferRefList->end();
-  
-  // add the first two connections together into the input buffer
-  ArrayArithmetic::add(*it++, *it++, localInputBuffer, 0, blockSizeInt);
-  
-  // add the remaining output buffers to the input buffer
-  while (it != end) {
-    ArrayArithmetic::add(localInputBuffer, *it++, localInputBuffer, 0, blockSizeInt);
-  }
-}
-
 void DspObject::processDspWithIndex(float fromIndex, float toIndex) {
   // by default, this function just calls the integer version with adjusted block indicies
   processDspWithIndex((int) ceilf(fromIndex), (int) ceilf(toIndex));
@@ -260,7 +212,7 @@ bool DspObject::isLeafNode() {
     return false;
   } else {
     for (int i = 0; i < numDspOutlets; i++) {
-      if (outgoingDspConnectionsListAtOutlet[i]->size() > 0) {
+      if (outgoingDspConnectionsListAtOutlet[i].size() > 0) {
         return false;
       }
     }
@@ -268,30 +220,34 @@ bool DspObject::isLeafNode() {
   }
 }
 
-List *DspObject::getProcessOrder() {
+list<MessageObject *> *DspObject::getProcessOrder() {
   if (isOrdered) {
     // if this object has already been ordered, then move on
-    return new List();
+    return new list<MessageObject *>();
   } else {
     isOrdered = true;
-    List *processList = new List();
-    for (int i = 0; i < numMessageInlets; i++) {
-      for (int j = 0; j < incomingMessageConnectionsListAtInlet[i]->size(); j++) {
-        ObjectLetPair objectLetPair = incomingMessageConnectionsListAtInlet[i]->at(j);
-        List *parentProcessList = objectLetPair.first->getProcessOrder();
-        processList->add(parentProcessList);
+    list<MessageObject *> *processList = new list<MessageObject *>();
+    for (int i = 0; i < incomingMessageConnections.size(); i++) {
+      list<ObjectLetPair>::iterator it = incomingMessageConnections[i].begin();
+      list<ObjectLetPair>::iterator end = incomingMessageConnections[i].end();
+      while (it != end) {
+        ObjectLetPair objectLetPair = *it++;
+        list<MessageObject *> *parentProcessList = objectLetPair.first->getProcessOrder();
+        processList->splice(processList->end(), *parentProcessList);
         delete parentProcessList;
       }
     }
     for (int i = 0; i < numDspInlets; i++) {
-      for (int j = 0; j < incomingDspConnectionsListAtInlet[i]->size(); j++) {
-        ObjectLetPair objectLetPair = incomingDspConnectionsListAtInlet[i]->at(j);
-        List *parentProcessList = objectLetPair.first->getProcessOrder();
-        processList->add(parentProcessList);
+      list<ObjectLetPair>::iterator it = incomingDspConnectionsListAtInlet[i].begin();
+      list<ObjectLetPair>::iterator end = incomingDspConnectionsListAtInlet[i].end();
+      while (it != end) {
+        ObjectLetPair objectLetPair = *it++;
+        list<MessageObject *> *parentProcessList = objectLetPair.first->getProcessOrder();
+        processList->splice(processList->end(), *parentProcessList);
         delete parentProcessList;
       }
     }
-    processList->add(this);
+    processList->push_back(this);
     return processList;
   }
 }

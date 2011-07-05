@@ -24,8 +24,17 @@
 #define _DSP_OBJECT_H_
 
 #include <queue>
+#include "ArrayArithmetic.h"
 #include "DspMessagePresedence.h"
 #include "MessageObject.h"
+
+// this function is a macro and not a function such that the allocated buffer stays on the stack
+// for the remainder of the function
+#define RESOLVE_DSPINLET0_IF_NECESSARY() \
+  if (numConnectionsToInlet0 > 1) { \
+    dspBufferAtInlet0 = (float *) alloca(numBytesInBlock); \
+    resolveInputBuffers(0, dspBufferAtInlet0); \
+  }
 
 typedef std::pair<PdMessage *, unsigned int> MessageLetPair;
 
@@ -70,7 +79,7 @@ class DspObject : public MessageObject {
     virtual bool doesProcessAudio();
   
     virtual bool isLeafNode();
-    List *getProcessOrder();
+    list<MessageObject *> *getProcessOrder();
     
   protected: 
     /* IMPORTANT: one of these two functions MUST be overridden (or processDsp()) */
@@ -80,8 +89,23 @@ class DspObject : public MessageObject {
     /**
      * Prepares the input buffer at the given inlet index.
      * This is a helper function for <code>processDsp()</code>.
+     * it is known here that there are at least 2 connections at the given inlet
      */
-    void resolveInputBuffers(int inletIndex, float *localInputBuffer);
+    inline void resolveInputBuffers(int inletIndex, float *localInputBuffer) {
+      vector<float *> *dspBufferRefList = &(*(dspBufferRefListAtInlet.begin() + inletIndex));
+      
+      // prepare the vector iterator
+      vector<float *>::iterator it = dspBufferRefList->begin();
+      vector<float *>::iterator end = dspBufferRefList->end();
+      
+      // add the first two connections together into the input buffer
+      ArrayArithmetic::add(*it++, *it++, localInputBuffer, 0, blockSizeInt);
+      
+      // add the remaining output buffers to the input buffer
+      while (it != end) {
+        ArrayArithmetic::add(localInputBuffer, *it++, localInputBuffer, 0, blockSizeInt);
+      }
+    }
     
     /** The number of dsp inlets of this object. */
     int numDspInlets;
@@ -127,10 +151,10 @@ class DspObject : public MessageObject {
     int numConnectionsToInlet1;
   
     /** List of all dsp objects connecting to this object at each inlet. */
-    vector<ObjectLetPair> **incomingDspConnectionsListAtInlet;
+    vector<list<ObjectLetPair> > incomingDspConnectionsListAtInlet;
   
     /** List of all dsp objects to which this object connects at each outlet. */
-    vector<ObjectLetPair> **outgoingDspConnectionsListAtOutlet;
+    vector<list<ObjectLetPair> > outgoingDspConnectionsListAtOutlet;
   
     static float *zeroBuffer;
     static int zeroBufferCount;
