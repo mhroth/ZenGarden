@@ -243,27 +243,29 @@ void PdContext::process(float *inputBuffers, float *outputBuffers) {
   
   // clear the global output audio buffers so that dac~ nodes can write to it
   memset(globalDspOutputBuffers, 0, numBytesInOutputBuffers);
-  
+
   // Send all messages for this block
-  MessageDestination *destination = NULL;
+  ObjectMessageLetPair omlPair;
   double nextBlockStartTimestamp = blockStartTimestamp + blockDurationMs;
-  while ((destination = (MessageDestination *) messageCallbackQueue->peek()) != NULL &&
-         destination->message->getTimestamp() < nextBlockStartTimestamp) {
+  while ((omlPair = messageCallbackQueue->peek()).first != NULL &&
+      omlPair.second.first->getTimestamp() < nextBlockStartTimestamp) {
     messageCallbackQueue->pop(); // remove the message from the queue
-    if (destination->message->getTimestamp() < blockStartTimestamp) {
+
+    MessageObject *object = omlPair.first;
+    PdMessage *message = omlPair.second.first;
+    unsigned int outletIndex = omlPair.second.second;
+    if (message->getTimestamp() < blockStartTimestamp) {
       // messages injected into the system with a timestamp behind the current block are automatically
       // rescheduled for the beginning of the current block. This is done in order to normalise
       // the treament of messages, but also to avoid difficulties in cases when messages are scheduled
       // in subgraphs with different block sizes.
-      destination->message->setTimestamp(blockStartTimestamp);
+      message->setTimestamp(blockStartTimestamp);
     }
-    // save this pointer because destination->message may be reused as a consequence of sending the
-    // message (e.g., when a new message is scheduled).
-    PdMessage *message = destination->message;
-    destination->object->sendMessage(destination->index, message);
-    message->freeMessage(); // free the message now that it was been sent and processed
+    
+    object->sendMessage(outletIndex, message);
+    message->freeMessage(); // free the message now that it has been sent and processed
   }
-  
+
   int numGraphs = graphList.size();
   PdGraph **graph = (numGraphs > 0) ? &graphList.front() : NULL;
   for (int i = 0; i < numGraphs; ++i) {

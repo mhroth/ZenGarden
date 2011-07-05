@@ -26,6 +26,7 @@
 #include <stdio.h>
 #include "DspObject.h"
 #include "OrderedMessageQueue.h"
+#include "ZGLinkedList.h"
 
 class DeclareList;
 class DelayReceiver;

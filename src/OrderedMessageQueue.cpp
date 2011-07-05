@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -22,66 +22,50 @@
 
 #include "OrderedMessageQueue.h"
 
-OrderedMessageQueue::OrderedMessageQueue() : ZGLinkedList() {
-  // nothing to do
+OrderedMessageQueue::OrderedMessageQueue() {
+  orderedMessageQueue = list<ObjectMessageLetPair>();
 }
 
 OrderedMessageQueue::~OrderedMessageQueue() {
-  LinkedListNode* node = head;
-  
-  // delete the primary list data
-  while (node != NULL) {
-    deleteDataHolder(node->data);
-    node = node->next;
-  }
-  
-  // delete the pool list data
-  node = emptyHead;
-  while (node != NULL) {
-    deleteDataHolder(node->data);
-    node = node->next;
-  }
+  // nothing to do. All messages left in the queue when it is destroyed belong to other objects.
 }
 
 void OrderedMessageQueue::insertMessage(MessageObject *messageObject, int outletIndex, PdMessage *message) {
-  LinkedListNode *newNode = getEmptyNode();
-  MessageDestination *destination = (MessageDestination *) newNode->data;
-  destination->object = messageObject;
-  destination->message = message;
-  destination->index = outletIndex;
+  ObjectMessageLetPair omlPair = make_pair(messageObject, make_pair(message, outletIndex));
   
-  LinkedListNode *node = head;
-  while (node != NULL) {
-    destination = (MessageDestination *) node->data;
-    if (message->getTimestamp() < destination->message->getTimestamp()) {
-      insertBefore(newNode, node);
+  list<ObjectMessageLetPair>::iterator it = orderedMessageQueue.begin();
+  list<ObjectMessageLetPair>::iterator end = orderedMessageQueue.end();
+  while (it != end) {
+    if (message->getTimestamp() < (*it).second.first->getTimestamp()) {
+      orderedMessageQueue.insert(it, omlPair);
       return;
     } else {
-      node = node->next;
+      ++it;
     }
   }
-  insertAfter(newNode, tail);
+  orderedMessageQueue.insert(it, omlPair); // insert at end
 }
 
 void OrderedMessageQueue::removeMessage(MessageObject *messageObject, int outletIndex, PdMessage *message) {
-  MessageDestination *destination;
-  LinkedListNode *iteratorNode = head;
-  while ((iteratorNode != NULL) && (destination = (MessageDestination *) iteratorNode->data) != NULL) {
-    if (destination->object == messageObject &&
-        destination->message == message &&
-        destination->index == outletIndex) {
-      remove(iteratorNode);
+  list<ObjectMessageLetPair>::iterator it = orderedMessageQueue.begin();
+  list<ObjectMessageLetPair>::iterator end = orderedMessageQueue.end();
+  while (it != end) {
+    ObjectMessageLetPair omlPair = *it;
+    if (omlPair.first == messageObject &&
+        omlPair.second.first == message &&
+        omlPair.second.second == outletIndex) {
+      orderedMessageQueue.erase(it);
       return;
     } else {
-      iteratorNode = iteratorNode->next;
+      ++it;
     }
   }
 }
 
-void *OrderedMessageQueue::newDataHolder() {
-  return malloc(sizeof(MessageDestination));
+ObjectMessageLetPair OrderedMessageQueue::peek() {
+  return orderedMessageQueue.front();
 }
 
-void OrderedMessageQueue::deleteDataHolder(void *data) {
-  free((MessageDestination *) data);
+void OrderedMessageQueue::pop() {
+  orderedMessageQueue.pop_front();
 }
