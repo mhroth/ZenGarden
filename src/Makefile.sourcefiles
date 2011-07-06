@@ -95,7 +95,6 @@ LOCAL_SRC_FILES := \
 ./MessagePow.cpp \
 ./MessagePowToDb.cpp \
 ./MessagePrint.cpp \
-./MessageQueue.cpp \
 ./MessageRandom.cpp \
 ./MessageReceive.cpp \
 ./MessageRemainder.cpp \
