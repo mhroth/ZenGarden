@@ -70,6 +70,10 @@ list<MessageObject *> *DspInlet::getProcessOrderFromInlet() {
   return processList;
 }
 
+void DspInlet::receiveMessage(int inletIndex, PdMessage *message) {
+  graph->printErr("DspInlet has received a message in error: %s", message->toString());
+}
+
 void DspInlet::processDsp() {
   switch (numConnectionsToInlet0) {
     case 0: {

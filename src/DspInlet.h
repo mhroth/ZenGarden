@@ -47,6 +47,7 @@ class DspInlet : public DspObject {
     list<MessageObject *> *getProcessOrder();
     list<MessageObject *> *getProcessOrderFromInlet();
   
+    void receiveMessage(int inletIndex, PdMessage *message);
     void processDsp();
   
   private:  
