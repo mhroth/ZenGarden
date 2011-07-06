@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,11 +23,12 @@
 #ifndef _MESSAGE_SEND_CONTROLLER_H_
 #define _MESSAGE_SEND_CONTROLLER_H_
 
+#include <set>
+#include <string>
 #include "MessageObject.h"
 #include "RemoteMessageReceiver.h"
 
 class PdContext;
-class ZGLinkedList;
 
 /**
  * Because of features such as external message injection and implicit message sending from message
@@ -71,11 +72,7 @@ class MessageSendController : public MessageObject {
   
     PdContext *context;
   
-    ZGLinkedList *nameList;
-    ZGLinkedList *receiverLists;
-  
-    // a special index for referencing the system "pd" receiver
-    static const int SYSTEM_NAME_INDEX = 0x7FFFFFFF;
+    vector<std::pair<string, set<RemoteMessageReceiver *> > > sendStack;
 };
 
 #endif // _MESSAGE_SEND_CONTROLLER_H_
