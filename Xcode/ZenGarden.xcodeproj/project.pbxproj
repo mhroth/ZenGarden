@@ -102,7 +102,6 @@
 		90337CB511D0D847009FCC01 /* MessagePow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C0611D0D847009FCC01 /* MessagePow.cpp */; };
 		90337CB611D0D847009FCC01 /* MessagePowToDb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C0811D0D847009FCC01 /* MessagePowToDb.cpp */; };
 		90337CB711D0D847009FCC01 /* MessagePrint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C0A11D0D847009FCC01 /* MessagePrint.cpp */; };
-		90337CB811D0D847009FCC01 /* MessageQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C0C11D0D847009FCC01 /* MessageQueue.cpp */; };
 		90337CB911D0D847009FCC01 /* MessageRandom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C0E11D0D847009FCC01 /* MessageRandom.cpp */; };
 		90337CBA11D0D847009FCC01 /* MessageReceive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C1011D0D847009FCC01 /* MessageReceive.cpp */; };
 		90337CBB11D0D847009FCC01 /* MessageRemainder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C1211D0D847009FCC01 /* MessageRemainder.cpp */; };
@@ -295,8 +294,6 @@
 		90337D9311D0D847009FCC01 /* MessagePowToDb.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C0911D0D847009FCC01 /* MessagePowToDb.h */; };
 		90337D9411D0D847009FCC01 /* MessagePrint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C0A11D0D847009FCC01 /* MessagePrint.cpp */; };
 		90337D9511D0D847009FCC01 /* MessagePrint.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C0B11D0D847009FCC01 /* MessagePrint.h */; };
-		90337D9611D0D847009FCC01 /* MessageQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C0C11D0D847009FCC01 /* MessageQueue.cpp */; };
-		90337D9711D0D847009FCC01 /* MessageQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C0D11D0D847009FCC01 /* MessageQueue.h */; };
 		90337D9811D0D847009FCC01 /* MessageRandom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C0E11D0D847009FCC01 /* MessageRandom.cpp */; };
 		90337D9911D0D847009FCC01 /* MessageRandom.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C0F11D0D847009FCC01 /* MessageRandom.h */; };
 		90337D9A11D0D847009FCC01 /* MessageReceive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C1011D0D847009FCC01 /* MessageReceive.cpp */; };
@@ -523,8 +520,6 @@
 		90337E9711D0D847009FCC01 /* MessagePowToDb.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C0911D0D847009FCC01 /* MessagePowToDb.h */; };
 		90337E9811D0D847009FCC01 /* MessagePrint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C0A11D0D847009FCC01 /* MessagePrint.cpp */; };
 		90337E9911D0D847009FCC01 /* MessagePrint.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C0B11D0D847009FCC01 /* MessagePrint.h */; };
-		90337E9A11D0D847009FCC01 /* MessageQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C0C11D0D847009FCC01 /* MessageQueue.cpp */; };
-		90337E9B11D0D847009FCC01 /* MessageQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C0D11D0D847009FCC01 /* MessageQueue.h */; };
 		90337E9C11D0D847009FCC01 /* MessageRandom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C0E11D0D847009FCC01 /* MessageRandom.cpp */; };
 		90337E9D11D0D847009FCC01 /* MessageRandom.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337C0F11D0D847009FCC01 /* MessageRandom.h */; };
 		90337E9E11D0D847009FCC01 /* MessageReceive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337C1011D0D847009FCC01 /* MessageReceive.cpp */; };
@@ -896,8 +891,6 @@
 		90337C0911D0D847009FCC01 /* MessagePowToDb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessagePowToDb.h; path = ../src/MessagePowToDb.h; sourceTree = SOURCE_ROOT; };
 		90337C0A11D0D847009FCC01 /* MessagePrint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessagePrint.cpp; path = ../src/MessagePrint.cpp; sourceTree = SOURCE_ROOT; };
 		90337C0B11D0D847009FCC01 /* MessagePrint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessagePrint.h; path = ../src/MessagePrint.h; sourceTree = SOURCE_ROOT; };
-		90337C0C11D0D847009FCC01 /* MessageQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageQueue.cpp; path = ../src/MessageQueue.cpp; sourceTree = SOURCE_ROOT; };
-		90337C0D11D0D847009FCC01 /* MessageQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageQueue.h; path = ../src/MessageQueue.h; sourceTree = SOURCE_ROOT; };
 		90337C0E11D0D847009FCC01 /* MessageRandom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageRandom.cpp; path = ../src/MessageRandom.cpp; sourceTree = SOURCE_ROOT; };
 		90337C0F11D0D847009FCC01 /* MessageRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageRandom.h; path = ../src/MessageRandom.h; sourceTree = SOURCE_ROOT; };
 		90337C1011D0D847009FCC01 /* MessageReceive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageReceive.cpp; path = ../src/MessageReceive.cpp; sourceTree = SOURCE_ROOT; };
@@ -1256,8 +1249,6 @@
 				90337C0911D0D847009FCC01 /* MessagePowToDb.h */,
 				90337C0A11D0D847009FCC01 /* MessagePrint.cpp */,
 				90337C0B11D0D847009FCC01 /* MessagePrint.h */,
-				90337C0C11D0D847009FCC01 /* MessageQueue.cpp */,
-				90337C0D11D0D847009FCC01 /* MessageQueue.h */,
 				90337C0E11D0D847009FCC01 /* MessageRandom.cpp */,
 				90337C0F11D0D847009FCC01 /* MessageRandom.h */,
 				90337C1011D0D847009FCC01 /* MessageReceive.cpp */,
@@ -1460,7 +1451,6 @@
 				90337D9111D0D847009FCC01 /* MessagePow.h in Headers */,
 				90337D9311D0D847009FCC01 /* MessagePowToDb.h in Headers */,
 				90337D9511D0D847009FCC01 /* MessagePrint.h in Headers */,
-				90337D9711D0D847009FCC01 /* MessageQueue.h in Headers */,
 				90337D9911D0D847009FCC01 /* MessageRandom.h in Headers */,
 				90337D9B11D0D847009FCC01 /* MessageReceive.h in Headers */,
 				90337D9D11D0D847009FCC01 /* MessageRemainder.h in Headers */,
@@ -1613,7 +1603,6 @@
 				90337E9511D0D847009FCC01 /* MessagePow.h in Headers */,
 				90337E9711D0D847009FCC01 /* MessagePowToDb.h in Headers */,
 				90337E9911D0D847009FCC01 /* MessagePrint.h in Headers */,
-				90337E9B11D0D847009FCC01 /* MessageQueue.h in Headers */,
 				90337E9D11D0D847009FCC01 /* MessageRandom.h in Headers */,
 				90337E9F11D0D847009FCC01 /* MessageReceive.h in Headers */,
 				90337EA111D0D847009FCC01 /* MessageRemainder.h in Headers */,
@@ -1839,7 +1828,6 @@
 				90337CB511D0D847009FCC01 /* MessagePow.cpp in Sources */,
 				90337CB611D0D847009FCC01 /* MessagePowToDb.cpp in Sources */,
 				90337CB711D0D847009FCC01 /* MessagePrint.cpp in Sources */,
-				90337CB811D0D847009FCC01 /* MessageQueue.cpp in Sources */,
 				90337CB911D0D847009FCC01 /* MessageRandom.cpp in Sources */,
 				90337CBA11D0D847009FCC01 /* MessageReceive.cpp in Sources */,
 				90337CBB11D0D847009FCC01 /* MessageRemainder.cpp in Sources */,
@@ -1983,7 +1971,6 @@
 				90337D9011D0D847009FCC01 /* MessagePow.cpp in Sources */,
 				90337D9211D0D847009FCC01 /* MessagePowToDb.cpp in Sources */,
 				90337D9411D0D847009FCC01 /* MessagePrint.cpp in Sources */,
-				90337D9611D0D847009FCC01 /* MessageQueue.cpp in Sources */,
 				90337D9811D0D847009FCC01 /* MessageRandom.cpp in Sources */,
 				90337D9A11D0D847009FCC01 /* MessageReceive.cpp in Sources */,
 				90337D9C11D0D847009FCC01 /* MessageRemainder.cpp in Sources */,
@@ -2126,7 +2113,6 @@
 				90337E9411D0D847009FCC01 /* MessagePow.cpp in Sources */,
 				90337E9611D0D847009FCC01 /* MessagePowToDb.cpp in Sources */,
 				90337E9811D0D847009FCC01 /* MessagePrint.cpp in Sources */,
-				90337E9A11D0D847009FCC01 /* MessageQueue.cpp in Sources */,
 				90337E9C11D0D847009FCC01 /* MessageRandom.cpp in Sources */,
 				90337E9E11D0D847009FCC01 /* MessageReceive.cpp in Sources */,
 				90337EA011D0D847009FCC01 /* MessageRemainder.cpp in Sources */,
