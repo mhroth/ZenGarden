@@ -320,14 +320,13 @@ char *PdGraph::resolveFullPath(char *filename) {
 
 char *PdGraph::findFilePath(char *filename) {
   char *directory = NULL;
-  declareList->resetIterator();
-  while ((directory = (char *) declareList->getNext()) != NULL) {
-    char *fullPath = StaticUtils::concatStrings(directory, filename);
-    if (StaticUtils::fileExists(fullPath)) {
-      free(fullPath);
-      return directory;
-    } else {
-      free(fullPath);
+  list<string>::iterator it = declareList->getIterator();
+  list<string>::iterator end = declareList->getEnd();
+  while (it != end) {
+    string directory = *it++;
+    string fullPath = directory + string(filename);
+    if (StaticUtils::fileExists((char *) fullPath.c_str())) {
+      return (char *) directory.c_str();
     }
   }
   return isRootGraph() ? NULL : parentGraph->findFilePath(filename);

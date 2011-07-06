@@ -24,6 +24,7 @@
 #define _MESSAGE_OBJECT_H_
 
 #include <list>
+#include <string>
 #include <vector>
 #include <math.h>
 #include "ConnectionType.h"

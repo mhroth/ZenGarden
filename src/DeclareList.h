@@ -23,7 +23,9 @@
 #ifndef _DECLARE_LIST_H_
 #define _DECLARE_LIST_H_
 
-#include "ZGLinkedList.h"
+#include <list>
+#include <string>
+using namespace std;
 
 /**
  * A DeclareList is resonsible for keeping track of [declare]d paths. It maintains ownership of all
@@ -33,7 +35,7 @@
  * to the root path of the original patch.
  * NOTE(mhroth): currently it does not do duplicate checking for given paths, though it probably should
  */
-class DeclareList : public ZGLinkedList {
+class DeclareList  {
   
   public:
     DeclareList();
@@ -52,7 +54,13 @@ class DeclareList : public ZGLinkedList {
     static bool isFullPath(char *path);
   
     /** Returns true if the given path has a trailing slash (indicating that it is a directory). */
-    static bool hasTrailingSlash(char *path);  
+    static bool hasTrailingSlash(char *path);
+  
+    list<string>::iterator getIterator();
+    list<string>::iterator getEnd();
+  
+  private:
+    list<string> declareList;
 };
 
 #endif // _DECLARE_LIST_H_
