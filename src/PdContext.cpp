@@ -247,8 +247,10 @@ void PdContext::process(float *inputBuffers, float *outputBuffers) {
   // Send all messages for this block
   ObjectMessageLetPair omlPair;
   double nextBlockStartTimestamp = blockStartTimestamp + blockDurationMs;
-  while ((omlPair = messageCallbackQueue->peek()).first != NULL &&
+  while (!messageCallbackQueue->empty() &&
+      (omlPair = messageCallbackQueue->peek()).first != NULL &&
       omlPair.second.first->getTimestamp() < nextBlockStartTimestamp) {
+    
     messageCallbackQueue->pop(); // remove the message from the queue
 
     MessageObject *object = omlPair.first;

@@ -27,7 +27,13 @@ OrderedMessageQueue::OrderedMessageQueue() {
 }
 
 OrderedMessageQueue::~OrderedMessageQueue() {
-  // nothing to do. All messages left in the queue when it is destroyed belong to other objects.
+  // destroy all remaining inserted messages
+  list<ObjectMessageLetPair>::iterator it = orderedMessageQueue.begin();
+  list<ObjectMessageLetPair>::iterator end = orderedMessageQueue.end();
+  while (it != end) {
+    ObjectMessageLetPair omlPair = *it++;
+    omlPair.second.first->freeMessage();
+  }
 }
 
 void OrderedMessageQueue::insertMessage(MessageObject *messageObject, int outletIndex, PdMessage *message) {
@@ -36,14 +42,14 @@ void OrderedMessageQueue::insertMessage(MessageObject *messageObject, int outlet
   list<ObjectMessageLetPair>::iterator it = orderedMessageQueue.begin();
   list<ObjectMessageLetPair>::iterator end = orderedMessageQueue.end();
   while (it != end) {
-    if (message->getTimestamp() < (*it).second.first->getTimestamp()) {
+    if (message->getTimestamp() < it->second.first->getTimestamp()) {
       orderedMessageQueue.insert(it, omlPair);
       return;
     } else {
       ++it;
     }
   }
-  orderedMessageQueue.insert(it, omlPair); // insert at end
+  orderedMessageQueue.push_back(omlPair); // insert at end
 }
 
 void OrderedMessageQueue::removeMessage(MessageObject *messageObject, int outletIndex, PdMessage *message) {
@@ -68,4 +74,8 @@ ObjectMessageLetPair OrderedMessageQueue::peek() {
 
 void OrderedMessageQueue::pop() {
   orderedMessageQueue.pop_front();
+}
+
+bool OrderedMessageQueue::empty() {
+  return orderedMessageQueue.empty();
 }

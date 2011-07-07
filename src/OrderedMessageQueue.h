@@ -43,6 +43,8 @@ class OrderedMessageQueue {
   
     void pop();
   
+    bool empty();
+  
   private:
     list<ObjectMessageLetPair> orderedMessageQueue;
 };
