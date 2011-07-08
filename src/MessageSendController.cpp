@@ -46,8 +46,6 @@ int MessageSendController::getNameIndex(char *receiverName) {
     return SYSTEM_NAME_INDEX; // a special case for sending messages to the system
   }
   
-  vector<std::pair<string, set<RemoteMessageReceiver *> > >::iterator it = sendStack.begin();
-  vector<std::pair<string, set<RemoteMessageReceiver *> > >::iterator end = sendStack.end();
   for (int i = 0; i < sendStack.size(); i++) {
     string str = sendStack[i].first;
     if (!str.compare(receiverName)) return i;
@@ -85,6 +83,7 @@ void MessageSendController::addReceiver(RemoteMessageReceiver *receiver) {
     std::pair<string, set<RemoteMessageReceiver *> > nameSetPair =
         make_pair(string(receiver->getName()), remoteSet);
     sendStack.push_back(nameSetPair);
+    nameIndex = sendStack.size()-1;
   }
   
   set<RemoteMessageReceiver *> receiverSet = sendStack[nameIndex].second;
