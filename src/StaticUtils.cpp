@@ -94,41 +94,31 @@ char *StaticUtils::concatStrings(const char *path0, const char *path1) {
 float StaticUtils::sineApprox(float x) {
   const static float a = 4.0f / M_PI; // 1.273239544735163
   const static float b = 4.0f / (M_PI * M_PI); // 0.405284734569351
-  return (a * x) - (b * x) * abs(x);
+  return (a * x) - (b * x) * fabsf(x);
   // NOTE(mhroth): use for former method instead of the latter for now (unless performance issues arise)
   // in order to avoid type-punning pointer warnings.
   //int y = *(int *)&x | 0x80000000;
   //return (1.273239544735163f * x) - (0.405284734569351f * x) * (*(float *)&y);
 }
 
-List *StaticUtils::tokenizeString(char *str, const char *delim) {
-  List *tokenizedStrings = new List();
+vector<string> StaticUtils::tokenizeString(char *str, const char *delim) {
+  vector<string> tokenizedStrings = vector<string>();
+  string s0 = string(str);
+  
   char *head = str;
   char *tail = NULL;
   while ((tail = strstr(head, delim)) != NULL) {
     int numBytes = tail-head;
-    char *nextToken = (char *) malloc(numBytes+1);
-    memcpy(nextToken, head, numBytes);
-    nextToken[numBytes] = '\0';
-    tokenizedStrings->add(nextToken);
+    string nextToken = string(s0, head-str, numBytes);
+    tokenizedStrings.push_back(nextToken);
     head = tail + strlen(delim);
   }
   if (head < str + strlen(str)) {
     int numBytes = str + strlen(str) - head;
-    char *nextToken = (char *) malloc(numBytes+1);
-    memcpy(nextToken, head, numBytes);
-    nextToken[numBytes] = '\0';
-    tokenizedStrings->add(nextToken);
+    string nextToken = string(s0, head-str, numBytes);
+    tokenizedStrings.push_back(nextToken);
   }
   return tokenizedStrings;
-}
-
-void StaticUtils::destroyTokenizedStringList(List *list) {
-  for (int i = 0; i < list->size(); i++) {
-    char *str = (char *) list->get(i);
-    free(str);
-  }
-  delete list;
 }
 
 const char *StaticUtils::messageElementTypeToString(MessageElementType type) {

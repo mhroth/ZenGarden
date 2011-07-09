@@ -643,11 +643,6 @@
 		90BB31CF11FE3F62008A0628 /* ObjectType.h in Headers */ = {isa = PBXBuildFile; fileRef = 90BB31C811FE3F62008A0628 /* ObjectType.h */; };
 		90BB31D011FE3F62008A0628 /* PdContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90BB31C911FE3F62008A0628 /* PdContext.cpp */; };
 		90BB31D111FE3F62008A0628 /* PdContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 90BB31CA11FE3F62008A0628 /* PdContext.h */; };
-		90C8162713C51C420062EEDF /* List.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90C8162513C51C420062EEDF /* List.cpp */; };
-		90C8162813C51C420062EEDF /* List.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90C8162513C51C420062EEDF /* List.cpp */; };
-		90C8162913C51C420062EEDF /* List.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90C8162513C51C420062EEDF /* List.cpp */; };
-		90C8162A13C51C420062EEDF /* List.h in Headers */ = {isa = PBXBuildFile; fileRef = 90C8162613C51C420062EEDF /* List.h */; };
-		90C8162B13C51C420062EEDF /* List.h in Headers */ = {isa = PBXBuildFile; fileRef = 90C8162613C51C420062EEDF /* List.h */; };
 		90CCEBE31299CD7D009D36DF /* DspReciprocalSqrt.h in Headers */ = {isa = PBXBuildFile; fileRef = 90CCEBE11299CD7D009D36DF /* DspReciprocalSqrt.h */; };
 		90CCEBE41299CD7D009D36DF /* DspReciprocalSqrt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90CCEBE21299CD7D009D36DF /* DspReciprocalSqrt.cpp */; };
 		90CCEBE51299CD7D009D36DF /* DspReciprocalSqrt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90CCEBE21299CD7D009D36DF /* DspReciprocalSqrt.cpp */; };
@@ -973,8 +968,6 @@
 		90BB31C811FE3F62008A0628 /* ObjectType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ObjectType.h; path = ../src/ObjectType.h; sourceTree = SOURCE_ROOT; };
 		90BB31C911FE3F62008A0628 /* PdContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PdContext.cpp; path = ../src/PdContext.cpp; sourceTree = SOURCE_ROOT; };
 		90BB31CA11FE3F62008A0628 /* PdContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PdContext.h; path = ../src/PdContext.h; sourceTree = SOURCE_ROOT; };
-		90C8162513C51C420062EEDF /* List.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = List.cpp; path = ../src/List.cpp; sourceTree = "<group>"; };
-		90C8162613C51C420062EEDF /* List.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = List.h; path = ../src/List.h; sourceTree = "<group>"; };
 		90CCEBE11299CD7D009D36DF /* DspReciprocalSqrt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspReciprocalSqrt.h; path = ../src/DspReciprocalSqrt.h; sourceTree = SOURCE_ROOT; };
 		90CCEBE21299CD7D009D36DF /* DspReciprocalSqrt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspReciprocalSqrt.cpp; path = ../src/DspReciprocalSqrt.cpp; sourceTree = SOURCE_ROOT; };
 		90D031281204866300FEE5BB /* MessageListSplit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageListSplit.h; path = ../src/MessageListSplit.h; sourceTree = SOURCE_ROOT; };
@@ -1131,8 +1124,6 @@
 				90337B8D11D0D847009FCC01 /* DspVariableDelay.h */,
 				90337B9011D0D847009FCC01 /* DspWrap.cpp */,
 				90337B9111D0D847009FCC01 /* DspWrap.h */,
-				90C8162513C51C420062EEDF /* List.cpp */,
-				90C8162613C51C420062EEDF /* List.h */,
 				90337B9411D0D847009FCC01 /* main.cpp */,
 				90337BA811D0D847009FCC01 /* MersenneTwister.h */,
 				90337BA911D0D847009FCC01 /* MessageAbsoluteValue.cpp */,
@@ -1501,7 +1492,6 @@
 				90CCEBE31299CD7D009D36DF /* DspReciprocalSqrt.h in Headers */,
 				9086906C129AC67B00D3BD5D /* DspSqrt.h in Headers */,
 				90F6E69913A028580073F1EF /* MessageCputime.h in Headers */,
-				90C8162A13C51C420062EEDF /* List.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1652,7 +1642,6 @@
 				90CCEBE61299CD7D009D36DF /* DspReciprocalSqrt.h in Headers */,
 				9086906E129AC67B00D3BD5D /* DspSqrt.h in Headers */,
 				90F6E69A13A028580073F1EF /* MessageCputime.h in Headers */,
-				90C8162B13C51C420062EEDF /* List.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1875,7 +1864,6 @@
 				90CCEBE51299CD7D009D36DF /* DspReciprocalSqrt.cpp in Sources */,
 				90869070129AC67B00D3BD5D /* DspSqrt.cpp in Sources */,
 				90F6E69613A028580073F1EF /* MessageCputime.cpp in Sources */,
-				90C8162713C51C420062EEDF /* List.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2015,7 +2003,6 @@
 				90CCEBE41299CD7D009D36DF /* DspReciprocalSqrt.cpp in Sources */,
 				9086906D129AC67B00D3BD5D /* DspSqrt.cpp in Sources */,
 				90F6E69713A028580073F1EF /* MessageCputime.cpp in Sources */,
-				90C8162813C51C420062EEDF /* List.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2156,7 +2143,6 @@
 				90CCEBE71299CD7D009D36DF /* DspReciprocalSqrt.cpp in Sources */,
 				9086906F129AC67B00D3BD5D /* DspSqrt.cpp in Sources */,
 				90F6E69813A028580073F1EF /* MessageCputime.cpp in Sources */,
-				90C8162913C51C420062EEDF /* List.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

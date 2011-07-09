@@ -41,7 +41,6 @@ LOCAL_SRC_FILES := \
 ./DspThrow.cpp \
 ./DspVariableDelay.cpp \
 ./DspWrap.cpp \
-./List.cpp \
 ./MessageAbsoluteValue.cpp \
 ./MessageAdd.cpp \
 ./MessageArcTangent.cpp \

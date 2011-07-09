@@ -38,34 +38,36 @@
  */
 MessageMessageBox::MessageMessageBox(char *initString, PdGraph *graph) : MessageObject(1, 1, graph) {
   // parse the entire initialisation string
-  List *messageInitListAll = StaticUtils::tokenizeString(initString, "\\;");
+  vector<string> messageInitListAll = StaticUtils::tokenizeString(initString, "\\;");
   
   // parse the first "message" for individual messages that should be sent from the outlet 
-  List *messageInitList = StaticUtils::tokenizeString((char *) messageInitListAll->get(0), "\\,");
+  vector<string> messageInitList = StaticUtils::tokenizeString((char *) messageInitListAll[0].c_str(), "\\,");
+  // NOTE(mhroth): we'll be in trouble if the message has more than 16 elements!
   PdMessage *message = PD_MESSAGE_ON_STACK(16);
-  for (int i = 0; i < messageInitList->size(); i++) {
-    char *initString = (char *) messageInitList->get(i);
+  for (int i = 0; i < messageInitList.size(); i++) {
+    string initString = messageInitList[i];
     // StaticUtils::tokenizeString does not remove the trailing ";" from the
     // original string. We should not process it because it will result in an empty message. 
-    if (strcmp(initString, ";") != 0) {
-      message->initWithString(16, initString);
+    if (strcmp(initString.c_str(), ";") != 0) {
+      message->initWithString(16, (char *) initString.c_str());
       localMessageList.push_back(message->copyToHeap());
     }
   }
-  StaticUtils::destroyTokenizedStringList(messageInitList);
   
   // parse the remainder of the init list for all remote messages
-  for (int i = 1; i < messageInitListAll->size(); i++) {
-    char *initString = (char *) messageInitListAll->get(i);
-    if (strcmp(initString, ";") != 0) {
+  for (int i = 1; i < messageInitListAll.size(); i++) {
+    string initString = messageInitListAll[i];
+    if (strcmp(initString.c_str(), ";") != 0) {
       // NOTE(mhroth): name string is not resolved
-      message->initWithString(16, strtok(NULL, ";"));
+      // get named destination (first element, delimited by space)
+      string name = string(initString, 0, initString.find(" "));
+      string messageString = string(initString, initString.find(" ")+2);
+      message->initWithString(16, (char *) messageString.c_str());
       MessageNamedDestination namedDestination = 
-          make_pair(StaticUtils::copyString(strtok(initString, " ")), message->copyToHeap());
+          make_pair(StaticUtils::copyString((char *) name.c_str()), message->copyToHeap());
       remoteMessageList.push_back(namedDestination);
     }
   }
-  StaticUtils::destroyTokenizedStringList(messageInitListAll);
 }
 
 MessageMessageBox::~MessageMessageBox() {
@@ -90,14 +92,13 @@ void MessageMessageBox::processMessage(int inletIndex, PdMessage *message) {
 #define RES_BUFFER_LENGTH 64
   char resolvedName[RES_BUFFER_LENGTH]; // resolution buffer for named destination
   
-  // NOTE(mhroth): there are a lot of PdMessages being created on the stack here. Is this really
-  // necessary?
+  // NOTE(mhroth): if any message has more than 64 elements, that's very bad
+  PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(64);
   
   // send local messages
   for (int i = 0; i < localMessageList.size(); i++) {
     PdMessage *messageTemplate = localMessageList.at(i);
     int numElements = messageTemplate->getNumElements();
-    PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(numElements);
     outgoingMessage->initWithTimestampAndNumElements(message->getTimestamp(), numElements);
     memcpy(outgoingMessage->getElement(0), messageTemplate->getElement(0), numElements*sizeof(MessageAtom));
     for (int i = 0; i < numElements; i++) {
@@ -119,7 +120,6 @@ void MessageMessageBox::processMessage(int inletIndex, PdMessage *message) {
     
     PdMessage *messageTemplate = namedDestination.second;
     int numElements = messageTemplate->getNumElements();
-    PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(numElements);
     outgoingMessage->initWithTimestampAndNumElements(message->getTimestamp(), numElements);
     memcpy(outgoingMessage->getElement(0), messageTemplate->getElement(0), numElements*sizeof(MessageAtom));
     for (int i = 0; i < numElements; i++) {

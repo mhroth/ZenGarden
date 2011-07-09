@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,8 +23,10 @@
 #ifndef _STATIC_UTILS_H_
 #define _STATIC_UTILS_H_
 
-#include "List.h"
+#include <string>
+#include <vector>
 #include "MessageElementType.h"
+using namespace std;
 
 class StaticUtils {
   
@@ -36,8 +38,7 @@ class StaticUtils {
     };
     static char *concatStrings(const char *path0, const char *path1);
     static float sineApprox(float x);
-    static List *tokenizeString(char *str, const char *delim);
-    static void destroyTokenizedStringList(List *tokenList);
+    static vector<string> tokenizeString(char *str, const char *delim);
   
     /** This is a helper function for printing error (or info) messages. */
     static const char *messageElementTypeToString(MessageElementType type);

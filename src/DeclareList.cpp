@@ -20,7 +20,6 @@
  *
  */
 
-#include <string.h>
 #include "DeclareList.h"
 #include "StaticUtils.h"
 
