@@ -1,0 +1,36 @@
+#N canvas 581 102 450 300 10;
+#X obj 116 47 loadbang;
+#X obj 191 47 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X obj 130 100 t b b;
+#N canvas 0 22 450 300 (subpatch) 0;
+#X obj 155 38 inlet;
+#X obj 155 83 + 1;
+#X obj 154 127 outlet;
+#X connect 0 0 1 0;
+#X connect 1 0 2 0;
+#X restore 166 176 pd;
+#X obj 140 209 print;
+#X obj 172 135 f 0;
+#N canvas 0 22 651 329 (subpatch) 1;
+#X obj 243 108 inlet;
+#X obj 170 108 inlet;
+#X obj 169 149 + 2;
+#X obj 169 216 outlet;
+#X text 143 24 The left inlet was created after the right inlet.;
+#X text 145 46 This test should validate that Pd inlets are evaluated
+according to the x-order on the canvas \, not their creation order.
+;
+#X connect 0 0 3 0;
+#X connect 1 0 2 0;
+#X connect 2 0 3 0;
+#X restore 114 173 pd;
+#X obj 121 136 f 0;
+#X connect 0 0 2 0;
+#X connect 1 0 2 0;
+#X connect 2 0 7 0;
+#X connect 2 1 5 0;
+#X connect 3 0 4 0;
+#X connect 5 0 3 0;
+#X connect 6 0 4 0;
+#X connect 7 0 6 0;
