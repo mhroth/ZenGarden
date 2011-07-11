@@ -23,13 +23,14 @@
 #include "MessageInlet.h"
 #include "PdGraph.h"
 
+// MessageInlet is initialised with an inlet because it manages connections from outside of the
+// containing graph.
 MessageInlet::MessageInlet(PdGraph *graph) : MessageObject(1, 1, graph) {
-  numMessageInlets = 0;
   canvasX = 0;
 }
 
 MessageInlet::~MessageInlet() {
-  numMessageInlets = 1;
+  // nothing to do
 }
 
 const char *MessageInlet::getObjectLabel() {
@@ -42,6 +43,17 @@ ObjectType MessageInlet::getObjectType() {
 
 void MessageInlet::processMessage(int inletIndex, PdMessage *message) {
   sendMessage(0, message);
+}
+
+list<MessageObject *> *MessageInlet::getProcessOrder() {
+  if (isOrdered) {
+    return new list<MessageObject *>();
+  } else {
+    isOrdered = true;
+    list<MessageObject *> *processList = new list<MessageObject *>();
+    processList->push_back(this);
+    return processList;
+  }
 }
 
 list<MessageObject *> *MessageInlet::getProcessOrderFromInlet() {

@@ -118,13 +118,14 @@ class MessageObject {
      * recompute the process order.
      */
     void resetOrderedFlag();
+  
+    virtual unsigned int getNumInlets();
+    virtual unsigned int getNumOutlets();
     
   protected:  
     /** A pointer to the graph owning this object. */
     PdGraph *graph;
   
-    int numMessageInlets; // TODO(mhroth): remove these class vars. They are no longer explicitly needed.
-    int numMessageOutlets; // They are implicitly encoded in the length of e.g. incomingMessageConnections
     vector<list<ObjectLetPair> > incomingMessageConnections;
     vector<list<ObjectLetPair> > outgoingMessageConnections;
   

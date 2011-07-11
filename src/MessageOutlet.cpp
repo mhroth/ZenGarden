@@ -23,17 +23,22 @@
 #include "MessageOutlet.h"
 #include "PdGraph.h"
 
+// MessageOutlets is initialised with one outlet because it handles all outgoing connections
+// for the containing graph.
 MessageOutlet::MessageOutlet(PdGraph *graph) : MessageObject(1, 1, graph) {
-  numMessageOutlets = 0;
   canvasX = 0;
 }
 
 MessageOutlet::~MessageOutlet() {
-  numMessageOutlets = 1;
+  // nothing to do
 }
 
 const char *MessageOutlet::getObjectLabel() {
   return "outlet";
+}
+
+bool MessageOutlet::isLeafNode() {
+  return true;
 }
 
 ObjectType MessageOutlet::getObjectType() {

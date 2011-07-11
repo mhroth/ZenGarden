@@ -631,3 +631,11 @@ void PdGraph::setValueForName(char *name, float constant) {
 float PdGraph::getValueForName(char *name) {
   return context->getValueForName(name);
 }
+
+unsigned int PdGraph::getNumInlets() {
+  return inletList.size();
+}
+
+unsigned int PdGraph::getNumOutlets() {
+  return outletList.size();
+}

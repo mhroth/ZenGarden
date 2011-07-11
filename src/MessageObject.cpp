@@ -24,8 +24,6 @@
 #include "PdGraph.h"
 
 MessageObject::MessageObject(int numMessageInlets, int numMessageOutlets, PdGraph *graph) {
-  this->numMessageInlets = numMessageInlets;
-  this->numMessageOutlets = numMessageOutlets;
   this->graph = graph;
   this->isOrdered = false;
 
@@ -116,6 +114,14 @@ void MessageObject::addConnectionToObjectFromOutlet(MessageObject *messageObject
     ObjectLetPair objectLetPair = make_pair(messageObject, inletIndex);
     connections->push_back(objectLetPair);
   }
+}
+
+unsigned int MessageObject::getNumInlets() {
+  return incomingMessageConnections.size();
+}
+
+unsigned int MessageObject::getNumOutlets() {
+  return outgoingMessageConnections.size();
 }
 
 ObjectType MessageObject::getObjectType() {

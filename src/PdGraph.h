@@ -176,6 +176,9 @@ class PdGraph : public DspObject {
   
     void processDsp();
   
+    unsigned int getNumInlets();
+    unsigned int getNumOutlets();
+  
   private:
     /** Create a new object based on its initialisation string. */
     MessageObject *newObject(char *objectType, char *objectLabel, PdMessage *initMessage, PdGraph *graph);

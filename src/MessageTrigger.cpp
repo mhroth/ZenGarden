@@ -45,6 +45,7 @@ const char *MessageTrigger::getObjectLabel() {
 
 void MessageTrigger::processMessage(int inletIndex, PdMessage *message) {
   PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+  int numMessageOutlets = outgoingMessageConnections.size();
   for (int i = numMessageOutlets-1; i >= 0; i--) { // send messages from outlets right-to-left
     // TODO(mhroth): There is currently no support for converting to a LIST type
     switch (message->getType(0)) { // converting from...
