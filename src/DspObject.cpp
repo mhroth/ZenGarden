@@ -60,8 +60,14 @@ void DspObject::init(int numDspInlets, int numDspOutlets, int blockSize) {
   // initialise the incoming dsp connections list
   incomingDspConnectionsListAtInlet = vector<list<ObjectLetPair> >(numDspInlets);
   
+  // with no connections, this convenience pointer should point to zero
+  dspBufferAtInlet0 = zeroBuffer;
+  
   // initialise the outgoing dsp connections list
   outgoingDspConnectionsListAtOutlet = vector<list<ObjectLetPair> >(numDspOutlets);
+  
+  // with no connections, this convenience pointer should point to zero
+  dspBufferAtInlet1 = zeroBuffer;
   
   dspBufferAtInlet = (numDspInlets > 2) ? (float **) calloc(numDspInlets, sizeof(float *)) : NULL;
   dspBufferRefListAtInlet = vector<vector<float *> >(numDspInlets);
