@@ -207,6 +207,16 @@ void DspObject::processDspWithIndex(int fromIndex, int toIndex) {
   processDspWithIndex((float) fromIndex, (float) toIndex);
 }
 
+unsigned int DspObject::getNumInlets() {
+  return incomingMessageConnections.size() > incomingDspConnectionsListAtInlet.size()
+      ? incomingMessageConnections.size() : incomingDspConnectionsListAtInlet.size();
+}
+
+unsigned int DspObject::getNumOutlets() {
+  return outgoingMessageConnections.size() > outgoingDspConnectionsListAtOutlet.size()
+  ? outgoingMessageConnections.size() : outgoingDspConnectionsListAtOutlet.size();
+}
+
 bool DspObject::isLeafNode() {
   if (!MessageObject::isLeafNode()) {
     return false;

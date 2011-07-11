@@ -79,7 +79,10 @@ class DspObject : public MessageObject {
     virtual bool doesProcessAudio();
   
     virtual bool isLeafNode();
-    list<MessageObject *> *getProcessOrder();
+    virtual list<MessageObject *> *getProcessOrder();
+  
+    virtual unsigned int getNumInlets();
+    virtual unsigned int getNumOutlets();
     
   protected: 
     /* IMPORTANT: one of these two functions MUST be overridden (or processDsp()) */

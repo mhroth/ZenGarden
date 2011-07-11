@@ -47,6 +47,10 @@ class DspOutlet : public DspObject {
     int getCanvasPosition();
     void setCanvasPosition(int pos);
   
+    bool isLeafNode();
+  
+    float *getDspBufferRefAtOutlet(int outletIndex);
+  
     void processDsp();
   
   private:  

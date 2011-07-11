@@ -23,13 +23,11 @@
 #include "DspOutlet.h"
 
 DspOutlet::DspOutlet(PdGraph *graph) : DspObject(0, 1, 0, 1, graph) {
-  // NOTE(mhroth): check this
-  numDspOutlets = 0; // set numDspOutlets to zero in order all leaves to be correctly detected
   canvasX = 0;
 }
 
 DspOutlet::~DspOutlet() {
-  numDspOutlets = 1;
+  // nothing to do
 }
 
 const char *DspOutlet::getObjectLabel() {
@@ -40,12 +38,20 @@ ObjectType DspOutlet::getObjectType() {
   return DSP_OUTLET;
 }
 
+bool DspOutlet::isLeafNode() {
+  return true;
+}
+
 int DspOutlet::getCanvasPosition() {
   return canvasX;
 }
 
 void DspOutlet::setCanvasPosition(int pos) {
   canvasX = pos;
+}
+
+float *DspOutlet::getDspBufferRefAtOutlet(int outletIndex) {
+  return dspBufferAtOutlet0;
 }
 
 void DspOutlet::processDsp() {
