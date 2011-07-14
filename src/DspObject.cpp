@@ -46,8 +46,6 @@ void DspObject::init(int numDspInlets, int numDspOutlets, int blockSize) {
   blockIndexOfLastMessage = 0.0f;
   signalPrecedence = MESSAGE_MESSAGE; // default
   numBytesInBlock = blockSizeInt * sizeof(float);
-  numConnectionsToInlet0 = 0;
-  numConnectionsToInlet1 = 0;
   hasMessagesToProcess = false;
   
   if (zeroBufferSize < blockSize) {
@@ -118,11 +116,11 @@ void DspObject::addConnectionFromObjectToInlet(MessageObject *messageObject, int
     vector<float *> *dspBufferRefList = &(*(dspBufferRefListAtInlet.begin() + inletIndex));
     dspBufferRefList->push_back(dspObject->getDspBufferRefAtOutlet(outletIndex));
     if (inletIndex == 0) {
-      if (++numConnectionsToInlet0 == 1) {
+      if (incomingDspConnectionsListAtInlet[0].size() == 1) {
         dspBufferAtInlet0 = dspBufferRefList->at(0);
       }
     } else if (inletIndex == 1) {
-      if (++numConnectionsToInlet1 == 1) {
+      if (incomingDspConnectionsListAtInlet[1].size() == 1) {
         dspBufferAtInlet1 = dspBufferRefList->at(0);
       }
     }
@@ -158,6 +156,7 @@ void DspObject::receiveMessage(int inletIndex, PdMessage *message) {
 void DspObject::processDsp() {
   // take care of common special cases giving a good increase in speed. Most objects have only one
   // or two inlets. And most objects usually have only one (or none!) DSP connection per inlet.
+  int numDspInlets = incomingDspConnectionsListAtInlet.size();
   switch (numDspInlets) {
     default: {
       for (int i = 2; i < numDspInlets; i++) {
@@ -170,7 +169,8 @@ void DspObject::processDsp() {
       // allow fallthrough
     }
     case 2: {
-      if (numConnectionsToInlet1 > 1) {
+      // numConnectionsToInlet1
+      if (incomingDspConnectionsListAtInlet[1].size() > 1) {
         dspBufferAtInlet1 = (float *) alloca(numBytesInBlock);
         resolveInputBuffers(1, dspBufferAtInlet1);
       }
@@ -183,7 +183,7 @@ void DspObject::processDsp() {
     case 0: break;
   }
   
-  if (hasMessagesToProcess) {
+  if (!messageQueue.empty()) {
     do { // there is at least one message
       MessageLetPair messageLetPair = messageQueue.front();
       PdMessage *message = messageLetPair.first;

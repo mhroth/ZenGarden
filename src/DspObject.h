@@ -31,7 +31,7 @@
 // this function is a macro and not a function such that the allocated buffer stays on the stack
 // for the remainder of the function
 #define RESOLVE_DSPINLET0_IF_NECESSARY() \
-  if (numConnectionsToInlet0 > 1) { \
+  if (incomingDspConnectionsListAtInlet[0].size() > 1) { \
     dspBufferAtInlet0 = (float *) alloca(numBytesInBlock); \
     resolveInputBuffers(0, dspBufferAtInlet0); \
   }
@@ -146,12 +146,6 @@ class DspObject : public MessageObject {
   
     /** Points to a concatinated array of all output buffers. Permanent pointer to the local output buffers. */
     float *dspBufferAtOutlet0;
-  
-    /** True if there is more than one connection arriving at inlet 0. False otherwise. */
-    int numConnectionsToInlet0;
-  
-    /** True if there is more than one connection arriving at inlet 1. False otherwise. */
-    int numConnectionsToInlet1;
   
     /** List of all dsp objects connecting to this object at each inlet. */
     vector<list<ObjectLetPair> > incomingDspConnectionsListAtInlet;
