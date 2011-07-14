@@ -39,6 +39,7 @@ class DspReceive : public DspObject {
     ObjectType getObjectType();
   
     void processDsp();
+    void processMessage(int inletIndex, PdMessage *message);
   
   private:
     char *name;

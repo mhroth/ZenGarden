@@ -41,12 +41,11 @@ class DspSend : public DspObject {
     char *getName();
     const char *getObjectLabel();
     ObjectType getObjectType();
+  
+    void processDsp();
     
   private:
-    void processDspWithIndex(int fromIndex, int toIndex);
-  
     char *name;
-    float *buffer;
 };
 
 #endif // _DSP_SEND_H_

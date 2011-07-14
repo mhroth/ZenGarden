@@ -26,11 +26,12 @@
 DspSend::DspSend(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0, 0, graph) {
   if (initMessage->isSymbol(0)) {
     name = StaticUtils::copyString(initMessage->getSymbol(0));
-    buffer = (float *) calloc(blockSizeInt, sizeof(float));
-    dspBufferAtOutlet0 = buffer;
+    
+    // as this object has no official outlet buffer, reuse the class variable in order to reference
+    // the local scratch buffer.
+    dspBufferAtOutlet0 = (float *) calloc(blockSizeInt, sizeof(float));
   } else {
     name = NULL;
-    buffer = NULL;
     graph->printErr("send~ not initialised with a name.");
   }
 }
@@ -38,6 +39,7 @@ DspSend::DspSend(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0, 0,
 DspSend::~DspSend() {
   free(name);
   free(dspBufferAtOutlet0);
+  dspBufferAtOutlet0 = NULL;
 }
 
 const char *DspSend::getObjectLabel() {
@@ -53,19 +55,13 @@ char *DspSend::getName() {
 }
 
 float **DspSend::getBuffer() {
-  return &buffer;
+  return &dspBufferAtOutlet0;
 }
 
-void DspSend::processDspWithIndex(int fromIndex, int toIndex) {
-  if (dspBufferAtInlet0 == NULL) {
-    // TODO(mhroth): if inlet buffer is NULL, then point to zero buffer
-    buffer = DspObject::zeroBuffer; // TODO(mhroth): check implementation
+void DspSend::processDsp() {
+  if (incomingDspConnections[0].size() > 1) {
+    resolveInputBuffers(0, dspBufferAtOutlet0);
   } else {
-    if (numConnectionsToInlet0 > 1) {
-      buffer = dspBufferAtOutlet0;
-      memcpy(buffer, dspBufferAtInlet0, numBytesInBlock);
-    } else {
-      buffer = dspBufferAtInlet0;
-    }
+    memcpy(dspBufferAtOutlet0, dspBufferAtInlet0, numBytesInBlock);
   }
 }
