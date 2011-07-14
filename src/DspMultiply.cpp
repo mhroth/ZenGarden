@@ -42,14 +42,14 @@ void DspMultiply::addConnectionFromObjectToInlet(MessageObject *messageObject, i
   DspObject::addConnectionFromObjectToInlet(messageObject, outletIndex, inletIndex);
   
   // attempt to resolve common code paths for increased efficiency
-  if (incomingDspConnectionsListAtInlet[0].size() > 0) {
-    if (incomingDspConnectionsListAtInlet[1].size() == 0) {
+  if (incomingDspConnections[0].size() > 0) {
+    if (incomingDspConnections[1].size() == 0) {
       if (incomingMessageConnections[1].size() == 0) {
         codePath = DSP_MULTIPLY_DSPX_MESSAGE0;
       } else {
         codePath = DSP_MULTIPLY_DSPX_MESSAGEX;
       }
-    } else if (incomingDspConnectionsListAtInlet[1].size() == 1) {
+    } else if (incomingDspConnections[1].size() == 1) {
       codePath = DSP_MULTIPLY_DSPX_DSP1;
     } else {
       codePath = DSP_MULTIPLY_DSPX_DSPX;
@@ -103,7 +103,7 @@ void DspMultiply::processDsp() {
 }
 
 void DspMultiply::processDspWithIndex(int fromIndex, int toIndex) {
-  switch (signalPrecedence) {
+  switch (codePath) {
     /*
      * NOTE(mhroth): not sure what to do in this case
     case MESSAGE_DSP: {
