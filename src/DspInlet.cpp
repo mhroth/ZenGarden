@@ -59,8 +59,8 @@ list<MessageObject *> *DspInlet::getProcessOrder() {
 
 list<MessageObject *> *DspInlet::getProcessOrderFromInlet() {
   list<MessageObject *> *processList = new list<MessageObject *>();
-  list<ObjectLetPair>::iterator it = incomingDspConnectionsListAtInlet[0].begin();
-  list<ObjectLetPair>::iterator end = incomingDspConnectionsListAtInlet[0].end();
+  list<ObjectLetPair>::iterator it = incomingDspConnections[0].begin();
+  list<ObjectLetPair>::iterator end = incomingDspConnections[0].end();
   while (it != end) {
     ObjectLetPair objectLetPair = *it++;
     list<MessageObject *> *parentProcessList = objectLetPair.first->getProcessOrder();
@@ -75,7 +75,7 @@ void DspInlet::receiveMessage(int inletIndex, PdMessage *message) {
 }
 
 void DspInlet::processDsp() {
-  switch (incomingDspConnectionsListAtInlet[0].size()) {
+  switch (incomingDspConnections[0].size()) {
     case 0: {
       ArrayArithmetic::fill(dspBufferAtOutlet0, 0.0f, 0, blockSizeInt);
       break;

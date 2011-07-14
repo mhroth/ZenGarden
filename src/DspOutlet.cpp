@@ -55,7 +55,7 @@ float *DspOutlet::getDspBufferRefAtOutlet(int outletIndex) {
 }
 
 void DspOutlet::processDsp() {
-  if (incomingDspConnectionsListAtInlet[0].size() > 1) {
+  if (incomingDspConnections[0].size() > 1) {
     // if there are many connections, resolve directly to the ouput buffer
     resolveInputBuffers(0, dspBufferAtOutlet0);
   } else {

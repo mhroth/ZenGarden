@@ -31,7 +31,7 @@
 // this function is a macro and not a function such that the allocated buffer stays on the stack
 // for the remainder of the function
 #define RESOLVE_DSPINLET0_IF_NECESSARY() \
-  if (incomingDspConnectionsListAtInlet[0].size() > 1) { \
+  if (incomingDspConnections[0].size() > 1) { \
     dspBufferAtInlet0 = (float *) alloca(numBytesInBlock); \
     resolveInputBuffers(0, dspBufferAtInlet0); \
   }
@@ -142,10 +142,10 @@ class DspObject : public MessageObject {
     float *dspBufferAtOutlet0;
   
     /** List of all dsp objects connecting to this object at each inlet. */
-    vector<list<ObjectLetPair> > incomingDspConnectionsListAtInlet;
+    vector<list<ObjectLetPair> > incomingDspConnections;
   
     /** List of all dsp objects to which this object connects at each outlet. */
-    vector<list<ObjectLetPair> > outgoingDspConnectionsListAtOutlet;
+    vector<list<ObjectLetPair> > outgoingDspConnections;
   
     static float *zeroBuffer;
     static int zeroBufferCount;
@@ -154,12 +154,6 @@ class DspObject : public MessageObject {
   private:
     /** This function encapsulates the common code between the two constructors. */
     void init(int numDspInlets, int numDspOutlets, int blockSize);
-  
-    /**
-     * true if messages exist to process, false otherwise. Faster to look up this variable
-     * than to call function messageQueue.empty().
-     */
-    bool hasMessagesToProcess;
 };
 
 #endif // _DSP_OBJECT_H_

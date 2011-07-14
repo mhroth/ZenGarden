@@ -41,14 +41,14 @@ void DspSubtract::addConnectionFromObjectToInlet(MessageObject *messageObject, i
   DspObject::addConnectionFromObjectToInlet(messageObject, outletIndex, inletIndex);
   
   // attempt to resolve common code paths for increased efficiency
-  if (incomingDspConnectionsListAtInlet[0].size() > 0) {
-    if (incomingDspConnectionsListAtInlet[1].size() == 0) {
+  if (incomingDspConnections[0].size() > 0) {
+    if (incomingDspConnections[1].size() == 0) {
       if (incomingMessageConnections[1].size() == 0) {
         codePath = DSP_SUBTRACT_DSPX_MESSAGE0;
       } else {
         codePath = DSP_SUBTRACT_DSPX_MESSAGEX;
       }
-    } else if (incomingDspConnectionsListAtInlet[1].size() == 1) {
+    } else if (incomingDspConnections[1].size() == 1) {
       codePath = DSP_SUBTRACT_DSPX_DSP1;
     } else {
       codePath = DSP_SUBTRACT_DSPX_DSPX;
