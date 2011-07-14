@@ -39,8 +39,6 @@ DspObject::DspObject(int numMessageInlets, int numDspInlets, int numMessageOutle
 }
 
 void DspObject::init(int numDspInlets, int numDspOutlets, int blockSize) {
-  this->numDspInlets = numDspInlets;
-  this->numDspOutlets = numDspOutlets;
   blockSizeInt = blockSize;
   blockSizeFloat = (float) blockSizeInt;
   blockIndexOfLastMessage = 0.0f;
@@ -93,7 +91,7 @@ ConnectionType DspObject::getConnectionType(int outletIndex) {
 
 float *DspObject::getDspBufferRefAtOutlet(int outletIndex) {
   // sanity check on outletIndex
-  return (outletIndex < numDspOutlets) ? dspBufferAtOutlet0 + (outletIndex * blockSizeInt) : NULL;
+  return (outletIndex < outgoingDspConnectionsListAtOutlet.size()) ? dspBufferAtOutlet0 + (outletIndex * blockSizeInt) : NULL;
 }
 
 bool DspObject::doesProcessAudio() {
@@ -227,7 +225,7 @@ bool DspObject::isLeafNode() {
   if (!MessageObject::isLeafNode()) {
     return false;
   } else {
-    for (int i = 0; i < numDspOutlets; i++) {
+    for (int i = 0; i < outgoingDspConnectionsListAtOutlet.size(); i++) {
       if (outgoingDspConnectionsListAtOutlet[i].size() > 0) {
         return false;
       }
@@ -253,7 +251,7 @@ list<MessageObject *> *DspObject::getProcessOrder() {
         delete parentProcessList;
       }
     }
-    for (int i = 0; i < numDspInlets; i++) {
+    for (int i = 0; i < incomingDspConnectionsListAtInlet.size(); i++) {
       list<ObjectLetPair>::iterator it = incomingDspConnectionsListAtInlet[i].begin();
       list<ObjectLetPair>::iterator end = incomingDspConnectionsListAtInlet[i].end();
       while (it != end) {

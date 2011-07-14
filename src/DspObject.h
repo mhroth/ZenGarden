@@ -110,12 +110,6 @@ class DspObject : public MessageObject {
       }
     }
     
-    /** The number of dsp inlets of this object. */
-    int numDspInlets;
-  
-    /** The number of dsp outlets of this object. */
-    int numDspOutlets;
-    
     // both float and int versions of the blocksize are stored as different internal mechanisms
     // require different number formats
     int blockSizeInt;
