@@ -56,7 +56,8 @@ int main(int argc, char * const argv[]) {
   // pass directory and filename of the patch to load
   PdContext *context = zg_new_context(numInputChannels, numOutputChannels, blockSize, sampleRate,
       callbackFunction, NULL);
-  PdGraph *graph = zg_new_graph(context, "/Users/mhroth/workspace/ZenGarden/test/", "MessageMessageBox.pd");
+  //PdGraph *graph = zg_new_graph(context, "/Users/mhroth/workspace/ZenGarden/demo/", "128_osc.pd");
+  PdGraph *graph = zg_new_graph(context, "/Users/mhroth/Desktop/", "csaw.pd");
   if (graph == NULL) {
     zg_delete_context(context);
     return 1;
@@ -70,6 +71,7 @@ int main(int argc, char * const argv[]) {
   timeval start, end;
   gettimeofday(&start, NULL);
   for (int i = 0; i < NUM_ITERATIONS; i++) {
+  //while (1) {
     zg_process(context, inputBuffers, outputBuffers);
   }
   gettimeofday(&end, NULL);

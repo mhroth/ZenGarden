@@ -47,7 +47,7 @@ class DspLowpassFilter : public DspObject {
     float alpha;
     float beta; // 1 - alpha;
   
-    float *coefficients;
+    float coefficients[5];
     float signalConstant;
 };
 

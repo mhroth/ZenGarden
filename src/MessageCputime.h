@@ -1,8 +1,8 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
- * 
+ *
  *  This file is part of ZenGarden.
  *
  *  ZenGarden is free software: you can redistribute it and/or modify
@@ -14,23 +14,31 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU Lesser General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with ZenGarden.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
-#ifndef _MESSAGE_DESTINATION_H_
-#define _MESSAGE_DESTINATION_H_
+#ifndef _MESSAGE_CPUTIME_H_
+#define _MESSAGE_CPUTIME_H_
 
-class MessageObject;
-class PdMessage;
+#include <sys/time.h>
+#include "MessageObject.h"
 
-/** A struct containing the destination of a message.*/
-typedef struct {
-  MessageObject *object;
-  PdMessage *message;
-  int index;
-} MessageDestination;
+/** [cputime]: returns the elapsed real time. */
+class MessageCputime : public MessageObject {
+  
+  public:
+    MessageCputime(PdMessage *initMessage, PdGraph *graph);
+    ~MessageCputime();
+    
+    const char *getObjectLabel();
+    
+  private:
+    void processMessage(int inletIndex, PdMessage *message);
+  
+    timeval start;
+};
 
-#endif // _MESSAGE_DESTINATION_H_
+#endif // _MESSAGE_CPUTIME_H_

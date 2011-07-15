@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -24,7 +24,6 @@
 #define _PD_CONTEXT_H_
 
 #include <pthread.h>
-
 #include "OrderedMessageQueue.h"
 #include "PdGraph.h"
 #include "ZGCallbackFunction.h"
@@ -132,11 +131,16 @@ class PdContext {
   
     /**
      * Schedules a <code>PdMessage</code> to be sent by the <code>MessageObject</code> from the
-     * <code>outletIndex</code> at the specified <code>time</code>.
+     * <code>outletIndex</code> at the specified <code>time</code>. The message will be copied
+     * to the heap and the context will thereafter take over ownership and be responsible for
+     * freeing it. The pointer to the heap-message is returned.
      */
-    void scheduleMessage(MessageObject *messageObject, int outletIndex, PdMessage *message);
+    PdMessage *scheduleMessage(MessageObject *messageObject, unsigned int outletIndex, PdMessage *message);
   
-    /** Cancel a scheduled <code>PdMessage</code> according to its id. */
+    /**
+     * Cancel a scheduled <code>PdMessage</code> according to its id. The message memory will
+     * be freed.
+     */
     void cancelMessage(MessageObject *messageObject, int outletIndex, PdMessage *message);
   
     /** Receives and processes messages sent to the Pd system by sending to "pd". */
@@ -176,14 +180,6 @@ class PdContext {
     /** Returns <code>true</code> if the graph was successfully configured. <code>false</code> otherwise. */
     bool configureEmptyGraphWithParser(PdGraph *graph, PdFileParser *fileParser);
   
-    /**
-     * This is an analog of MessageObject::getNextOutgoingMessage(), but strictly for use with the
-     * external messages.
-     */
-    PdMessage *getNextExternalMessage();
-  
-    List *externalMessagePool;
-  
     int numInputChannels;
     int numOutputChannels;
     int blockSize;
@@ -193,7 +189,7 @@ class PdContext {
     static int globalGraphId;
   
     /** A list of all top-level graphs in this context. */
-    ZGLinkedList *graphList;
+    vector<PdGraph *> graphList;
   
     /** A thread lock used to access critical sections of this context. */
     pthread_mutex_t contextLock;
@@ -217,28 +213,28 @@ class PdContext {
     MessageSendController *sendController;
   
     /** A global list of all [send~] objects. */
-    ZGLinkedList *dspSendList;
+    list<DspSend *> dspSendList;
     
     /** A global list of all [receive~] objects. */
-    ZGLinkedList *dspReceiveList;
+    list<DspReceive *> dspReceiveList;
     
-    /** A global list of all [delwite~] objects. */
-    ZGLinkedList *delaylineList;
+    /** A global list of all [delwrite~] objects. */
+    list<DspDelayWrite *> delaylineList;
     
     /** A global list of all [delread~] and [vd~] objects. */
-    ZGLinkedList *delayReceiverList;
+    list<DelayReceiver *> delayReceiverList;
     
     /** A global list of all [throw~] objects. */
-    ZGLinkedList *throwList;
+    list<DspThrow *> throwList;
     
     /** A global list of all [catch~] objects. */
-    ZGLinkedList *catchList;
+    list<DspCatch *> catchList;
     
     /** A global list of all [table] objects. */
-    ZGLinkedList *tableList;
+    list<MessageTable *> tableList;
     
-    /** A global list of all table receivers ([tabread4~] and [tabplay~]) */
-    ZGLinkedList *tableReceiverList;
+    /** A global list of all table receivers (e.g., [tabread4~] and [tabplay~]) */
+    list<TableReceiverInterface *> tableReceiverList;
   
     /** The registered callback function for sending data outside of the graph. */
     void (*callbackFunction)(ZGCallbackFunction, void *, void *);

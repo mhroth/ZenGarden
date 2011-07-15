@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -39,9 +39,13 @@ class MessageDelay : public MessageObject {
     ~MessageDelay();
   
     const char *getObjectLabel();
+  
+    void sendMessage(int outletIndex, PdMessage *message);
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
+  
+    void cancelScheduledMessageIfExists();
   
     double delayMs;
     PdMessage *scheduledMessage;

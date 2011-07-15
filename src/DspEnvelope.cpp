@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -24,17 +24,20 @@
 #include "DspEnvelope.h"
 #include "PdGraph.h"
 
+/** By default, the analysis window size is 1024 samples. */
+#define DEFAULT_WINDOW_SIZE 1024
+
 DspEnvelope::DspEnvelope(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 1, 0, graph) {
-  if (initMessage->getNumElements() == 1 && initMessage->getElement(0)->getType() == FLOAT) {
-    // if one parameter is provided, set the window size
-    windowSize = (int) initMessage->getElement(0)->getFloat();
-    setWindowInterval(windowSize/2);
-  } else if (initMessage->getNumElements() == 2 && 
-             initMessage->getElement(0)->getType() == FLOAT &&
-             initMessage->getElement(1)->getType() == FLOAT) {
-    // if two parameters are provided, set the window size and window interval
-    windowSize = initMessage->getElement(0)->getFloat();
-    windowInterval = initMessage->getElement(1)->getFloat();
+  if (initMessage->isFloat(0)) {
+    if (initMessage->isFloat(1)) {
+      // if two parameters are provided, set the window size and window interval
+      windowSize = initMessage->getFloat(0);
+      windowInterval = initMessage->getFloat(1);
+    } else {
+      // if one parameter is provided, set the window size
+      windowSize = (int) initMessage->getFloat(0);
+      setWindowInterval(windowSize/2);
+    }
   } else {
     // otherwise, use default values for the window size and interval
     windowSize = DEFAULT_WINDOW_SIZE;
@@ -48,12 +51,12 @@ DspEnvelope::DspEnvelope(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 
   // must be at least as large as the block size.
   if (windowSize < graph->getBlockSize()) {
     graph->printErr("env~ window size must be at least as large as the block size. %i reset to %i.\n",
-                    windowSize, graph->getBlockSize());
+        windowSize, graph->getBlockSize());
     windowSize = graph->getBlockSize();
   }
   if (windowInterval < graph->getBlockSize()) {
     graph->printErr("env~ window interval must be at least as large as the block size. %i reset to %i.\n",
-                    windowInterval, graph->getBlockSize());
+        windowInterval, graph->getBlockSize());
     windowInterval = graph->getBlockSize();
   }
   
@@ -63,7 +66,6 @@ DspEnvelope::DspEnvelope(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 
 DspEnvelope::~DspEnvelope() {
   free(signalBuffer);
   free(hanningCoefficients);
-  free(rmsBuffer);
 }
 
 const char *DspEnvelope::getObjectLabel() {
@@ -95,7 +97,6 @@ void DspEnvelope::initBuffers() {
   int numBlocksPerWindow = (windowSize % graph->getBlockSize() == 0) ? (windowSize/graph->getBlockSize()) : (windowSize/graph->getBlockSize()) + 1;
   int bufferSize = numBlocksPerWindow * graph->getBlockSize();
   signalBuffer = (float *) malloc(bufferSize * sizeof(float));
-  rmsBuffer = (float *) malloc(windowSize * sizeof(float));
   hanningCoefficients = (float *) malloc(bufferSize * sizeof(float));
   float N_1 = (float) (windowSize - 1); // (N == windowSize) - 1
   float hanningSum = 0.0f;
@@ -111,7 +112,9 @@ void DspEnvelope::initBuffers() {
 }
 
 // windowSize and windowInterval are constrained to be multiples of the block size
-void DspEnvelope::processDspWithIndex(int fromIndex, int toIndex) {
+void DspEnvelope::processDsp() {
+  RESOLVE_DSPINLET0_IF_NECESSARY();
+  
   // copy the input into the signal buffer
   memcpy(signalBuffer + numSamplesReceived, dspBufferAtInlet0, numBytesInBlock);
   numSamplesReceived += blockSizeInt;
@@ -124,6 +127,7 @@ void DspEnvelope::processDspWithIndex(int fromIndex, int toIndex) {
     // apply hanning window to signal and calculate Root Mean Square
     float rms = 0.0f;
     #if __APPLE__
+    float rmsBuffer[windowSize];
     vDSP_vsq(signalBuffer, 1, rmsBuffer, 1, windowSize); // signalBuffer^2 
     vDSP_vmul(rmsBuffer, 1, hanningCoefficients, 1, rmsBuffer, 1, windowSize); // * hanning window
     vDSP_sve(rmsBuffer, 1, &rms, windowSize); // sum the result
@@ -136,11 +140,10 @@ void DspEnvelope::processDspWithIndex(int fromIndex, int toIndex) {
     // result is normalised such that 1 RMS == 100 dB
     rms = 10.0f * log10f(rms) + 100.0f;
 
-    PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+    PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
     // graph will schedule this at the beginning of the next block because the timestamp will be
     // behind the block start timestamp
-    outgoingMessage->setTimestamp(0.0);
-    outgoingMessage->setFloat(0, (rms < 0.0f) ? 0.0f : rms);
+    outgoingMessage->initWithTimestampAndFloat(0.0, (rms < 0.0f) ? 0.0f : rms);
     graph->scheduleMessage(this, 0, outgoingMessage);
   }
 }

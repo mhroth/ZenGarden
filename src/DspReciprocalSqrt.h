@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -23,7 +23,6 @@
 #ifndef _DSP_RSQRT_H_
 #define _DSP_RSQRT_H_
 
-#include "ArrayArithmetic.h"
 #include "DspObject.h"
 
 /** [rsqrt~], [q8_rsqrt~] */
@@ -34,10 +33,8 @@ class DspReciprocalSqrt : public DspObject {
     ~DspReciprocalSqrt();
     
     const char *getObjectLabel();
-    
-  private:
-    void processDspWithIndex(int fromIndex, int toIndex);
   
+    void processDsp();
 };
 
 #endif // _DSP_RSQRT_H_

@@ -61,14 +61,13 @@ void MessageTableWrite::processMessage(int inletIndex, PdMessage *message) {
           if (table != NULL) {
             int bufferLength = 0;
             float *buffer = table->getBuffer(&bufferLength);
-            if (index >=0 && index < bufferLength) {
+            if (index >= 0 && index < bufferLength) {
               buffer[index] = message->getFloat(0);
             }
           }
           break;
         }
         case SYMBOL: {
-          printf("%s", message->toString());
           if (message->isSymbol(0, "set") && message->isSymbol(1)) {
             free(name);
             name = StaticUtils::copyString(message->getSymbol(1));

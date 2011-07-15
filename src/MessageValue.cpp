@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -47,9 +47,8 @@ void MessageValue::processMessage(int inletIndex, PdMessage *message) {
       break;
     }
     case BANG: {
-      PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-      outgoingMessage->setTimestamp(message->getTimestamp());
-      outgoingMessage->setFloat(0, graph->getValueForName(name));
+      PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+      outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), graph->getValueForName(name));
       sendMessage(0, outgoingMessage);
       break;
     }

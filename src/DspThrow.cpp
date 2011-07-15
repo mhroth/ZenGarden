@@ -60,7 +60,7 @@ float *DspThrow::getBuffer() {
 }
 
 void DspThrow::processDspWithIndex(int fromIndex, int toIndex) {
-  if (numConnectionsToInlet0 > 1) {
+  if (incomingDspConnections[0].size() > 1) {
     // inlet has been resolved, and thus the input exists in a temporary array
     buffer = dspBufferAtOutlet0;
     memcpy(buffer, dspBufferAtInlet0, numBytesInBlock);

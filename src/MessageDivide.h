@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009, 2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -30,13 +30,11 @@ class MessageDivide : public MessageObject {
 
   public:
     MessageDivide(PdMessage *initMessage, PdGraph *graph);
-    MessageDivide(float constant, PdGraph *graph);
     ~MessageDivide();
 
     const char *getObjectLabel();
 
   private:
-    void init(float constant);
     void processMessage(int inletIndex, PdMessage *message);
 
     float constant;

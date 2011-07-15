@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -26,7 +26,7 @@
 MessageNotein::MessageNotein(PdMessage *initMessage, PdGraph *graph) :
     RemoteMessageReceiver(0, 3, graph) {
   if (initMessage->isFloat(0) &&
-      (initMessage->getFloat(0) >= 1.0f && initMessage->isFloat(0) <= 16.0f)) {
+      (initMessage->getFloat(0) >= 1.0f && initMessage->getFloat(0) <= 16.0f)) {
     // channel provided (Pd channels are indexed from 1, while ZG channels are indexed from 0)
     channel = (int) (initMessage->getFloat(0)-1.0f);
     name = (char *) calloc(13, sizeof(char));
@@ -59,23 +59,19 @@ bool MessageNotein::isOmni() {
 }
 
 void MessageNotein::processMessage(int inletIndex, PdMessage *message) {
+  PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+  
   if (isOmni()) {
     // send channel
-    PdMessage *outgoingMessage = getNextOutgoingMessage(2);
-    outgoingMessage->setTimestamp(message->getTimestamp());
-    outgoingMessage->setFloat(0, message->getFloat(2));
+    outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), message->getFloat(2));
     sendMessage(2, outgoingMessage);
   }
   
   // send velocity
-  PdMessage *outgoingMessage = getNextOutgoingMessage(1);
-  outgoingMessage->setTimestamp(message->getTimestamp());
-  outgoingMessage->setFloat(0, message->getFloat(1));
+  outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), message->getFloat(1));
   sendMessage(1, outgoingMessage);
   
   // send note
-  outgoingMessage = getNextOutgoingMessage(0);
-  outgoingMessage->setTimestamp(message->getTimestamp());
-  outgoingMessage->setFloat(0, message->getFloat(0));
+  outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), message->getFloat(0));
   sendMessage(0, outgoingMessage);
 }

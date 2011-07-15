@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -26,6 +26,7 @@
 
 DspSubtract::DspSubtract(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
   constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
+  codePath = DSP_SUBTRACT_DEFAULT;
 }
 
 DspSubtract::~DspSubtract() {
@@ -34,6 +35,46 @@ DspSubtract::~DspSubtract() {
 
 const char *DspSubtract::getObjectLabel() {
   return "-~";
+}
+
+void DspSubtract::addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex) {
+  DspObject::addConnectionFromObjectToInlet(messageObject, outletIndex, inletIndex);
+  
+  // attempt to resolve common code paths for increased efficiency
+  if (incomingDspConnections[0].size() > 0) {
+    if (incomingDspConnections[1].size() == 0) {
+      if (incomingMessageConnections[1].size() == 0) {
+        codePath = DSP_SUBTRACT_DSPX_MESSAGE0;
+      } else {
+        codePath = DSP_SUBTRACT_DSPX_MESSAGEX;
+      }
+    } else if (incomingDspConnections[1].size() == 1) {
+      codePath = DSP_SUBTRACT_DSPX_DSP1;
+    } else {
+      codePath = DSP_SUBTRACT_DSPX_DSPX;
+    }
+  } else {
+    codePath = DSP_SUBTRACT_DEFAULT; // use DspObject infrastructure    
+  }
+}
+
+void DspSubtract::processDsp() {
+  switch (codePath) {
+    case DSP_SUBTRACT_DSPX_MESSAGE0: {
+      RESOLVE_DSPINLET0_IF_NECESSARY();
+      ArrayArithmetic::subtract(dspBufferAtInlet0, constant, dspBufferAtOutlet0, 0, blockSizeInt);
+      break;
+    }
+    case DSP_SUBTRACT_DSPX_DSP1: {
+      RESOLVE_DSPINLET0_IF_NECESSARY();
+      ArrayArithmetic::subtract(dspBufferAtInlet0, dspBufferAtInlet1, dspBufferAtOutlet0, 0, blockSizeInt);
+      break;
+    }
+    default: {
+      DspObject::processDsp();
+      break;
+    }
+  }
 }
 
 void DspSubtract::processMessage(int inletIndex, PdMessage *message) {
@@ -46,13 +87,13 @@ void DspSubtract::processMessage(int inletIndex, PdMessage *message) {
 }
 
 void DspSubtract::processDspWithIndex(int fromIndex, int toIndex) {
-  switch (signalPrecedence) {
-    case DSP_DSP: {
+  switch (codePath) {
+    case DSP_SUBTRACT_DSPX_DSPX: {
       ArrayArithmetic::subtract(dspBufferAtInlet0, dspBufferAtInlet1, dspBufferAtOutlet0,
           fromIndex, toIndex);
       break;
     }
-    case DSP_MESSAGE: {
+    case DSP_SUBTRACT_DSPX_MESSAGEX: {
       ArrayArithmetic::subtract(dspBufferAtInlet0, constant, dspBufferAtOutlet0, fromIndex, toIndex);
       break;
     }

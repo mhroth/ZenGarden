@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -36,28 +36,30 @@ const char *MessageDelay::getObjectLabel() {
   return "delay";
 }
 
+void MessageDelay::cancelScheduledMessageIfExists() {
+  if (scheduledMessage != NULL) {
+    graph->cancelMessage(this, 0, scheduledMessage);
+    scheduledMessage = NULL;
+  }
+}
+
 void MessageDelay::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
       switch (message->getType(0)) {
         case SYMBOL: {
           if (message->isSymbol(0, "stop")) {
-            if (scheduledMessage != NULL) {
-              graph->cancelMessage(this, 0, scheduledMessage);
-            }
+            cancelScheduledMessageIfExists();
             break;
           }
           // allow fall-through
         }
         case FLOAT:
         case BANG: {
-          if (scheduledMessage != NULL) {
-            graph->cancelMessage(this, 0, scheduledMessage);
-            scheduledMessage = NULL;
-          }
-          scheduledMessage = getNextOutgoingMessage(0);
-          scheduledMessage->setTimestamp(message->getTimestamp() + delayMs);
-          graph->scheduleMessage(this, 0, scheduledMessage);
+          cancelScheduledMessageIfExists();
+          scheduledMessage = PD_MESSAGE_ON_STACK(1);
+          scheduledMessage->initWithTimestampAndBang(message->getTimestamp() + delayMs);
+          scheduledMessage = graph->scheduleMessage(this, 0, scheduledMessage);
           break;
         }
         default: {
@@ -68,11 +70,8 @@ void MessageDelay::processMessage(int inletIndex, PdMessage *message) {
     }
     case 1: {
       if (message->isFloat(0)) {
-        if (scheduledMessage != NULL) {
-          // if an outstanding message exists when the delay is reset, the message is cancelled
-          graph->cancelMessage(this, 0, scheduledMessage);
-          scheduledMessage = NULL;
-        }
+        // if an outstanding message exists when the delay is reset, the message is cancelled
+        cancelScheduledMessageIfExists();
         delayMs = (double) message->getFloat(0);
       }
       break;
@@ -81,4 +80,12 @@ void MessageDelay::processMessage(int inletIndex, PdMessage *message) {
       break;
     }
   }
+}
+
+void MessageDelay::sendMessage(int outletIndex, PdMessage *message) {
+  if (message == scheduledMessage) {
+    // now that we know that this message is being sent, we don't have to worry about it anymore
+    scheduledMessage = NULL;
+  }
+  MessageObject::sendMessage(outletIndex, message);
 }

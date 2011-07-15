@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,13 +23,20 @@
 #ifndef _MESSAGE_OBJECT_H_
 #define _MESSAGE_OBJECT_H_
 
+#include <list>
+#include <string>
+#include <vector>
+#include <math.h>
 #include "ConnectionType.h"
-#include "ObjectLetPair.h"
 #include "ObjectType.h"
 #include "PdMessage.h"
 #include "StaticUtils.h"
+using namespace std;
 
 class PdGraph;
+class MessageObject;
+
+typedef std::pair<MessageObject *, unsigned int> ObjectLetPair;
 
 class MessageObject {
   
@@ -88,8 +95,8 @@ class MessageObject {
     /**
      * Returns <code>true</code> if this object should distribute the elements of the incoming
      * message across the inlets. A message is otherwise only distributed if the message arrives
-     * on the left-most inlet, has more than one inlet, and has exactly as many elements as there
-     * object inlets. This function returns <code>true</code> by default and should be overridden
+     * on the left-most inlet and has more than one inlet. This function returns <code>true</code>
+     * by default and should be overridden
      * to return <code>false</code> if this behaviour is not desired (e.g., as in the case of the
      * <code>line</code> object). This behaviour is set to <code>false</code> for all
      * <code>DspObject</code> objects.
@@ -104,33 +111,26 @@ class MessageObject {
     virtual bool isLeafNode();
   
     /** Returns an ordered list of all parent objects of this object. */
-    virtual List *getProcessOrder();
+    virtual list<MessageObject *> *getProcessOrder();
   
     /**
      * Reset the <code>isOrdered</code> flag to <code>false</code>. This is necessary in order to
      * recompute the process order.
      */
     void resetOrderedFlag();
-    
-  protected:
-    /** Returns a message that can be sent from the given outlet. */
-    PdMessage *getNextOutgoingMessage(int outletIndex);
-    
-    /** Returns a new message for use at the given outlet. */
-    virtual PdMessage *newCanonicalMessage(int outletIndex);
   
-    PdGraph *graph;    
-    int numMessageInlets;
-    int numMessageOutlets;
-    List **incomingMessageConnectionsListAtInlet;
-    List **outgoingMessageConnectionsListAtOutlet;
-    List **messageOutletPools;
+    virtual unsigned int getNumInlets();
+    virtual unsigned int getNumOutlets();
+    
+  protected:  
+    /** A pointer to the graph owning this object. */
+    PdGraph *graph;
+  
+    vector<list<ObjectLetPair> > incomingMessageConnections;
+    vector<list<ObjectLetPair> > outgoingMessageConnections;
   
     /** A flag indicating that this object has already been considered when ordering the process tree. */
     bool isOrdered;
-  
-    /** A <code>PdMessage</code> used only to distribute an incoming message across inlets, when necessary. */
-    PdMessage *distributedMessage;
 };
 
 #endif // _MESSAGE_OBJECT_H_

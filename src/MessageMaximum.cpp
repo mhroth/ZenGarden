@@ -31,10 +31,6 @@ MessageMaximum::~MessageMaximum() {
   // nothing to do
 }
 
-void MessageMaximum::init(float constant) {
-  this->constant = constant;
-}
-
 const char *MessageMaximum::getObjectLabel() {
   return "max";
 }
@@ -48,9 +44,8 @@ void MessageMaximum::processMessage(int inletIndex, PdMessage *message) {
           // allow fallthrough
         }
         case BANG: {
-          PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-          outgoingMessage->setFloat(0, lastOutput);
-          outgoingMessage->setTimestamp(message->getTimestamp());
+          PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+          outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), lastOutput);
           sendMessage(0, outgoingMessage);
           break;
         }

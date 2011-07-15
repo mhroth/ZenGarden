@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,28 +23,18 @@
 #include "MessageSendController.h"
 #include "PdContext.h"
 
+// a special index for referencing the system "pd" receiver
+#define SYSTEM_NAME_INDEX 0x7FFFFFFF
+
 // it might nice if this class were implemented using a hashtable with receiver name as the key
 // and Lists as the value.
 MessageSendController::MessageSendController(PdContext *aContext) : MessageObject(0, 0, NULL) {
   context = aContext;
-  nameList = new ZGLinkedList();
-  receiverLists = new ZGLinkedList();
+  sendStack = vector<std::pair<string, set<RemoteMessageReceiver *> > >();
 }
 
 MessageSendController::~MessageSendController() {
-  nameList->resetIterator();
-  char *name = NULL;
-  while ((name = (char *) nameList->getNext()) != NULL) {
-    free(name);
-  }
-  delete nameList;
-  
-  receiverLists->resetIterator();
-  ZGLinkedList *receiverList = NULL;
-  while ((receiverList = (ZGLinkedList *) receiverLists->getNext()) != NULL) {
-    delete receiverList;
-  }
-  delete receiverLists;
+  // nothing to do
 }
 
 const char *MessageSendController::getObjectLabel() {
@@ -52,20 +42,14 @@ const char *MessageSendController::getObjectLabel() {
 }
 
 int MessageSendController::getNameIndex(char *receiverName) {
-  if (strcmp("pd", receiverName) == 0) {
+  if (!strcmp("pd", receiverName)) {
     return SYSTEM_NAME_INDEX; // a special case for sending messages to the system
   }
   
-  nameList->resetIterator();
-  char *name = NULL;
-  int i = 0;
-  while ((name = (char *) nameList->getNext()) != NULL) {
-    if (strcmp(name, receiverName) == 0) {
-      return i;
-    }
-    i++;
-  }
-  
+  for (int i = 0; i < sendStack.size(); i++) {
+    string str = sendStack[i].first;
+    if (!str.compare(receiverName)) return i;
+  }  
   return -1;
 }
 
@@ -78,15 +62,14 @@ void MessageSendController::processMessage(int inletIndex, PdMessage *message) {
 }
 
 void MessageSendController::sendMessage(int outletIndex, PdMessage *message) {
-  if (outletIndex < 0) {
-    return; // outlet index does not exist
-  } else if (outletIndex == SYSTEM_NAME_INDEX) {
+  if (outletIndex == SYSTEM_NAME_INDEX) {
     context->receiveSystemMessage(message);
   } else {
-    ZGLinkedList *receiverList = (ZGLinkedList *) receiverLists->get(outletIndex);
-    receiverList->resetIterator();
-    RemoteMessageReceiver *receiver = NULL;
-    while ((receiver = (RemoteMessageReceiver *) receiverList->getNext()) != NULL) {
+    set<RemoteMessageReceiver *> receiverSet = sendStack[outletIndex].second;
+    set<RemoteMessageReceiver *>::iterator it = receiverSet.begin();
+    set<RemoteMessageReceiver *>::iterator end = receiverSet.end();
+    while (it != end) {
+      RemoteMessageReceiver *receiver = *it++;
       receiver->receiveMessage(0, message);
     }
   }
@@ -95,11 +78,14 @@ void MessageSendController::sendMessage(int outletIndex, PdMessage *message) {
 void MessageSendController::addReceiver(RemoteMessageReceiver *receiver) {
   int nameIndex = getNameIndex(receiver->getName());
   if (nameIndex == -1) {
-    nameList->add(StaticUtils::copyString(receiver->getName()));
-    receiverLists->add((void *) new ZGLinkedList());
-    nameIndex = nameList->size() - 1;
+    set<RemoteMessageReceiver *> remoteSet = set<RemoteMessageReceiver *>();
+    remoteSet.insert(receiver);
+    std::pair<string, set<RemoteMessageReceiver *> > nameSetPair =
+        make_pair(string(receiver->getName()), remoteSet);
+    sendStack.push_back(nameSetPair);
+    nameIndex = sendStack.size()-1;
   }
   
-  ZGLinkedList *receiverList = (ZGLinkedList *) receiverLists->get(nameIndex);
-  receiverList->add(receiver);
+  set<RemoteMessageReceiver *> receiverSet = sendStack[nameIndex].second;
+  receiverSet.insert(receiver);
 }

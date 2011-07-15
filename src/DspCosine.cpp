@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -52,7 +52,11 @@ const char *DspCosine::getObjectLabel() {
   return "cos~";
 }
 
-void DspCosine::processDspWithIndex(int fromIndex, int toIndex) {
+void DspCosine::processDsp() {
+  // as no messages are received and there is only one inlet, processDsp does not need much of the
+  // infrastructure provided by DspObject
+  RESOLVE_DSPINLET0_IF_NECESSARY();
+  
   #if __APPLE__
   float tempBuffer[blockSizeInt];
   vDSP_vabs(dspBufferAtInlet0, 1, tempBuffer, 1, blockSizeInt); // abs(x)

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -33,9 +33,8 @@ class DspWrap : public DspObject {
     ~DspWrap();
 
     const char *getObjectLabel();
-
-  private:
-    void processDspWithIndex(int fromIndex, int toIndex);
+  
+    void processDsp();
 };
 
 #endif // _DSP_WRAP_H_

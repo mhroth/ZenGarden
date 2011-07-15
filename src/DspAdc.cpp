@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -31,22 +31,24 @@ DspAdc::DspAdc(PdGraph *graph) : DspObject(0, 0, 0, graph->getNumInputChannels()
    * <code>DspObject</code>s can continue to refer to <code>localDspBufferAtOutlet</code>
    * and still get access to the global audio input buffers.
    */
-  free(localDspOutletBuffers);
-  localDspOutletBuffers = NULL;
+  free(dspBufferAtOutlet0);
+  dspBufferAtOutlet0 = NULL;
+  
+  // both dspBufferAtOutlet0 and input buffers are concatinated buffers, so this works :)
   dspBufferAtOutlet0 = graph->getGlobalDspBufferAtInlet(0);
-  for (int i = 1; i < numDspOutlets; i++) {
-    dspBufferAtOutlet[i] = graph->getGlobalDspBufferAtInlet(i);
-  }
 }
 
 DspAdc::~DspAdc() {
-  // nothing to do
+  // reset dspBufferAtOutlet0 to NULL so that the global input buffer is not freed (possibly multiple times)
+  dspBufferAtOutlet0 = NULL;
 }
 
 const char *DspAdc::getObjectLabel() {
   return "adc~";
 }
 
-void DspAdc::processDsp() {
-  // nothing to do
+bool DspAdc::doesProcessAudio() {
+  // This object doesn't do anything with audio, it only provides buffers. It should not be included
+  // in the dsp list
+  return false;
 }

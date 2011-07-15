@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -28,6 +28,7 @@
 #include "MessageCosine.h"
 #include "MessageChange.h"
 #include "MessageClip.h"
+#include "MessageCputime.h"
 #include "MessageDeclare.h"
 #include "MessageDelay.h"
 #include "MessageDivide.h"
@@ -167,21 +168,9 @@ PdContext::PdContext(int numInputChannels, int numOutputChannels, int blockSize,
   globalDspInputBuffers = (float *) calloc(blockSize * numInputChannels, sizeof(float));
   globalDspOutputBuffers = (float *) calloc(blockSize * numOutputChannels, sizeof(float));
   
-  externalMessagePool = new List();
-  
   sendController = new MessageSendController(this);
-  
-  graphList = new ZGLinkedList();
-  dspReceiveList = new ZGLinkedList();
-  dspSendList = new ZGLinkedList();
-  delaylineList = new ZGLinkedList();
-  delayReceiverList = new ZGLinkedList();
-  throwList = new ZGLinkedList();
-  catchList = new ZGLinkedList();
-  tableList = new ZGLinkedList();
-  tableReceiverList = new ZGLinkedList();
-  
-  // lock is recursive
+    
+  // configure the context lock, which is recursive
   pthread_mutexattr_t mta;
   pthread_mutexattr_init(&mta);
   pthread_mutexattr_settype(&mta, PTHREAD_MUTEX_RECURSIVE);
@@ -195,25 +184,10 @@ PdContext::~PdContext() {
   delete messageCallbackQueue;
   delete sendController;
   
-  PdGraph *graph = NULL;
-  graphList->resetIterator();
-  while ((graph = (PdGraph *) graphList->getNext()) != NULL) {
-    delete graph;
+  // delete all of the PdGraphs in the graph list
+  for (int i = 0; i < graphList.size(); i++) {
+    delete graphList[i];
   }
-  for (int i = 0; i < externalMessagePool->size(); i++) {
-    PdMessage *message = (PdMessage *) externalMessagePool->get(i);
-    delete message;
-  }
-  delete externalMessagePool;
-  delete graphList;
-  delete dspReceiveList;
-  delete dspSendList;
-  delete delaylineList;
-  delete delayReceiverList;
-  delete throwList;
-  delete catchList;
-  delete tableList;
-  delete tableReceiverList;
 
   pthread_mutex_destroy(&contextLock);
 }
@@ -257,6 +231,7 @@ int PdContext::getNextGraphId() {
   return ++globalGraphId;
 }
 
+
 #pragma mark -
 #pragma mark process
 
@@ -268,36 +243,35 @@ void PdContext::process(float *inputBuffers, float *outputBuffers) {
   
   // clear the global output audio buffers so that dac~ nodes can write to it
   memset(globalDspOutputBuffers, 0, numBytesInOutputBuffers);
-  
+
   // Send all messages for this block
-  MessageDestination *destination = NULL;
+  ObjectMessageLetPair omlPair;
   double nextBlockStartTimestamp = blockStartTimestamp + blockDurationMs;
-  while ((destination = (MessageDestination *) messageCallbackQueue->peek()) != NULL &&
-         destination->message->getTimestamp() < nextBlockStartTimestamp) {
+  while (!messageCallbackQueue->empty() &&
+      (omlPair = messageCallbackQueue->peek()).first != NULL &&
+      omlPair.second.first->getTimestamp() < nextBlockStartTimestamp) {
+    
     messageCallbackQueue->pop(); // remove the message from the queue
-    if (destination->message->getTimestamp() < blockStartTimestamp) {
+
+    MessageObject *object = omlPair.first;
+    PdMessage *message = omlPair.second.first;
+    unsigned int outletIndex = omlPair.second.second;
+    if (message->getTimestamp() < blockStartTimestamp) {
       // messages injected into the system with a timestamp behind the current block are automatically
       // rescheduled for the beginning of the current block. This is done in order to normalise
       // the treament of messages, but also to avoid difficulties in cases when messages are scheduled
       // in subgraphs with different block sizes.
-      destination->message->setTimestamp(blockStartTimestamp);
+      message->setTimestamp(blockStartTimestamp);
     }
-    // save this pointer because destination->message may be reused as a consequence of sending the
-    // message (e.g., when a new message is scheduled).
-    PdMessage *message = destination->message;
-    destination->object->sendMessage(destination->index, message);
     
-    // unreserve() is called after sendMessage() in order to prevent the message from being resused
-    // in the case the reserving object is retriggered during the execution of sendMessage()
-    // However, also, sendMessage reserves the message anyway. But this unreserve is needed
-    // in any case in order to balance the reserve() called in scheduleMessage()
-    message->unreserve();
+    object->sendMessage(outletIndex, message);
+    message->freeMessage(); // free the message now that it has been sent and processed
   }
-  
-  PdGraph *graph = NULL;
-  graphList->resetIterator();
-  while ((graph = (PdGraph *) graphList->getNext()) != NULL) {
-    graph->processDsp();
+
+  int numGraphs = graphList.size();
+  PdGraph **graph = (numGraphs > 0) ? &graphList.front() : NULL;
+  for (int i = 0; i < numGraphs; ++i) {
+    graph[i]->processDsp();
   }
   
   blockStartTimestamp = nextBlockStartTimestamp;
@@ -307,6 +281,7 @@ void PdContext::process(float *inputBuffers, float *outputBuffers) {
   
   unlock(); // unlock the context
 }
+
 
 #pragma mark -
 #pragma mark New Graph
@@ -348,6 +323,10 @@ PdGraph *PdContext::newGraph(char *directory, char *filename, PdMessage *initMes
 bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser *fileParser) {
   PdGraph *graph = emptyGraph;
 
+#define RESOLUTION_BUFFER_LENGTH 512
+#define INIT_MESSAGE_MAX_ELEMENTS 32
+  PdMessage *initMessage = PD_MESSAGE_ON_STACK(INIT_MESSAGE_MAX_ELEMENTS);
+  
   // configure the graph based on the messages
   char *line = NULL;
   while ((line = fileParser->nextMessage()) != NULL) {
@@ -372,28 +351,28 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
         int canvasY = atoi(strtok(NULL, " ")); // read the second canvas coordinate
         char *objectLabel = strtok(NULL, " ;"); // delimit with " " or ";"
         char *objectInitString = strtok(NULL, ";"); // get the object initialisation string
-        PdMessage *initMessage = new PdMessage(objectInitString, graph->getArguments());
+        char resBuffer[RESOLUTION_BUFFER_LENGTH];
+        initMessage->initWithSARb(INIT_MESSAGE_MAX_ELEMENTS, objectInitString, graph->getArguments(),
+            resBuffer, RESOLUTION_BUFFER_LENGTH);
         MessageObject *messageObject = newObject(objectType, objectLabel, initMessage, graph);
         if (messageObject == NULL) {
           char *filename = StaticUtils::concatStrings(objectLabel, ".pd");
           char *directory = graph->findFilePath(filename);
           if (directory == NULL) {
             free(filename);
-            delete initMessage;
             printErr("Unknown object or abstraction \"%s\".", objectLabel);
             return false;
           }
           messageObject = newGraph(directory, filename, initMessage, graph);
           free(filename);
         }
-        delete initMessage;
 
         // add the object to the local graph and make any necessary registrations
         graph->addObject(canvasX, canvasY, messageObject);
       } else if (strcmp(objectType, "msg") == 0) {
         int canvasX = atoi(strtok(NULL, " ")); // read the first canvas coordinate
         int canvasY = atoi(strtok(NULL, " ")); // read the second canvas coordinate
-        char *objectInitString = strtok(NULL, ""); // get the message initialisation string
+        char *objectInitString = strtok(NULL, ";"); // get the message initialisation string
         graph->addObject(canvasX, canvasY ,new MessageMessageBox(objectInitString, graph));
       } else if (strcmp(objectType, "connect") == 0) {
         int fromObjectIndex = atoi(strtok(NULL, " "));
@@ -404,11 +383,13 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
       } else if (strcmp(objectType, "floatatom") == 0) {
         int canvasX = atoi(strtok(NULL, " ")); // read the first canvas coordinate
         int canvasY = atoi(strtok(NULL, " ")); // read the second canvas coordinate
-        graph->addObject(canvasX, canvasY, new MessageFloat(0.0f, graph)); // defines a number box
+        initMessage->initWithTimestampAndFloat(0.0, 0.0f);
+        graph->addObject(canvasX, canvasY, new MessageFloat(initMessage, graph)); // defines a number box
       } else if (strcmp(objectType, "symbolatom") == 0) {
         int canvasX = atoi(strtok(NULL, " ")); // read the first canvas coordinate
         int canvasY = atoi(strtok(NULL, " ")); // read the second canvas coordinate
-        graph->addObject(canvasX, canvasY, new MessageSymbol("", graph)); // defines a symbol box
+        initMessage->initWithTimestampAndSymbol(0.0, NULL);
+        graph->addObject(canvasX, canvasY, new MessageSymbol(initMessage, graph)); // defines a symbol box
       } else if (strcmp(objectType, "restore") == 0) {
         // the graph is finished being defined
         graph = graph->getParentGraph(); // pop the graph stack to the parent graph
@@ -421,7 +402,7 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
       } else if (strcmp(objectType, "declare") == 0) {
         // set environment for loading patch
         char *objectInitString = strtok(NULL, ";"); // get the arguments to declare
-        PdMessage *initMessage = new PdMessage(objectInitString); // parse them
+        initMessage->initWithString(2, objectInitString); // parse them
         if (initMessage->isSymbol(0, "-path")) {
           if (initMessage->isSymbol(1)) {
             // add symbol to declare directories
@@ -430,16 +411,15 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
         } else {
           printErr("declare \"%s\" flag is not supported.", initMessage->getSymbol(0));
         }
-        delete initMessage;
       } else if (strcmp(objectType, "array") == 0) {
         // creates a new table
         // objectInitString should contain both name and buffer length
         char *objectInitString = strtok(NULL, ";"); // get the object initialisation string
-        PdMessage *initMessage = new PdMessage(objectInitString, graph->getArguments());
+        char resBuffer[RESOLUTION_BUFFER_LENGTH];
+        initMessage->initWithSARb(4, objectInitString, graph->getArguments(), resBuffer, RESOLUTION_BUFFER_LENGTH);
         MessageTable *table = new MessageTable(initMessage, graph);
         int bufferLength = 0;
         float *buffer = table->getBuffer(&bufferLength);
-        delete initMessage;
         graph->addObject(0, 0, table);
         
         // next many lines should be elements of that array
@@ -447,12 +427,9 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
         while (strcmp(strtok(line = fileParser->nextMessage(), " ;"), "#A") == 0) {
           int index = atoi(strtok(NULL, " ;"));
           char *nextNumber = NULL;
-          while ((nextNumber = strtok(NULL, " ;")) != NULL) {
-            if (index >= bufferLength) {
-              break; // ensure that file does not attempt to write more than stated numbers
-            } else {
-              buffer[index++] = atof(nextNumber);
-            }
+          // ensure that file does not attempt to write more than stated numbers
+          while (((nextNumber = strtok(NULL, " ;")) != NULL) && (index < bufferLength)) {
+            buffer[index++] = atof(nextNumber);
           }
         }
         // ignore the #X coords line
@@ -473,7 +450,7 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
 
 void PdContext::attachGraph(PdGraph *graph) {
   lock();
-  graphList->add(graph);
+  graphList.push_back(graph);
   graph->attachToContext(true);
   unlock();
 }
@@ -534,6 +511,8 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
       return new MessageChange(initMessage, graph);
     } else if (strcmp(objectLabel, "cos") == 0) {
       return new MessageCosine(initMessage, graph);
+    } else if (strcmp(objectLabel, "cputime") == 0) {
+      return new MessageCputime(initMessage, graph);
     } else if (strcmp(objectLabel, "clip") == 0) {
       return new MessageClip(initMessage, graph);
     } else if (strcmp(objectLabel, "declare") == 0) {
@@ -551,7 +530,9 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
     } else if (strcmp(objectLabel, "mtof") == 0) {
       return new MessageMidiToFrequency(graph);
     } else if (StaticUtils::isNumeric(objectLabel)){
-      return new MessageFloat(atof(objectLabel), graph);
+      PdMessage *initMessage = PD_MESSAGE_ON_STACK(1);
+      initMessage->initWithTimestampAndFloat(0.0, atof(objectLabel));
+      return new MessageFloat(initMessage, graph);
     } else if (strcmp(objectLabel, "inlet") == 0) {
       return new MessageInlet(graph);
     } else if (strcmp(objectLabel, "int") == 0 ||
@@ -564,19 +545,18 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
         if (initMessage->isSymbol(0, "append") ||
             initMessage->isSymbol(0, "prepend") ||
             initMessage->isSymbol(0, "split")) {
-          PdMessage *newMessage = new PdMessage();
-          for (int i = 1; i < initMessage->getNumElements(); i++) {
-            newMessage->addElement(initMessage->getElement(i));
-          }
+          int numElements = initMessage->getNumElements()-1;
+          PdMessage *message = PD_MESSAGE_ON_STACK(numElements);
+          message->initWithTimestampAndNumElements(0.0, numElements);
+          memcpy(message->getElement(0), initMessage->getElement(1), numElements*sizeof(MessageAtom));
           MessageObject *messageObject = NULL;
           if (initMessage->isSymbol(0, "append")) {
-            messageObject = new MessageListAppend(newMessage, graph);
+            messageObject = new MessageListAppend(message, graph);
           } else if (initMessage->isSymbol(0, "prepend")) {
-            messageObject = new MessageListPrepend(newMessage, graph);
+            messageObject = new MessageListPrepend(message, graph);
           } else if (initMessage->isSymbol(0, "split")) {
-            messageObject = new MessageListSplit(newMessage, graph);
+            messageObject = new MessageListSplit(message, graph);
           }
-          delete newMessage;
           return messageObject;
         } else if (initMessage->isSymbol(0, "trim")) {
           // trim and length do not act on the initMessage
@@ -667,7 +647,9 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
     } else if (strcmp(objectLabel, "vsl") == 0 ||
                strcmp(objectLabel, "hsl") == 0) {
       // gui sliders are represented as a float objects
-      return new MessageFloat(0.0f, graph);
+      PdMessage *message = PD_MESSAGE_ON_STACK(1);
+      message->initWithTimestampAndFloat(0.0, 1.0f);
+      return new MessageFloat(message, graph);
     } else if (strcmp(objectLabel, "wrap") == 0) {
       return new MessageWrap(initMessage, graph);
     } else if (strcmp(objectLabel, "+~") == 0) {
@@ -821,7 +803,7 @@ void PdContext::registerRemoteMessageReceiver(RemoteMessageReceiver *receiver) {
 }
 
 void PdContext::registerDspReceive(DspReceive *dspReceive) {
-  dspReceiveList->add(dspReceive);
+  dspReceiveList.push_back(dspReceive);
   
   // connect receive~ to associated send~
   DspSend *dspSend = getDspSend(dspReceive->getName());
@@ -836,25 +818,19 @@ void PdContext::registerDspSend(DspSend *dspSend) {
     printErr("Duplicate send~ object found with name \"%s\".", dspSend->getName());
     return;
   }
-  dspSendList->add(dspSend);
+  dspSendList.push_back(dspSend);
   
   // connect associated receive~s to send~.
-  DspReceive *dspReceive = NULL;
-  dspReceiveList->resetIterator();
-  while ((dspReceive = (DspReceive *) dspReceiveList->getNext()) != NULL) {
-    if (strcmp(dspReceive->getName(), dspSend->getName()) == 0) {
-      dspReceive->setBuffer(dspSend->getBuffer());
+  for (list<DspReceive *>::iterator it = dspReceiveList.begin(); it != dspReceiveList.end(); it++) {
+    if (!strcmp((*it)->getName(), dspSend->getName())) {
+      (*it)->setBuffer(dspSend->getBuffer());
     }
   }
 }
 
 DspSend *PdContext::getDspSend(char *name) {
-  DspSend *dspSend = NULL;
-  dspSendList->resetIterator();
-  while ((dspSend = (DspSend *) dspSendList->getNext()) != NULL) {
-    if (strcmp(dspSend->getName(), name) == 0) {
-      return dspSend;
-    }
+  for (list<DspSend *>::iterator it = dspSendList.begin(); it != dspSendList.end(); it++) {
+    if (!strcmp((*it)->getName(), name)) return (*it);
   }
   return NULL;
 }
@@ -864,21 +840,16 @@ void PdContext::registerDelayline(DspDelayWrite *delayline) {
     printErr("delwrite~ with duplicate name \"%s\" registered.", delayline->getName());
     return;
   }
-  
-  delaylineList->add(delayline);
+  delaylineList.push_back(delayline);
   
   // connect this delayline to all same-named delay receivers
-  DelayReceiver *delayReceiver = NULL;
-  delayReceiverList->resetIterator();
-  while ((delayReceiver = (DelayReceiver *) delayReceiverList->getNext()) != NULL) {
-    if (strcmp(delayReceiver->getName(), delayline->getName()) == 0) {
-      delayReceiver->setDelayline(delayline);
-    }
+  for (list<DelayReceiver *>::iterator it = delayReceiverList.begin(); it != delayReceiverList.end(); it++) {
+    if (!strcmp((*it)->getName(), delayline->getName())) (*it)->setDelayline(delayline);
   }
 }
 
 void PdContext::registerDelayReceiver(DelayReceiver *delayReceiver) {
-  delayReceiverList->add(delayReceiver);
+  delayReceiverList.push_back(delayReceiver);
   
   // connect the delay receiver to the named delayline
   DspDelayWrite *delayline = getDelayline(delayReceiver->getName());
@@ -886,18 +857,14 @@ void PdContext::registerDelayReceiver(DelayReceiver *delayReceiver) {
 }
 
 DspDelayWrite *PdContext::getDelayline(char *name) {
-  DspDelayWrite *delayline = NULL;
-  delaylineList->resetIterator();
-  while ((delayline = (DspDelayWrite *) delaylineList->getNext()) != NULL) {
-    if (strcmp(delayline->getName(), name) == 0) {
-      return delayline;
-    }
+  for (list<DspDelayWrite *>::iterator it = delaylineList.begin(); it != delaylineList.end(); it++) {
+    if (!strcmp((*it)->getName(), name)) return *it;
   }
   return NULL;
 }
 
 void PdContext::registerDspThrow(DspThrow *dspThrow) {
-  throwList->add(dspThrow);
+  throwList.push_back(dspThrow);
   
   DspCatch *dspCatch = getDspCatch(dspThrow->getName());
   if (dspCatch != NULL) {
@@ -911,57 +878,43 @@ void PdContext::registerDspCatch(DspCatch *dspCatch) {
     printErr("catch~ with duplicate name \"%s\" already exists.", dspCatch->getName());
     return;
   }
-  catchList->add(dspCatch);
+  catchList.push_back(dspCatch);
   
   // connect catch~ to all associated throw~s
-  DspThrow *dspThrow = NULL;
-  throwList->resetIterator();
-  while ((dspThrow = (DspThrow *) throwList->getNext()) != NULL) {
-    dspCatch->addThrow(dspThrow);
+  for (list<DspThrow *>::iterator it = throwList.begin(); it != throwList.end(); it++) {
+    if (!strcmp((*it)->getName(), dspCatch->getName())) dspCatch->addThrow((*it));
   }
 }
 
 DspCatch *PdContext::getDspCatch(char *name) {
-  DspCatch *dspCatch = NULL;
-  catchList->resetIterator();
-  while ((dspCatch = (DspCatch *) catchList->getNext()) != NULL) {
-    if (strcmp(dspCatch->getName(), name) == 0) {
-      return dspCatch;
-    }
+  for (list<DspCatch *>::iterator it = catchList.begin(); it != catchList.end(); it++) {
+    if (!strcmp((*it)->getName(), name)) return (*it);
   }
   return NULL;
 }
 
-void PdContext::registerTable(MessageTable *table) {
+void PdContext::registerTable(MessageTable *table) {  
   if (getTable(table->getName()) != NULL) {
     printErr("Table with name \"%s\" already exists.", table->getName());
     return;
   }
+  tableList.push_back(table);
   
-  tableList->add(table);
-  
-  TableReceiverInterface *receiver = NULL;
-  tableReceiverList->resetIterator();
-  while ((receiver = (TableReceiverInterface *) tableReceiverList->getNext()) != NULL) {
-    if (strcmp(receiver->getName(), table->getName()) == 0) {
-      receiver->setTable(table);
-    }
+  for (list<TableReceiverInterface *>::iterator it = tableReceiverList.begin();
+      it != tableReceiverList.end(); it++) {
+    if (!strcmp((*it)->getName(), table->getName())) (*it)->setTable(table);
   }
 }
 
 MessageTable *PdContext::getTable(char *name) {
-  MessageTable *table = NULL;
-  tableList->resetIterator();
-  while ((table = (MessageTable *) tableList->getNext()) != NULL) {
-    if (strcmp(table->getName(), name) == 0) {
-      return table;
-    }
+  for (list<MessageTable *>::iterator it = tableList.begin(); it != tableList.end(); it++) {
+    if (!strcmp((*it)->getName(), name)) return (*it);
   }
   return NULL;
 }
 
 void PdContext::registerTableReceiver(TableReceiverInterface *tableReceiver) {
-  tableReceiverList->add(tableReceiver); // add the new receiver
+  tableReceiverList.push_back(tableReceiver); // add the new receiver
   
   MessageTable *table = getTable(tableReceiver->getName());
   tableReceiver->setTable(table); // set table whether it is NULL or not
@@ -976,6 +929,7 @@ float PdContext::getValueForName(char *name) {
   return 0.0f;
 }
 
+
 #pragma mark -
 #pragma mark Manage Messages
 
@@ -988,24 +942,23 @@ void PdContext::scheduleExternalMessageV(const char *receiverName, double timest
   lock(); // NOTE(mhroth): can reduce size of critical section?
   int receiverNameIndex = sendController->getNameIndex((char *) receiverName);
   if (receiverNameIndex >= 0) { // if the receiver exists
-    PdMessage *message = getNextExternalMessage();
-    message->setTimestamp(timestamp);
+    int numElements = strlen(messageFormat);
+    PdMessage *message = PD_MESSAGE_ON_STACK(numElements);
+    message->initWithTimestampAndNumElements(timestamp, numElements);
     
     // format message
-    message->clear();
-    int numElements = strlen(messageFormat);
     for (int i = 0; i < numElements; i++) {
       switch (messageFormat[i]) {
         case 'f': {
-          message->addElement((float) va_arg(ap, double));
+          message->setFloat(i, (float) va_arg(ap, double));
           break;
         }
         case 's': {
-          message->addElement((char *) va_arg(ap, char *));
+          message->setSymbol(i, (char *) va_arg(ap, char *));
           break;
         }
         case 'b': {
-          message->addElement();
+          message->setBang(i);
           break;
         }
         default: {
@@ -1019,33 +972,21 @@ void PdContext::scheduleExternalMessageV(const char *receiverName, double timest
   unlock();
 }
 
-PdMessage *PdContext::getNextExternalMessage() {
-  int numMessages = externalMessagePool->size();
-  for (int i = 0; i < numMessages; i++) {
-    PdMessage *message = (PdMessage *) externalMessagePool->get(i);
-    if (!message->isReserved()) {
-      return message;
-    }
-  }
-  PdMessage *message = new PdMessage();
-  message->addElement(); // add one element to the message
-  externalMessagePool->add(message);
-  return message;
-}
-
-void PdContext::scheduleMessage(MessageObject *messageObject, int outletIndex, PdMessage *message) {
+PdMessage *PdContext::scheduleMessage(MessageObject *messageObject, unsigned int outletIndex, PdMessage *message) {
   // basic argument checking. It may happen that the message is NULL in case a cancel message
   // is sent multiple times to a particular object, when no message is pending
-  if (message != NULL && outletIndex >= 0 && messageObject != NULL) {
-    message->reserve();
+  if (message != NULL && messageObject != NULL) {
+    message = message->copyToHeap();
     messageCallbackQueue->insertMessage(messageObject, outletIndex, message);
+    return message;
   }
+  return NULL;
 }
 
 void PdContext::cancelMessage(MessageObject *messageObject, int outletIndex, PdMessage *message) {
   if (message != NULL && outletIndex >= 0 && messageObject != NULL) {
     messageCallbackQueue->removeMessage(messageObject, outletIndex, message);
-    message->unreserve();
+    message->freeMessage();
   }
 }
 

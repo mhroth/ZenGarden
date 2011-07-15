@@ -38,6 +38,8 @@ class MessageOutlet : public MessageObject {
     int getCanvasPosition();
     void setCanvasPosition(int pos);
   
+    bool isLeafNode();
+  
   private:
     void processMessage(int inletIndex, PdMessage *message);
   

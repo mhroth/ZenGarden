@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -48,8 +48,7 @@ class DspCatch : public DspObject {
     
   private:
     char *name;
-    List *throwList; // list of associated throw~ objects
-    float *originalOutputBuffer;
+    list<DspThrow *> throwList; // list of associated throw~ objects
 };
 
 #endif // _DSP_CATCH_H_

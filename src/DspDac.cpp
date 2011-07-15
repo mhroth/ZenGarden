@@ -38,7 +38,7 @@ const char *DspDac::getObjectLabel() {
 
 void DspDac::processDspWithIndex(int fromIndex, int toIndex) {
   float *globalOutputBuffer;
-  switch (numDspInlets) {
+  switch (incomingDspConnections.size()) {
     default: {
       /* TODO(mhroth): fit this into the new buffer reference architecture
       for (int i = 2; i < numDspInlets; i++) {

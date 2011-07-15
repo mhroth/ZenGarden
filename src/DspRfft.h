@@ -34,10 +34,10 @@ class DspRfft : public DspObject {
     ~DspRfft();
     
     const char *getObjectLabel();
+  
+    void processDsp();
     
   private:
-    void processDspWithIndex(int fromIndex, int toIndex);
-  
     #if __APPLE__
     vDSP_Length log2n;
     FFTSetup fftSetup;

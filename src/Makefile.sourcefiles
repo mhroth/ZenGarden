@@ -41,7 +41,6 @@ LOCAL_SRC_FILES := \
 ./DspThrow.cpp \
 ./DspVariableDelay.cpp \
 ./DspWrap.cpp \
-./List.cpp \
 ./MessageAbsoluteValue.cpp \
 ./MessageAdd.cpp \
 ./MessageArcTangent.cpp \
@@ -50,6 +49,7 @@ LOCAL_SRC_FILES := \
 ./MessageChange.cpp \
 ./MessageClip.cpp \
 ./MessageCosine.cpp \
+./MessageCputime.cpp \
 ./MessageDbToPow.cpp \
 ./MessageDbToRms.cpp \
 ./MessageDeclare.cpp \
@@ -94,7 +94,6 @@ LOCAL_SRC_FILES := \
 ./MessagePow.cpp \
 ./MessagePowToDb.cpp \
 ./MessagePrint.cpp \
-./MessageQueue.cpp \
 ./MessageRandom.cpp \
 ./MessageReceive.cpp \
 ./MessageRemainder.cpp \
@@ -132,5 +131,4 @@ LOCAL_SRC_FILES := \
 ./PdMessage.cpp \
 ./RemoteMessageReceiver.cpp \
 ./StaticUtils.cpp \
-./ZenGarden.cpp \
-./ZGLinkedList.cpp 
+./ZenGarden.cpp

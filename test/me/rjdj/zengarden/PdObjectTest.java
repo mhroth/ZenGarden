@@ -155,6 +155,11 @@ public class PdObjectTest implements ZenGardenListener {
   public void testMessageGreaterThanOrEqualTo() {
     genericMessageTest("MessageGreaterThanOrEqualTo.pd");
   }
+  
+  @Test
+  public void testMessageInletOutlet() {
+    genericMessageTest("MessageInletOutlet.pd");
+  }
 
   @Test
   public void testMessageInteger() {
@@ -351,7 +356,6 @@ public class PdObjectTest implements ZenGardenListener {
     genericMessageTest("MessageToggle.pd");
   }
   
-  
   @Test
   public void testMessageTrigger() {
     genericMessageTest("MessageTrigger.pd");
@@ -361,12 +365,12 @@ public class PdObjectTest implements ZenGardenListener {
   public void testMessageUnpack() {
     genericMessageTest("MessageUnpack.pd");
   }
-  
+
   @Test
   public void testMessageUntil() {
     genericMessageTest("MessageUntil.pd");
   }
-  
+
   @Test
   public void testMessageWrap() {
     genericMessageTest("MessageWrap.pd");
@@ -396,7 +400,7 @@ public class PdObjectTest implements ZenGardenListener {
         testFilename.split("\\.")[0] + ".golden"));
     
     // ensure that message standard output is same as golden file
-    assertEquals(printBuffer.toString(), goldenOutput);
+    assertEquals(goldenOutput, printBuffer.toString());
     
     graph.unloadNativeComponentIfStillLoaded();
   }

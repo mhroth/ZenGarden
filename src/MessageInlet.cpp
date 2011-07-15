@@ -23,13 +23,14 @@
 #include "MessageInlet.h"
 #include "PdGraph.h"
 
+// MessageInlet is initialised with an inlet because it manages connections from outside of the
+// containing graph.
 MessageInlet::MessageInlet(PdGraph *graph) : MessageObject(1, 1, graph) {
-  numMessageInlets = 0;
   canvasX = 0;
 }
 
 MessageInlet::~MessageInlet() {
-  numMessageInlets = 1;
+  // nothing to do
 }
 
 const char *MessageInlet::getObjectLabel() {
@@ -44,13 +45,25 @@ void MessageInlet::processMessage(int inletIndex, PdMessage *message) {
   sendMessage(0, message);
 }
 
-List *MessageInlet::getProcessOrderFromInlet() {
-  List *processList = new List();
-  List *incomingMessageConnections = incomingMessageConnectionsListAtInlet[0];
-  for (int i = 0; i < incomingMessageConnections->size(); i++) {
-    ObjectLetPair *objectLetPair = (ObjectLetPair *) incomingMessageConnections->get(i);
-    List *parentProcessList = objectLetPair->object->getProcessOrder();
-    processList->add(parentProcessList);
+list<MessageObject *> *MessageInlet::getProcessOrder() {
+  if (isOrdered) {
+    return new list<MessageObject *>();
+  } else {
+    isOrdered = true;
+    list<MessageObject *> *processList = new list<MessageObject *>();
+    processList->push_back(this);
+    return processList;
+  }
+}
+
+list<MessageObject *> *MessageInlet::getProcessOrderFromInlet() {
+  list<MessageObject *> *processList = new list<MessageObject *>();
+  list<ObjectLetPair>::iterator it = incomingMessageConnections[0].begin();
+  list<ObjectLetPair>::iterator end = incomingMessageConnections[0].end();
+  while (it != end) {
+    ObjectLetPair objectLetPair = *it++;
+    list<MessageObject *> *parentProcessList = objectLetPair.first->getProcessOrder();
+    processList->splice(processList->end(), *parentProcessList);
     delete parentProcessList;
   }
   return processList;

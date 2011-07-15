@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009, 2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -23,24 +23,11 @@
 #include "MessagePow.h"
 
 MessagePow::MessagePow(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
-  if (initMessage->getNumElements() > 0 &&
-      initMessage->getElement(0)->getType() == FLOAT) {
-    init(initMessage->getElement(0)->getFloat());
-  } else {
-    init(0.0f);
-  }
-}
-
-MessagePow::MessagePow(float constant, PdGraph *graph) : MessageObject(2, 1, graph) {
-  init(constant);
+  constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
 }
 
 MessagePow::~MessagePow() {
   // nothing to do
-}
-
-void MessagePow::init(float constant) {
-  this->constant = constant;
 }
 
 const char *MessagePow::getObjectLabel() {
@@ -50,19 +37,17 @@ const char *MessagePow::getObjectLabel() {
 void MessagePow::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
-      MessageElement *messageElement = message->getElement(0);
-      if (messageElement->getType() == FLOAT) {
-        PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-        outgoingMessage->getElement(0)->setFloat((messageElement->getFloat() <= 0)? 0.0f : powf(messageElement->getFloat(), constant));
-        outgoingMessage->setTimestamp(message->getTimestamp());
-        sendMessage(0, outgoingMessage); // send a message from outlet 0
+      if (message->isFloat(0)) {
+        PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+        float value = (message->getFloat(0) <= 0.0f) ? 0.0f : powf(message->getFloat(0), constant);
+        outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), value);
+        sendMessage(0, outgoingMessage);
       }
       break;
     }
     case 1: {
-      MessageElement *messageElement = message->getElement(0);
-      if (messageElement->getType() == FLOAT) {
-        constant = messageElement->getFloat();
+      if (message->isFloat(0)) {
+        constant = message->getFloat(0);
       }
       break;
     }

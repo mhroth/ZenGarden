@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,8 +23,9 @@
 #ifndef _MESSAGE_MESSAGE_BOX_H_
 #define _MESSAGE_MESSAGE_BOX_H_
 
-#include "MessageNamedDestination.h"
 #include "MessageObject.h"
+
+typedef std::pair<char *, PdMessage *> MessageNamedDestination;
 
 /** Implements the functionality of Pd's message box. */
 class MessageMessageBox : public MessageObject {
@@ -37,11 +38,9 @@ class MessageMessageBox : public MessageObject {
   
   private:
     void processMessage(int inletIndex, PdMessage *message);
-    PdMessage *newCanonicalMessage(int outletIndex);
-    PdMessage *getNextResolvedMessage(int objMessageIndex, PdMessage *templateMessage, PdMessage *incomingMessage);
   
-    List *localMessageList;
-    List *remoteMessageList;
+    vector<PdMessage *> localMessageList;
+    vector<MessageNamedDestination> remoteMessageList;
 };
 
 #endif // _MESSAGE_MESSAGE_BOX_H_

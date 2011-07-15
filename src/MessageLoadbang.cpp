@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -24,8 +24,8 @@
 #include "PdGraph.h"
 
 MessageLoadbang::MessageLoadbang(PdGraph *graph) : MessageObject(0, 1, graph) {
-  PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-  outgoingMessage->setTimestamp(0.0);
+  PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+  outgoingMessage->initWithTimestampAndBang(0.0);
   graph->scheduleMessage(this, 0, outgoingMessage);
 }
 

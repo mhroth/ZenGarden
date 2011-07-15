@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,11 +23,20 @@
 #ifndef _DSP_OBJECT_H_
 #define _DSP_OBJECT_H_
 
-#include <math.h>
+#include <queue>
+#include "ArrayArithmetic.h"
 #include "DspMessagePresedence.h"
-#include "MessageLetPair.h"
 #include "MessageObject.h"
-#include "MessageQueue.h"
+
+// this function is a macro and not a function such that the allocated buffer stays on the stack
+// for the remainder of the function
+#define RESOLVE_DSPINLET0_IF_NECESSARY() \
+  if (incomingDspConnections[0].size() > 1) { \
+    dspBufferAtInlet0 = (float *) alloca(numBytesInBlock); \
+    resolveInputBuffers(0, dspBufferAtInlet0); \
+  }
+
+typedef std::pair<PdMessage *, unsigned int> MessageLetPair;
 
 /**
  * A <code>DspObject</code> is the abstract superclass of any object which processes audio.
@@ -61,7 +70,7 @@ class DspObject : public MessageObject {
     /** Returns the connection type of the given outlet. */
     virtual ConnectionType getConnectionType(int outletIndex);
 
-    virtual float **getDspBufferRefAtOutlet(int outletIndex);
+    virtual float *getDspBufferRefAtOutlet(int outletIndex);
   
     virtual void addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex);
       
@@ -70,18 +79,36 @@ class DspObject : public MessageObject {
     virtual bool doesProcessAudio();
   
     virtual bool isLeafNode();
-    List *getProcessOrder();
+    virtual list<MessageObject *> *getProcessOrder();
+  
+    virtual unsigned int getNumInlets();
+    virtual unsigned int getNumOutlets();
     
   protected: 
     /* IMPORTANT: one of these two functions MUST be overridden (or processDsp()) */
     virtual void processDspWithIndex(float fromIndex, float toIndex);
     virtual void processDspWithIndex(int fromIndex, int toIndex);
-    
-    /** The number of dsp inlets of this object. */
-    int numDspInlets;
   
-    /** The number of dsp outlets of this object. */
-    int numDspOutlets;
+    /**
+     * Prepares the input buffer at the given inlet index.
+     * This is a helper function for <code>processDsp()</code>.
+     * it is known here that there are at least 2 connections at the given inlet
+     */
+    inline void resolveInputBuffers(int inletIndex, float *localInputBuffer) {
+      vector<float *> *dspBufferRefList = &(*(dspBufferRefListAtInlet.begin() + inletIndex));
+      
+      // prepare the vector iterator
+      vector<float *>::iterator it = dspBufferRefList->begin();
+      vector<float *>::iterator end = dspBufferRefList->end();
+      
+      // add the first two connections together into the input buffer
+      ArrayArithmetic::add(*it++, *it++, localInputBuffer, 0, blockSizeInt);
+      
+      // add the remaining output buffers to the input buffer
+      while (it != end) {
+        ArrayArithmetic::add(localInputBuffer, *it++, localInputBuffer, 0, blockSizeInt);
+      }
+    }
     
     // both float and int versions of the blocksize are stored as different internal mechanisms
     // require different number formats
@@ -92,16 +119,13 @@ class DspObject : public MessageObject {
     float blockIndexOfLastMessage;
   
     /** The local message queue. Messages that are pending for the next block. */
-    MessageQueue *messageQueue;
+    queue<MessageLetPair> messageQueue;
   
     /** Indicates if messages or signals should take precedence on two inlet <code>DspObject</code>s. */
     DspMessagePresedence signalPrecedence;
   
     /** The number of bytes in a single dsp block. == blockSize * sizeof(float) */
     int numBytesInBlock;
-  
-    /** Permanent pointer to the local output buffers. */
-    float *localDspOutletBuffers;
   
     float *dspBufferAtInlet0;
     float *dspBufferAtInlet1;
@@ -112,23 +136,16 @@ class DspObject : public MessageObject {
      */
     float **dspBufferAtInlet;
 
-    float **dspBufferRefAtInlet0;
-    float **dspBufferRefAtInlet1;
-    List **dspBufferRefListAtInlet;
+    vector<vector<float *> > dspBufferRefListAtInlet;
+  
+    /** Points to a concatinated array of all output buffers. Permanent pointer to the local output buffers. */
     float *dspBufferAtOutlet0;
-    float **dspBufferAtOutlet;
-  
-    /** True if there is more than one connection arriving at inlet 0. False otherwise. */
-    int numConnectionsToInlet0;
-  
-    /** True if there is more than one connection arriving at inlet 1. False otherwise. */
-    int numConnectionsToInlet1;
   
     /** List of all dsp objects connecting to this object at each inlet. */
-    List **incomingDspConnectionsListAtInlet;
+    vector<list<ObjectLetPair> > incomingDspConnections;
   
     /** List of all dsp objects to which this object connects at each outlet. */
-    List **outgoingDspConnectionsListAtOutlet;
+    vector<list<ObjectLetPair> > outgoingDspConnections;
   
     static float *zeroBuffer;
     static int zeroBufferCount;
@@ -137,14 +154,6 @@ class DspObject : public MessageObject {
   private:
     /** This function encapsulates the common code between the two constructors. */
     void init(int numDspInlets, int numDspOutlets, int blockSize);
-  
-    /**
-     * Prepares the input buffer at the given inlet index.
-     * This is a helper function for <code>processDsp()</code>.
-     */
-    inline void resolveInputBuffers(int inletIndex, float *localInputBuffer);
-
-    bool hasMessageToProcess;
 };
 
 #endif // _DSP_OBJECT_H_

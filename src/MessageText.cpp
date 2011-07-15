@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -22,8 +22,8 @@
 
 #include "MessageText.h"
 
-MessageText::MessageText(char *comment, PdGraph *graph) : MessageObject(0, 0, graph) {
-  this->comment = StaticUtils::copyString(comment);
+MessageText::MessageText(char *initString, PdGraph *graph) : MessageObject(0, 0, graph) {
+  comment = StaticUtils::copyString(initString);
 }
 
 MessageText::~MessageText() {

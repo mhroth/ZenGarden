@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -53,7 +53,7 @@ class PdGraph : public DspObject {
      * Schedules a <code>PdMessage</code> to be sent by the <code>MessageObject</code> from the
      * <code>outletIndex</code> at the specified <code>time</code>.
      */
-    void scheduleMessage(MessageObject *messageObject, int outletIndex, PdMessage *message);
+    PdMessage *scheduleMessage(MessageObject *messageObject, int outletIndex, PdMessage *message);
   
     /** Cancel a scheduled <code>PdMessage</code> according to its id. */
     void cancelMessage(MessageObject *messageObject, int outletIndex, PdMessage *message);
@@ -122,7 +122,7 @@ class PdGraph : public DspObject {
     /** (Re-)Computes the local tree and node processing ordering for dsp nodes. */
     void computeLocalDspProcessOrder();
   
-    List *getProcessOrder();
+    list<MessageObject *> *getProcessOrder();
     bool isLeafNode();
   
     /**
@@ -172,9 +172,12 @@ class PdGraph : public DspObject {
     void setValueForName(char *name, float constant);
     float getValueForName(char *name);
   
-    float **getDspBufferRefAtOutlet(int outletIndex);
+    float *getDspBufferRefAtOutlet(int outletIndex);
   
     void processDsp();
+  
+    unsigned int getNumInlets();
+    unsigned int getNumOutlets();
   
   private:
     /** Create a new object based on its initialisation string. */
@@ -190,7 +193,7 @@ class PdGraph : public DspObject {
     void registerObjectIfRequiresRegistration(MessageObject *messageObject);
     void unregisterObjectIfRequiresUnregistration(MessageObject *messageObject);
   
-    void addLetObjectToLetList(MessageObject *inletObject, int newPosition, ZGLinkedList *letList);
+    void addLetObjectToLetList(MessageObject *inletObject, int newPosition, vector<MessageObject *> *letList);
   
     /** The <code>PdContext</code> to which this graph belongs. */
     PdContext *context;
@@ -214,19 +217,19 @@ class PdGraph : public DspObject {
     PdGraph *parentGraph;
   
     /** A list of <i>all</i> <code>MessageObject</code>s in this subgraph.  */
-    ZGLinkedList *nodeList;
+    vector<MessageObject *> nodeList;
     
     /**
      * A list of all <code>DspObject</code>s in this graph, in the order in which they should be
      * called in the <code>processDsp()</code> loop.
      */
-    List *dspNodeList;
+    vector<DspObject *> dspNodeList;
     
     /** A list of all inlet (message or audio) nodes in this subgraph. */
-    ZGLinkedList *inletList;
+    vector<MessageObject *> inletList; // in fact contains only MessageInlet and DspInlet objects
     
     /** A list of all outlet (message or audio) nodes in this subgraph. */
-    ZGLinkedList *outletList;
+    vector<MessageObject *> outletList; // in fact contains only MessageOutlet and DspOutlet objects
   
     /** A global list of all declared directories (-path and -stdpath) */
     DeclareList *declareList;

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -56,9 +56,8 @@ void MessageTableRead::processMessage(int inletIndex, PdMessage *message) {
         float *buffer = table->getBuffer(&bufferLength);
         int index = (int) message->getFloat(0);
         if (index >= 0 && index < bufferLength) {
-          PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-          outgoingMessage->setTimestamp(message->getTimestamp());
-          outgoingMessage->setFloat(0, buffer[index]);
+          PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+          outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), buffer[index]);
           sendMessage(0, outgoingMessage);
         }
       }

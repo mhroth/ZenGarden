@@ -23,7 +23,6 @@
 #ifndef _MESSAGE_ARCTANGENT2_H_
 #define _MESSAGE_ARCTANGENT2_H_
 
-#include <math.h>
 #include "MessageObject.h"
 
 /** [atan2] */

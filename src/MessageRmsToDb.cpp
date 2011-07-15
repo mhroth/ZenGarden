@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009, 2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -36,10 +36,10 @@ const char *MessageRmsToDb::getObjectLabel() {
 
 void MessageRmsToDb::processMessage(int inletIndex, PdMessage *message) {
   if (message->isFloat(0)) {
-    PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+    PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
     float f = message->getFloat(0);
-    outgoingMessage->getElement(0)->setFloat((f <= 0.0f) ? 0.0f : 20.0f * log10f(f * 100000.0f));
-    outgoingMessage->setTimestamp(message->getTimestamp());
+    outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(),
+        (f <= 0.0f) ? 0.0f : 20.0f * log10f(f * 100000.0f));
     sendMessage(0, outgoingMessage); // send a message from outlet 0
   }
 }

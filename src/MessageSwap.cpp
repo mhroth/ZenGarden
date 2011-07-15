@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009, 2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -44,15 +44,12 @@ void MessageSwap::processMessage(int inletIndex, PdMessage *message) {
           // allow fallthrough
         }
         case BANG: {
-          PdMessage *outgoingMessageRight = getNextOutgoingMessage(1);
-          outgoingMessageRight->setFloat(0, left);
-          outgoingMessageRight->setTimestamp(message->getTimestamp());
-          sendMessage(1, outgoingMessageRight); // send a message from outlet 1
+          PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+          outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), left);
+          sendMessage(1, outgoingMessage); // send a message from outlet 1
           
-          PdMessage *outgoingMessageLeft = getNextOutgoingMessage(0);
-          outgoingMessageLeft->setFloat(0, right);
-          outgoingMessageLeft->setTimestamp(message->getTimestamp());
-          sendMessage(0, outgoingMessageLeft); // send a message from outlet 0
+          outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), right);
+          sendMessage(0, outgoingMessage); // send a message from outlet 0
           break;
         }
         default: {

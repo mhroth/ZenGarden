@@ -23,7 +23,6 @@
 #ifndef _MESSAGE_DBTOPOW_H_
 #define _MESSAGE_DBTOPOW_H_
 
-#include <math.h>
 #include "MessageObject.h"
 
 /** [dbtopow] */

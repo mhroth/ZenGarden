@@ -23,8 +23,6 @@
 #ifndef _MESSAGE_RMSTODB_H_
 #define _MESSAGE_RMSTODB_H_
 
-
-#include "math.h"
 #include "MessageObject.h"
 
 /** [rmstodb] */

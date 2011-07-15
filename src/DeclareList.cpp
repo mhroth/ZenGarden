@@ -20,20 +20,15 @@
  *
  */
 
-#include <string.h>
 #include "DeclareList.h"
 #include "StaticUtils.h"
 
-DeclareList::DeclareList() : ZGLinkedList() {
-  // nothing to do
+DeclareList::DeclareList() {
+  declareList = list<string>();
 }
 
 DeclareList::~DeclareList() {
-  resetIterator();
-  char *path = NULL;
-  while ((path = (char *) getNext()) != NULL) {
-    free(path);
-  }
+  // nothing to do
 }
 
 void DeclareList::addPath(char *path) {
@@ -41,23 +36,19 @@ void DeclareList::addPath(char *path) {
     // if the path is full, then just add it to the list
     if (hasTrailingSlash(path)) {
       // if a trailing slash exists, then it can be added to the list
-      add(StaticUtils::copyString(path));
+      declareList.push_back(string(path));
     } else {
       // if no trailing slash exists, then one must be added
-      char *newPath = StaticUtils::concatStrings(path, "/");
-      add(newPath);
+      declareList.push_back(string(path) + string("/"));
     }
   } else {
     // if it is not a full path, then make it relative to the root path
     if (hasTrailingSlash(path)) {
-      char *newPath = StaticUtils::concatStrings(getRootPath(), path);
-      add(newPath);
+      // front is root path
+      declareList.push_back(declareList.front() + string(path));
     } else {
       // if no trailing slash exists, then one should be added
-      char *a = StaticUtils::concatStrings(path, "/");
-      char *newPath = StaticUtils::concatStrings(getRootPath(), a);
-      free(a);
-      add(newPath);
+      declareList.push_back(declareList.front() + string(path) + string("/"));
     }
   }
 }
@@ -71,5 +62,13 @@ bool DeclareList::hasTrailingSlash(char *path) {
 }
 
 char *DeclareList::getRootPath() {
-  return (char *) head->data;
+  return (char *) declareList.front().c_str();
+}
+
+list<string>::iterator DeclareList::getIterator() {
+  return declareList.begin();
+}
+
+list<string>::iterator DeclareList::getEnd() {
+  return declareList.end();
 }

@@ -43,14 +43,16 @@ const char *DspRfft::getObjectLabel() {
   return "rfft~";
 }
 
-void DspRfft::processDspWithIndex(int fromIndex, int toIndex) {
+void DspRfft::processDsp() {
+  RESOLVE_DSPINLET0_IF_NECESSARY();
+  
   #if __APPLE__
   DSPSplitComplex inputVector;
   inputVector.realp = dspBufferAtInlet0;
   inputVector.imagp = DspObject::zeroBuffer;
   DSPSplitComplex outputVector;
   outputVector.realp = dspBufferAtOutlet0;
-  outputVector.imagp = dspBufferAtOutlet[1];
+  outputVector.imagp = getDspBufferRefAtOutlet(1);
   vDSP_fft_zop(fftSetup, &inputVector, 1, &outputVector, 1, log2n, kFFTDirection_Forward);
   
   // NOTE(mhroth): vDSP_fft_zop outputs the entire series of symmetric coefficients.

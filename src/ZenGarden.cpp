@@ -32,18 +32,18 @@ ZGContext *zg_new_context(int numInputChannels, int numOutputChannels, int block
 }
 
 ZGGraph *zg_new_empty_graph(PdContext *context) {
-  PdMessage *initMessage = new PdMessage(); // create an empty message to use for initialisation
-  // the new graph has no parent grpah and is created in the given context
+  PdMessage *initMessage = PD_MESSAGE_ON_STACK(0); // create an empty message to use for initialisation
+  initMessage->initWithTimestampAndNumElements(0.0, 0);
+  // the new graph has no parent graph and is created in the given context
   PdGraph *graph = new PdGraph(initMessage, NULL, context, context->getNextGraphId());
-  delete initMessage; // destroy the dummy initial message
   return graph;
 }
 
 ZGGraph *zg_new_graph(PdContext *context, char *directory, char *filename) {
-  PdMessage *initMessage = new PdMessage(); // create an empty initMessage
+  PdMessage *initMessage = PD_MESSAGE_ON_STACK(0); // create an empty initMessage
+  initMessage->initWithTimestampAndNumElements(0.0, 0);
   // no parent graph
   PdGraph *graph = context->newGraph(directory, filename, initMessage, NULL);
-  delete initMessage;
   return graph;
 }
 
@@ -59,9 +59,10 @@ void zg_remove_graph(PdContext *context, PdGraph *graph) {
 ZGObject *zg_new_object(ZGContext *context, ZGGraph *graph, char *objectString) {
   char *objectLabel = strtok(objectString, " ;");
   char *initString = strtok(NULL, ";");
-  PdMessage *initMessage = new PdMessage(initString, graph->getArguments());
-  MessageObject *messageObject = context->newObject("obj", objectLabel, initMessage, graph);
-  delete initMessage;
+  char resolutionBuffer[256];
+  PdMessage *initMessage = PD_MESSAGE_ON_STACK(32);
+  initMessage->initWithSARb(32, initString, graph->getArguments(), resolutionBuffer, 256);
+  MessageObject *messageObject = context->newObject((char *) "obj", objectLabel, initMessage, graph);
   return messageObject;
 }
 
@@ -107,11 +108,19 @@ ConnectionType zg_get_connection_type(ZGObject *object, unsigned int outletIndex
 }
 
 unsigned int zg_get_num_inlets(ZGObject *object) {
-  return 0; // TODO(mhroth)
+  if (object != NULL) {
+    return object->getNumInlets();
+  } else {
+    return 0;
+  }
 }
 
 unsigned int zg_get_num_outlets(ZGObject *object) {
-  return 0; // TODO(mhroth)
+  if (object != NULL) {
+    return object->getNumOutlets();
+  } else {
+    return 0;
+  }
 }
 
 void zg_process(PdContext *context, float *inputBuffers, float *outputBuffers) {

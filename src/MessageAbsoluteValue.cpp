@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -36,9 +36,8 @@ const char *MessageAbsoluteValue::getObjectLabel() {
 
 void MessageAbsoluteValue::processMessage(int inletIndex, PdMessage *message) {
   if (message->isFloat(0)) {
-    PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-    outgoingMessage->setFloat(0, fabsf(message->getFloat(0)));
-    outgoingMessage->setTimestamp(message->getTimestamp());
+    PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+    outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), fabsf(message->getFloat(0)));
     sendMessage(0, outgoingMessage);
   }
 }

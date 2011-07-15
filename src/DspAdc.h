@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -33,7 +33,7 @@ class DspAdc : public DspObject {
   
     const char *getObjectLabel();
   
-    void processDsp();
+    bool doesProcessAudio();
 };
 
 #endif // _DSP_ADC_H_

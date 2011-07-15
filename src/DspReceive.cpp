@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -20,18 +20,18 @@
  *
  */
 
+#include "ArrayArithmetic.h"
 #include "DspReceive.h"
 #include "PdGraph.h"
 
-DspReceive::DspReceive(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 0, 0, 1, graph) {
+DspReceive::DspReceive(PdMessage *initMessage, PdGraph *graph) : DspObject(1, 0, 0, 1, graph) {
   if (initMessage->isSymbol(0)) {
     name = StaticUtils::copyString(initMessage->getSymbol(0));
   } else {
     name = NULL;
-    graph->printErr("receive~ not initialised with a name.\n");
+    graph->printErr("receive~ not initialised with a name.");
   }
   sendBuffer = NULL;
-  memset(localDspOutletBuffers, 0, blockSizeInt * sizeof(float));
 }
 
 DspReceive::~DspReceive() {
@@ -55,12 +55,17 @@ void DspReceive::setBuffer(float **buffer) {
   sendBuffer = buffer;
 }
 
+void DspReceive::processMessage(int inletIndex, PdMessage *message) {
+  if (message->isSymbol(0, "set")) {
+    graph->printErr("[receive~]: message \"set\" is not yet supported.");
+  }
+}
+
 void DspReceive::processDsp() {
-  // replace the local outlet buffer with a pointer to the input buffer of the associated send~
   // sendBuffer may be null if there is no related send~
   if (sendBuffer == NULL) {
-    // TODO(mhroth): if sendBuffer is null, point to a zero buffer
+    ArrayArithmetic::fill(dspBufferAtOutlet0, 0.0f, 0, blockSizeInt);
   } else {
-    dspBufferAtOutlet0 = *sendBuffer;
+    memcpy(dspBufferAtOutlet0, *sendBuffer, numBytesInBlock);
   }
 }

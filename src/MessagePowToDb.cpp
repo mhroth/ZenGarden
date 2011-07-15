@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -26,7 +26,6 @@ MessagePowToDb::MessagePowToDb(PdGraph *graph) : MessageObject(1, 1, graph) {
   // nothing to do
 }
 
-
 MessagePowToDb::~MessagePowToDb() {
   // nothing to do
 }
@@ -37,10 +36,10 @@ const char *MessagePowToDb::getObjectLabel() {
 
 void MessagePowToDb::processMessage(int inletIndex, PdMessage *message) {
   if (message->isFloat(0)) {
-    PdMessage *outgoingMessage = getNextOutgoingMessage(0);
+    PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
     float f = message->getFloat(0);
-    outgoingMessage->setFloat(0, (f <= 0.0f) ? 0.0f : 100.0f + 10.0f * log10f(f));
-    outgoingMessage->setTimestamp(message->getTimestamp());
+    outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(),
+        (f <= 0.0f) ? 0.0f : 100.0f + 10.0f * log10f(f));
     sendMessage(0, outgoingMessage);
   }
 }

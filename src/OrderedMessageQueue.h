@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,11 +23,11 @@
 #ifndef _ORDERED_MESSAGE_QUEUE_H_
 #define _ORDERED_MESSAGE_QUEUE_H_
 
-#include "MessageDestination.h"
-#include "PdMessage.h"
-#include "ZGLinkedList.h"
+#include "MessageObject.h"
 
-class OrderedMessageQueue : public ZGLinkedList {
+typedef std::pair<MessageObject *, std::pair<PdMessage *, unsigned int> > ObjectMessageLetPair;
+
+class OrderedMessageQueue {
   
   public:
     OrderedMessageQueue();
@@ -39,9 +39,14 @@ class OrderedMessageQueue : public ZGLinkedList {
     /** Removes the given message addressed to the given <code>MessageObject</code> from the queue. */
     void removeMessage(MessageObject *messageObject, int outletIndex, PdMessage *message);
   
-  protected:
-    void *newDataHolder();
-    void deleteDataHolder(void *data);
+    ObjectMessageLetPair peek();
+  
+    void pop();
+  
+    bool empty();
+  
+  private:
+    list<ObjectMessageLetPair> orderedMessageQueue;
 };
 
 #endif // _ORDERED_MESSAGE_QUEUE_H_

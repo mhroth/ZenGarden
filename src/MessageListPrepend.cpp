@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,11 +23,11 @@
 #include "MessageListPrepend.h"
 
 MessageListPrepend::MessageListPrepend(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
-  prependMessage = initMessage->copy();
+  prependMessage = initMessage->copyToHeap();
 }
 
 MessageListPrepend::~MessageListPrepend() {
-  delete prependMessage;
+  prependMessage->freeMessage();
 }
 
 const char *MessageListPrepend::getObjectLabel() {
@@ -37,25 +37,21 @@ const char *MessageListPrepend::getObjectLabel() {
 void MessageListPrepend::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
-      PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-      outgoingMessage->setTimestamp(message->getTimestamp());
-      outgoingMessage->clear();
-      int numElements = message->getNumElements();
-      for (int i = 0; i < numElements; i++) {
-        outgoingMessage->addElement(prependMessage->getElement(i));
-      }
-      numElements = prependMessage->getNumElements();
-      for (int i = 0; i < numElements; i++) {
-        outgoingMessage->addElement(message->getElement(i));
-      }
+      int numPrependElements = prependMessage->getNumElements();
+      int numMessageElements = message->getNumElements();
+      int numElements = numPrependElements + numMessageElements;
+      PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(numElements);
+      outgoingMessage->initWithTimestampAndNumElements(message->getTimestamp(), numElements);
+      memcpy(outgoingMessage->getElement(0), prependMessage->getElement(0), numPrependElements * sizeof(MessageAtom));
+      memcpy(outgoingMessage->getElement(numPrependElements), message->getElement(0), numMessageElements * sizeof(MessageAtom));
       sendMessage(0, outgoingMessage);
       break;
     }
     case 1: {
       // NOTE(mhroth): would be faster to copy in place rather than destroying and creating memory
       // can change if it becomes a problem
-      delete prependMessage;
-      prependMessage = message->copy();
+      prependMessage->freeMessage();
+      prependMessage = message->copyToHeap();
       break;
     }
     default: {

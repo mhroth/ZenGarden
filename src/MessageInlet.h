@@ -35,7 +35,8 @@ class MessageInlet : public MessageObject {
     const char *getObjectLabel();
     ObjectType getObjectType();
   
-    List *getProcessOrderFromInlet();
+    list<MessageObject *> *getProcessOrder();
+    list<MessageObject *> *getProcessOrderFromInlet();
   
     int getCanvasPosition();
     void setCanvasPosition(int pos);

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -38,9 +38,8 @@ void MessageAdd::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
       if (message->isFloat(0)) {
-        PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-        outgoingMessage->setFloat(0, message->getFloat(0) + constant);
-        outgoingMessage->setTimestamp(message->getTimestamp());
+        PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+        outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), message->getFloat(0) + constant);
         sendMessage(0, outgoingMessage); // send a message from outlet 0
       }
       break;

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -20,6 +20,7 @@
  *
  */
 
+#include <string.h>
 #include "MessageListSplit.h"
 
 MessageListSplit::MessageListSplit(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 3, graph) {
@@ -42,22 +43,16 @@ void MessageListSplit::processMessage(int inletIndex, PdMessage *message) {
         // if there aren't enough elements to split on, forward the message on the third outlet
         sendMessage(2, message);
       } else {
-        PdMessage *outgoingMessage0 = getNextOutgoingMessage(0);
-        outgoingMessage0->setTimestamp(message->getTimestamp());
-        outgoingMessage0->clear();
-        for (int i = 0; i < splitIndex; i++) {
-          outgoingMessage0->addElement(message->getElement(i));
-        }
+        int numElems = numElements-splitIndex;
+        PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(numElems);
+        outgoingMessage->initWithTimestampAndNumElements(message->getTimestamp(), numElems);
+        memcpy(outgoingMessage->getElement(0), message->getElement(splitIndex), numElems * sizeof(MessageAtom));
+        sendMessage(1, outgoingMessage);
         
-        PdMessage *outgoingMessage1 = getNextOutgoingMessage(1);
-        outgoingMessage1->setTimestamp(message->getTimestamp());
-        outgoingMessage1->clear();
-        for (int i = splitIndex; i < numElements; i++) {
-          outgoingMessage1->addElement(message->getElement(i));
-        }
-        
-        sendMessage(1, outgoingMessage1);
-        sendMessage(0, outgoingMessage0);
+        outgoingMessage = PD_MESSAGE_ON_STACK(splitIndex);
+        outgoingMessage->initWithTimestampAndNumElements(message->getTimestamp(), splitIndex);
+        memcpy(outgoingMessage->getElement(0), message->getElement(0), splitIndex * sizeof(MessageAtom));
+        sendMessage(0, outgoingMessage);
       }
       break;
     }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -25,6 +25,17 @@
 
 #include "DspObject.h"
 
+enum DspMultiplyCodePath {
+  DSP_MULTIPLY_DSP1_MESSAGE0, // zero or one dsp inputs on left inlet, no message inputs on right inlet
+  DSP_MULTIPLY_DSPX_MESSAGE0, // many dsp inputs on left inlet, no message inputs on right inlet
+  DSP_MULTIPLY_DSPX_MESSAGEX, // many dsp inputs on left inlets, many message inputs on right inlet
+  DSP_MULTIPLY_DSP1_DSP1,     // zero or one dsp inputs on left inlet, one dsp input on the right inlet
+  DSP_MULTIPLY_DSPX_DSP1,     // many dsp inputs on left inlets, one dsp input on right inlet
+  DSP_MULTIPLY_DSPX_DSPX,     // many dsp inputs on left inlets, many dsp inputs on right inlet
+  DSP_MULTIPLY_DEFAULT        // corner cases
+};
+
+
 class DspMultiply : public DspObject {
   
   public:
@@ -32,10 +43,16 @@ class DspMultiply : public DspObject {
     ~DspMultiply();
   
     const char *getObjectLabel();
+  
+    void addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex);
+  
+    void processDsp();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
     void processDspWithIndex(int fromIndex, int toIndex);
+    
+    DspMultiplyCodePath codePath;
     
     float inputConstant;
     float constant;

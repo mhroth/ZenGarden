@@ -44,12 +44,13 @@ class DspInlet : public DspObject {
     void setCanvasPosition(int pos);
     int getCanvasPosition();
   
-    List *getProcessOrder();
-    List *getProcessOrderFromInlet();
+    list<MessageObject *> *getProcessOrder();
+    list<MessageObject *> *getProcessOrderFromInlet();
   
-  private:
-    void processDspWithIndex(int fromIndex, int toIndex);
+    void receiveMessage(int inletIndex, PdMessage *message);
+    void processDsp();
   
+  private:  
     int canvasX;
 };
 

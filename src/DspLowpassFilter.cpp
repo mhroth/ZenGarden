@@ -26,13 +26,12 @@
 
 DspLowpassFilter::DspLowpassFilter(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 1, 0, 1, graph) {
   tap_0 = 0.0f;
-  coefficients = (float *) calloc(5, sizeof(float));
   calculateFilterCoefficients(initMessage->isFloat(0) ? initMessage->getFloat(0) : graph->getSampleRate()/2.0f);
   signalConstant = 0.0f;
 }
 
 DspLowpassFilter::~DspLowpassFilter() {
-  free(coefficients);
+  // nothing to do
 }
 
 const char *DspLowpassFilter::getObjectLabel() {

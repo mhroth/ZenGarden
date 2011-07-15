@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -37,9 +37,8 @@ const char *MessageSamplerate::getObjectLabel() {
 
 void MessageSamplerate::MessageSamplerate::processMessage(int inletIndex, PdMessage *message) {
   if (message->isBang(0)) {
-    PdMessage *outgoingMessage = getNextOutgoingMessage(0);
-    outgoingMessage->setTimestamp(message->getTimestamp());
-    outgoingMessage->getElement(0)->setFloat(graph->getSampleRate());
+    PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+    outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), graph->getSampleRate());
     sendMessage(0, outgoingMessage);
   }
 }

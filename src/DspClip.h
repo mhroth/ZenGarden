@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,6 +23,12 @@
 #ifndef _DSP_CLIP_H_
 #define _DSP_CLIP_H_
 
+enum DspClipCodePath {
+  DSP_CLIP_DSPX_MESSAGE0,
+  DSP_CLIP_DEFAULT
+};
+
+
 #include "DspObject.h"
 
 /** [clip~ float float] */
@@ -33,10 +39,16 @@ class DspClip : public DspObject {
     ~DspClip();
   
     const char *getObjectLabel();
+  
+    void addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex);
+  
+    void processDsp();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
     void processDspWithIndex(int fromIndex, int toIndex);
+  
+    DspClipCodePath codePath;
   
     float lowerBound;
     float upperBound;
