@@ -69,11 +69,11 @@ ZGObject *zg_new_object(ZGContext *context, ZGGraph *graph, char *objectString) 
 void zg_add_object(PdGraph *graph, ZGObject *object, int canvasX, int canvasY) {
   graph->addObject(canvasX, canvasY, object);
 }
-/*
+
 void zg_remove_object(PdGraph *graph, MessageObject *object) {
-  graph->removeObject(object);
+  // TODO(mhroth): graph->removeObject(object);
 }
-*/
+
 void zg_delete_context(ZGContext *context) {
   if (context != NULL) {
     delete context;
