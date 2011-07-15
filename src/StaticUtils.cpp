@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "regex.h"
 #include "StaticUtils.h"
 
 StaticUtils::StaticUtils() {
@@ -45,39 +46,12 @@ char *StaticUtils::copyString(char *str) {
 }
 
 bool StaticUtils::isNumeric(char *str) {
-  float f = atof(str);
-  if (f != 0.0f) {
-    return true;
-  } else {
-    // the string is probably not a float, but may be 0
-    if (!strcmp(str, "0")) return true;
-    if (!strcmp(str, "+0")) return true;
-    if (!strcmp(str, "-0")) return true;
-    if (!strcmp(str, "0.")) return true;
-    if (!strcmp(str, "0.0")) return true;
-    if (!strcmp(str, "+0.0")) return true;
-    if (!strcmp(str, "-0.0")) return true;
-    return false;
-  }
-  /*
-   int length = strlen(str);
-   bool foundSign = str[0] == '+' || str[0] == '-';
-   bool foundDecimal = false;
-   for (int i = foundSign ? 1 : 0; i < length; i++) {
-   if (str[i]-'0' >= 0 && str[i]-'0' <= 9) continue;
-   if (str[i] == '.' && foundDecimal) {
-   return false;
-   } else if (str[i] == '.' && !foundDecimal) {
-   foundDecimal = true;
-   continue;
-   }
-   if (str[i] == '+' || str[i] == '-') {
-   return false;
-   }
-   return false;
-   }  
-   return true;
-   */
+  // http://www.regular-expressions.info/floatingpoint.html
+  regex_t preg;
+  regcomp(&preg, "^[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?$", REG_NOSUB | REG_EXTENDED);
+  bool isFloat = (regexec(&preg, str, 0, NULL, 0) == 0);
+  regfree(&preg);
+  return isFloat;
 }
 
 char *StaticUtils::concatStrings(const char *path0, const char *path1) {
