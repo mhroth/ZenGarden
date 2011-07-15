@@ -24,6 +24,7 @@
 #define _DSP_CLIP_H_
 
 enum DspClipCodePath {
+  DSP_CLIP_DSP1_MESSAGE0,
   DSP_CLIP_DSPX_MESSAGE0,
   DSP_CLIP_DEFAULT
 };

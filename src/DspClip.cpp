@@ -43,8 +43,12 @@ void DspClip::addConnectionFromObjectToInlet(MessageObject *messageObject, int o
   
   if (incomingMessageConnections[1].size() == 0 &&
       incomingMessageConnections[2].size() == 0) {
-    // use the simple case if no message connections to the object exist
-    codePath = DSP_CLIP_DSPX_MESSAGE0;
+    if (incomingDspConnections[0].size() < 2) {
+      codePath = DSP_CLIP_DSP1_MESSAGE0;
+    } else {
+      // use the simple case if no message connections to the object exist
+      codePath = DSP_CLIP_DSPX_MESSAGE0;
+    }
   } else {
     codePath = DSP_CLIP_DEFAULT; // use DspObject infrastructure
   }
@@ -75,7 +79,10 @@ void DspClip::processMessage(int inletIndex, PdMessage *message) {
 void DspClip::processDsp() {
   switch (codePath) {
     case DSP_CLIP_DSPX_MESSAGE0: {
-      RESOLVE_DSPINLET0_IF_NECESSARY();
+      resolveInputBuffers(0, dspBufferAtInlet0);
+      // allow fallthrough
+    }
+    case DSP_CLIP_DSP1_MESSAGE0: {
       vDSP_vclip(dspBufferAtInlet0, 1, &lowerBound, &upperBound, dspBufferAtOutlet0, 1, blockSizeInt);
       break;
     }
