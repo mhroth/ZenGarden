@@ -25,6 +25,13 @@
 
 #include "DspObject.h"
 
+enum DspLopCodePath {
+  DSP_LOP_DSPX_MESSAGE0,
+  DSP_LOP_DSP1_MESSAGE0,
+  DSP_LOP_MESSAGE_MESSAGE,
+  DSP_LOP_DEFAULT
+};
+
 /**
  * [lop~]
  * Specficially implement a one-tap IIR filter: y = alpha * x_0 + (1-alpha) * y_-1
@@ -36,14 +43,21 @@ class DspLowpassFilter : public DspObject {
     ~DspLowpassFilter();
   
     const char *getObjectLabel();
+  
+    void addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex);
+  
+    float *getDspBufferRefAtOutlet(int outletIndex);
+  
+    void processDsp();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
     void processDspWithIndex(int fromIndex, int toIndex);
     void calculateFilterCoefficients(float cutoffFrequency);
+    void processLop(float *buffer, int fromIndex, int toIndex);
   
-    float sampleRate;
-    float tap_0;
+    DspLopCodePath codePath;
+  
     float alpha;
     float beta; // 1 - alpha;
   
