@@ -25,6 +25,16 @@
 
 #include "DspObject.h"
 
+enum DspAddCodePath {
+  DSP_ADD_DSP1_MESSAGE0,
+  DSP_ADD_DSPX_MESSAGE0,
+  DSP_ADD_DSPX_MESSAGEX,
+  DSP_ADD_DSP1_DSP1,
+  DSP_ADD_DSPX_DSP1,
+  DSP_ADD_DSPX_DSPX,
+  DSP_ADD_DEFAULT
+};
+
 /** [+~], [+~ float] */
 class DspAdd : public DspObject {
   
@@ -33,10 +43,16 @@ class DspAdd : public DspObject {
     ~DspAdd();
   
     const char *getObjectLabel();
+  
+    void addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex);
+  
+    void processDsp();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
     void processDspWithIndex(int fromIndex, int toIndex);
+  
+    DspAddCodePath codePath;
     
     float constant;
 };
