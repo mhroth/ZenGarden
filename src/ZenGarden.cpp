@@ -100,27 +100,15 @@ void zg_remove_connection(ZGObject *fromObject, int outletIndex, ZGObject *toObj
 }
 
 ConnectionType zg_get_connection_type(ZGObject *object, unsigned int outletIndex) {
-  if (object != NULL) {
-    return object->getConnectionType(outletIndex);
-  } else {
-    return MESSAGE;
-  }
+  return (object != NULL) ? object->getConnectionType(outletIndex) : MESSAGE;
 }
 
 unsigned int zg_get_num_inlets(ZGObject *object) {
-  if (object != NULL) {
-    return object->getNumInlets();
-  } else {
-    return 0;
-  }
+  return (object != NULL) ? object->getNumInlets() : 0;
 }
 
 unsigned int zg_get_num_outlets(ZGObject *object) {
-  if (object != NULL) {
-    return object->getNumOutlets();
-  } else {
-    return 0;
-  }
+  return (object != NULL) ? object->getNumOutlets() : 0;
 }
 
 void zg_process(PdContext *context, float *inputBuffers, float *outputBuffers) {

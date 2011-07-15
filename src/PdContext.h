@@ -179,7 +179,7 @@ class PdContext {
   private:
     /** Returns <code>true</code> if the graph was successfully configured. <code>false</code> otherwise. */
     bool configureEmptyGraphWithParser(PdGraph *graph, PdFileParser *fileParser);
-  
+
     int numInputChannels;
     int numOutputChannels;
     int blockSize;
