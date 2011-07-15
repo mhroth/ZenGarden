@@ -41,36 +41,49 @@ void DspSubtract::addConnectionFromObjectToInlet(MessageObject *messageObject, i
   DspObject::addConnectionFromObjectToInlet(messageObject, outletIndex, inletIndex);
   
   // attempt to resolve common code paths for increased efficiency
-  if (incomingDspConnections[0].size() > 0) {
-    if (incomingDspConnections[1].size() == 0) {
-      if (incomingMessageConnections[1].size() == 0) {
-        codePath = DSP_SUBTRACT_DSPX_MESSAGE0;
+  if (incomingDspConnections[1].size() == 0) {
+    if (incomingMessageConnections[1].size() == 0) {
+      if (incomingDspConnections[0].size() < 2) {
+        codePath = DSP_SUBTRACT_DSP1_MESSAGE0;
       } else {
-        codePath = DSP_SUBTRACT_DSPX_MESSAGEX;
-      }
-    } else if (incomingDspConnections[1].size() == 1) {
-      codePath = DSP_SUBTRACT_DSPX_DSP1;
+        codePath = DSP_SUBTRACT_DSPX_MESSAGE0;
+      }      
     } else {
-      codePath = DSP_SUBTRACT_DSPX_DSPX;
+      codePath = DSP_SUBTRACT_DSPX_MESSAGEX;
     }
+  } else if (incomingDspConnections[1].size() == 1) {
+    if (incomingDspConnections[0].size() < 2) {
+      codePath = DSP_SUBTRACT_DSP1_DSP1;
+    } else {
+      codePath = DSP_SUBTRACT_DSPX_DSP1;
+    }
+  } else if (incomingDspConnections[0].size() >= 2) {
+    codePath = DSP_SUBTRACT_DSPX_DSPX;
   } else {
-    codePath = DSP_SUBTRACT_DEFAULT; // use DspObject infrastructure    
+    codePath = DSP_SUBTRACT_DEFAULT;
   }
 }
 
 void DspSubtract::processDsp() {
   switch (codePath) {
     case DSP_SUBTRACT_DSPX_MESSAGE0: {
-      RESOLVE_DSPINLET0_IF_NECESSARY();
+      resolveInputBuffers(0, dspBufferAtInlet0);
+      // allow fallthrough
+    }
+    case DSP_SUBTRACT_DSP1_MESSAGE0: {
       ArrayArithmetic::subtract(dspBufferAtInlet0, constant, dspBufferAtOutlet0, 0, blockSizeInt);
       break;
     }
     case DSP_SUBTRACT_DSPX_DSP1: {
-      RESOLVE_DSPINLET0_IF_NECESSARY();
+      resolveInputBuffers(0, dspBufferAtInlet0);
+      // allow fallthrough
+    }
+    case DSP_SUBTRACT_DSP1_DSP1: {
       ArrayArithmetic::subtract(dspBufferAtInlet0, dspBufferAtInlet1, dspBufferAtOutlet0, 0, blockSizeInt);
       break;
     }
     default: {
+      // default. Resolve right dsp inlet and/or process messages
       DspObject::processDsp();
       break;
     }
@@ -97,9 +110,8 @@ void DspSubtract::processDspWithIndex(int fromIndex, int toIndex) {
       ArrayArithmetic::subtract(dspBufferAtInlet0, constant, dspBufferAtOutlet0, fromIndex, toIndex);
       break;
     }
-    case MESSAGE_DSP:
-    case MESSAGE_MESSAGE:
     default: {
+      ArrayArithmetic::fill(dspBufferAtOutlet0, 0, fromIndex, toIndex);
       break; // nothing to do
     }
   }
