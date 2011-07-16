@@ -121,6 +121,8 @@ void DspObject::addConnectionFromObjectToInlet(MessageObject *messageObject, int
         dspBufferAtInlet1 = dspBufferRefList->at(0);
       }
     }
+    
+    onInletConnectionUpdate();
   }
 }
 
@@ -133,6 +135,10 @@ void DspObject::addConnectionToObjectFromOutlet(MessageObject *messageObject, in
     ObjectLetPair objectLetPair = make_pair(messageObject, inletIndex);
     connections->push_back(objectLetPair);
   }
+}
+
+void DspObject::onInletConnectionUpdate() {
+  // nothing to do
 }
 
 bool DspObject::shouldDistributeMessageToInlets() {

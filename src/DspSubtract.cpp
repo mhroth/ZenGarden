@@ -37,10 +37,7 @@ const char *DspSubtract::getObjectLabel() {
   return "-~";
 }
 
-void DspSubtract::addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex) {
-  DspObject::addConnectionFromObjectToInlet(messageObject, outletIndex, inletIndex);
-  
-  // attempt to resolve common code paths for increased efficiency
+void DspSubtract::onInletConnectionUpdate() {
   if (incomingDspConnections[1].size() == 0) {
     if (incomingMessageConnections[1].size() == 0) {
       if (incomingDspConnections[0].size() < 2) {

@@ -41,13 +41,13 @@ class DspClip : public DspObject {
   
     const char *getObjectLabel();
   
-    void addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex);
-  
     void processDsp();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
     void processDspWithIndex(int fromIndex, int toIndex);
+  
+    void onInletConnectionUpdate();
   
     DspClipCodePath codePath;
   

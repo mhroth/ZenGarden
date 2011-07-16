@@ -36,9 +36,7 @@ const char *DspAdd::getObjectLabel() {
   return "+~";
 }
 
-void DspAdd::addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex) {
-  DspObject::addConnectionFromObjectToInlet(messageObject, outletIndex, inletIndex);
-  
+void DspAdd::onInletConnectionUpdate() {
   // attempt to resolve common code paths for increased efficiency
   if (incomingDspConnections[1].size() == 0) {
     if (incomingMessageConnections[1].size() == 0) {

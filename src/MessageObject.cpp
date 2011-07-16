@@ -46,6 +46,8 @@ bool MessageObject::shouldDistributeMessageToInlets() {
   return true;
 }
 
+#pragma mark - Process Messages
+
 void MessageObject::receiveMessage(int inletIndex, PdMessage *message) {
   int numMessageInlets = incomingMessageConnections.size();
   if (inletIndex == 0 &&
@@ -95,9 +97,15 @@ void MessageObject::processMessage(int inletIndex, PdMessage *message) {
   // By default there is nothing to process.
 }
 
+
+#pragma mark -
+
 bool MessageObject::doesProcessAudio() {
   return false;
 }
+
+
+#pragma mark - Manage Connections
 
 void MessageObject::addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex) {
   if (messageObject->getConnectionType(outletIndex) == MESSAGE) {
@@ -115,6 +123,9 @@ void MessageObject::addConnectionToObjectFromOutlet(MessageObject *messageObject
     connections->push_back(objectLetPair);
   }
 }
+
+
+#pragma mark -
 
 unsigned int MessageObject::getNumInlets() {
   return incomingMessageConnections.size();

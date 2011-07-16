@@ -38,9 +38,7 @@ const char *DspClip::getObjectLabel() {
   return "clip~";
 }
 
-void DspClip::addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex) {
-  DspObject::addConnectionFromObjectToInlet(messageObject, outletIndex, inletIndex);
-  
+void DspClip::onInletConnectionUpdate() {
   if (incomingMessageConnections[1].size() == 0 &&
       incomingMessageConnections[2].size() == 0) {
     if (incomingDspConnections[0].size() < 2) {

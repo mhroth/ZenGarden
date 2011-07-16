@@ -73,7 +73,6 @@ class DspObject : public MessageObject {
     virtual float *getDspBufferRefAtOutlet(int outletIndex);
   
     virtual void addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex);
-      
     virtual void addConnectionToObjectFromOutlet(MessageObject *messageObject, int inletIndex, int outletIndex);
   
     virtual bool doesProcessAudio();
@@ -110,6 +109,13 @@ class DspObject : public MessageObject {
         ArrayArithmetic::add(localInputBuffer, *it++, localInputBuffer, 0, blockSizeInt);
       }
     }
+  
+    /**
+     * DspObject subclasses are informed that a connection change has happened to an inlet. A
+     * message or signal connection has been added or removed. They may which to reconfigure their
+     * (optimised) codepath with this new information.
+     */
+    virtual void onInletConnectionUpdate();
     
     // both float and int versions of the blocksize are stored as different internal mechanisms
     // require different number formats
