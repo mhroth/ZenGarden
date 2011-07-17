@@ -45,8 +45,9 @@ PdGraph::PdGraph(PdMessage *initMessage, PdGraph *parentGraph, PdContext *contex
   this->context = context;
   inletList = vector<MessageObject *>();
   outletList = vector<MessageObject *>();
-  declareList = new DeclareList();
   nodeList = list<MessageObject *>();
+  dspNodeList = list<DspObject *>();
+  declareList = new DeclareList();
   // all graphs start out unattached to any context, though they exist in a context
   isAttachedToContext = false;
   switched = true; // graphs are switched on by default
@@ -173,7 +174,7 @@ void PdGraph::removeObject(MessageObject *object) {
       
       // remove the object from the dspNodeList if the object processes audio
       if (object->doesProcessAudio()) {
-        //dspNodeList.remove((DspObject *) object); // dspNodeList should be a list<>?
+        dspNodeList.remove((DspObject *) object);
       }
       
       // remove the object from any special lists if it is in any of them (e.g., receive, throw~, etc.)
@@ -468,14 +469,12 @@ void PdGraph::processDsp() {
     // process all dsp objects
     // DSP processing elements are only executed if the graph is switched on
     
-    //for (int i = 0; i < 1; i++) { // TODO(mhroth): iterate depending on local blocksize relative to parent
+    // TODO(mhroth): iterate depending on local blocksize relative to parent
     // execute all nodes which process audio
-    
-    // http://fastcpp.blogspot.com/2011/03/fast-iteration-over-stl-vector-elements.html
-    int numNodes = dspNodeList.size();
-    DspObject **dspObjects = (numNodes > 0) ? &dspNodeList.front() : NULL;
-    for (int i = 0; i < numNodes; ++i) {
-      dspObjects[i]->processDsp();
+    list<DspObject *>::iterator it = dspNodeList.begin();
+    list<DspObject *>::iterator end = dspNodeList.end();
+    while (it != end) {
+      (*it++)->processDsp();
     }
   }
 }

@@ -23,7 +23,6 @@
 #ifndef _PD_GRAPH_H_
 #define _PD_GRAPH_H_
 
-#include <stdio.h>
 #include "DspObject.h"
 #include "OrderedMessageQueue.h"
 
@@ -39,7 +38,6 @@ class MessageObject;
 class MessageReceive;
 class MessageSend;
 class MessageTable;
-
 class PdContext;
 
 class PdGraph : public DspObject {
@@ -231,7 +229,7 @@ class PdGraph : public DspObject {
      * A list of all <code>DspObject</code>s in this graph, in the order in which they should be
      * called in the <code>processDsp()</code> loop.
      */
-    vector<DspObject *> dspNodeList;
+    list<DspObject *> dspNodeList;
     
     /** A list of all inlet (message or audio) nodes in this subgraph. */
     vector<MessageObject *> inletList; // in fact contains only MessageInlet and DspInlet objects
