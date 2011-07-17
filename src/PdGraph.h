@@ -138,8 +138,8 @@ class PdGraph : public DspObject {
     void addObject(int canvasX, int canvasY, MessageObject *node);
   
     /**
-     * Remove the object from the graph. Delete the object. The object reference is invalid after
-     * calling this function.
+     * Remove the object from the graph, also removing all of the connections to and from ths object.
+     * The object is then deleted; the object reference is invalid after calling this function.
      */
     void removeObject(MessageObject *object);
   

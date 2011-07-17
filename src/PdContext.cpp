@@ -928,6 +928,11 @@ void PdContext::registerTableReceiver(TableReceiverInterface *tableReceiver) {
   tableReceiver->setTable(table); // set table whether it is NULL or not
 }
 
+void PdContext::unregisterTableReceiver(TableReceiverInterface *tableReceiver) {
+  tableReceiverList.remove(tableReceiver); // remove the receiver
+  tableReceiver->setTable(NULL);
+}
+
 void PdContext::setValueForName(char *name, float constant) {
   // TODO(mhroth): requires implementation!
 }

@@ -76,7 +76,7 @@ void DspTableRead4::processMessage(int inletIndex, PdMessage *message) {
 
 void DspTableRead4::processDspWithIndex(int fromIndex, int toIndex) {
   if (table != NULL) { // ensure that there is a table to read from!
-    int bufferLength;
+    int bufferLength = 0;
     float *buffer = table->getBuffer(&bufferLength);
     #if __APPLE__
     //float zero = 0.0f;

@@ -108,6 +108,7 @@ class PdContext {
     void registerTable(MessageTable *table);
     
     void registerTableReceiver(TableReceiverInterface *tableReceiver);
+    void unregisterTableReceiver(TableReceiverInterface *tableReceiver);
     
     MessageTable *getTable(char *name);
     
