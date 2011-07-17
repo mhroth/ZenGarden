@@ -79,9 +79,11 @@ class PdContext {
   
     /** Globally register a [receive~] object. Connect to registered [send~] objects with the same name. */
     void registerDspReceive(DspReceive *dspReceive);
+    void unregisterDspReceive(DspReceive *dspReceive);
     
     /** Globally register a [send~] object. Connect to registered [receive~] objects with the same name. */
     void registerDspSend(DspSend *dspSend);
+    void unregisterDspSend(DspSend *dspSend);
   
     /** Returns the named global <code>DspSend</code> object. */
     DspSend *getDspSend(char *name);

@@ -196,8 +196,8 @@ class PdGraph : public DspObject {
     void unlockContextIfAttached();
   
     /** Does not check if the object is already registered. */
-    void registerObjectIfRequiresRegistration(MessageObject *messageObject);
-    void unregisterObjectIfRequiresUnregistration(MessageObject *messageObject);
+    void registerObject(MessageObject *messageObject);
+    void unregisterObject(MessageObject *messageObject);
   
     void addLetObjectToLetList(MessageObject *inletObject, int newPosition, vector<MessageObject *> *letList);
   

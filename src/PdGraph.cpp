@@ -132,7 +132,7 @@ void PdGraph::addObject(int canvasX, int canvasY, MessageObject *messageObject) 
     default: {
       // only register objects with the context if the graph is attached
       if (isAttachedToContext) {
-        registerObjectIfRequiresRegistration(messageObject);
+        registerObject(messageObject);
       }
     }
   }
@@ -178,7 +178,7 @@ void PdGraph::removeObject(MessageObject *object) {
       }
       
       // remove the object from any special lists if it is in any of them (e.g., receive, throw~, etc.)
-      unregisterObjectIfRequiresUnregistration(object);
+      unregisterObject(object);
       
       // delete the object
       delete object;
@@ -289,9 +289,9 @@ void PdGraph::attachToContext(bool isAttached) {
     while (it != end) {
       MessageObject *messageObject = *it++;
       if (isAttachedToContext) {
-        registerObjectIfRequiresRegistration(messageObject);
+        registerObject(messageObject);
       } else {
-        unregisterObjectIfRequiresUnregistration(messageObject);
+        unregisterObject(messageObject);
       }
       if (messageObject->getObjectType() == OBJECT_PD) {
         PdGraph *pdGraph = (PdGraph *) messageObject;
@@ -301,7 +301,7 @@ void PdGraph::attachToContext(bool isAttached) {
   }
 }
 
-void PdGraph::registerObjectIfRequiresRegistration(MessageObject *messageObject) {
+void PdGraph::registerObject(MessageObject *messageObject) {
   switch (messageObject->getObjectType()) {
     case MESSAGE_RECEIVE:
     case MESSAGE_NOTEIN: {
@@ -365,12 +365,40 @@ void PdGraph::registerObjectIfRequiresRegistration(MessageObject *messageObject)
   }
 }
 
-void PdGraph::unregisterObjectIfRequiresUnregistration(MessageObject *messageObject) {
+void PdGraph::unregisterObject(MessageObject *messageObject) {
   // TODO(mhroth)
   switch (messageObject->getObjectType()) {
     case MESSAGE_RECEIVE:
     case MESSAGE_NOTEIN: {
       context->unregisterRemoteMessageReceiver((RemoteMessageReceiver *) messageObject);
+      break;
+    }
+    case MESSAGE_TABLE_READ: {
+      context->unregisterTableReceiver((MessageTableRead *) messageObject);
+      break;
+    }
+    case MESSAGE_TABLE_WRITE: {
+      context->unregisterTableReceiver((MessageTableWrite *) messageObject);
+      break;
+    }
+    case DSP_SEND: {
+      context->unregisterDspSend((DspSend *) messageObject);
+      break;
+    }
+    case DSP_RECEIVE: {
+      context->unregisterDspReceive((DspReceive *) messageObject);
+      break;
+    }
+    case DSP_TABLE_PLAY: {
+      context->unregisterTableReceiver((DspTablePlay *) messageObject);
+      break;
+    }
+    case DSP_TABLE_READ4: {
+      context->unregisterTableReceiver((DspTableRead4 *) messageObject);
+      break;
+    }
+    case DSP_TABLE_READ: {
+      context->unregisterTableReceiver((DspTableRead *) messageObject);
       break;
     }
     default: {

@@ -820,6 +820,11 @@ void PdContext::registerDspReceive(DspReceive *dspReceive) {
   }
 }
 
+void PdContext::unregisterDspReceive(DspReceive *dspReceive) {
+  dspReceiveList.remove(dspReceive);
+  dspReceive->setBuffer(NULL);
+}
+
 void PdContext::registerDspSend(DspSend *dspSend) {
   DspSend *sendObject = getDspSend(dspSend->getName());
   if (sendObject != NULL) {
@@ -832,6 +837,17 @@ void PdContext::registerDspSend(DspSend *dspSend) {
   for (list<DspReceive *>::iterator it = dspReceiveList.begin(); it != dspReceiveList.end(); it++) {
     if (!strcmp((*it)->getName(), dspSend->getName())) {
       (*it)->setBuffer(dspSend->getBuffer());
+    }
+  }
+}
+
+void PdContext::unregisterDspSend(DspSend *dspSend) {
+  dspSendList.remove(dspSend);
+  
+  // inform all previously connected receive~s that the send~ buffer does not exist anymore.
+  for (list<DspReceive *>::iterator it = dspReceiveList.begin(); it != dspReceiveList.end(); it++) {
+    if (!strcmp((*it)->getName(), dspSend->getName())) {
+      (*it)->setBuffer(NULL);
     }
   }
 }
