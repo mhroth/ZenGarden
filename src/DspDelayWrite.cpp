@@ -69,7 +69,9 @@ float *DspDelayWrite::getBuffer(int *headIndex, int *bufferLength) {
   return buffer;
 }
 
-void DspDelayWrite::processDspWithIndex(int fromIndex, int toIndex) {
+void DspDelayWrite::processDsp() {
+  RESOLVE_DSPINLET0_IF_NECESSARY();
+  
   // copy inlet buffer to delay buffer
   if (dspBufferAtInlet0 == NULL) {
     // TODO(mhroth): refer buffer to a zero buffer
