@@ -44,8 +44,6 @@ class DspLowpassFilter : public DspObject {
   
     const char *getObjectLabel();
   
-    void addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex);
-  
     float *getDspBufferRefAtOutlet(int outletIndex);
   
     void processDsp();
@@ -55,6 +53,8 @@ class DspLowpassFilter : public DspObject {
     void processDspWithIndex(int fromIndex, int toIndex);
     void calculateFilterCoefficients(float cutoffFrequency);
     void processLop(float *buffer, int fromIndex, int toIndex);
+  
+    void onInletConnectionUpdate();
   
     DspLopCodePath codePath;
   

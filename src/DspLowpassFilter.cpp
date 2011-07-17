@@ -50,9 +50,7 @@ float *DspLowpassFilter::getDspBufferRefAtOutlet(int outletIndex) {
   return dspBufferAtOutlet0+2;
 }
 
-void DspLowpassFilter::addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex) {
-  DspObject::addConnectionFromObjectToInlet(messageObject, outletIndex, inletIndex);
-  
+void DspLowpassFilter::onInletConnectionUpdate() {
   if (incomingMessageConnections[1].size() == 0) {
     if (incomingDspConnections[0].size() < 2) {
       codePath = DSP_LOP_DSP1_MESSAGE0;
