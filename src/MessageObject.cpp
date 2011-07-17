@@ -124,6 +124,26 @@ void MessageObject::addConnectionToObjectFromOutlet(MessageObject *messageObject
   }
 }
 
+void MessageObject::removeConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex) {
+  list<ObjectLetPair> *incomingConnections = &incomingMessageConnections[inletIndex];
+  ObjectLetPair objectLetPair = make_pair(messageObject, outletIndex);
+  incomingConnections->remove(objectLetPair); // does this work?
+}
+
+void MessageObject::removeConnectionToObjectFromOutlet(MessageObject *messageObject, int inletIndex, int outletIndex) {
+  list<ObjectLetPair> *outgoingConnections = &outgoingMessageConnections[outletIndex];
+  ObjectLetPair objectLetPair = make_pair(messageObject, inletIndex);
+  outgoingConnections->remove(objectLetPair);
+}
+
+list<ObjectLetPair> MessageObject::getIncomingConnections(unsigned int inletIndex) {
+  return incomingMessageConnections[inletIndex];
+}
+
+list<ObjectLetPair> MessageObject::getOutgoingConnections(unsigned int outletIndex) {
+  return outgoingMessageConnections[outletIndex];
+}
+
 
 #pragma mark -
 

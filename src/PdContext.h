@@ -75,6 +75,7 @@ class PdContext {
   
     /** Globally register a remote message receiver (e.g. [send] or [notein]). */
     void registerRemoteMessageReceiver(RemoteMessageReceiver *receiver);
+    void unregisterRemoteMessageReceiver(RemoteMessageReceiver *receiver);
   
     /** Globally register a [receive~] object. Connect to registered [send~] objects with the same name. */
     void registerDspReceive(DspReceive *dspReceive);

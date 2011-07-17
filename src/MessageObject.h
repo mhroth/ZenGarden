@@ -65,11 +65,27 @@ class MessageObject {
     /** Returns the connection type of the given outlet. */
     virtual ConnectionType getConnectionType(int outletIndex);
   
+    virtual list<ObjectLetPair> getIncomingConnections(unsigned int inletIndex);
+  
+    virtual list<ObjectLetPair> getOutgoingConnections(unsigned int outletIndex);
+  
     /** Establish a connection from another object to this object. */
     virtual void addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex);
   
     /** Establish a connection to another object from this object. */
     virtual void addConnectionToObjectFromOutlet(MessageObject *messageObject, int inletIndex, int outletIndex);
+  
+    /**
+     * Remove a connection from another object to this object. This function does not remove the 
+     * connection reference at the connecting object. It must be removed separately.
+     */
+    virtual void removeConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex);
+    
+    /**
+     * Remove a connection to another object from this object. This function does not remove the 
+     * connection reference at the connecting object. It must be removed separately.
+     */
+    virtual void removeConnectionToObjectFromOutlet(MessageObject *messageObject, int inletIndex, int outletIndex);
   
     /**
      * The destination inlet of an outgoing message connection can change if an [inlet] object

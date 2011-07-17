@@ -799,11 +799,15 @@ void PdContext::printStd(const char *msg, ...) {
   printStd(stringBuffer);
 }
 
-#pragma mark -
-#pragma mark Register/Unregister Objects
+
+#pragma mark - Register/Unregister Objects
 
 void PdContext::registerRemoteMessageReceiver(RemoteMessageReceiver *receiver) {
   sendController->addReceiver(receiver);
+}
+
+void PdContext::unregisterRemoteMessageReceiver(RemoteMessageReceiver *receiver) {
+  sendController->removeReceiver(receiver);
 }
 
 void PdContext::registerDspReceive(DspReceive *dspReceive) {

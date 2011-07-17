@@ -89,3 +89,16 @@ void MessageSendController::addReceiver(RemoteMessageReceiver *receiver) {
   set<RemoteMessageReceiver *> receiverSet = sendStack[nameIndex].second;
   receiverSet.insert(receiver);
 }
+
+void MessageSendController::removeReceiver(RemoteMessageReceiver *receiver) {
+  int nameIndex = getNameIndex(receiver->getName());
+  if (nameIndex != -1) {
+    set<RemoteMessageReceiver *> *receiverSet = &(sendStack[nameIndex].second);
+    receiverSet->erase(receiver);
+    // once the receiver set has been created, it should not be erased anymore from the sendStack.
+    // PdContext depends on the nameIndex to be constant for all receiver names once they are
+    // defined, as a message destined for that receiver may already be in the message queue
+    // with the given index. If the indicies change, then message will be sent to the wrong
+    // receiver set.
+  }
+}

@@ -71,7 +71,9 @@ void zg_add_object(PdGraph *graph, ZGObject *object, int canvasX, int canvasY) {
 }
 
 void zg_remove_object(PdGraph *graph, MessageObject *object) {
-  // TODO(mhroth): graph->removeObject(object);
+  if (graph != NULL && object != NULL) {
+    graph->removeObject(object);
+  }
 }
 
 void zg_delete_context(ZGContext *context) {
@@ -95,8 +97,10 @@ void zg_add_connection(ZGGraph *graph, ZGObject *fromObject, int outletIndex, ZG
   graph->addConnection(fromObject, outletIndex, toObject, inletIndex);
 }
 
-void zg_remove_connection(ZGObject *fromObject, int outletIndex, ZGObject *toObject, int inletIndex) {
-  //graph->removeConnection(fromObject, outletIndex, toObject, inletIndex);
+void zg_remove_connection(ZGGraph *graph, ZGObject *fromObject, int outletIndex, ZGObject *toObject, int inletIndex) {
+  if (graph != NULL && fromObject != NULL && toObject != NULL) {
+    graph->removeConnection(fromObject, outletIndex, toObject, inletIndex);
+  }
 }
 
 ConnectionType zg_get_connection_type(ZGObject *object, unsigned int outletIndex) {

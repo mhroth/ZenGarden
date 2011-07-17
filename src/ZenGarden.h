@@ -92,8 +92,9 @@ extern "C" {
   void zg_add_object(ZGGraph *graph, ZGObject *object, int canvasX, int canvasY);
   
   /**
-   * Removes the object from the graph. Any connections that this object may have had in the graph
-   * are also deleted.
+   * Removes the object from the graph and deletes it from memory. Any connections that this object
+   * may have had in the graph are also deleted. The reference to the object after this function
+   * completes is invalid.
    */
   void zg_remove_object(ZGGraph *graph, ZGObject *object);
   

@@ -67,6 +67,8 @@ class MessageSendController : public MessageObject {
   
     void addReceiver(RemoteMessageReceiver *receiver);
   
+    void removeReceiver(RemoteMessageReceiver *receiver);
+  
   private:
     void processMessage(int inletIndex, PdMessage *message);
   

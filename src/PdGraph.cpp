@@ -46,6 +46,7 @@ PdGraph::PdGraph(PdMessage *initMessage, PdGraph *parentGraph, PdContext *contex
   inletList = vector<MessageObject *>();
   outletList = vector<MessageObject *>();
   declareList = new DeclareList();
+  nodeList = list<MessageObject *>();
   // all graphs start out unattached to any context, though they exist in a context
   isAttachedToContext = false;
   switched = true; // graphs are switched on by default
@@ -65,9 +66,10 @@ PdGraph::~PdGraph() {
   delete declareList;
 
   // delete all constituent nodes
-  for (int i = 0; i < nodeList.size(); i++) {
-    delete nodeList[i];
-  }
+//  for (int i = 0; i < nodeList.size(); i++) {
+//    delete nodeList[i];
+//  }
+  // is the destructor of MessageObject called when the list itself is destory? do we need to do this manually?
 }
 
 const char *PdGraph::getObjectLabel() {
@@ -93,8 +95,8 @@ void PdGraph::unlockContextIfAttached() {
   }
 }
 
-#pragma mark -
-#pragma mark Add or Remove Objects, Connections, or Contexts
+
+#pragma mark - Add/Remove Objects
 
 void PdGraph::addObject(int canvasX, int canvasY, MessageObject *messageObject) {
   lockContextIfAttached();
@@ -131,6 +133,58 @@ void PdGraph::addObject(int canvasX, int canvasY, MessageObject *messageObject) 
       if (isAttachedToContext) {
         registerObjectIfRequiresRegistration(messageObject);
       }
+    }
+  }
+  
+  unlockContextIfAttached();
+}
+
+void PdGraph::removeObject(MessageObject *object) {
+  lockContextIfAttached();
+  
+  list<MessageObject *>::iterator it = nodeList.begin();
+  list<MessageObject *>::iterator end = nodeList.end();
+  while (it != end) {
+    // find the object in the nodeList
+    if (*it == object) {
+      
+      // remove all incoming connections
+      for (int i = 0; i < object->getNumInlets(); i++) {
+        list<ObjectLetPair> incomingConnections = object->getIncomingConnections(i);
+        list<ObjectLetPair>::iterator lit = incomingConnections.begin();
+        list<ObjectLetPair>::iterator lend = incomingConnections.end();
+        while (lit != lend) {
+          removeConnection((*lit).first, (*lit).second, object, i);
+        }
+      }
+      
+      // remove all outgoing connections
+      for (int i = 0; i < object->getNumOutlets(); i++) {
+        list<ObjectLetPair> outgoingConnections = object->getOutgoingConnections(i);
+        list<ObjectLetPair>::iterator lit = outgoingConnections.begin();
+        list<ObjectLetPair>::iterator lend = outgoingConnections.end();
+        while (lit != lend) {
+          removeConnection(object, i, (*lit).first, (*lit).second);
+        }
+      }
+      
+      // remove the object from the nodeList
+      nodeList.erase(it);
+      
+      // remove the object from the dspNodeList if the object processes audio
+      if (object->doesProcessAudio()) {
+        //dspNodeList.remove((DspObject *) object); // dspNodeList should be a list<>?
+      }
+      
+      // remove the object from any special lists if it is in any of them (e.g., receive, throw~, etc.)
+      unregisterObjectIfRequiresUnregistration(object);
+      
+      // delete the object
+      delete object;
+      
+      return;
+    } else {
+      it++;
     }
   }
   
@@ -178,10 +232,16 @@ void PdGraph::addLetObjectToLetList(MessageObject *inletObject, int newPosition,
   letList->push_back(inletObject);
 }
 
+
+#pragma mark -
+
 float *PdGraph::getDspBufferRefAtOutlet(int outletIndex) {
   DspObject *dspOutlet = (DspObject *) outletList.at(outletIndex);
   return dspOutlet->getDspBufferRefAtOutlet(0);
 }
+
+
+#pragma mark - Add/Remove Connections
 
 void PdGraph::addConnection(MessageObject *fromObject, int outletIndex, MessageObject *toObject, int inletIndex) {
   lockContextIfAttached();
@@ -193,18 +253,40 @@ void PdGraph::addConnection(MessageObject *fromObject, int outletIndex, MessageO
 }
 
 void PdGraph::addConnection(int fromObjectIndex, int outletIndex, int toObjectIndex, int inletIndex) {
-  MessageObject *fromObject = nodeList[fromObjectIndex];
-  MessageObject *toObject = nodeList[toObjectIndex];
+  list<MessageObject *>::iterator fromIt = nodeList.begin();
+  for (int i = 0; i < fromObjectIndex; i++) fromIt++;
+  list<MessageObject *>::iterator toIt = nodeList.begin();
+  for (int i = 0; i < toObjectIndex; i++) toIt++;
+  
+  MessageObject *fromObject = *fromIt;
+  MessageObject *toObject = *toIt;
   addConnection(fromObject, outletIndex, toObject, inletIndex);
 }
+
+/*
+ * removeConnection does not force a reordering of the dspNodeList, as lost connections do not create
+ * any new constraints on the dsp object ordering that weren't there already. addConnection does
+ * force a reevaluation, as the new connection may force a new constrained how how objects are ordered.
+ */
+void PdGraph::removeConnection(MessageObject *fromObject, int outletIndex, MessageObject *toObject, int inletIndex) {
+  lockContextIfAttached();
+  toObject->removeConnectionFromObjectToInlet(fromObject, outletIndex, inletIndex);
+  fromObject->removeConnectionToObjectFromOutlet(toObject, inletIndex, outletIndex);
+  unlockContextIfAttached();
+}
+
+
+#pragma mark -
 
 void PdGraph::attachToContext(bool isAttached) {
   // ensure that this function is only run on attachement change
   if (isAttachedToContext != isAttached) {
     isAttachedToContext = isAttached;
     // ensure that all subgraphs know if they are attached or not
-    for (int i = 0; i < nodeList.size(); i++) {
-      MessageObject *messageObject = nodeList[i];
+    list<MessageObject *>::iterator it = nodeList.begin();
+    list<MessageObject *>::iterator end = nodeList.end();
+    while (it != end) {
+      MessageObject *messageObject = *it++;
       if (isAttachedToContext) {
         registerObjectIfRequiresRegistration(messageObject);
       } else {
@@ -284,6 +366,16 @@ void PdGraph::registerObjectIfRequiresRegistration(MessageObject *messageObject)
 
 void PdGraph::unregisterObjectIfRequiresUnregistration(MessageObject *messageObject) {
   // TODO(mhroth)
+  switch (messageObject->getObjectType()) {
+    case MESSAGE_RECEIVE:
+    case MESSAGE_NOTEIN: {
+      context->unregisterRemoteMessageReceiver((RemoteMessageReceiver *) messageObject);
+      break;
+    }
+    default: {
+      break;
+    }
+  }
 }
 
 float PdGraph::getBlockIndex(PdMessage *message) {
@@ -494,8 +586,10 @@ void PdGraph::computeLocalDspProcessOrder() {
 
   // generate the leafnode list
   list<MessageObject *> leafNodeList;
-  for (int i = 0; i < nodeList.size(); i++) {
-    MessageObject *object = nodeList[i];
+  list<MessageObject *>::iterator it = nodeList.begin();
+  list<MessageObject *>::iterator end = nodeList.end();
+  while (it != end) {
+    MessageObject *object = *it++;
     
     object->resetOrderedFlag(); // reset the ordered flag on all local objects
     if (object->isLeafNode()) { // isLeafNode() takes into account send/~ and throw~ objects

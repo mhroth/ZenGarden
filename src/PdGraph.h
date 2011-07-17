@@ -139,9 +139,17 @@ class PdGraph : public DspObject {
     /** Add an object to the graph, taking care of any special object registration. */
     void addObject(int canvasX, int canvasY, MessageObject *node);
   
+    /**
+     * Remove the object from the graph. Delete the object. The object reference is invalid after
+     * calling this function.
+     */
+    void removeObject(MessageObject *object);
+  
     /** Connect the given <code>MessageObject</code>s from the given outlet to the given inlet. */
     void addConnection(int fromObjectIndex, int outletIndex, int toObjectIndex, int inletIndex);
     void addConnection(MessageObject *fromObject, int outletIndex, MessageObject *toObject, int inletIndex);
+  
+    void removeConnection(MessageObject *fromObject, int outletIndex, MessageObject *toObject, int inletIndex);
   
     void attachToContext(bool isAttached);
   
@@ -217,7 +225,7 @@ class PdGraph : public DspObject {
     PdGraph *parentGraph;
   
     /** A list of <i>all</i> <code>MessageObject</code>s in this subgraph.  */
-    vector<MessageObject *> nodeList;
+    list<MessageObject *> nodeList;
     
     /**
      * A list of all <code>DspObject</code>s in this graph, in the order in which they should be
