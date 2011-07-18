@@ -161,6 +161,8 @@ class DspObject : public MessageObject {
   private:
     /** This function encapsulates the common code between the two constructors. */
     void init(int numDspInlets, int numDspOutlets, int blockSize);
+  
+    void updateInletBufferRefs(unsigned int inletIndex);
 };
 
 #endif // _DSP_OBJECT_H_

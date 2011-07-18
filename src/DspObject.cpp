@@ -46,7 +46,9 @@ void DspObject::init(int numDspInlets, int numDspOutlets, int blockSize) {
   numBytesInBlock = blockSizeInt * sizeof(float);
   
   if (zeroBufferSize < blockSize) {
-    zeroBuffer = (float *) realloc(zeroBuffer, blockSize * sizeof(float));
+    float *buffer = (float *) realloc(zeroBuffer, blockSize * sizeof(float));
+    if (buffer == NULL) buffer = (float *) malloc(blockSize * sizeof(float));
+    zeroBuffer = buffer;
     memset(zeroBuffer, 0, blockSize * sizeof(float));
     zeroBufferSize = blockSize;
   }
@@ -109,21 +111,30 @@ void DspObject::addConnectionFromObjectToInlet(MessageObject *messageObject, int
     signalPrecedence = (DspMessagePresedence) (signalPrecedence | (0x1 << inletIndex));
     
     DspObject *dspObject = (DspObject *) messageObject;
-    // get pointer to indexInlet-th element of dspBufferRefListAtInlet
+    // get pointer to inletIndex-th element of dspBufferRefListAtInlet
     vector<float *> *dspBufferRefList = &(*(dspBufferRefListAtInlet.begin() + inletIndex));
     dspBufferRefList->push_back(dspObject->getDspBufferRefAtOutlet(outletIndex));
-    if (inletIndex == 0) {
-      if (incomingDspConnections[0].size() == 1) {
-        dspBufferAtInlet0 = dspBufferRefList->at(0);
-      }
-    } else if (inletIndex == 1) {
-      if (incomingDspConnections[1].size() == 1) {
-        dspBufferAtInlet1 = dspBufferRefList->at(0);
-      }
-    }
-    
-    onInletConnectionUpdate();
+    updateInletBufferRefs(inletIndex);
   }
+}
+
+void DspObject::updateInletBufferRefs(unsigned int inletIndex) {
+  vector<float *> *dspBufferRefList = &(*(dspBufferRefListAtInlet.begin() + inletIndex));
+  if (inletIndex == 0) {
+    if (incomingDspConnections[0].size() == 0) {
+      dspBufferAtInlet0 = zeroBuffer;
+    } else if (incomingDspConnections[0].size() == 1) {
+      dspBufferAtInlet0 = dspBufferRefList->at(0);
+    }
+  } else if (inletIndex == 1) {
+    if (incomingDspConnections.size() == 0) {
+      dspBufferAtInlet1 = zeroBuffer;
+    } else if (incomingDspConnections[1].size() == 1) {
+      dspBufferAtInlet1 = dspBufferRefList->at(0);
+    }
+  }
+  
+   onInletConnectionUpdate();
 }
 
 void DspObject::addConnectionToObjectFromOutlet(MessageObject *messageObject, int inletIndex, int outletIndex) {
