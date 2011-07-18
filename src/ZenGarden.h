@@ -98,6 +98,9 @@ extern "C" {
    */
   void zg_remove_object(ZGGraph *graph, ZGObject *object);
   
+  /** Returns the object label, e.g. "osc~" or "+". */
+  const char *zg_object_get_label(ZGObject *object);
+  
   
 #pragma mark - Manage Connections
   

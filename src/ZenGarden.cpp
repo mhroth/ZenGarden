@@ -115,6 +115,10 @@ unsigned int zg_get_num_outlets(ZGObject *object) {
   return (object != NULL) ? object->getNumOutlets() : 0;
 }
 
+const char *zg_object_get_label(ZGObject *object) {
+  return (object != NULL) ? object->getObjectLabel() : NULL;
+}
+
 void zg_process(PdContext *context, float *inputBuffers, float *outputBuffers) {
   context->process(inputBuffers, outputBuffers);
 }
