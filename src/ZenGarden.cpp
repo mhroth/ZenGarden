@@ -61,12 +61,14 @@ unsigned int zg_graph_get_dollar_zero(ZGGraph *graph) {
 }
 
 ZGObject *zg_new_object(ZGContext *context, ZGGraph *graph, char *objectString) {
-  char *objectLabel = strtok(objectString, " ;");
+  char *objectStringCopy = StaticUtils::copyString(objectString);
+  char *objectLabel = strtok(objectStringCopy, " ;");
   char *initString = strtok(NULL, ";");
   char resolutionBuffer[256];
   PdMessage *initMessage = PD_MESSAGE_ON_STACK(32);
   initMessage->initWithSARb(32, initString, graph->getArguments(), resolutionBuffer, 256);
   MessageObject *messageObject = context->newObject((char *) "obj", objectLabel, initMessage, graph);
+  free(objectStringCopy);
   return messageObject;
 }
 
