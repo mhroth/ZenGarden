@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -25,6 +25,17 @@
 
 #include "DspObject.h"
 
+enum DspMinimumCodePath {
+  DSP_MINIMUM_DSP1_MESSAGE0,
+  DSP_MINIMUM_DSPX_MESSAGE0,
+  DSP_MINIMUM_DSPX_MESSAGEX,
+  DSP_MINIMUM_DSP1_DSP1,
+  DSP_MINIMUM_DSPX_DSP1,
+  DSP_MINIMUM_DSPX_DSPX,
+  DSP_MINIMUM_DEFAULT
+};
+
+
 /** [min~ float] */
 class DspMinimum : public DspObject {
   
@@ -33,10 +44,16 @@ class DspMinimum : public DspObject {
     ~DspMinimum();
     
     const char *getObjectLabel();
+  
+    void processDsp();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
     void processDspWithIndex(int fromIndex, int toIndex);
+  
+    void onInletConnectionUpdate();
+  
+    DspMinimumCodePath codePath;
     
     float constant;
 };
