@@ -248,7 +248,10 @@ void PdGraph::addConnection(MessageObject *fromObject, int outletIndex, MessageO
   lockContextIfAttached();
   toObject->addConnectionFromObjectToInlet(fromObject, outletIndex, inletIndex);
   fromObject->addConnectionToObjectFromOutlet(toObject, inletIndex, outletIndex);
-  // NOTE(mhroth): very heavy handed approach. Always recompute the process order when adding connections
+  // NOTE(mhroth): very heavy handed approach. Always recompute the process order when adding connections.
+  // In theory this function should check to see if a reordering is even necessary and then only make
+  // the appropriate changes. Usually a complete reevaluation shouldn't be necessary, and otherwise
+  // the use of a linked list to store the node list should make the reordering fast.
   computeLocalDspProcessOrder(); 
   unlockContextIfAttached();
 }
