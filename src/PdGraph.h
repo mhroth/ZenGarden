@@ -64,6 +64,8 @@ class PdGraph : public DspObject {
   
     void addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex);
     void addConnectionToObjectFromOutlet(MessageObject *messageObject, int inletIndex, int outletIndex);
+    void removeConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex);
+    void removeConnectionToObjectFromOutlet(MessageObject *messageObject, int inletIndex, int outletIndex);
   
     const char *getObjectLabel();
     ObjectType getObjectType();

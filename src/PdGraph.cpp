@@ -440,7 +440,6 @@ char *PdGraph::resolveFullPath(char *filename) {
 }
 
 char *PdGraph::findFilePath(char *filename) {
-  char *directory = NULL;
   list<string>::iterator it = declareList->getIterator();
   list<string>::iterator end = declareList->getEnd();
   while (it != end) {
@@ -467,6 +466,7 @@ void PdGraph::addDeclarePath(char *path) {
   }
 }
 
+
 #pragma mark -
 #pragma mark Manage Messages
 
@@ -481,6 +481,7 @@ void PdGraph::cancelMessage(MessageObject *messageObject, int outletIndex, PdMes
 void PdGraph::sendMessageToNamedReceivers(char *name, PdMessage *message) {
   context->sendMessageToNamedReceivers(name, message);
 }
+
 
 #pragma mark -
 #pragma mark Message/DspObject Functions
@@ -553,6 +554,17 @@ void PdGraph::addConnectionToObjectFromOutlet(MessageObject *messageObject, int 
       break;
     }
   }
+}
+
+void PdGraph::removeConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex) {
+  // NOTE(mhroth): double check! this should work even if inletObject is a DspInlet
+  MessageObject *inletObject = inletList.at(inletIndex);
+  inletObject->removeConnectionFromObjectToInlet(messageObject, outletIndex, 0);
+}
+
+void PdGraph::removeConnectionToObjectFromOutlet(MessageObject *messageObject, int inletIndex, int outletIndex) {
+  MessageObject *outletObject = outletList.at(outletIndex);
+  outletObject->removeConnectionToObjectFromOutlet(messageObject, inletIndex, 0);
 }
 
 list<MessageObject *> *PdGraph::getProcessOrder() {
