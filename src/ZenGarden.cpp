@@ -20,6 +20,7 @@
  *
  */
 
+#include <string.h>
 #include "PdContext.h"
 #include "PdGraph.h"
 #include "ZenGarden.h"
@@ -119,6 +120,32 @@ unsigned int zg_get_num_inlets(ZGObject *object) {
 
 unsigned int zg_get_num_outlets(ZGObject *object) {
   return (object != NULL) ? object->getNumOutlets() : 0;
+}
+
+ZGConnectionPair *zg_object_get_connections_at_inlet(ZGObject *object, unsigned int inletIndex, unsigned int *n) {
+  if (object == NULL || n == NULL) return NULL;
+  
+  list<ObjectLetPair> connections = object->getIncomingConnections(inletIndex);
+  *n = connections.size();
+  int i = 0;
+  ObjectLetPair *conns = (ObjectLetPair *) malloc(connections.size() * sizeof(ObjectLetPair));
+  for (list<ObjectLetPair>::iterator it = connections.begin(); it != connections.end(); it++, i++) {
+    conns[i] = *it;
+  }
+  return (ZGConnectionPair *) conns;
+}
+
+ZGConnectionPair *zg_object_get_connections_at_outlet(ZGObject *object, unsigned int outletIndex, unsigned int *n) {
+  if (object == NULL || n == NULL) return NULL;
+  
+  list<ObjectLetPair> connections = object->getOutgoingConnections(outletIndex);
+  *n = connections.size();
+  int i = 0;
+  ObjectLetPair *conns = (ObjectLetPair *) malloc(connections.size() * sizeof(ObjectLetPair));
+  for (list<ObjectLetPair>::iterator it = connections.begin(); it != connections.end(); it++, i++) {
+    conns[i] = *it;
+  }
+  return (ZGConnectionPair *) conns;
 }
 
 const char *zg_object_get_label(ZGObject *object) {

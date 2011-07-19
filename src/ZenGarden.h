@@ -43,6 +43,10 @@ extern "C" {
   typedef void ZGContext;
   typedef void ZGObject;
 #endif
+typedef struct ZGConnectionPair {
+  ZGObject *object;
+  unsigned int letIndex;
+} ZGConnectionPair;
   
   
 #pragma mark - New Context/Graph/Object
@@ -126,6 +130,15 @@ extern "C" {
   unsigned int zg_get_num_inlets(ZGObject *object);
   
   unsigned int zg_get_num_outlets(ZGObject *object);
+  
+  /**
+   * Returns an array of ZGConnectionPair structs indicating the objects and outlets from which
+   * the connections are comming. The result in n is the length of the array (i.e. the number of
+   * connections at the given inlet). The returned array is owned and must be freed by the caller.
+   * NOTE(mhroth): This function currently only returns MESSAGE connections.
+   */
+  ZGConnectionPair *zg_object_get_connections_at_inlet(ZGObject *object, unsigned int inletIndex, unsigned int *n);
+  ZGConnectionPair *zg_object_get_connections_at_outlet(ZGObject *object, unsigned int outletIndex, unsigned int *n);
   
   
 #pragma mark - Process
