@@ -72,6 +72,9 @@ extern "C" {
   /** Deletes the given graph. If attached, the graph is automatically removed from its context. */
   void zg_delete_graph(ZGGraph *graph);
   
+  /** Returns the $0 argument to a graph, allowing graph-specific receivers to be addressed. */
+  unsigned int zg_graph_get_dollar_zero(ZGGraph *graph);
+  
   
 #pragma mark - Object Manipulation
   

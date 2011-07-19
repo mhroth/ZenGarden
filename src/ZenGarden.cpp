@@ -56,6 +56,10 @@ void zg_remove_graph(PdContext *context, PdGraph *graph) {
 }
 */
 
+unsigned int zg_graph_get_dollar_zero(ZGGraph *graph) {
+  return (graph != NULL) ? (unsigned int) graph->getArguments()->getFloat(0) : 0;
+}
+
 ZGObject *zg_new_object(ZGContext *context, ZGGraph *graph, char *objectString) {
   char *objectLabel = strtok(objectString, " ;");
   char *initString = strtok(NULL, ";");
