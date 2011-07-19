@@ -968,34 +968,32 @@ void PdContext::sendMessageToNamedReceivers(char *name, PdMessage *message) {
 
 void PdContext::scheduleExternalMessageV(const char *receiverName, double timestamp,
     const char *messageFormat, va_list ap) {
-  lock(); // NOTE(mhroth): can reduce size of critical section?
-  int receiverNameIndex = sendController->getNameIndex((char *) receiverName);
-  if (receiverNameIndex >= 0) { // if the receiver exists
-    int numElements = strlen(messageFormat);
-    PdMessage *message = PD_MESSAGE_ON_STACK(numElements);
-    message->initWithTimestampAndNumElements(timestamp, numElements);
-    
-    // format message
-    for (int i = 0; i < numElements; i++) {
-      switch (messageFormat[i]) {
-        case 'f': {
-          message->setFloat(i, (float) va_arg(ap, double));
-          break;
-        }
-        case 's': {
-          message->setSymbol(i, (char *) va_arg(ap, char *));
-          break;
-        }
-        case 'b': {
-          message->setBang(i);
-          break;
-        }
-        default: {
-          break;
-        }
+  int numElements = strlen(messageFormat);
+  PdMessage *message = PD_MESSAGE_ON_STACK(numElements);
+  message->initWithTimestampAndNumElements(timestamp, numElements);
+  for (int i = 0; i < numElements; i++) { // format message
+    switch (messageFormat[i]) {
+      case 'f': {
+        message->setFloat(i, (float) va_arg(ap, double));
+        break;
+      }
+      case 's': {
+        message->setSymbol(i, (char *) va_arg(ap, char *));
+        break;
+      }
+      case 'b': {
+        message->setBang(i);
+        break;
+      }
+      default: {
+        break;
       }
     }
-    
+  }
+  
+  lock();
+  int receiverNameIndex = sendController->getNameIndex((char *) receiverName);
+  if (receiverNameIndex >= 0) { // if the receiver exists
     scheduleMessage(sendController, receiverNameIndex, message);
   }
   unlock();
