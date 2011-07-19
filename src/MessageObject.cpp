@@ -125,9 +125,12 @@ void MessageObject::addConnectionToObjectFromOutlet(MessageObject *messageObject
 }
 
 void MessageObject::removeConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex) {
-  list<ObjectLetPair> *incomingConnections = &incomingMessageConnections[inletIndex];
-  ObjectLetPair objectLetPair = make_pair(messageObject, outletIndex);
-  incomingConnections->remove(objectLetPair); // does this work?
+  // error check, the connection to this object must obviously be of type MESSAGE
+  if (messageObject->getConnectionType(outletIndex) == MESSAGE) {
+    list<ObjectLetPair> *incomingConnections = &incomingMessageConnections[inletIndex];
+    ObjectLetPair objectLetPair = make_pair(messageObject, outletIndex);
+    incomingConnections->remove(objectLetPair); // does this work?
+  }
 }
 
 void MessageObject::removeConnectionToObjectFromOutlet(MessageObject *messageObject, int inletIndex, int outletIndex) {

@@ -99,6 +99,9 @@ bool DspObject::doesProcessAudio() {
   return true;
 }
 
+
+#pragma mark - Add/Remove Connections
+
 void DspObject::addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex) {
   MessageObject::addConnectionFromObjectToInlet(messageObject, outletIndex, inletIndex);
   
@@ -118,6 +121,18 @@ void DspObject::addConnectionFromObjectToInlet(MessageObject *messageObject, int
   }
 }
 
+void DspObject::removeConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex) {
+  if (messageObject->getConnectionType(outletIndex) == DSP) {
+    list<ObjectLetPair> *incomingConnections = &incomingDspConnections[inletIndex];
+    ObjectLetPair objectLetPair = make_pair(messageObject, outletIndex);
+    incomingConnections->remove(objectLetPair); // does this work?
+    
+    updateInletBufferRefs(inletIndex);
+  } else {
+    MessageObject::removeConnectionFromObjectToInlet(messageObject, outletIndex, inletIndex);
+  }
+}
+
 void DspObject::updateInletBufferRefs(unsigned int inletIndex) {
   vector<float *> *dspBufferRefList = &(*(dspBufferRefListAtInlet.begin() + inletIndex));
   if (inletIndex == 0) {
@@ -134,7 +149,11 @@ void DspObject::updateInletBufferRefs(unsigned int inletIndex) {
     }
   }
   
-   onInletConnectionUpdate();
+  onInletConnectionUpdate();
+}
+
+void DspObject::onInletConnectionUpdate() {
+  // nothing to do
 }
 
 void DspObject::addConnectionToObjectFromOutlet(MessageObject *messageObject, int inletIndex, int outletIndex) {
@@ -148,9 +167,18 @@ void DspObject::addConnectionToObjectFromOutlet(MessageObject *messageObject, in
   }
 }
 
-void DspObject::onInletConnectionUpdate() {
-  // nothing to do
+void DspObject::removeConnectionToObjectFromOutlet(MessageObject *messageObject, int inletIndex, int outletIndex) {
+  if (getConnectionType(outletIndex) == MESSAGE) {
+    MessageObject::removeConnectionToObjectFromOutlet(messageObject, inletIndex, outletIndex);
+  } else {
+    list<ObjectLetPair> *outgoingConnections = &outgoingDspConnections[outletIndex];
+    ObjectLetPair objectLetPair = make_pair(messageObject, inletIndex);
+    outgoingConnections->remove(objectLetPair);
+  }
 }
+
+
+#pragma mark -
 
 bool DspObject::shouldDistributeMessageToInlets() {
   return false;

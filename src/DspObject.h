@@ -74,6 +74,8 @@ class DspObject : public MessageObject {
   
     virtual void addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex);
     virtual void addConnectionToObjectFromOutlet(MessageObject *messageObject, int inletIndex, int outletIndex);
+    virtual void removeConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex);
+    virtual void removeConnectionToObjectFromOutlet(MessageObject *messageObject, int inletIndex, int outletIndex);
   
     virtual bool doesProcessAudio();
   
