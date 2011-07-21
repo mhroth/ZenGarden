@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -22,28 +22,31 @@
 
 package me.rjdj.zengarden;
 
-/**
- * An interface detailing the various callbacks that can come from a <code>ZenGarden</code> graph.
- */
-public interface ZenGardenListener {
+public class ZGObject {
   
   /**
-   * Prints a normal message.
-   * @param message
+   * The native pointer to the ZGGraph object.
    */
-  public void onPrintStd(String message);
+  final protected long objectPtr;
   
   /**
-   * Print an error message.
-   * @param message
+   * This constructor should only be called by JNI. It represents a convenient way to address
+   * objects in ZenGarden. Even if the Java object is garbage collected, the native object remains
+   * in memory and in use.
+   * @param nativePtr  The native pointer to the ZGGraph object.
    */
-  public void onPrintErr(String message);
+  protected ZGObject(long nativePtr) {
+    objectPtr = nativePtr;
+  }
   
   /**
-   * A message is received from a receiver.
-   * @param receiverName  The name of the registered receiver from which the message is coming.
-   * @param message  The received message.
+   * Remove this object from its parent graph. All connections to and from this object are also
+   * removed.
    */
-  public void onMessage(String receiverName, Message message);
+  public void remove() {
+    remove(objectPtr);
+  }
   
+  native private void remove(long nativePtr);
+
 }

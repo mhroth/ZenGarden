@@ -775,3 +775,7 @@ unsigned int PdGraph::getNumInlets() {
 unsigned int PdGraph::getNumOutlets() {
   return outletList.size();
 }
+
+PdContext *PdGraph::getContext() {
+  return context;
+}

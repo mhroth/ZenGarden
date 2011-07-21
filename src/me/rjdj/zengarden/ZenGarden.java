@@ -149,7 +149,7 @@ public class ZenGarden {
   
   private native void sendMidinote(int channel, int noteNumber, int velocity, double blockIndex,
       long nativePointer);
-  
+    
   /**
    * This method allows the native component to be manually unloaded.
    * This allows memory to be better managed.

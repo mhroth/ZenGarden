@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -35,6 +35,10 @@ public class ZenGardenAdapter implements ZenGardenListener {
 
   public void onPrintStd(String message) {
     System.out.println(message);
+  }
+  
+  public void onMessage(String receiverName, Message message) {
+    System.out.println(receiverName + ": " + message.toString());
   }
 
 }
