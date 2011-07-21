@@ -22,9 +22,13 @@
 
 package me.rjdj.zengarden;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ZGContext {
   
   protected final long contextPtr;
+  private List<ZenGardenListener> listenerList;
   
   public ZGContext(float sampleRate, int blockSize, int numInputChannels, int numOutputChannels)
       throws NativeLoadException {
@@ -47,6 +51,8 @@ public class ZGContext {
       throw new IllegalArgumentException("The number of output channels must be 1 or 2: " + 
           Integer.toString(numOutputChannels));
     }
+    
+    listenerList = new ArrayList<ZenGardenListener>();
     
     contextPtr = newContext(sampleRate, blockSize, numInputChannels, numOutputChannels);
   }
@@ -117,5 +123,41 @@ public class ZGContext {
   }
   
   private native void process(short[] inputBuffer, short[] outputBuffer, long nativePtr);
+  
+  /**
+   * Add a <code>ZenGardenListener</code> to this graph.
+   * @param listener
+   */
+  public void addListener(ZenGardenListener listener) {
+    if (!listenerList.contains(listener)) {
+      listenerList.add(listener);
+    }
+  }
+  
+  /**
+   * Remove a <code>ZenGardenListener</code> from this graph.
+   * @param listener
+   */
+  public void removeListener(ZenGardenListener listener) {
+    listenerList.remove(listener);
+  }
+  
+  private void onPrintStd(String message) {
+    for (ZenGardenListener listener : listenerList) {
+      listener.onPrintStd(message);
+    }
+  }
+  
+  private void onPrintErr(String message) {
+    for (ZenGardenListener listener : listenerList) {
+      listener.onPrintErr(message);
+    }
+  }
+  
+  private void onMessage(String receiverName, Message message) {
+    for (ZenGardenListener listener : listenerList) {
+      listener.onMessage(receiverName, message);
+    }
+  }
 
 }
