@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -444,6 +444,10 @@ public class PdObjectTest implements ZenGardenListener {
   public void onPrintStd(String message) {
     printBuffer.append(message);
     printBuffer.append(System.getProperty("line.separator"));
+  }
+
+  public void onMessage(String receiverName, Message message) {
+    // nothing to do 
   }
 
 }

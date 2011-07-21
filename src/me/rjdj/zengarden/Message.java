@@ -22,6 +22,8 @@
 
 package me.rjdj.zengarden;
 
+import java.util.Arrays;
+
 public class Message {
   
   private double timestamp;
@@ -83,7 +85,22 @@ public class Message {
   
   @Override
   public String toString() {
-    return "{" + Double.toString(timestamp) + "ms " + elements.toString() + "}";
+    return "{" + Double.toString(timestamp) + "ms " + Arrays.toString(elements) + "}";
+  }
+  
+  @Override
+  public boolean equals(Object o) {
+    if (Message.class.isInstance(o)) {
+      Message message = (Message) o;
+      return (timestamp == message.timestamp && Arrays.equals(elements, message.elements));
+    } else {
+      return false;
+    }
+  }
+  
+  @Override
+  public int hashCode() {
+    return ((new Double(timestamp).hashCode()) + Arrays.hashCode(elements));
   }
   
   public class Bang {

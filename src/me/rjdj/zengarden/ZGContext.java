@@ -125,6 +125,16 @@ public class ZGContext {
   private native void process(short[] inputBuffer, short[] outputBuffer, long nativePtr);
   
   /**
+   * 
+   * @param receiverName
+   * @param message
+   */
+  public void sendMessage(String receiverName, Message message) {
+    sendMessage(receiverName, message, contextPtr);
+  }
+  native private void sendMessage(String receiverName, Message message, long nativePtr);
+  
+  /**
    * Add a <code>ZenGardenListener</code> to this graph.
    * @param listener
    */
