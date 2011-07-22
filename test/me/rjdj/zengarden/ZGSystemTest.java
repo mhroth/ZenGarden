@@ -30,6 +30,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
+
 public class ZGSystemTest {
   
   private static final int BLOCK_SIZE = 64;
@@ -54,7 +56,7 @@ public class ZGSystemTest {
   @Test
   public void testAddAndRemoveConnections() {
     ZGContext context = new ZGContext(SAMPLE_RATE, BLOCK_SIZE, NUM_INPUT_CHANNELS, NUM_OUTPUT_CHANNELS);
-    ZGGraph graph = context.newEmptyGraph();
+    ZGGraph graph = context.newGraph();
     ZGObject obj0 = graph.addObject("osc~ 440");
     ZGObject obj1 = graph.addObject("dac~");
     graph.addConnection(obj0, 0, obj1, 0);
@@ -77,6 +79,7 @@ public class ZGSystemTest {
   @Test
   public void testRegisterReceiver() {
     final Message message = new Message(0.0, "Hello World!");
+    final boolean didReceiveMessage = false;
     
     // create a new context
     ZGContext context = new ZGContext(SAMPLE_RATE, BLOCK_SIZE, NUM_INPUT_CHANNELS, NUM_OUTPUT_CHANNELS);
@@ -88,18 +91,22 @@ public class ZGSystemTest {
       public void onMessage(String receiverName, Message receivedMessage) {
         assertEquals(PATCH_TO_TEST, receiverName);
         assertEquals(message, receivedMessage);
+        //didReceiveMessage = true;
       }
     };
     context.addListener(zgListener);
     
     // register the receiver
     context.registerReceiver(PATCH_TO_TEST);
-    //ZGGraph graph = context.newGraphFromFile("");
+    ZGGraph graph = context.newGraph(new File(""));
     
     // attach the graph and send the message
     graph.attach();
     context.sendMessage(TEST_TO_PATCH, message);
     context.process(INPUT_BUFFER, OUTPUT_BUFFER); // process once in order to process the message
+    if (!didReceiveMessage) {
+      fail("Context did not receive a message callback.");
+    }
     
     // remove the listener
     context.removeListener(zgListener);

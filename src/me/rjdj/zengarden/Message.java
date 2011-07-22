@@ -30,11 +30,21 @@ public class Message {
   private Object[] elements;
  
   /**
-   * 
-   * @param timestamp
-   * @param elements
+   * Creates a new message.
+   * @param timestamp  The time in milliseconds at which this message is created.
+   * @param elements  The constituent elements of 
    */
   public Message(double timestamp, Object... elements) {
+    if (timestamp < 0.0) {
+      throw new IllegalArgumentException("A Message may not be created with a negatime timestamp" +
+          Double.toString(timestamp));
+    }
+    if (elements == null) {
+      throw new NullPointerException("The submitted message elements cannot be null");
+    }
+    if (elements.length == 0) {
+      throw new IllegalArgumentException("The submitted message element array must have at least one element.");
+    }
     this.timestamp = timestamp;
     this.elements = elements;
   }

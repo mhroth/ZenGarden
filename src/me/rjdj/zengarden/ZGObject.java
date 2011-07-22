@@ -46,7 +46,20 @@ public class ZGObject {
   public void remove() {
     remove(objectPtr);
   }
-  
   native private void remove(long nativePtr);
+  
+  /**
+   * Send a {@link Message} to the {@link ZGObject}. The message will be executed at the beginning
+   * of the next block <i>before</i> any other previously scheduled messages for that block are
+   * executed. The message will be executed at the beginning of the next block regardless of its
+   * timestamp. If the message should be executed at some time in the future, or if it should be
+   * executed after all of previously scheduled messaged for the next block, use ZGContext's sendMessage,
+   * and send the message to a named receiver.
+   * @param message  The message which will be sent to the object.
+   */
+  public void sendMessage(Message message) {
+    sendMessage(message, objectPtr);
+  }
+  native private void sendMessage(Message message, long nativePtr);
 
 }

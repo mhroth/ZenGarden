@@ -1,0 +1,4 @@
+#N canvas 557 294 324 179 10;
+#X obj 104 50 r #TEST_TO_PATCH;
+#X obj 104 91 s #PATCH_TO_TEST;
+#X connect 0 0 1 0;

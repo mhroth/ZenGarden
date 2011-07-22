@@ -22,6 +22,7 @@
 
 package me.rjdj.zengarden;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,8 +31,7 @@ public class ZGContext {
   protected final long contextPtr;
   private List<ZenGardenListener> listenerList;
   
-  public ZGContext(float sampleRate, int blockSize, int numInputChannels, int numOutputChannels)
-      throws NativeLoadException {
+  public ZGContext(float sampleRate, int blockSize, int numInputChannels, int numOutputChannels) {
     if (sampleRate < 0f) {
       throw new IllegalArgumentException("Sample rate must be positive: " + Float.toString(sampleRate));
     }
@@ -57,8 +57,7 @@ public class ZGContext {
     contextPtr = newContext(sampleRate, blockSize, numInputChannels, numOutputChannels);
   }
   
-  private native long newContext(float sampleRate, int blockSize, int numInputChannels, int numOutputChannels)
-      throws NativeLoadException;
+  private native long newContext(float sampleRate, int blockSize, int numInputChannels, int numOutputChannels);
   
   @Override
   protected void finalize() throws Throwable {
@@ -74,11 +73,26 @@ public class ZGContext {
   /**
    * Create a new empty graph, unattached to the current context.
    */
-  public ZGGraph newEmptyGraph() {
-    return newEmptyGraph(contextPtr);
+  public ZGGraph newGraph() {
+    return newGraph(contextPtr);
   }
+  private native ZGGraph newGraph(long nativePtr);
   
-  private native ZGGraph newEmptyGraph(long nativePtr);
+  /**
+   * Create a new unattached graph based on the given Pd file.
+   */
+  public ZGGraph newGraph(File file) {
+    if (file == null) {
+      throw new NullPointerException("");
+    }
+    if (!file.isFile()) {
+      throw new IllegalArgumentException("The file object must refer to a file: " + 
+          file.toString());
+    }
+    
+    return newGraph(file.getAbsoluteFile().getParent() + File.separator, file.getName(), contextPtr);
+  }
+  native private ZGGraph newGraph(String filePath, String fileName, long nativePtr);
   
   /**
    * Register to receive all messages sent to the given receiver name.
@@ -121,8 +135,7 @@ public class ZGContext {
   public void process(short[] inputBuffer, short[] outputBuffer) {
     process(inputBuffer, outputBuffer, contextPtr);
   }
-  
-  private native void process(short[] inputBuffer, short[] outputBuffer, long nativePtr);
+  native private void process(short[] inputBuffer, short[] outputBuffer, long nativePtr);
   
   /**
    * 
