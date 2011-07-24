@@ -22,15 +22,12 @@
 
 package me.rjdj.zengarden;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.File;
 
 public class ZGSystemTest {
   
@@ -53,21 +50,55 @@ public class ZGSystemTest {
     // nothing to do
   }
   
+  /**
+   * A very basic test ensuring that a context can be created for nominal arguments.
+   */
+  @Test
+  public void testNewContext() {
+    ZGContext context = new ZGContext(NUM_INPUT_CHANNELS, NUM_OUTPUT_CHANNELS, BLOCK_SIZE, SAMPLE_RATE);
+    assertNotNull(context);
+  }
+  
+  /**
+   * Ensures that an object initialised with a valid string will create a non-<code>null</code> <code>ZGObject</code>.
+   * An object added to a graph with an invalid string will return <code>null</code>
+   */
+  @Test
+  public void testAddObject() {
+    ZGContext context = new ZGContext(NUM_INPUT_CHANNELS, NUM_OUTPUT_CHANNELS, BLOCK_SIZE, SAMPLE_RATE);
+    ZGGraph graph = context.newGraph();
+    ZGObject goodOscObj = graph.addObject("osc~ 440");
+    assertNotNull(goodOscObj);
+    ZGObject badOscObj = graph.addObject("osc~ 440");
+    assertNull(badOscObj);
+  }
+  
   @Test
   public void testAddAndRemoveConnections() {
-    ZGContext context = new ZGContext(SAMPLE_RATE, BLOCK_SIZE, NUM_INPUT_CHANNELS, NUM_OUTPUT_CHANNELS);
+    ZGContext context = new ZGContext(NUM_INPUT_CHANNELS, NUM_OUTPUT_CHANNELS, BLOCK_SIZE, SAMPLE_RATE);
     ZGGraph graph = context.newGraph();
     ZGObject obj0 = graph.addObject("osc~ 440");
     ZGObject obj1 = graph.addObject("dac~");
     graph.addConnection(obj0, 0, obj1, 0);
+    /*
+    obj0.getConnectionsAtInlet(0).size()
+    assertEquals(1, obj0.getNumConnectionsAtOutlet(0), ""); // 1 connection at osc~ outlet
+    assertEquals(1, obj1.getNumConnectionsAtInlet(0), ""); // 1 connection at left dac~ inlet
+    assertEquals(0, obj1.getNumConnectionsAtInlet(1), ""); // 0 connections at right dac~ inlet
+    */
     graph.addConnection(obj0, 0, obj1, 1);
+    /*
+    assertEquals(2, obj0.getNumConnectionsAtOutlet(0), ""); // 2 connections at osc~ outlet
+    assertEquals(1, obj1.getNumConnectionsAtInlet(0), ""); // 1 connection at left dac~ inlet
+    assertEquals(1, obj1.getNumConnectionsAtInlet(1), ""); // 1 connection at right dac~ inlet
+    */
     graph.removeConnection(obj0, 0, obj1, 0);
     graph.removeConnection(obj0, 0, obj1, 1);
     obj0.remove();
     obj1.remove();
     //graph.removeObject(obj0); // ???
     //graph.removeObject(obj1);
-    graph.unattach();
+    //graph.unattach();
   }
   
   /**
@@ -76,13 +107,14 @@ public class ZGSystemTest {
    * unregistered, and another message is sent to the TEST_TO_PATCH receiver. No message should
    * be returned.
    */
+  /*
   @Test
   public void testRegisterReceiver() {
     final Message message = new Message(0.0, "Hello World!");
     final boolean didReceiveMessage = false;
     
     // create a new context
-    ZGContext context = new ZGContext(SAMPLE_RATE, BLOCK_SIZE, NUM_INPUT_CHANNELS, NUM_OUTPUT_CHANNELS);
+    ZGContext context = new ZGContext(NUM_INPUT_CHANNELS, NUM_OUTPUT_CHANNELS, BLOCK_SIZE, SAMPLE_RATE);
     
     // define a ZenGardenListener which asserts that the received message is equal to the one
     // which was sent, from the correct receiver
@@ -126,5 +158,5 @@ public class ZGSystemTest {
     context.sendMessage(TEST_TO_PATCH, message);
     context.process(INPUT_BUFFER, OUTPUT_BUFFER);
   }
-  
+  */
 }
