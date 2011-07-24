@@ -25,12 +25,12 @@ package me.rjdj.zengarden;
 public class ZGObject {
   
   /**
-   * The native pointer to the ZGGraph object.
+   * The native pointer to the ZGObject object.
    */
   final protected long objectPtr;
   
   /**
-   * This constructor should only be called by JNI. It represents a convenient way to address
+   * This object represents a convenient way to address
    * objects in ZenGarden. Even if the Java object is garbage collected, the native object remains
    * in memory and in use.
    * @param nativePtr  The native pointer to the ZGGraph object.
@@ -57,9 +57,30 @@ public class ZGObject {
    * and send the message to a named receiver.
    * @param message  The message which will be sent to the object.
    */
-  public void sendMessage(Message message) {
-    sendMessage(message, objectPtr);
+  public void sendMessage(int inletIndex, Message message) {
+    if (inletIndex < 0) {
+      throw new IllegalArgumentException();
+    }
+    if (message == null) {
+      throw new NullPointerException();
+    }
+    sendMessage(inletIndex, message, objectPtr);
   }
-  native private void sendMessage(Message message, long nativePtr);
+  native private void sendMessage(int inletIndex, Message message, long nativePtr);
+  
+  @Override
+  public boolean equals(Object o) {
+    if (ZGObject.class.isInstance(o)) {
+      ZGObject zgObject = (ZGObject) o;
+      return (objectPtr == zgObject.objectPtr);
+    } else {
+      return false;
+    }
+  }
+  
+  @Override
+  public int hashCode() {
+    return new Long(objectPtr).hashCode();
+  }
 
 }

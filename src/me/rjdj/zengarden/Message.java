@@ -36,11 +36,11 @@ public class Message {
    */
   public Message(double timestamp, Object... elements) {
     if (timestamp < 0.0) {
-      throw new IllegalArgumentException("A Message may not be created with a negatime timestamp" +
+      throw new IllegalArgumentException("A Message may not be created with a negatime timestamp: " +
           Double.toString(timestamp));
     }
     if (elements == null) {
-      throw new NullPointerException("The submitted message elements cannot be null");
+      throw new NullPointerException("The submitted message elements may not be null.");
     }
     if (elements.length == 0) {
       throw new IllegalArgumentException("The submitted message element array must have at least one element.");
@@ -94,7 +94,7 @@ public class Message {
   }
   
   @Override
-  public String toString() {
+  public String toString() {   
     return "{" + Double.toString(timestamp) + "ms " + Arrays.toString(elements) + "}";
   }
   
@@ -102,7 +102,12 @@ public class Message {
   public boolean equals(Object o) {
     if (Message.class.isInstance(o)) {
       Message message = (Message) o;
-      return (timestamp == message.timestamp && Arrays.equals(elements, message.elements));
+      if (timestamp != message.timestamp) return false;
+      if (elements.length != message.elements.length) return false;
+      for (int i = 0; i < elements.length; i++) {
+        if (getType(i) != message.getType(i)) return false;
+      }
+      return true;
     } else {
       return false;
     }

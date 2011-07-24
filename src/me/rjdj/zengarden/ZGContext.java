@@ -31,11 +31,18 @@ public class ZGContext {
   protected final long contextPtr;
   private List<ZenGardenListener> listenerList;
   
-  public ZGContext(float sampleRate, int blockSize, int numInputChannels, int numOutputChannels) {
-    if (sampleRate < 0f) {
+  /**
+   * Once the <code>ZGContext</code> object is garbage collected, the native object is also destroyed.
+   * @param numInputChannels
+   * @param numOutputChannels
+   * @param blockSize
+   * @param sampleRate
+   */
+  public ZGContext(int numInputChannels, int numOutputChannels, int blockSize, float sampleRate) {
+    if (sampleRate < 0.0f) {
       throw new IllegalArgumentException("Sample rate must be positive: " + Float.toString(sampleRate));
     }
-    if (sampleRate != 22050.0f || sampleRate != 44100.0f) {
+    if (!(sampleRate == 22050.0f || sampleRate == 44100.0f)) {
       System.err.println("It seems that you have chosen a slightly non-standard sample rate (like 22050 or 44100)." +
           "ZenGarden supports you, but you should be sure that you know what you are doing.");
     }
@@ -52,14 +59,24 @@ public class ZGContext {
           Integer.toString(numOutputChannels));
     }
     
+    // instantiate the list of listeners for this context
     listenerList = new ArrayList<ZenGardenListener>();
     
-    contextPtr = newContext(sampleRate, blockSize, numInputChannels, numOutputChannels);
+    // create the native context object
+    contextPtr = newContext(numInputChannels, numOutputChannels, blockSize, sampleRate);
+    if (contextPtr == 0) {
+      // TODO(mhroth): what is the correct exception to throw in this case. Something has gone very wrong.
+      throw new NullPointerException();
+    }
+  }
+  native private long newContext(int numInputChannels, int numOutputChannels, int blockSize, float sampleRate);
+  
+  static {
+    System.loadLibrary("jnizengarden");
   }
   
-  private native long newContext(float sampleRate, int blockSize, int numInputChannels, int numOutputChannels);
-  
   @Override
+  // The native context object is destroyed when the Java object is garbage collected.s
   protected void finalize() throws Throwable {
     try {
       deleteContext(contextPtr);
@@ -67,52 +84,51 @@ public class ZGContext {
       super.finalize();
     }
   }
-  
   native private void deleteContext(long nativePtr);
   
   /**
    * Create a new empty graph, unattached to the current context.
    */
   public ZGGraph newGraph() {
-    return newGraph(contextPtr);
+    return new ZGGraph(newGraph(contextPtr));
   }
-  private native ZGGraph newGraph(long nativePtr);
+  native private long newGraph(long nativePtr);
   
   /**
    * Create a new unattached graph based on the given Pd file.
    */
   public ZGGraph newGraph(File file) {
     if (file == null) {
-      throw new NullPointerException("");
+      throw new NullPointerException("The file cannot be null.");
     }
     if (!file.isFile()) {
       throw new IllegalArgumentException("The file object must refer to a file: " + 
           file.toString());
     }
     
-    return newGraph(file.getAbsoluteFile().getParent() + File.separator, file.getName(), contextPtr);
+    return new ZGGraph(newGraph(file.getAbsoluteFile().getParent() + File.separator, file.getName(), contextPtr));
   }
-  native private ZGGraph newGraph(String filePath, String fileName, long nativePtr);
+  native private long newGraph(String filePath, String fileName, long nativePtr);
   
   /**
    * Register to receive all messages sent to the given receiver name.
    */
   public void registerReceiver(String receiverName) {
     if (receiverName != null) {
-      registerReceiver(contextPtr, receiverName);
+      registerReceiver(receiverName, contextPtr);
     }
   }
-  native private void registerReceiver(long nativePtr, String receiverName);
+  native private void registerReceiver(String receiverName, long nativePtr);
   
   /**
    * Unregister a previously registered receiver.
    */
   public void unregisterReceiver(String receiverName) {
     if (receiverName != null) {
-      unregisterReceiver(contextPtr, receiverName);
+      unregisterReceiver(receiverName, contextPtr);
     }
   }
-  native private void unregisterReceiver(long nativePtr, String receiverName);
+  native private void unregisterReceiver(String receiverName, long nativePtr);
   
   /**
    * Process the input buffer and return the results in the given output buffer. The buffers contain
@@ -138,7 +154,9 @@ public class ZGContext {
   native private void process(short[] inputBuffer, short[] outputBuffer, long nativePtr);
   
   /**
-   * 
+   * Send a message to the named receiver. The message will be delivered at the timestamp of the message.
+   * If the timestamp is earlier than the current clock of the context, the message will be delivered
+   * at the start of the next block. If the receiver does not exist, this function has no effect.
    * @param receiverName
    * @param message
    */
@@ -146,6 +164,21 @@ public class ZGContext {
     sendMessage(receiverName, message, contextPtr);
   }
   native private void sendMessage(String receiverName, Message message, long nativePtr);
+  
+  @Override
+  public boolean equals(Object o) {
+    if (ZGContext.class.isInstance(o)) {
+      ZGContext zgContext = (ZGContext) o;
+      return (contextPtr == zgContext.contextPtr);
+    } else {
+      return false;
+    }
+  }
+  
+  @Override
+  public int hashCode() {
+    return new Long(contextPtr).hashCode();
+  }
   
   /**
    * Add a <code>ZenGardenListener</code> to this graph.

@@ -57,9 +57,35 @@ public class ZGGraph {
    * @return
    */
   ZGObject addObject(String initString) {
-    return addObject(graphPtr, initString);
+    if (initString == null) {
+      throw new NullPointerException();
+    }
+    long ptr = addObject(initString, 0, 0, graphPtr);
+    return (ptr != 0) ? new ZGObject(ptr) : null;
   }
-  private native ZGObject addObject(long nativePtr, String initString);
+  
+  /**
+   * Create a new object based on the string description, and add it to the graph at the given
+   * location in the graph. Canvas position is only important for inlet and outlet ordering.
+   * @param initString
+   * @param canvasX  The horizontal position of the object in the graph.
+   * @param canvasY  The vertical position of the object in the graph.
+   * @return  The newly created object. If no object could be created, <code>null</code> is returned.
+   */
+  ZGObject addObject(String initString, int canvasX, int canvasY) {
+    if (initString == null) {
+      throw new NullPointerException();
+    }
+    if (canvasX < 0) {
+      throw new IllegalArgumentException();
+    }
+    if (canvasY < 0) {
+      throw new IllegalArgumentException();
+    }
+    long ptr = addObject(initString, canvasX, canvasY, graphPtr);
+    return (ptr != 0) ? new ZGObject(ptr) : null;
+  }
+  private native long addObject(String initString, int canvasX, int canvasY, long nativePtr);
   
   /**
    * Add a connection between two objects.
@@ -82,9 +108,9 @@ public class ZGGraph {
       throw new IllegalArgumentException("inletIndex must be non-negative: " + inletIndex);
     }
     
-    addConnection(fromObject.objectPtr, outletIndex, toObject.objectPtr, inletIndex);
+    addConnection(fromObject.objectPtr, outletIndex, toObject.objectPtr, inletIndex, graphPtr);
   }
-  native private void addConnection(long fromPtr, int outletIndex, long toPtr, int inletIndex);
+  native private void addConnection(long fromPtr, int outletIndex, long toPtr, int inletIndex, long nativePtr);
   
   /**
    * Remove a connection between two objects.
@@ -107,8 +133,23 @@ public class ZGGraph {
       throw new IllegalArgumentException("inletIndex must be non-negative: " + inletIndex);
     }
     
-    removeConnection(fromObject.objectPtr, outletIndex, toObject.objectPtr, inletIndex);
+    removeConnection(fromObject.objectPtr, outletIndex, toObject.objectPtr, inletIndex, graphPtr);
   }
-  native private void removeConnection(long fromPtr, int outletIndex, long toPtr, int inletIndex);
+  native private void removeConnection(long fromPtr, int outletIndex, long toPtr, int inletIndex, long nativePtr);
+  
+  @Override
+  public boolean equals(Object o) {
+    if (ZGGraph.class.isInstance(o)) {
+      ZGGraph zgGraph = (ZGGraph) o;
+      return (graphPtr == zgGraph.graphPtr);
+    } else {
+      return false;
+    }
+  }
+  
+  @Override
+  public int hashCode() {
+    return new Long(graphPtr).hashCode();
+  }
 
 }
