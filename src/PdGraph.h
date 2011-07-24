@@ -141,7 +141,8 @@ class PdGraph : public DspObject {
   
     /**
      * Remove the object from the graph, also removing all of the connections to and from ths object.
-     * The object is then deleted; the object reference is invalid after calling this function.
+     * The object is then deleted. The object reference is invalid after calling this function and
+     * it is an error to reuse it.
      */
     void removeObject(MessageObject *object);
   

@@ -137,6 +137,9 @@ class MessageObject {
   
     virtual unsigned int getNumInlets();
     virtual unsigned int getNumOutlets();
+  
+    /** Returns the graph in which this object exists. */
+    PdGraph *getGraph();
     
   protected:  
     /** A pointer to the graph owning this object. */

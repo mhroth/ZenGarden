@@ -162,6 +162,10 @@ ObjectType MessageObject::getObjectType() {
   return OBJECT_UNKNOWN;
 }
 
+PdGraph *MessageObject::getGraph() {
+  return graph;
+}
+
 bool MessageObject::isLeafNode() {
   for (int i = 0; i < outgoingMessageConnections.size(); i++) {
     if (!outgoingMessageConnections[i].empty()) return false;

@@ -180,6 +180,12 @@ class PdContext {
     /** Create a new object based on its initialisation string. */
     MessageObject *newObject(char *objectType, char *objectLabel, PdMessage *initMessage, PdGraph *graph);
   
+    void registerExternalReceiver(const char *receiverName);
+    void unregisterExternalReceiver(const char *receiverName);
+  
+    /** User-provided data associated with the callback function. */
+    void *callbackUserData;
+  
   private:
     /** Returns <code>true</code> if the graph was successfully configured. <code>false</code> otherwise. */
     bool configureEmptyGraphWithParser(PdGraph *graph, PdFileParser *fileParser);
@@ -242,9 +248,6 @@ class PdContext {
   
     /** The registered callback function for sending data outside of the graph. */
     void (*callbackFunction)(ZGCallbackFunction, void *, void *);
-  
-    /** User-provided data associated with the callback function. */
-    void *callbackUserData;
 };
 
 #endif // _PD_CONTEXT_H_

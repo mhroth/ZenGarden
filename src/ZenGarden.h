@@ -34,19 +34,29 @@
 class PdContext;
 class PdGraph;
 class MessageObject;
+class PdMessage;
 typedef PdContext ZGContext;
 typedef PdGraph ZGGraph;
 typedef MessageObject ZGObject;
+typedef PdMessage ZGMessage;
 extern "C" {
 #else
-  typedef void ZGGraph;
-  typedef void ZGContext;
-  typedef void ZGObject;
+typedef void ZGGraph;
+typedef void ZGContext;
+typedef void ZGObject;
+typedef void ZGMessage;
 #endif
+  
 typedef struct ZGConnectionPair {
   ZGObject *object;
   unsigned int letIndex;
 } ZGConnectionPair;
+  
+typedef enum ZGMessageElementType {
+  ZG_MESSAGE_ELEMENT_FLOAT,
+  ZG_MESSAGE_ELEMENT_SYMBOL,
+  ZG_MESSAGE_ELEMENT_BANG
+} ZGMessageElementType;
   
   
 #pragma mark - New Context/Graph/Object
@@ -79,6 +89,9 @@ typedef struct ZGConnectionPair {
   /** Returns the $0 argument to a graph, allowing graph-specific receivers to be addressed. */
   unsigned int zg_graph_get_dollar_zero(ZGGraph *graph);
   
+  /** Returns the userinfo pointer used with the callback function. */
+  void *zg_context_get_userinfo(ZGContext *context);
+  
   
 #pragma mark - Object Manipulation
   
@@ -87,7 +100,7 @@ typedef struct ZGConnectionPair {
    * initialisation string (e.g. "5", "hello", or "f f f"). The object must be added to the same
    * context and graph as given to this function.
    */
-  ZGObject *zg_new_object(ZGContext *context, ZGGraph *graph, char *objectString);
+  ZGObject *zg_new_object(ZGGraph *graph, char *objectString);
   
   /**
    * Add an object to a graph. If the graph is currently attached then audio may be interrupted
@@ -107,6 +120,9 @@ typedef struct ZGConnectionPair {
   
   /** Returns the object label, e.g. "osc~" or "+". */
   const char *zg_object_get_label(ZGObject *object);
+  
+  /** Remove and delete an object from its graph. */
+  void zg_object_remove(ZGObject *object);
   
   
 #pragma mark - Manage Connections
@@ -183,6 +199,30 @@ typedef struct ZGConnectionPair {
    * 16 are supported. A note off message is generally interpreted as having velocity zero.
    */
   void zg_send_midinote(ZGContext *context, int channel, int noteNumber, int velocity, double blockIndex);
+  
+  /** Send a message directly to an object. */
+  void zg_object_send_message(ZGObject *object, unsigned int inletIndex, ZGMessage *message);
+  
+
+#pragma mark - Un/Register External Receivers
+  
+  void zg_context_register_receiver(ZGContext *context, const char *receiverName);
+  
+  void zg_context_unregister_receiver(ZGContext *context, const char *receiverName);
+  
+
+#pragma mark - Message
+  
+  unsigned int zg_message_get_num_elements(PdMessage *message);
+  
+  double zg_message_get_timestamp(PdMessage *message);
+  
+  ZGMessageElementType zg_message_get_element_type(unsigned int index, ZGMessage *message);
+  
+  float zg_message_get_float(unsigned int index, ZGMessage *message);
+  
+  const char *zg_message_get_symbol(unsigned int index, ZGMessage *message);
+  
   
 #ifdef __cplusplus
 }

@@ -36,7 +36,12 @@ typedef enum {
    * Note that message and signal processing are dependent in ZenGarden. If PdContext::process()
    * is no longer called, then messages will also stop being processed.
    */
-  ZG_PD_DSP
+  ZG_PD_DSP,
+  
+  /**
+   * A message is being sent to the callback via a previously registered receiver.
+   */
+  ZG_RECEIVER_MESSAGE
 } ZGCallbackFunction;
 
 #endif // _ZG_CALLBACK_FUNCTION_H_

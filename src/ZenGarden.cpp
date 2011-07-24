@@ -61,14 +61,24 @@ unsigned int zg_graph_get_dollar_zero(ZGGraph *graph) {
   return (graph != NULL) ? (unsigned int) graph->getArguments()->getFloat(0) : 0;
 }
 
-ZGObject *zg_new_object(ZGContext *context, ZGGraph *graph, char *objectString) {
+void *zg_context_get_userinfo(PdContext *context) {
+  return (context != NULL) ? context->callbackUserData : NULL;
+}
+
+void zg_object_remove(MessageObject *object) {
+  if (object != NULL) {
+    object->getGraph()->removeObject(object);
+  }
+}
+
+ZGObject *zg_new_object(ZGGraph *graph, char *objectString) {
   char *objectStringCopy = StaticUtils::copyString(objectString);
   char *objectLabel = strtok(objectStringCopy, " ;");
   char *initString = strtok(NULL, ";");
   char resolutionBuffer[256];
   PdMessage *initMessage = PD_MESSAGE_ON_STACK(32);
   initMessage->initWithSARb(32, initString, graph->getArguments(), resolutionBuffer, 256);
-  MessageObject *messageObject = context->newObject((char *) "obj", objectLabel, initMessage, graph);
+  MessageObject *messageObject = graph->getContext()->newObject((char *) "obj", objectLabel, initMessage, graph);
   free(objectStringCopy);
   return messageObject;
 }
@@ -205,4 +215,56 @@ void zg_send_midinote(PdContext *context, int channel, int noteNumber, int veloc
   // all message are also sent to the omni listener
   zg_send_message_at_blockindex(context, "zg_notein_omni", blockIndex, "fff",
       (float) noteNumber, (float) velocity, (float) channel);
+}
+
+void zg_object_send_message(MessageObject *object, unsigned int inletIndex, ZGMessage *message) {
+  if (object != NULL && message != NULL) {
+    object->getGraph()->getContext()->lock();
+    object->receiveMessage(inletIndex, message);
+    object->getGraph()->getContext()->unlock();
+  }
+}
+
+
+#pragma mark - Un/Register External Receivers
+
+void zg_context_register_receiver(ZGContext *context, const char *receiverName) {
+  if (context != NULL) {
+    context->registerExternalReceiver(receiverName);
+  }
+}
+
+void zg_context_unregister_receiver(ZGContext *context, const char *receiverName) {
+  context->unregisterExternalReceiver(receiverName);
+}
+
+
+#pragma mark - Message
+
+unsigned int zg_message_get_num_elements(PdMessage *message) {
+  return (message != NULL) ? message->getNumElements() : 0;
+}
+
+double zg_message_get_timestamp(PdMessage *message) {
+  return (message != NULL) ? message->getTimestamp() : -1.0;
+}
+
+ZGMessageElementType zg_message_get_element_type(unsigned int index, PdMessage *message) {
+  if (message != NULL) {
+    switch (message->getType(index)) {
+      case FLOAT: return ZG_MESSAGE_ELEMENT_FLOAT;
+      case SYMBOL: return ZG_MESSAGE_ELEMENT_SYMBOL;
+      default: return ZG_MESSAGE_ELEMENT_BANG;
+    }
+  } else {
+    return ZG_MESSAGE_ELEMENT_BANG;
+  }
+}
+
+float zg_message_get_float(unsigned int index, PdMessage *message) {
+  return (message != NULL) ? message->getFloat(index) : 0.0f;
+}
+
+const char *zg_message_get_symbol(unsigned int index, PdMessage *message) {
+  return (message != NULL) ? message->getSymbol(index) : "";
 }

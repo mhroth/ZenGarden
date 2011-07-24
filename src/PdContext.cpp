@@ -958,9 +958,16 @@ float PdContext::getValueForName(char *name) {
   return 0.0f;
 }
 
+void PdContext::registerExternalReceiver(const char *receiverName) {
+  
+}
 
-#pragma mark -
-#pragma mark Manage Messages
+void PdContext::unregisterExternalReceiver(const char *receiverName) {
+  
+}
+
+
+#pragma mark - Manage Messages
 
 void PdContext::sendMessageToNamedReceivers(char *name, PdMessage *message) {
   sendController->receiveMessage(name, message);
