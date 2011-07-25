@@ -107,6 +107,9 @@ public class ZGGraph {
     if (inletIndex < 0) {
       throw new IllegalArgumentException("inletIndex must be non-negative: " + inletIndex);
     }
+    if (fromObject.equals(toObject)) {
+      throw new IllegalArgumentException("An object may not be directly connection to itself.");
+    }
     
     addConnection(fromObject.objectPtr, outletIndex, toObject.objectPtr, inletIndex, graphPtr);
   }

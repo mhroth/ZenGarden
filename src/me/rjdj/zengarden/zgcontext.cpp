@@ -61,9 +61,10 @@ extern "C" {
           break;
         }
         case ZG_RECEIVER_MESSAGE: {
-          // TODO(mhroth): create a new Message
-          ZGMessage *zgMessage = NULL;
+          ZGReceiverMessagePair *rmPair = (ZGReceiverMessagePair *) ptr;
           
+          // create a new Message
+          ZGMessage *zgMessage = rmPair->message;
           int numMessageElements = zg_message_get_num_elements(zgMessage);
           jobjectArray jelements = env->NewObjectArray(numMessageElements,
               env->FindClass("java/lang/Object"), NULL);
@@ -99,7 +100,7 @@ extern "C" {
           env->CallVoidMethod(zgContext,
               env->GetMethodID(env->GetObjectClass(zgContext),
                   "onMessage", "(Ljava/lang/String;Lme/rjdj/zengarden/Message;)V"),
-              env->NewStringUTF((char *) ptr), jmessage);
+              env->NewStringUTF(rmPair->receiverName), jmessage);
           break;
         }
         default: {

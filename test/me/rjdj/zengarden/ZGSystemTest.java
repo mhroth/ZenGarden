@@ -67,9 +67,9 @@ public class ZGSystemTest {
   public void testAddObject() {
     ZGContext context = new ZGContext(NUM_INPUT_CHANNELS, NUM_OUTPUT_CHANNELS, BLOCK_SIZE, SAMPLE_RATE);
     ZGGraph graph = context.newGraph();
-    ZGObject goodOscObj = graph.addObject("osc~ 440");
+    ZGObject goodOscObj = graph.addObject("osc~ 440"); // this described a valid Pd object
     assertNotNull(goodOscObj);
-    ZGObject badOscObj = graph.addObject("osc~ 440");
+    ZGObject badOscObj = graph.addObject("osc 440"); // this describes an invalid Pd object
     assertNull(badOscObj);
   }
   

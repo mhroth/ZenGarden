@@ -2,6 +2,7 @@ my-dir = $(dir $(lastword $(MAKEFILE_LIST)))
 OS_MAKEFILES = $(shell ls Makefile.OS.*)
 
 include Makefile.sourcefiles
+include Makefile.jni.sourcefiles
 
 OBJS := $(foreach FILE,$(LOCAL_SRC_FILES),$(FILE:.cpp=.o))
 
@@ -39,7 +40,7 @@ platform: Makefile.OS.$(OS)
 	@mkdir -p ../libs/$(OS)
 
 clean:
-	rm -rf $(LOCAL_MODULE).so *.d *.o me/rjdj/zengarden/*.class ../test/me/rjdj/zengarden/*.class ../ZenGarden.jar ../libs/$(OS)/*
+	rm -rf $(LOCAL_MODULE).so *.d *.o me/rjdj/zengarden/*.class me/rjdj/zengarden/*.o ../test/me/rjdj/zengarden/*.class ../ZenGarden.jar ../libs/$(OS)/*
 
 libzengarden-static: ../libs/$(OS)/libzengarden.a
 
@@ -48,8 +49,8 @@ libzengarden-static: ../libs/$(OS)/libzengarden.a
 
 libjnizengarden: ../libs/$(OS)/libjnizengarden.$(JNI_EXTENSION)
 
-../libs/$(OS)/libjnizengarden.$(JNI_EXTENSION): ./me/rjdj/zengarden/jnizengarden.cpp $(OBJS)
-	$(call MAKE_SO, $@, $<, $(OBJS))
+../libs/$(OS)/libjnizengarden.$(JNI_EXTENSION):
+	$(call MAKE_SO, $@, $<, $(LOCAL_JNI_SRC_FILES) $(OBJS))
 
 libzengarden: ../libs/$(OS)/libzengarden.$(SO_EXTENSION)
 

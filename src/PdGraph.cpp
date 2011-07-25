@@ -183,7 +183,7 @@ void PdGraph::removeObject(MessageObject *object) {
       // delete the object
       delete object;
       
-      return;
+      break;
     } else {
       it++;
     }
