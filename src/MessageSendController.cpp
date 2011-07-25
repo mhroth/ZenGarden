@@ -54,11 +54,11 @@ int MessageSendController::getNameIndex(char *receiverName) {
 }
 
 void MessageSendController::receiveMessage(char *name, PdMessage *message) {
-  processMessage(getNameIndex(name), message);
-}
-
-void MessageSendController::processMessage(int inletIndex, PdMessage *message) {
-  sendMessage(inletIndex, message);
+  sendMessage(getNameIndex(name), message);
+  if (externalReceiverSet.find(string(name)) != externalReceiverSet.end()) {
+    std::pair<char *, PdMessage *> pair = make_pair(name, message);
+    context->callbackFunction(ZG_RECEIVER_MESSAGE, context->callbackUserData, &pair);
+  }
 }
 
 void MessageSendController::sendMessage(int outletIndex, PdMessage *message) {
@@ -101,4 +101,17 @@ void MessageSendController::removeReceiver(RemoteMessageReceiver *receiver) {
     // with the given index. If the indicies change, then message will be sent to the wrong
     // receiver set.
   }
+}
+
+void MessageSendController::registerExternalReceiver(const char *receiverName) {
+  string str = string(receiverName);
+  // check to make sure that the same receiver name is not entered more than once
+  if (externalReceiverSet.find(str) != externalReceiverSet.end()) {
+    externalReceiverSet.insert(str);
+  }
+}
+
+void MessageSendController::unregisterExternalReceiver(const char *receiverName) {
+  string str = string(receiverName);
+  externalReceiverSet.erase(str);
 }

@@ -186,6 +186,9 @@ class PdContext {
     /** User-provided data associated with the callback function. */
     void *callbackUserData;
   
+    /** The registered callback function for sending data outside of the graph. */
+    void (*callbackFunction)(ZGCallbackFunction, void *, void *);
+  
   private:
     /** Returns <code>true</code> if the graph was successfully configured. <code>false</code> otherwise. */
     bool configureEmptyGraphWithParser(PdGraph *graph, PdFileParser *fileParser);
@@ -245,9 +248,6 @@ class PdContext {
     
     /** A global list of all table receivers (e.g., [tabread4~] and [tabplay~]) */
     list<TableReceiverInterface *> tableReceiverList;
-  
-    /** The registered callback function for sending data outside of the graph. */
-    void (*callbackFunction)(ZGCallbackFunction, void *, void *);
 };
 
 #endif // _PD_CONTEXT_H_

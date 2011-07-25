@@ -69,12 +69,16 @@ class MessageSendController : public MessageObject {
   
     void removeReceiver(RemoteMessageReceiver *receiver);
   
+    void registerExternalReceiver(const char *receiverName);
+    void unregisterExternalReceiver(const char *receiverName);
+  
   private:
-    void processMessage(int inletIndex, PdMessage *message);
   
     PdContext *context;
   
     vector<std::pair<string, set<RemoteMessageReceiver *> > > sendStack;
+  
+    set<string> externalReceiverSet;
 };
 
 #endif // _MESSAGE_SEND_CONTROLLER_H_

@@ -58,6 +58,15 @@ typedef enum ZGMessageElementType {
   ZG_MESSAGE_ELEMENT_BANG
 } ZGMessageElementType;
   
+/**
+ * A pointer to this structure is supplied in the callback function with ZG_RECEIVER_MESSAGE.
+ * The structure will not persister after the function returns and the pointer will become invalid.
+ */
+typedef struct ZGReceiverMessagePair {
+  const char *receiverName;
+  ZGMessage *message;
+} ZGReceiverMessagePair;
+  
   
 #pragma mark - New Context/Graph/Object
   

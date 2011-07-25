@@ -959,11 +959,11 @@ float PdContext::getValueForName(char *name) {
 }
 
 void PdContext::registerExternalReceiver(const char *receiverName) {
-  
+  sendController->registerExternalReceiver(receiverName);
 }
 
 void PdContext::unregisterExternalReceiver(const char *receiverName) {
-  
+  sendController->unregisterExternalReceiver(receiverName);
 }
 
 
