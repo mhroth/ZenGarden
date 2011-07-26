@@ -46,3 +46,13 @@ JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZGGraph_removeConnection
     (JNIEnv *env, jobject jobj, jlong fromObjectPtr, jint outletIndex, jlong toObjectPtr, jint inletIndex, jlong graphPtr) {
   zg_remove_connection((ZGGraph *) graphPtr, (ZGObject *) fromObjectPtr, outletIndex, (ZGObject *) toObjectPtr, inletIndex);
 }
+
+JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZGGraph_attach
+    (JNIEnv *env, jobject jobj, jlong nativePtr) {
+  zg_graph_attach((ZGGraph *) nativePtr);
+}
+
+JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZGGraph_unattach
+    (JNIEnv *env, jobject jobj, jlong nativePtr) {
+  zg_graph_unattach((ZGGraph *) nativePtr);
+}

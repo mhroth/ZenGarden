@@ -24,8 +24,8 @@
 #define _MESSAGE_ELEMENT_TYPE_H_
 
 enum MessageElementType {
+  BANG = 0, // set to zero such that all elements of messages calloced in memory default to bang
   FLOAT,
-  BANG,
   SYMBOL,
   ANYTHING, // these last two types are used exlusively for trigger
   LIST      // which can cast messages to the former types

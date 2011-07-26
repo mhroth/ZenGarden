@@ -133,6 +133,9 @@ class PdContext {
     void scheduleExternalMessageV(const char *receiverName, double timestamp,
         const char *messageFormat, va_list ap);
   
+    /** Schedules a message to be sent to all receivers at the start of the next block. */
+    void scheduleExternalMessage(const char *receiverName, PdMessage *message);
+  
     /**
      * Schedules a <code>PdMessage</code> to be sent by the <code>MessageObject</code> from the
      * <code>outletIndex</code> at the specified <code>time</code>. The message will be copied

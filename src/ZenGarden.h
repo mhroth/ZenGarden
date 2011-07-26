@@ -100,6 +100,12 @@ typedef struct ZGReceiverMessagePair {
   
   /** Returns the userinfo pointer used with the callback function. */
   void *zg_context_get_userinfo(ZGContext *context);
+
+  
+#pragma mark - Context
+  
+  /** Send a message to the named receiver. */
+  void zg_context_send_message(ZGContext *context, const char *receiverName, ZGMessage *message);
   
   
 #pragma mark - Object Manipulation
@@ -132,6 +138,15 @@ typedef struct ZGReceiverMessagePair {
   
   /** Remove and delete an object from its graph. */
   void zg_object_remove(ZGObject *object);
+  
+  
+#pragma mark - Graph
+  
+  /** Attaches a graph to its context */
+  void zg_graph_attach(ZGGraph *graph);
+  
+  /** Attaches a graph to its context */
+  void zg_graph_unattach(ZGGraph *graph);
   
   
 #pragma mark - Manage Connections
@@ -221,6 +236,16 @@ typedef struct ZGReceiverMessagePair {
   
 
 #pragma mark - Message
+  
+  ZGMessage *zg_message_new(double timestamp, unsigned int numElements);
+  
+  void zg_message_delete(ZGMessage *message);
+  
+  void zg_message_set_float(ZGMessage *message, unsigned int index, float f);
+  
+  void zg_message_set_symbol(ZGMessage *message, unsigned int index, const char *s);
+  
+  void zg_message_set_bang(ZGMessage *message, unsigned int index);
   
   unsigned int zg_message_get_num_elements(PdMessage *message);
   

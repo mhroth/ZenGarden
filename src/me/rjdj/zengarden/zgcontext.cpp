@@ -165,3 +165,43 @@ JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZGContext_unregisterReceiver
   zg_context_unregister_receiver(context, creceiverName);
   env->ReleaseStringUTFChars(jreceiverName, creceiverName);
 }
+
+ZGMessage *javaMessageToZgMessage(JNIEnv *env, jobject jmessage) {
+  double timestamp = env->CallDoubleMethod(jmessage,
+      env->GetMethodID(env->GetObjectClass(jmessage), "getTimestamp", "()D"));
+  jint numElements = env->CallIntMethod(jmessage,
+      env->GetMethodID(env->GetObjectClass(jmessage), "getNumElements", "()I"));
+  ZGMessage *zgMessage = zg_message_new(timestamp, numElements);
+  for (int i = 0; i < numElements; i++) {
+    jobject jmessageType = env->CallObjectMethod(jmessage, env->GetMethodID(env->GetObjectClass(jmessage), "getType", "(I)Lme/rjdj/zengarden/Message.MessageType;"), i);
+    switch (env->CallIntMethod(jmessageType, env->GetMethodID(env->GetObjectClass(jmessageType), "ordinal", "()I"))) {
+      case 0: { // FLOAT
+        zg_message_set_float(zgMessage, i, env->CallFloatMethod(jmessage, env->GetMethodID(env->GetObjectClass(jmessage), "getFloat", "(I)F")));
+        break;
+      }
+      case 1: { // SYMBOL
+        jstring jstr = (jstring) env->CallObjectMethod(jmessage, env->GetMethodID(env->GetObjectClass(jmessage), "getSymbol", "(I)Ljava/lang/String;"));
+        const char *cstr = env->GetStringUTFChars(jstr, NULL);
+        // TODO(mhroth): put string into message
+        env->ReleaseStringUTFChars(jstr, cstr);
+        break;
+      }
+      case 2: // BANG
+      default: {
+        zg_message_set_bang(zgMessage, i);
+        break;
+      }
+    }
+  }
+  return zgMessage;
+}
+
+JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZGContext_sendMessage
+    (JNIEnv *env, jobject jobj, jstring jreceiverName, jobject jmessage, jlong nativePtr) {
+  ZGContext *context = (ZGContext *) context;
+  const char *creceiverName = env->GetStringUTFChars(jreceiverName, NULL);
+  ZGMessage *zgMessage = javaMessageToZgMessage(env, jmessage);
+  zg_context_send_message(context, creceiverName, zgMessage);
+  env->ReleaseStringUTFChars(jreceiverName, creceiverName);
+  zg_message_delete(zgMessage);
+}

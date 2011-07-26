@@ -224,6 +224,25 @@ void zg_object_send_message(MessageObject *object, unsigned int inletIndex, ZGMe
 }
 
 
+#pragma mark - Context
+
+/** Send a message to the named receiver. */
+void zg_context_send_message(ZGContext *context, const char *receiverName, ZGMessage *message) {
+  context->scheduleExternalMessage(receiverName, message);
+}
+
+
+#pragma mark - Graph
+
+void zg_graph_attach(ZGGraph *graph) {
+  graph->attachToContext(true);
+}
+
+void zg_graph_unattach(ZGGraph *graph) {
+  graph->attachToContext(false);
+}
+
+
 #pragma mark - Un/Register External Receivers
 
 void zg_context_register_receiver(ZGContext *context, const char *receiverName) {
@@ -238,6 +257,29 @@ void zg_context_unregister_receiver(ZGContext *context, const char *receiverName
 
 
 #pragma mark - Message
+
+ZGMessage *zg_message_new(double timestamp, unsigned int numElements) {
+  PdMessage *message = PD_MESSAGE_ON_STACK(numElements);
+  memset(message, 0, sizeof(PdMessage) + (numElements-1)*sizeof(MessageAtom));
+  message->initWithTimestampAndNumElements(timestamp, numElements);
+  return message->copyToHeap();
+}
+
+void zg_message_delete(ZGMessage *message) {
+  message->freeMessage(); // also frees any symbols on the heap
+}
+
+void zg_message_set_float(ZGMessage *message, unsigned int index, float f) {
+  message->setFloat(index, f);
+}
+
+void zg_message_set_symbol(ZGMessage *message, unsigned int index, const char *s) {
+  message->setSymbol(index, StaticUtils::copyString((char *) s));
+}
+
+void zg_message_set_bang(ZGMessage *message, unsigned int index) {
+  message->setBang(index);
+}
 
 unsigned int zg_message_get_num_elements(PdMessage *message) {
   return (message != NULL) ? message->getNumElements() : 0;

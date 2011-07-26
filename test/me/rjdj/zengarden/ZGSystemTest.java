@@ -22,12 +22,16 @@
 
 package me.rjdj.zengarden;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.File;
 
 public class ZGSystemTest {
   
@@ -130,7 +134,7 @@ public class ZGSystemTest {
     
     // register the receiver
     context.registerReceiver(PATCH_TO_TEST);
-    ZGGraph graph = context.newGraph(new File(""));
+    ZGGraph graph = context.newGraph(new File("./test/RegisterReceiver.pd"));
     
     // attach the graph and send the message
     graph.attach();
