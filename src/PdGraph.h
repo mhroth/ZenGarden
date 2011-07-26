@@ -191,6 +191,9 @@ class PdGraph : public DspObject {
     /** Returns the context with which this graph is associated. */
     PdContext *getContext();
   
+    list<ObjectLetPair> getIncomingConnections(unsigned int inletIndex);
+    list<ObjectLetPair> getOutgoingConnections(unsigned int outletIndex);
+  
   private:
     /** Create a new object based on its initialisation string. */
     MessageObject *newObject(char *objectType, char *objectLabel, PdMessage *initMessage, PdGraph *graph);

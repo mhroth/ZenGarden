@@ -279,6 +279,52 @@ void PdGraph::removeConnection(MessageObject *fromObject, int outletIndex, Messa
   unlockContextIfAttached();
 }
 
+list<ObjectLetPair> PdGraph::getIncomingConnections(unsigned int inletIndex) {
+  if (inletList.empty()) {
+    return list<ObjectLetPair>();
+  } else {
+    MessageObject *inletObject = inletList[inletIndex];
+    switch (inletObject->getObjectType()) {
+      case MESSAGE_INLET: {
+        MessageInlet *messageInlet = (MessageInlet *) inletObject;
+        return messageInlet->getIncomingConnections(0);
+        break;
+      }
+      case DSP_INLET: {
+        DspInlet *dspInlet = (DspInlet *) inletObject;
+        return dspInlet->getIncomingConnections(0);
+        break;
+      }
+      default: {
+        return list<ObjectLetPair>();
+      }
+    }
+  }
+}
+
+list<ObjectLetPair> PdGraph::getOutgoingConnections(unsigned int outletIndex) {
+  if (outletList.empty()) {
+    return list<ObjectLetPair>();
+  } else {
+    MessageObject *outletObject = outletList[outletIndex];
+    switch (outletObject->getObjectType()) {
+      case MESSAGE_OUTLET: {
+        MessageOutlet *messageOutlet = (MessageOutlet *) outletObject;
+        return messageOutlet->getOutgoingConnections(0);
+        break;
+      }
+      case DSP_OUTLET: {
+        DspOutlet *dspOutlet = (DspOutlet *) outletObject;
+        return dspOutlet->getOutgoingConnections(0);
+        break;
+      }
+      default: {
+        return list<ObjectLetPair>();
+      }
+    }
+  }
+}
+
 
 #pragma mark -
 

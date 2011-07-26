@@ -85,6 +85,18 @@ class DspObject : public MessageObject {
   
     virtual unsigned int getNumInlets();
     virtual unsigned int getNumOutlets();
+  
+    /**
+     * Returns <i>all</i> incoming connections to the given inlet. This includes both message and
+     * dsp connections.
+     */
+    virtual list<ObjectLetPair> getIncomingConnections(unsigned int inletIndex);
+  
+    /**
+     * Returns <i>all</i> outgoing connections from the given outlet. This includes both message and
+     * dsp connections.
+     */
+    virtual list<ObjectLetPair> getOutgoingConnections(unsigned int outletIndex);
     
   protected: 
     /* IMPORTANT: one of these two functions MUST be overridden (or processDsp()) */

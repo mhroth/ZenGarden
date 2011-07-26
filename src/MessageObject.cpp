@@ -140,11 +140,11 @@ void MessageObject::removeConnectionToObjectFromOutlet(MessageObject *messageObj
 }
 
 list<ObjectLetPair> MessageObject::getIncomingConnections(unsigned int inletIndex) {
-  return incomingMessageConnections[inletIndex];
+  return incomingMessageConnections.empty() ? list<ObjectLetPair>() : incomingMessageConnections[inletIndex];
 }
 
 list<ObjectLetPair> MessageObject::getOutgoingConnections(unsigned int outletIndex) {
-  return outgoingMessageConnections[outletIndex];
+  return outgoingMessageConnections.empty() ? list<ObjectLetPair>() : outgoingMessageConnections[outletIndex];
 }
 
 

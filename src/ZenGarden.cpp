@@ -88,9 +88,7 @@ void zg_add_object(PdGraph *graph, ZGObject *object, int canvasX, int canvasY) {
 }
 
 void zg_remove_object(PdGraph *graph, MessageObject *object) {
-  if (graph != NULL && object != NULL) {
-    graph->removeObject(object);
-  }
+  graph->removeObject(object);
 }
 
 void zg_delete_context(ZGContext *context) {

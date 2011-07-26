@@ -28,6 +28,9 @@ float *DspObject::zeroBuffer = NULL;
 int DspObject::zeroBufferCount = 0;
 int DspObject::zeroBufferSize = 0;
 
+
+#pragma mark - Constructor/Destructor
+
 DspObject::DspObject(int numMessageInlets, int numDspInlets, int numMessageOutlets, int numDspOutlets, PdGraph *graph) :
     MessageObject(numMessageInlets, numMessageOutlets, graph) {
   init(numDspInlets, numDspOutlets, graph->getBlockSize());
@@ -86,6 +89,9 @@ DspObject::~DspObject() {
   free(dspBufferAtOutlet0);
 }
 
+
+#pragma mark -
+
 ConnectionType DspObject::getConnectionType(int outletIndex) {
   return DSP;
 }
@@ -97,6 +103,22 @@ float *DspObject::getDspBufferRefAtOutlet(int outletIndex) {
 
 bool DspObject::doesProcessAudio() {
   return true;
+}
+
+list<ObjectLetPair> DspObject::getIncomingConnections(unsigned int inletIndex) {
+  list<ObjectLetPair> messageConnectionList = MessageObject::getIncomingConnections(inletIndex);
+  list<ObjectLetPair> dspConnectionList = incomingMessageConnections.empty()
+      ? list<ObjectLetPair>() : incomingMessageConnections[inletIndex];
+  messageConnectionList.insert(messageConnectionList.end(), dspConnectionList.begin(), dspConnectionList.end());
+  return messageConnectionList;
+}
+
+list<ObjectLetPair> DspObject::getOutgoingConnections(unsigned int outletIndex) {
+  list<ObjectLetPair> messageConnectionList = MessageObject::getOutgoingConnections(outletIndex);
+  list<ObjectLetPair> dspConnectionList = outgoingMessageConnections.empty()
+      ? list<ObjectLetPair>() : outgoingMessageConnections[outletIndex];
+  messageConnectionList.insert(messageConnectionList.end(), dspConnectionList.begin(), dspConnectionList.end());
+  return messageConnectionList;
 }
 
 
@@ -254,13 +276,15 @@ void DspObject::processDspWithIndex(int fromIndex, int toIndex) {
 }
 
 unsigned int DspObject::getNumInlets() {
-  return incomingMessageConnections.size() > incomingDspConnections.size()
-      ? incomingMessageConnections.size() : incomingDspConnections.size();
+  int numMessageConnections = incomingMessageConnections.size();
+  int numDspConnections = incomingDspConnections.size();
+  return (numMessageConnections > numDspConnections) ? numMessageConnections : numDspConnections;
 }
 
 unsigned int DspObject::getNumOutlets() {
-  return outgoingMessageConnections.size() > outgoingDspConnections.size()
-  ? outgoingMessageConnections.size() : outgoingDspConnections.size();
+  int numMessageConnections = outgoingMessageConnections.size();
+  int numDspConnections = outgoingDspConnections.size();
+  return (numMessageConnections > numDspConnections) ? numMessageConnections : numDspConnections;
 }
 
 bool DspObject::isLeafNode() {
