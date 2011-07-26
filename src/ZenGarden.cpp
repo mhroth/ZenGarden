@@ -25,53 +25,13 @@
 #include "PdGraph.h"
 #include "ZenGarden.h"
 
-ZGContext *zg_new_context(int numInputChannels, int numOutputChannels, int blockSize, float sampleRate,
-    void (*callbackFunction)(ZGCallbackFunction function, void *userData, void *ptr), void *userData) {
-  PdContext *context = new PdContext(numInputChannels, numOutputChannels, blockSize, sampleRate,
-      callbackFunction, userData);
-  return context;
-}
-
-ZGGraph *zg_new_empty_graph(PdContext *context) {
-  PdMessage *initMessage = PD_MESSAGE_ON_STACK(0); // create an empty message to use for initialisation
-  initMessage->initWithTimestampAndNumElements(0.0, 0);
-  // the new graph has no parent graph and is created in the given context
-  PdGraph *graph = new PdGraph(initMessage, NULL, context, context->getNextGraphId());
-  return graph;
-}
-
-ZGGraph *zg_new_graph(PdContext *context, char *directory, char *filename) {
-  PdMessage *initMessage = PD_MESSAGE_ON_STACK(0); // create an empty initMessage
-  initMessage->initWithTimestampAndNumElements(0.0, 0);
-  // no parent graph
-  PdGraph *graph = context->newGraph(directory, filename, initMessage, NULL);
-  return graph;
-}
-
-void zg_attach_graph(PdContext *context, PdGraph *graph) {
-  context->attachGraph(graph);
-}
 /*
 void zg_remove_graph(PdContext *context, PdGraph *graph) {
   context->removeGraph(graph);
 }
 */
 
-unsigned int zg_graph_get_dollar_zero(ZGGraph *graph) {
-  return (graph != NULL) ? (unsigned int) graph->getArguments()->getFloat(0) : 0;
-}
-
-void *zg_context_get_userinfo(PdContext *context) {
-  return (context != NULL) ? context->callbackUserData : NULL;
-}
-
-void zg_object_remove(MessageObject *object) {
-  if (object != NULL) {
-    object->getGraph()->removeObject(object);
-  }
-}
-
-ZGObject *zg_new_object(ZGGraph *graph, char *objectString) {
+ZGObject *zg_graph_new_object(ZGGraph *graph, char *objectString) {
   char *objectStringCopy = StaticUtils::copyString(objectString);
   char *objectLabel = strtok(objectStringCopy, " ;");
   char *initString = strtok(NULL, ";");
@@ -87,16 +47,6 @@ void zg_add_object(PdGraph *graph, ZGObject *object, int canvasX, int canvasY) {
   graph->addObject(canvasX, canvasY, object);
 }
 
-void zg_remove_object(PdGraph *graph, MessageObject *object) {
-  graph->removeObject(object);
-}
-
-void zg_delete_context(ZGContext *context) {
-  if (context != NULL) {
-    delete context;
-  }
-}
-
 void zg_delete_graph(ZGGraph *graph) {
   if (graph != NULL) {
     /*
@@ -108,17 +58,14 @@ void zg_delete_graph(ZGGraph *graph) {
   }
 }
 
-void zg_add_connection(ZGGraph *graph, ZGObject *fromObject, int outletIndex, ZGObject *toObject, int inletIndex) {
-  graph->addConnection(fromObject, outletIndex, toObject, inletIndex);
+
+#pragma mark - Object
+
+void zg_object_remove(MessageObject *object) {
+  object->getGraph()->removeObject(object);
 }
 
-void zg_remove_connection(ZGGraph *graph, ZGObject *fromObject, int outletIndex, ZGObject *toObject, int inletIndex) {
-  if (graph != NULL && fromObject != NULL && toObject != NULL) {
-    graph->removeConnection(fromObject, outletIndex, toObject, inletIndex);
-  }
-}
-
-ZGConnectionType zg_get_connection_type(ZGObject *object, unsigned int outletIndex) {
+ZGConnectionType zg_object_get_connection_type(ZGObject *object, unsigned int outletIndex) {
   switch (object->getConnectionType(outletIndex)) {
     default:
     case MESSAGE: return ZG_CONNECTION_MESSAGE;
@@ -126,11 +73,11 @@ ZGConnectionType zg_get_connection_type(ZGObject *object, unsigned int outletInd
   }
 }
 
-unsigned int zg_get_num_inlets(ZGObject *object) {
+unsigned int zg_object_get_num_inlets(ZGObject *object) {
   return (object != NULL) ? object->getNumInlets() : 0;
 }
 
-unsigned int zg_get_num_outlets(ZGObject *object) {
+unsigned int zg_object_get_num_outlets(ZGObject *object) {
   return (object != NULL) ? object->getNumOutlets() : 0;
 }
 
@@ -161,21 +108,80 @@ ZGConnectionPair *zg_object_get_connections_at_outlet(ZGObject *object, unsigned
 }
 
 const char *zg_object_get_label(ZGObject *object) {
-  return (object != NULL) ? object->getObjectLabel() : NULL;
+  return object->getObjectLabel();
 }
 
-void zg_process(PdContext *context, float *inputBuffers, float *outputBuffers) {
+void zg_object_send_message(MessageObject *object, unsigned int inletIndex, ZGMessage *message) {
+  // TODO(mhroth): lock only if the parent graph is attached!
+  object->getGraph()->getContext()->lock();
+  object->receiveMessage(inletIndex, message);
+  object->getGraph()->getContext()->unlock();
+}
+
+
+#pragma mark - Context
+
+ZGContext *zg_context_new(int numInputChannels, int numOutputChannels, int blockSize, float sampleRate,
+      void (*callbackFunction)(ZGCallbackFunction function, void *userData, void *ptr), void *userData) {
+  return new PdContext(numInputChannels, numOutputChannels, blockSize, sampleRate,
+      callbackFunction, userData);
+}
+
+void zg_context_delete(ZGContext *context) {
+  delete context;
+}
+
+ZGGraph *zg_context_new_empty_graph(PdContext *context) {
+  PdMessage *initMessage = PD_MESSAGE_ON_STACK(0); // create an empty message to use for initialisation
+  initMessage->initWithTimestampAndNumElements(0.0, 0);
+  // the new graph has no parent graph and is created in the given context
+  PdGraph *graph = new PdGraph(initMessage, NULL, context, context->getNextGraphId());
+  return graph;
+}
+
+ZGGraph *zg_context_new_graph(PdContext *context, char *directory, char *filename) {
+  PdMessage *initMessage = PD_MESSAGE_ON_STACK(0); // create an empty initMessage
+  initMessage->initWithTimestampAndNumElements(0.0, 0);
+  // no parent graph
+  PdGraph *graph = context->newGraph(directory, filename, initMessage, NULL);
+  return graph;
+}
+
+void zg_context_process(PdContext *context, float *inputBuffers, float *outputBuffers) {
   context->process(inputBuffers, outputBuffers);
 }
 
-void zg_send_message(PdContext *context, const char *receiverName, const char *messageFormat, ...) {
+void *zg_context_get_userinfo(PdContext *context) {
+  return context->callbackUserData;
+}
+
+
+#pragma mark - Context Un/Register External Receivers
+
+void zg_context_register_receiver(ZGContext *context, const char *receiverName) {
+  context->registerExternalReceiver(receiverName);
+}
+
+void zg_context_unregister_receiver(ZGContext *context, const char *receiverName) {
+  context->unregisterExternalReceiver(receiverName);
+}
+
+
+#pragma mark - Context Send Message
+
+/** Send a message to the named receiver. */
+void zg_context_send_message(ZGContext *context, const char *receiverName, ZGMessage *message) {
+  context->scheduleExternalMessage(receiverName, message);
+}
+/*
+void zg_context_send_message(PdContext *context, const char *receiverName, const char *messageFormat, ...) {
   va_list ap;
   va_start(ap, messageFormat);
   context->scheduleExternalMessageV(receiverName, 0.0, messageFormat, ap);
   va_end(ap); // release the va_list
 }
-
-void zg_send_message_at_blockindex(PdContext *context, const char *receiverName, double blockIndex,
+*/
+void zg_context_send_message_at_blockindex(PdContext *context, const char *receiverName, double blockIndex,
     const char *messageFormat, ...) {
   va_list ap;
   va_start(ap, messageFormat);
@@ -187,7 +193,7 @@ void zg_send_message_at_blockindex(PdContext *context, const char *receiverName,
   va_end(ap);
 }
 
-void zg_send_midinote(PdContext *context, int channel, int noteNumber, int velocity, double blockIndex) {
+void zg_context_send_midinote(PdContext *context, int channel, int noteNumber, int velocity, double blockIndex) {
   const char *receiverName;
   switch (channel) {
     case 0:  { receiverName = "zg_notein_0";  break; }
@@ -211,28 +217,12 @@ void zg_send_midinote(PdContext *context, int channel, int noteNumber, int veloc
     }
   }
   
-  zg_send_message_at_blockindex(context, receiverName, blockIndex, "fff",
+  zg_context_send_message_at_blockindex(context, receiverName, blockIndex, "fff",
       (float) noteNumber, (float) velocity, (float) channel);
   
   // all message are also sent to the omni listener
-  zg_send_message_at_blockindex(context, "zg_notein_omni", blockIndex, "fff",
+  zg_context_send_message_at_blockindex(context, "zg_notein_omni", blockIndex, "fff",
       (float) noteNumber, (float) velocity, (float) channel);
-}
-
-void zg_object_send_message(MessageObject *object, unsigned int inletIndex, ZGMessage *message) {
-  if (object != NULL && message != NULL) {
-    object->getGraph()->getContext()->lock();
-    object->receiveMessage(inletIndex, message);
-    object->getGraph()->getContext()->unlock();
-  }
-}
-
-
-#pragma mark - Context
-
-/** Send a message to the named receiver. */
-void zg_context_send_message(ZGContext *context, const char *receiverName, ZGMessage *message) {
-  context->scheduleExternalMessage(receiverName, message);
 }
 
 
@@ -246,17 +236,16 @@ void zg_graph_unattach(ZGGraph *graph) {
   graph->attachToContext(false);
 }
 
-
-#pragma mark - Un/Register External Receivers
-
-void zg_context_register_receiver(ZGContext *context, const char *receiverName) {
-  if (context != NULL) {
-    context->registerExternalReceiver(receiverName);
-  }
+void zg_graph_add_connection(ZGGraph *graph, ZGObject *fromObject, int outletIndex, ZGObject *toObject, int inletIndex) {
+  graph->addConnection(fromObject, outletIndex, toObject, inletIndex);
 }
 
-void zg_context_unregister_receiver(ZGContext *context, const char *receiverName) {
-  context->unregisterExternalReceiver(receiverName);
+void zg_graph_remove_connection(ZGGraph *graph, ZGObject *fromObject, int outletIndex, ZGObject *toObject, int inletIndex) {
+  graph->removeConnection(fromObject, outletIndex, toObject, inletIndex);
+}
+
+unsigned int zg_graph_get_dollar_zero(ZGGraph *graph) {
+  return (graph != NULL) ? (unsigned int) graph->getArguments()->getFloat(0) : 0;
 }
 
 
@@ -294,14 +283,10 @@ double zg_message_get_timestamp(PdMessage *message) {
 }
 
 ZGMessageElementType zg_message_get_element_type(unsigned int index, PdMessage *message) {
-  if (message != NULL) {
-    switch (message->getType(index)) {
-      case FLOAT: return ZG_MESSAGE_ELEMENT_FLOAT;
-      case SYMBOL: return ZG_MESSAGE_ELEMENT_SYMBOL;
-      default: return ZG_MESSAGE_ELEMENT_BANG;
-    }
-  } else {
-    return ZG_MESSAGE_ELEMENT_BANG;
+  switch (message->getType(index)) {
+    case FLOAT: return ZG_MESSAGE_ELEMENT_FLOAT;
+    case SYMBOL: return ZG_MESSAGE_ELEMENT_SYMBOL;
+    default: return ZG_MESSAGE_ELEMENT_BANG;
   }
 }
 

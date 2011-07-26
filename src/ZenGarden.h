@@ -26,7 +26,7 @@
 #include "ZGCallbackFunction.h"
 
 /**
- * This header file defines the C interface to ZenGarden to the outside world. Include this header
+ * This header file defines the C interface between ZenGarden and the outside world. Include this header
  * along with the <code>libzengarden</code> library in your project in order to integrate it.
  */
 #ifdef __cplusplus
@@ -77,17 +77,14 @@ typedef enum ZGConnectionType {
 #pragma mark - New Context/Graph/Object
   
   /** Create a new context to which graphs can be added. */
-  ZGContext *zg_new_context(int numInputChannels, int numOutputChannels, int blockSize, float sampleRate,
+  ZGContext *zg_context_new(int numInputChannels, int numOutputChannels, int blockSize, float sampleRate,
       void (*callbackFunction)(ZGCallbackFunction function, void *userData, void *ptr), void *userData);
 
   /** Create a new empty graph in the given context. Ideal for building graphs on the fly. */
-  ZGGraph *zg_new_empty_graph(ZGContext *context);
+  ZGGraph *zg_context_new_empty_graph(ZGContext *context);
   
   /* Create a new graph from a Pd file. */
-  ZGGraph *zg_new_graph(ZGContext *context, char *directory, char *filename);
-  
-  /** Attach a graph to the context. */
-  void zg_attach_graph(ZGContext *context, ZGGraph *graph);
+  ZGGraph *zg_context_new_graph(ZGContext *context, char *directory, char *filename);
   
   /** Remove the graph from the context. */
   //void zg_remove_graph(ZGContext *context, ZGGraph *graph);
@@ -96,7 +93,7 @@ typedef enum ZGConnectionType {
    * Delete the given context. All attached graphs are also deleted. Unattached graphs are not
    * automatically deleted, but should be by the user. They are thereafter useless.
    */
-  void zg_delete_context(ZGContext *context);
+  void zg_context_delete(ZGContext *context);
   
   /** Deletes the given graph. If attached, the graph is automatically removed from its context. */
   void zg_delete_graph(ZGGraph *graph);
@@ -121,7 +118,7 @@ typedef enum ZGConnectionType {
    * initialisation string (e.g. "5", "hello", or "f f f"). The object must be added to the same
    * context and graph as given to this function.
    */
-  ZGObject *zg_new_object(ZGGraph *graph, char *objectString);
+  ZGObject *zg_graph_new_object(ZGGraph *graph, char *objectString);
   
   /**
    * Add an object to a graph. If the graph is currently attached then audio may be interrupted
@@ -137,13 +134,10 @@ typedef enum ZGConnectionType {
    * may have had in the graph are also deleted. The reference to the object after this function
    * completes is invalid.
    */
-  void zg_remove_object(ZGGraph *graph, ZGObject *object);
+  void zg_object_remove(ZGObject *object);
   
   /** Returns the object label, e.g. "osc~" or "+". */
   const char *zg_object_get_label(ZGObject *object);
-  
-  /** Remove and delete an object from its graph. */
-  void zg_object_remove(ZGObject *object);
   
   
 #pragma mark - Graph
@@ -162,38 +156,29 @@ typedef enum ZGConnectionType {
    * may cause the object graph to be reordered and cause audio dropouts. If the arguments do
    * not define a valid connection, then this function does nothing.
    */
-  void zg_add_connection(ZGGraph *graph, ZGObject *fromObject, int outletIndex, ZGObject *toObject, int inletIndex);
+  void zg_graph_add_connection(ZGGraph *graph, ZGObject *fromObject, int outletIndex, ZGObject *toObject, int inletIndex);
   
   /**
    * Remove a connection between two objects, both of which are in the given graph. If the arguments
    * do not define a valid connection, then this function does nothing.
    */
-  void zg_remove_connection(ZGGraph *graph, ZGObject *fromObject, int outletIndex, ZGObject *toObject, int inletIndex);
+  void zg_graph_remove_connection(ZGGraph *graph, ZGObject *fromObject, int outletIndex, ZGObject *toObject, int inletIndex);
   
   /** Returns the connection type of the outlet of the given object. */
-  ZGConnectionType zg_get_connection_type(ZGObject *object, unsigned int outletIndex);
+  ZGConnectionType zg_object_get_connection_type(ZGObject *object, unsigned int outletIndex);
   
-  unsigned int zg_get_num_inlets(ZGObject *object);
+  unsigned int zg_object_get_num_inlets(ZGObject *object);
   
-  unsigned int zg_get_num_outlets(ZGObject *object);
-  
-  /**
-   * Returns an array of ZGConnectionPair structs indicating the objects and outlets from which
-   * the connections are comming. The result in n is the length of the array (i.e. the number of
-   * connections at the given inlet). The returned array is owned and must be freed by the caller.
-   * NOTE(mhroth): This function currently only returns MESSAGE connections.
-   */
-  ZGConnectionPair *zg_object_get_connections_at_inlet(ZGObject *object, unsigned int inletIndex, unsigned int *n);
-  ZGConnectionPair *zg_object_get_connections_at_outlet(ZGObject *object, unsigned int outletIndex, unsigned int *n);
+  unsigned int zg_object_get_num_outlets(ZGObject *object);
   
   
-#pragma mark - Process
+#pragma mark - Context Process
 
   /** Process the given context. */
-  void zg_process(ZGContext *context, float *inputBuffers, float *outputBuffers);
+  void zg_context_process(ZGContext *context, float *inputBuffers, float *outputBuffers);
   
   
-#pragma mark - Send Message
+#pragma mark - Context Send Message
   
   /**
    * Send a message to the named receiver with the given format at the beginning of the next audio block.
@@ -204,7 +189,7 @@ typedef enum ZGConnectionType {
    * E.g., zg_send_message(graph, "test", "s", "hello");
    * E.g., zg_send_message(graph, "test", "b");
    */
-  void zg_send_message(ZGContext *context, const char *receiverName, const char *messageFormat, ...);
+  //void zg_context_send_message(ZGContext *context, const char *receiverName, const char *messageFormat, ...);
   
   /**
    * Send a message to the named receiver with the given format at the given block index. If the
@@ -219,8 +204,8 @@ typedef enum ZGConnectionType {
    * sends a message containing three floats, each with value 0.0f, to all receivers named "#accelerate"
    * between samples 56th and 57th samples (counting from zero) of the block.
    */
-  void zg_send_message_at_blockindex(ZGContext *context, const char *receiverName, double blockIndex,
-      const char *messageFormat, ...);
+  void zg_context_send_message_at_blockindex(ZGContext *context, const char *receiverName,
+      double blockIndex, const char *messageFormat, ...);
   
   /**
    * Send a midi note message on the given channel to occur at the given block index. The
@@ -228,17 +213,34 @@ typedef enum ZGConnectionType {
    * All messages are sent to <code>notein</code> objects, i.e. omni. Channels are zero-index and only
    * 16 are supported. A note off message is generally interpreted as having velocity zero.
    */
-  void zg_send_midinote(ZGContext *context, int channel, int noteNumber, int velocity, double blockIndex);
-  
-  /** Send a message directly to an object. */
-  void zg_object_send_message(ZGObject *object, unsigned int inletIndex, ZGMessage *message);
+  void zg_context_send_midinote(ZGContext *context, int channel, int noteNumber, int velocity, double blockIndex);
   
 
-#pragma mark - Un/Register External Receivers
+#pragma mark - Context Un/Register External Receivers
   
   void zg_context_register_receiver(ZGContext *context, const char *receiverName);
   
   void zg_context_unregister_receiver(ZGContext *context, const char *receiverName);
+
+  
+#pragma mark - Object
+  
+  /**
+   * Returns an array of ZGConnectionPair structs indicating the objects and outlets from which
+   * the connections are comming. The result in n is the length of the array (i.e. the number of
+   * connections at the given inlet). The returned array is owned and must be freed by the caller.
+   * NOTE(mhroth): This function currently only returns MESSAGE connections.
+   */
+  ZGConnectionPair *zg_object_get_connections_at_inlet(ZGObject *object, unsigned int inletIndex, unsigned int *n);
+  ZGConnectionPair *zg_object_get_connections_at_outlet(ZGObject *object, unsigned int outletIndex, unsigned int *n);
+  
+  /**
+   * Send a message directly to an object. The message will be evaluated at the beginning of the
+   * next block, before any other messages otherwise scheduled are evaluated. The timestamp of
+   * this message is ignored. If the message should be delivered at a specific time, use
+   * zg_context_send_message() and its variants in order to send the message to a named receiver.
+   */
+  void zg_object_send_message(ZGObject *object, unsigned int inletIndex, ZGMessage *message);
   
 
 #pragma mark - Message
