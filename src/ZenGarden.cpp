@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -118,8 +118,12 @@ void zg_remove_connection(ZGGraph *graph, ZGObject *fromObject, int outletIndex,
   }
 }
 
-ConnectionType zg_get_connection_type(ZGObject *object, unsigned int outletIndex) {
-  return (object != NULL) ? object->getConnectionType(outletIndex) : MESSAGE;
+ZGConnectionType zg_get_connection_type(ZGObject *object, unsigned int outletIndex) {
+  switch (object->getConnectionType(outletIndex)) {
+    default:
+    case MESSAGE: return ZG_CONNECTION_MESSAGE;
+    case DSP: return ZG_CONNECTION_DSP;
+  }
 }
 
 unsigned int zg_get_num_inlets(ZGObject *object) {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -24,7 +24,6 @@
 #define _ZENGARDEN_H_
 
 #include "ZGCallbackFunction.h"
-#include "ConnectionType.h"
 
 /**
  * This header file defines the C interface to ZenGarden to the outside world. Include this header
@@ -52,6 +51,7 @@ typedef struct ZGConnectionPair {
   unsigned int letIndex;
 } ZGConnectionPair;
   
+/** Enumerates the types of elements of which messages are composed. */
 typedef enum ZGMessageElementType {
   ZG_MESSAGE_ELEMENT_FLOAT,
   ZG_MESSAGE_ELEMENT_SYMBOL,
@@ -60,12 +60,18 @@ typedef enum ZGMessageElementType {
   
 /**
  * A pointer to this structure is supplied in the callback function with ZG_RECEIVER_MESSAGE.
- * The structure will not persister after the function returns and the pointer will become invalid.
+ * The structure will not persistent after the function returns and the pointer will become invalid.
  */
 typedef struct ZGReceiverMessagePair {
   const char *receiverName;
   ZGMessage *message;
 } ZGReceiverMessagePair;
+  
+/** Enumerates the kinds of connections in ZenGarden; Message and DSP */
+typedef enum ZGConnectionType {
+  ZG_CONNECTION_MESSAGE,
+  ZG_CONNECTION_DSP
+} ZGConnectionType;
   
   
 #pragma mark - New Context/Graph/Object
@@ -164,8 +170,8 @@ typedef struct ZGReceiverMessagePair {
    */
   void zg_remove_connection(ZGGraph *graph, ZGObject *fromObject, int outletIndex, ZGObject *toObject, int inletIndex);
   
-  /** Returns the ConnectionType of the outlet of the given object. */
-  ConnectionType zg_get_connection_type(ZGObject *object, unsigned int outletIndex);
+  /** Returns the connection type of the outlet of the given object. */
+  ZGConnectionType zg_get_connection_type(ZGObject *object, unsigned int outletIndex);
   
   unsigned int zg_get_num_inlets(ZGObject *object);
   
