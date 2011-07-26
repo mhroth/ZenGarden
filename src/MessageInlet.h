@@ -40,10 +40,10 @@ class MessageInlet : public MessageObject {
   
     int getCanvasPosition();
     void setCanvasPosition(int pos);
+  
+    void receiveMessage(int inletIndex, PdMessage *message);
     
   private:
-    void processMessage(int inletIndex, PdMessage *message);
-  
     int canvasX;
 };
 

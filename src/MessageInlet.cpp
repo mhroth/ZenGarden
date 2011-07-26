@@ -41,7 +41,7 @@ ObjectType MessageInlet::getObjectType() {
   return MESSAGE_INLET;
 }
 
-void MessageInlet::processMessage(int inletIndex, PdMessage *message) {
+void MessageInlet::receiveMessage(int inletIndex, PdMessage *message) {
   sendMessage(0, message);
 }
 
