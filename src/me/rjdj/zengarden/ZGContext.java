@@ -29,6 +29,9 @@ import java.util.List;
 public class ZGContext {
   
   protected final long contextPtr;
+  protected final int numInputChannels;
+  protected final int numOutputChannels;
+  protected final int blockSize;
   private List<ZenGardenListener> listenerList;
   
   /**
@@ -58,6 +61,10 @@ public class ZGContext {
       throw new IllegalArgumentException("The number of output channels must be 1 or 2: " + 
           Integer.toString(numOutputChannels));
     }
+    
+    this.numInputChannels = numInputChannels;
+    this.numOutputChannels = numOutputChannels;
+    this.blockSize = blockSize;
     
     // instantiate the list of listeners for this context
     listenerList = new ArrayList<ZenGardenListener>();
@@ -149,9 +156,10 @@ public class ZGContext {
    * @param outputBuffer
    */
   public void process(short[] inputBuffer, short[] outputBuffer) {
-    process(inputBuffer, outputBuffer, contextPtr);
+    process(numInputChannels, inputBuffer, numOutputChannels, outputBuffer, blockSize, contextPtr);
   }
-  native private void process(short[] inputBuffer, short[] outputBuffer, long nativePtr);
+  native private void process(int numInputChannels, short[] inputBuffer, int numOutputChannels,
+      short[] outputBuffer, int blockSize, long nativePtr);
   
   /**
    * Send a message to the named receiver. The message will be delivered at the timestamp of the message.

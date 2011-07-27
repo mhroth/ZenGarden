@@ -201,3 +201,69 @@ JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZGContext_sendMessage
   env->ReleaseStringUTFChars(jreceiverName, creceiverName);
   zg_message_delete(zgMessage);
 }
+
+JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZGContext_process
+    (JNIEnv *env, jobject jobj, jint numInputChannels, jshortArray jinputBuffer, jint numOutputChannels,
+    jshortArray joutputBuffer, jint blockSize, jlong nativePtr) {
+
+  short *cinputBuffer = (short *) env->GetPrimitiveArrayCritical(jinputBuffer, NULL);
+  short *coutputBuffer = (short *) env->GetPrimitiveArrayCritical(joutputBuffer, NULL);
+  int inputBufferLength = env->GetArrayLength(jinputBuffer);
+  int outputBufferLength = env->GetArrayLength(joutputBuffer);
+  float finputBuffer[inputBufferLength];
+  float foutputBuffer[outputBufferLength];
+  
+  switch (numInputChannels) {
+    default: {
+      for (int j = 2; j < numInputChannels; j++) {
+        for (int i = j; i < inputBufferLength; i+=numInputChannels) {
+          finputBuffer[i] = ((float) cinputBuffer[i]) / 32768.0f;
+        }
+      }
+      // allow fallthrough
+    }
+    case 2: {
+      for (int i = 1; i < inputBufferLength; i+=numInputChannels) {
+        finputBuffer[i] = ((float) cinputBuffer[i]) / 32768.0f;
+      }
+      // allow fallthrough
+    }
+    case 1: {
+      for (int i = 0; i < inputBufferLength; i+=numInputChannels) {
+        finputBuffer[i] = ((float) cinputBuffer[i]) / 32768.0f;
+      }
+      // allow fallthrough
+    }
+    case 0: break;
+  }
+
+  zg_context_process((ZGContext *) nativePtr, finputBuffer, foutputBuffer);
+      
+  switch (numOutputChannels) {
+    default: {
+      for (int j = 2; j < numOutputChannels; j++) {
+        for (int i = j; i < outputBufferLength; i+=numOutputChannels) {
+          coutputBuffer[i] = (short) (foutputBuffer[i] * 32767.0f);
+        }
+      }
+      // allow fallthrough
+    }
+    case 2: {
+      for (int i = 1; i < outputBufferLength; i+=numOutputChannels) {
+        coutputBuffer[i] = (short) (foutputBuffer[i] * 32767.0f);
+      }
+      // allow fallthrough
+    }
+    case 1: {
+      for (int i = 0; i < outputBufferLength; i+=numOutputChannels) {
+        coutputBuffer[i] = (short) (foutputBuffer[i] * 32767.0f);
+      }
+      // allow fallthrough
+    }
+    case 0: break;
+  }
+      
+  // no need to copy back changes. release native buffer.
+  env->ReleasePrimitiveArrayCritical(jinputBuffer, cinputBuffer, JNI_ABORT);
+  env->ReleasePrimitiveArrayCritical(joutputBuffer, coutputBuffer, JNI_ABORT);
+}

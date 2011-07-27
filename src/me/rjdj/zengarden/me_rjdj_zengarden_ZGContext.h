@@ -58,10 +58,10 @@ JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZGContext_unregisterReceiver
 /*
  * Class:     me_rjdj_zengarden_ZGContext
  * Method:    process
- * Signature: ([S[SJ)V
+ * Signature: (I[SI[SIJ)V
  */
 JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZGContext_process
-  (JNIEnv *, jobject, jshortArray, jshortArray, jlong);
+  (JNIEnv *, jobject, jint, jshortArray, jint, jshortArray, jint, jlong);
 
 /*
  * Class:     me_rjdj_zengarden_ZGContext
