@@ -121,7 +121,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *ur_jvm, void *reserved) {
 
 JNIEXPORT jlong JNICALL Java_me_rjdj_zengarden_ZGContext_newContext
     (JNIEnv *env, jobject jobj, jint numInputChannels, jint numOutputChannels, jint blockSize, jfloat sampleRate) {
-  return (jlong) zg_new_context(numInputChannels, numOutputChannels, blockSize, sampleRate, zg_callback, env->NewWeakGlobalRef(jobj));
+  return (jlong) zg_context_new(numInputChannels, numOutputChannels, blockSize, sampleRate, zg_callback, env->NewWeakGlobalRef(jobj));
 }
 
 JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZGContext_deleteContext
@@ -131,20 +131,19 @@ JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZGContext_deleteContext
   // policy to clean up after oneself and release the VM resources needed to maintain the weak reference.
   ZGContext *context = (ZGContext *) nativePtr;
   env->DeleteWeakGlobalRef((jweak) zg_context_get_userinfo(context));
-  zg_delete_context(context);
+  zg_context_delete(context);
 }
 
 JNIEXPORT jlong JNICALL Java_me_rjdj_zengarden_ZGContext_newGraph__J
     (JNIEnv *env, jobject jobj, jlong nativePtr) {
-  return (jlong) zg_new_empty_graph((ZGContext *) nativePtr);
+  return (jlong) zg_context_new_empty_graph((ZGContext *) nativePtr);
 }
 
 JNIEXPORT jlong JNICALL Java_me_rjdj_zengarden_ZGContext_newGraph__Ljava_lang_String_2Ljava_lang_String_2J
     (JNIEnv *env, jobject jobj, jstring jdirectory, jstring jfilename, jlong nativePtr) {
-  ZGContext *zgContext = (ZGContext *) nativePtr;
   char *cdirectory = (char *) env->GetStringUTFChars(jdirectory, NULL);
   char *cfilename = (char *) env->GetStringUTFChars(jfilename, NULL);
-  ZGGraph *zgGraph = zg_new_graph(zgContext, cdirectory, cfilename);
+  ZGGraph *zgGraph = zg_context_new_graph((ZGContext *) nativePtr, cdirectory, cfilename);
   env->ReleaseStringUTFChars(jdirectory, cdirectory);
   env->ReleaseStringUTFChars(jfilename, cfilename);
   return (jlong) zgGraph;
@@ -152,17 +151,15 @@ JNIEXPORT jlong JNICALL Java_me_rjdj_zengarden_ZGContext_newGraph__Ljava_lang_St
 
 JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZGContext_registerReceiver
     (JNIEnv *env, jobject jobj, jstring jreceiverName, jlong nativePtr) {
-  ZGContext *context = (ZGContext *) nativePtr;
   const char *creceiverName = env->GetStringUTFChars(jreceiverName, NULL);
-  zg_context_register_receiver(context, creceiverName);
+  zg_context_register_receiver((ZGContext *) nativePtr, creceiverName);
   env->ReleaseStringUTFChars(jreceiverName, creceiverName);
 }
 
 JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZGContext_unregisterReceiver
     (JNIEnv *env, jobject jobj, jstring jreceiverName, jlong nativePtr) {
-  ZGContext *context = (ZGContext *) nativePtr;
   const char *creceiverName = env->GetStringUTFChars(jreceiverName, NULL);
-  zg_context_unregister_receiver(context, creceiverName);
+  zg_context_unregister_receiver((ZGContext *) nativePtr, creceiverName);
   env->ReleaseStringUTFChars(jreceiverName, creceiverName);
 }
 
@@ -198,10 +195,9 @@ ZGMessage *javaMessageToZgMessage(JNIEnv *env, jobject jmessage) {
 
 JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZGContext_sendMessage
     (JNIEnv *env, jobject jobj, jstring jreceiverName, jobject jmessage, jlong nativePtr) {
-  ZGContext *context = (ZGContext *) context;
   const char *creceiverName = env->GetStringUTFChars(jreceiverName, NULL);
   ZGMessage *zgMessage = javaMessageToZgMessage(env, jmessage);
-  zg_context_send_message(context, creceiverName, zgMessage);
+  zg_context_send_message((ZGContext *) nativePtr, creceiverName, zgMessage);
   env->ReleaseStringUTFChars(jreceiverName, creceiverName);
   zg_message_delete(zgMessage);
 }

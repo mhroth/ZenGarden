@@ -127,7 +127,7 @@ typedef enum ZGConnectionType {
    * and canvasY arguments specify the canvas location of the object. This is only relevant for
    * input/~ and output/~ objects, otherwise 0 may be specified.
    */
-  void zg_add_object(ZGGraph *graph, ZGObject *object, int canvasX, int canvasY);
+  void zg_graph_add_object(ZGGraph *graph, ZGObject *object, int canvasX, int canvasY);
   
   /**
    * Removes the object from the graph and deletes it from memory. Any connections that this object

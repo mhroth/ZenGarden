@@ -43,7 +43,7 @@ ZGObject *zg_graph_new_object(ZGGraph *graph, char *objectString) {
   return messageObject;
 }
 
-void zg_add_object(PdGraph *graph, ZGObject *object, int canvasX, int canvasY) {
+void zg_graph_add_object(PdGraph *graph, ZGObject *object, int canvasX, int canvasY) {
   graph->addObject(canvasX, canvasY, object);
 }
 

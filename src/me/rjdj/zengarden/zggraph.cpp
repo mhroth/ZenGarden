@@ -27,10 +27,10 @@ JNIEXPORT jlong JNICALL Java_me_rjdj_zengarden_ZGGraph_addObject
     (JNIEnv *env, jobject jobj, jstring jinitString, jint canvasX, jint canvasY, jlong nativePtr) {
   ZGGraph *zgGraph = (ZGGraph *) nativePtr;
   const char *cinitString = env->GetStringUTFChars(jinitString, NULL);
-  ZGObject *zgObject = zg_new_object(zgGraph, (char *) cinitString);
+  ZGObject *zgObject = zg_graph_new_object((ZGGraph *) nativePtr, (char *) cinitString);
   env->ReleaseStringUTFChars(jinitString, cinitString);
   if (zgObject != NULL) {
-    zg_add_object(zgGraph, zgObject, canvasX, canvasY);
+    zg_graph_add_object(zgGraph, zgObject, canvasX, canvasY);
     return (jlong) zgObject;
   } else {
     return (jlong) 0;
@@ -39,12 +39,12 @@ JNIEXPORT jlong JNICALL Java_me_rjdj_zengarden_ZGGraph_addObject
 
 JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZGGraph_addConnection
     (JNIEnv *env, jobject jobj, jlong fromObjectPtr, jint outletIndex, jlong toObjectPtr, jint inletIndex, jlong graphPtr) {
-  zg_add_connection((ZGGraph *) graphPtr, (ZGObject *) fromObjectPtr, outletIndex, (ZGObject *) toObjectPtr, inletIndex);
+  zg_graph_add_connection((ZGGraph *) graphPtr, (ZGObject *) fromObjectPtr, outletIndex, (ZGObject *) toObjectPtr, inletIndex);
 }
 
 JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZGGraph_removeConnection
     (JNIEnv *env, jobject jobj, jlong fromObjectPtr, jint outletIndex, jlong toObjectPtr, jint inletIndex, jlong graphPtr) {
-  zg_remove_connection((ZGGraph *) graphPtr, (ZGObject *) fromObjectPtr, outletIndex, (ZGObject *) toObjectPtr, inletIndex);
+  zg_graph_remove_connection((ZGGraph *) graphPtr, (ZGObject *) fromObjectPtr, outletIndex, (ZGObject *) toObjectPtr, inletIndex);
 }
 
 JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZGGraph_attach
