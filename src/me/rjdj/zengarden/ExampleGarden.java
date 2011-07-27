@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -101,18 +101,12 @@ public class ExampleGarden {
         System.exit(1);
       }
       
-      // load the Pd patch
-      File pdFile = new File(args[0]);
-      ZenGarden pdPatch = null;
-      ZenGardenAdapter zgAdapter = new ZenGardenAdapter();
-      try {
-        pdPatch = new ZenGarden(pdFile, BLOCK_SIZE, NUM_INPUT_CHANNELS, NUM_OUTPUT_CHANNELS,
-            (float) SAMPLE_RATE);
-        pdPatch.addListener(zgAdapter);
-      } catch (NativeLoadException nle) {
-        nle.printStackTrace(System.err);
-        System.exit(2);
-      }
+      // Create the context and graph based on the Pd patch
+      ZGContext zgContext = new ZGContext(NUM_INPUT_CHANNELS, NUM_OUTPUT_CHANNELS,
+          BLOCK_SIZE, (float) SAMPLE_RATE);
+      zgContext.addListener(new ZenGardenAdapter());
+      ZGGraph zgGraph = zgContext.newGraph(new File(args[0]));
+      zgGraph.attach();
       
       while (shouldContinuePlaying) {
         // run the patch in an infinite loop
@@ -123,7 +117,7 @@ public class ExampleGarden {
           inputBuffer[i] |= ((short) bInputBuffer[j++]) & 0x00FF;
         }
         
-        pdPatch.process(inputBuffer, outputBuffer);
+        zgContext.process(inputBuffer, outputBuffer);
         
         // convert short buffer to byte buffer
         for (int i = 0, j = 0; i < outputBuffer.length; i++) {
