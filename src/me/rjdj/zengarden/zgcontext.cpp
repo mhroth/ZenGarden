@@ -236,6 +236,14 @@ JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZGContext_process
   }
 
   zg_context_process((ZGContext *) nativePtr, finputBuffer, foutputBuffer);
+      
+  // clip the output to [-1,1]
+  for (int i = 0; i < outputBufferLength; i++) {
+    float f = foutputBuffer[i];
+    if (f < -1.0f) f = -1.0f;
+    else if (f > 1.0f) f = 1.0f;
+    foutputBuffer[i] = f;
+  }
   
   // interleave and float->short the samples from finputBuffer to cinputBuffer
   switch (numOutputChannels) {
