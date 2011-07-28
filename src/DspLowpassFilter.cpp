@@ -135,23 +135,6 @@ void DspLowpassFilter::processDsp() {
   }
 }
 
-void DspLowpassFilter::processLop(float *buffer, int fromIndex, int toIndex) {
-  #if __APPLE__
-  // vDSP_deq22 =
-  // out[i] = coeff[0]*in[i] + coeff[1]*in[i-1] + coeff[2]*in[i-2] - coeff[3]*out[i-1] - coeff[4]*out[i-2]
-  vDSP_deq22(buffer+fromIndex, 1, coefficients, dspBufferAtOutlet0+fromIndex, 1, toIndex - fromIndex);
-  #else
-  int _toIndex = toIndex + 2;
-  for (int i = fromIndex+2; i < _toIndex; i++) {
-    dspBufferAtOutlet0[i] = coefficients[0]*buffer[i] - coefficients[3]*dspBufferAtOutlet0[i-1];
-  }
-  #endif
-  
-  // retain last output
-  dspBufferAtOutlet0[0] = dspBufferAtOutlet0[toIndex];
-  dspBufferAtOutlet0[1] = dspBufferAtOutlet0[toIndex+1];
-}
-
 void DspLowpassFilter::processDspWithIndex(int fromIndex, int toIndex) {
   switch (codePath) {
     case DSP_LOP_MESSAGE_MESSAGE: {
