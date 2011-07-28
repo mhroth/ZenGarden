@@ -213,52 +213,48 @@ JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZGContext_process
   float finputBuffer[inputBufferLength];
   float foutputBuffer[outputBufferLength];
   
+  // uninterleave and short->float the samples in cinputBuffer to finputBuffer
   switch (numInputChannels) {
     default: {
       for (int j = 2; j < numInputChannels; j++) {
         for (int i = j; i < inputBufferLength; i+=numInputChannels) {
           finputBuffer[i] = ((float) cinputBuffer[i]) / 32768.0f;
         }
-      }
-      // allow fallthrough
+      } // allow fallthrough
     }
     case 2: {
       for (int i = 1; i < inputBufferLength; i+=numInputChannels) {
         finputBuffer[i] = ((float) cinputBuffer[i]) / 32768.0f;
-      }
-      // allow fallthrough
+      }  // allow fallthrough
     }
     case 1: {
       for (int i = 0; i < inputBufferLength; i+=numInputChannels) {
         finputBuffer[i] = ((float) cinputBuffer[i]) / 32768.0f;
-      }
-      // allow fallthrough
+      } // allow fallthrough
     }
     case 0: break;
   }
 
   zg_context_process((ZGContext *) nativePtr, finputBuffer, foutputBuffer);
-      
+  
+  // interleave and float->short the samples from finputBuffer to cinputBuffer
   switch (numOutputChannels) {
     default: {
-      for (int j = 2; j < numOutputChannels; j++) {
-        for (int i = j; i < outputBufferLength; i+=numOutputChannels) {
-          coutputBuffer[i] = (short) (foutputBuffer[i] * 32767.0f);
+      for (int k = 2; k < numOutputChannels; k++) {
+        for (int i = k, j = 0; i < outputBufferLength; i+=numOutputChannels, j++) {
+          coutputBuffer[i] = (short) (foutputBuffer[j] * 32767.0f);
         }
-      }
-      // allow fallthrough
+      } // allow fallthrough
     }
     case 2: {
-      for (int i = 1; i < outputBufferLength; i+=numOutputChannels) {
-        coutputBuffer[i] = (short) (foutputBuffer[i] * 32767.0f);
-      }
-      // allow fallthrough
+      for (int i = 1, j = 0; i < outputBufferLength; i+=numOutputChannels, j++) {
+        coutputBuffer[i] = (short) (foutputBuffer[j] * 32767.0f);
+      } // allow fallthrough
     }
     case 1: {
-      for (int i = 0; i < outputBufferLength; i+=numOutputChannels) {
-        coutputBuffer[i] = (short) (foutputBuffer[i] * 32767.0f);
-      }
-      // allow fallthrough
+      for (int i = 0, j = 0; i < outputBufferLength; i+=numOutputChannels, j++) {
+        coutputBuffer[i] = (short) (foutputBuffer[j] * 32767.0f);
+      } // allow fallthrough
     }
     case 0: break;
   }

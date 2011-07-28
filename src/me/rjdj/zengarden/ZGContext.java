@@ -113,7 +113,13 @@ public class ZGContext {
           file.toString());
     }
     
-    return new ZGGraph(newGraph(file.getAbsoluteFile().getParent() + File.separator, file.getName(), contextPtr));
+    long graphPtr = newGraph(file.getAbsoluteFile().getParent() + File.separator, file.getName(), contextPtr);
+    if (graphPtr == 0) {
+      // TODO(mhroth): is there a better exception to throw here?
+      throw new NullPointerException("Something has done terribly wrong while loading the file " +
+          file.getAbsoluteFile());
+    }
+    return new ZGGraph(graphPtr);
   }
   native private long newGraph(String filePath, String fileName, long nativePtr);
   
