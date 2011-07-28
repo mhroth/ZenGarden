@@ -457,6 +457,13 @@ void PdContext::attachGraph(PdGraph *graph) {
   unlock();
 }
 
+void PdContext::unattachGraph(PdGraph *graph) {
+  lock();
+  //graphList.erase(NULL);
+  graph->attachToContext(false);
+  unlock();
+}
+
 MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessage *initMessage, PdGraph *graph) {
   if (strcmp(objectType, "obj") == 0) {
     if (strcmp(objectLabel, "+") == 0) {

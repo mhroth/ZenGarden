@@ -229,7 +229,7 @@ void zg_context_send_midinote(PdContext *context, int channel, int noteNumber, i
 #pragma mark - Graph
 
 void zg_graph_attach(ZGGraph *graph) {
-  graph->attachToContext(true);
+  graph->getContext()->attachGraph(graph);
 }
 
 void zg_graph_unattach(ZGGraph *graph) {

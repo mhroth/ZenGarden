@@ -67,6 +67,7 @@ class PdContext {
      * necessary objects, and computing the dsp object compute order if necessary.
      */
     void attachGraph(PdGraph *graph);
+    void unattachGraph(PdGraph *graph);
     
     void process(float *inputBuffers, float *outputBuffers);
   

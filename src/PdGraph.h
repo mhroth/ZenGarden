@@ -62,10 +62,24 @@ class PdGraph : public DspObject {
      */
     void receiveMessage(int inletIndex, PdMessage *message);
   
+  
+#pragma mark - Add/Remove Connection
+  
+    /** Connect the given <code>MessageObject</code>s from the given outlet to the given inlet. */
+    void addConnection(int fromObjectIndex, int outletIndex, int toObjectIndex, int inletIndex);
+    void addConnection(MessageObject *fromObject, int outletIndex, MessageObject *toObject, int inletIndex);
+    void removeConnection(MessageObject *fromObject, int outletIndex, MessageObject *toObject, int inletIndex);
+  
+
+#pragma mark - Add/Remove Connection to/from Object
+
     void addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex);
     void addConnectionToObjectFromOutlet(MessageObject *messageObject, int inletIndex, int outletIndex);
     void removeConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex);
     void removeConnectionToObjectFromOutlet(MessageObject *messageObject, int inletIndex, int outletIndex);
+  
+
+#pragma mark -
   
     const char *getObjectLabel();
     ObjectType getObjectType();
@@ -145,12 +159,6 @@ class PdGraph : public DspObject {
      * it is an error to reuse it.
      */
     void removeObject(MessageObject *object);
-  
-    /** Connect the given <code>MessageObject</code>s from the given outlet to the given inlet. */
-    void addConnection(int fromObjectIndex, int outletIndex, int toObjectIndex, int inletIndex);
-    void addConnection(MessageObject *fromObject, int outletIndex, MessageObject *toObject, int inletIndex);
-  
-    void removeConnection(MessageObject *fromObject, int outletIndex, MessageObject *toObject, int inletIndex);
   
     void attachToContext(bool isAttached);
   
