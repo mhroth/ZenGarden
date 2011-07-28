@@ -36,6 +36,7 @@ DspLowpassFilter::DspLowpassFilter(PdMessage *initMessage, PdGraph *graph) : Dsp
     free(dspBufferAtOutlet0);
     dspBufferAtOutlet0 = (float *) malloc((blockSizeInt+2)*sizeof(float));
   }
+  memset(dspBufferAtOutlet0, 0, (blockSizeInt+2)*sizeof(float)); // clear the buffer
 }
 
 DspLowpassFilter::~DspLowpassFilter() {
@@ -63,15 +64,17 @@ void DspLowpassFilter::onInletConnectionUpdate() {
 }
 
 void DspLowpassFilter::calculateFilterCoefficients(float cutoffFrequency) {
-  alpha = cutoffFrequency * 2.0f * M_PI / graph->getSampleRate();
+  float alpha = cutoffFrequency * 2.0f * M_PI / graph->getSampleRate();
   if (alpha < 0.0f) {
     alpha = 0.0f;
   } else if (alpha > 1.0f) {
     alpha = 1.0f;
   }
-  beta = 1.0f - alpha;
   coefficients[0] = alpha;
-  coefficients[3] = -beta;
+  coefficients[1] = 0.0f;
+  coefficients[2] = 0.0f;
+  coefficients[3] = -(1.0f-alpha);
+  coefficients[4] = 0.0f;
 }
 
 void DspLowpassFilter::processMessage(int inletIndex, PdMessage *message) {
@@ -136,22 +139,17 @@ void DspLowpassFilter::processLop(float *buffer, int fromIndex, int toIndex) {
   #if __APPLE__
   // vDSP_deq22 =
   // out[i] = coeff[0]*in[i] + coeff[1]*in[i-1] + coeff[2]*in[i-2] - coeff[3]*out[i-1] - coeff[4]*out[i-2]
-  vDSP_deq22(buffer, 1, coefficients, dspBufferAtOutlet0, 1, toIndex - fromIndex);
-  // retain last output
-  // NOTE(mhroth): this is a potential problem if toIndex-2 < 0
-  dspBufferAtOutlet0[0] = dspBufferAtOutlet0[toIndex-2];
-  dspBufferAtOutlet0[1] = dspBufferAtOutlet0[toIndex-1];
+  vDSP_deq22(buffer+fromIndex, 1, coefficients, dspBufferAtOutlet0+fromIndex, 1, toIndex - fromIndex);
   #else
-  // TODO(mhroth): fix this
-  buffer += 2;
-  ArrayArithmetic::multiply(dspBufferAtInlet0, alpha, dspBufferAtOutlet0, fromIndex, toIndex);
-  dspBufferAtOutlet0[fromIndex] += beta * tap_0;
-  for (int i = fromIndex+1; i < toIndex; i++) {
-    dspBufferAtOutlet0[i] += beta * dspBufferAtOutlet0[i-1];
+  int _toIndex = toIndex + 2;
+  for (int i = fromIndex+2; i < _toIndex; i++) {
+    dspBufferAtOutlet0[i] = coefficients[0]*buffer[i] - coefficients[3]*dspBufferAtOutlet0[i-1];
   }
-  dspBufferAtOutlet0[0] = dspBufferAtOutlet0[toIndex-2];
-  dspBufferAtOutlet0[1] = dspBufferAtOutlet0[toIndex-1];
   #endif
+  
+  // retain last output
+  dspBufferAtOutlet0[0] = dspBufferAtOutlet0[toIndex];
+  dspBufferAtOutlet0[1] = dspBufferAtOutlet0[toIndex+1];
 }
 
 void DspLowpassFilter::processDspWithIndex(int fromIndex, int toIndex) {
