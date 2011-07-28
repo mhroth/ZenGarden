@@ -50,12 +50,12 @@ DspEnvelope::DspEnvelope(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 
   // I am too lazy to consider this option at the moment. Thus, currently the window size and interval
   // must be at least as large as the block size.
   if (windowSize < graph->getBlockSize()) {
-    graph->printErr("env~ window size must be at least as large as the block size. %i reset to %i.\n",
+    graph->printErr("env~ window size must be at least as large as the block size. %i reset to %i.",
         windowSize, graph->getBlockSize());
     windowSize = graph->getBlockSize();
   }
   if (windowInterval < graph->getBlockSize()) {
-    graph->printErr("env~ window interval must be at least as large as the block size. %i reset to %i.\n",
+    graph->printErr("env~ window interval must be at least as large as the block size. %i reset to %i.",
         windowInterval, graph->getBlockSize());
     windowInterval = graph->getBlockSize();
   }
