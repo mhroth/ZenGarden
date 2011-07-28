@@ -216,20 +216,20 @@ JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZGContext_process
   // uninterleave and short->float the samples in cinputBuffer to finputBuffer
   switch (numInputChannels) {
     default: {
-      for (int j = 2; j < numInputChannels; j++) {
-        for (int i = j; i < inputBufferLength; i+=numInputChannels) {
-          finputBuffer[i] = ((float) cinputBuffer[i]) / 32768.0f;
+      for (int k = 2; k < numInputChannels; k++) {
+        for (int i = k, j = k*blockSize; i < inputBufferLength; i+=numInputChannels, j++) {
+          finputBuffer[j] = ((float) cinputBuffer[i]) / 32768.0f;
         }
       } // allow fallthrough
     }
     case 2: {
-      for (int i = 1; i < inputBufferLength; i+=numInputChannels) {
-        finputBuffer[i] = ((float) cinputBuffer[i]) / 32768.0f;
+      for (int i = 1, j = blockSize; i < inputBufferLength; i+=numInputChannels, j++) {
+        finputBuffer[j] = ((float) cinputBuffer[i]) / 32768.0f;
       }  // allow fallthrough
     }
     case 1: {
-      for (int i = 0; i < inputBufferLength; i+=numInputChannels) {
-        finputBuffer[i] = ((float) cinputBuffer[i]) / 32768.0f;
+      for (int i = 0, j = 0; i < inputBufferLength; i+=numInputChannels, j++) {
+        finputBuffer[j] = ((float) cinputBuffer[i]) / 32768.0f;
       } // allow fallthrough
     }
     case 0: break;
@@ -241,13 +241,13 @@ JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZGContext_process
   switch (numOutputChannels) {
     default: {
       for (int k = 2; k < numOutputChannels; k++) {
-        for (int i = k, j = 0; i < outputBufferLength; i+=numOutputChannels, j++) {
+        for (int i = k, j = k*blockSize; i < outputBufferLength; i+=numOutputChannels, j++) {
           coutputBuffer[i] = (short) (foutputBuffer[j] * 32767.0f);
         }
       } // allow fallthrough
     }
     case 2: {
-      for (int i = 1, j = 0; i < outputBufferLength; i+=numOutputChannels, j++) {
+      for (int i = 1, j = blockSize; i < outputBufferLength; i+=numOutputChannels, j++) {
         coutputBuffer[i] = (short) (foutputBuffer[j] * 32767.0f);
       } // allow fallthrough
     }
