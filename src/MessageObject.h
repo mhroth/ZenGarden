@@ -140,10 +140,24 @@ class MessageObject {
   
     /** Returns the graph in which this object exists. */
     PdGraph *getGraph();
+  
+    /** Returns the correct canvas position of the object. */
+    virtual void getCanvasPosition(float *x, float *y);
+  
+    /**
+     * Sets the current canvas position of the object. This function may have side-effects,
+     * such as in the case of inlet objects which may cause connections to graphs reorder
+     * themselves.
+     */
+    virtual void setCanvasPosition(float x, float y);
     
   protected:  
     /** A pointer to the graph owning this object. */
     PdGraph *graph;
+  
+    /** Position of the object on a graphical canvas. Coordinates may be positive or negative. */
+    float canvasX;
+    float canvasY;
   
     vector<list<ObjectLetPair> > incomingMessageConnections;
     vector<list<ObjectLetPair> > outgoingMessageConnections;

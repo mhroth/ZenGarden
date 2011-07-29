@@ -68,11 +68,3 @@ list<MessageObject *> *MessageInlet::getProcessOrderFromInlet() {
   }
   return processList;
 }
-
-int MessageInlet::getCanvasPosition() {
-  return canvasX;
-}
-
-void MessageInlet::setCanvasPosition(int pos) {
-  canvasX = pos;
-}

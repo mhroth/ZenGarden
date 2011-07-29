@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -45,14 +45,6 @@ ObjectType MessageOutlet::getObjectType() {
   return MESSAGE_OUTLET;
 }
 
-void MessageOutlet::processMessage(int inletIndex, PdMessage *message) {
+void MessageOutlet::receiveMessage(int inletIndex, PdMessage *message) {
   sendMessage(0, message);
-}
-
-int MessageOutlet::getCanvasPosition() {
-  return canvasX;
-}
-
-void MessageOutlet::setCanvasPosition(int pos) {
-  canvasX = pos;
 }

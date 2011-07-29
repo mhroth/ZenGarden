@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -43,18 +43,12 @@ class DspOutlet : public DspObject {
   
     const char *getObjectLabel();
     ObjectType getObjectType();
-  
-    int getCanvasPosition();
-    void setCanvasPosition(int pos);
-  
+
     bool isLeafNode();
   
     float *getDspBufferRefAtOutlet(int outletIndex);
   
     void processDsp();
-  
-  private:  
-    int canvasX;
 };
 
 #endif // _DSP_OUTLET_H_

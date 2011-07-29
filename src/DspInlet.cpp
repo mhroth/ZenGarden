@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -38,14 +38,6 @@ const char *DspInlet::getObjectLabel() {
 
 ObjectType DspInlet::getObjectType() {
   return DSP_INLET;
-}
-
-int DspInlet::getCanvasPosition() {
-  return canvasX;
-}
-
-void DspInlet::setCanvasPosition(int pos) {
-  canvasX = pos;
 }
 
 list<MessageObject *> *DspInlet::getProcessOrder() {

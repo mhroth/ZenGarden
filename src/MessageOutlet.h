@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -35,15 +35,9 @@ class MessageOutlet : public MessageObject {
     const char *getObjectLabel();
     ObjectType getObjectType();
   
-    int getCanvasPosition();
-    void setCanvasPosition(int pos);
-  
     bool isLeafNode();
   
-  private:
-    void processMessage(int inletIndex, PdMessage *message);
-  
-    int canvasX;
+    void receiveMessage(int inletIndex, PdMessage *message);
 };
 
 #endif // _MESSAGE_OUTLET_H_

@@ -151,7 +151,7 @@ class PdGraph : public DspObject {
     MessageTable *getTable(char *name);
   
     /** Add an object to the graph, taking care of any special object registration. */
-    void addObject(int canvasX, int canvasY, MessageObject *node);
+    void addObject(float canvasX, float canvasY, MessageObject *node);
   
     /**
      * Remove the object from the graph, also removing all of the connections to and from ths object.
@@ -212,11 +212,14 @@ class PdGraph : public DspObject {
     /** Unlocks the context if this graph is attached. */
     void unlockContextIfAttached();
   
-    /** Does not check if the object is already registered. */
+    /**
+     * Registers the object with all relevant global lists.
+     * Does not check if the object is already registered.
+     */
     void registerObject(MessageObject *messageObject);
     void unregisterObject(MessageObject *messageObject);
   
-    void addLetObjectToLetList(MessageObject *inletObject, int newPosition, vector<MessageObject *> *letList);
+    void addLetObjectToLetList(MessageObject *inletObject, float newPosition, vector<MessageObject *> *letList);
   
     /** The <code>PdContext</code> to which this graph belongs. */
     PdContext *context;

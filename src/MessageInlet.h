@@ -38,13 +38,7 @@ class MessageInlet : public MessageObject {
     list<MessageObject *> *getProcessOrder();
     list<MessageObject *> *getProcessOrderFromInlet();
   
-    int getCanvasPosition();
-    void setCanvasPosition(int pos);
-  
     void receiveMessage(int inletIndex, PdMessage *message);
-    
-  private:
-    int canvasX;
 };
 
 #endif // _MESSAGE_INLET_H_

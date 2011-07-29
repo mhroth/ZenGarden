@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -40,14 +40,6 @@ ObjectType DspOutlet::getObjectType() {
 
 bool DspOutlet::isLeafNode() {
   return true;
-}
-
-int DspOutlet::getCanvasPosition() {
-  return canvasX;
-}
-
-void DspOutlet::setCanvasPosition(int pos) {
-  canvasX = pos;
 }
 
 float *DspOutlet::getDspBufferRefAtOutlet(int outletIndex) {

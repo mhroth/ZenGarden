@@ -148,7 +148,7 @@ list<ObjectLetPair> MessageObject::getOutgoingConnections(unsigned int outletInd
 }
 
 
-#pragma mark -
+#pragma mark - Accessors
 
 unsigned int MessageObject::getNumInlets() {
   return incomingMessageConnections.size();
@@ -164,6 +164,16 @@ ObjectType MessageObject::getObjectType() {
 
 PdGraph *MessageObject::getGraph() {
   return graph;
+}
+
+void MessageObject::getCanvasPosition(float *x, float *y) {
+  *x = canvasX;
+  *y = canvasY;
+}
+
+void MessageObject::setCanvasPosition(float x, float y) {
+  canvasX = x;
+  canvasY = y;
 }
 
 bool MessageObject::isLeafNode() {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -40,18 +40,12 @@ class DspInlet : public DspObject {
   
     const char *getObjectLabel();
     ObjectType getObjectType();
-    
-    void setCanvasPosition(int pos);
-    int getCanvasPosition();
   
     list<MessageObject *> *getProcessOrder();
     list<MessageObject *> *getProcessOrderFromInlet();
   
     void receiveMessage(int inletIndex, PdMessage *message);
     void processDsp();
-  
-  private:  
-    int canvasX;
 };
 
 #endif // _DSP_INLET_H_

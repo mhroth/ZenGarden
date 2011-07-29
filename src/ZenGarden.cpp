@@ -43,7 +43,7 @@ ZGObject *zg_graph_new_object(ZGGraph *graph, char *objectString) {
   return messageObject;
 }
 
-void zg_graph_add_object(PdGraph *graph, ZGObject *object, int canvasX, int canvasY) {
+void zg_graph_add_object(PdGraph *graph, ZGObject *object, float canvasX, float canvasY) {
   graph->addObject(canvasX, canvasY, object);
 }
 
@@ -116,6 +116,14 @@ void zg_object_send_message(MessageObject *object, unsigned int inletIndex, ZGMe
   object->getGraph()->getContext()->lock();
   object->receiveMessage(inletIndex, message);
   object->getGraph()->getContext()->unlock();
+}
+
+void zg_object_get_canvas_position(ZGObject *object, float *x, float *y) {
+  object->getCanvasPosition(x, y);
+}
+
+void zg_object_set_canvas_position(ZGObject *object, float x, float y) {
+  object->setCanvasPosition(x, y);
 }
 
 

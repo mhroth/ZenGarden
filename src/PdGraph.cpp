@@ -99,34 +99,22 @@ void PdGraph::unlockContextIfAttached() {
 
 #pragma mark - Add/Remove Objects
 
-void PdGraph::addObject(int canvasX, int canvasY, MessageObject *messageObject) {
+void PdGraph::addObject(float canvasX, float canvasY, MessageObject *messageObject) {
   lockContextIfAttached();
   
   nodeList.push_back(messageObject); // all nodes are added to the node list regardless
   
+  messageObject->setCanvasPosition(canvasX, canvasY);
+  
   switch (messageObject->getObjectType()) {
-    case MESSAGE_INLET: {
-      MessageInlet *letObject = (MessageInlet *) messageObject;
-      letObject->setCanvasPosition(canvasX);
-      addLetObjectToLetList(letObject, canvasX, &inletList);
-      break;
-    }
+    case MESSAGE_INLET:
     case DSP_INLET: {
-      DspInlet *letObject = (DspInlet *) messageObject;
-      letObject->setCanvasPosition(canvasX);
-      addLetObjectToLetList(letObject, canvasX, &inletList);
+      addLetObjectToLetList(messageObject, canvasX, &inletList);
       break;
     }
-    case MESSAGE_OUTLET: {
-      MessageOutlet *letObject = (MessageOutlet *) messageObject;
-      letObject->setCanvasPosition(canvasX);
-      addLetObjectToLetList(letObject, canvasX, &outletList);
-      break;
-    }
-    case DSP_OUTLET:{
-      DspOutlet *letObject = (DspOutlet *) messageObject;
-      letObject->setCanvasPosition(canvasX);
-      addLetObjectToLetList(letObject, canvasX, &outletList);
+    case MESSAGE_OUTLET:
+    case DSP_OUTLET: {
+      addLetObjectToLetList(messageObject, canvasX, &outletList);
       break;
     }
     default: {
@@ -134,6 +122,7 @@ void PdGraph::addObject(int canvasX, int canvasY, MessageObject *messageObject) 
       if (isAttachedToContext) {
         registerObject(messageObject);
       }
+      break;
     }
   }
   
@@ -192,36 +181,23 @@ void PdGraph::removeObject(MessageObject *object) {
   unlockContextIfAttached();
 }
 
-void PdGraph::addLetObjectToLetList(MessageObject *inletObject, int newPosition, vector<MessageObject *> *letList) {
+void PdGraph::addLetObjectToLetList(MessageObject *inletObject, float newPosition, vector<MessageObject *> *letList) {
   vector<MessageObject *>::iterator it = letList->begin();
   vector<MessageObject *>::iterator end = letList->end();
+  float canvasX, canvasY;
   while (it != end) {
     MessageObject *object = *it;
-    int position = -1;
+    float position = 0.0f;
     switch (object->getObjectType()) {
-      case MESSAGE_INLET: {
-        MessageInlet *inlet = (MessageInlet *) object;
-        position = inlet->getCanvasPosition();
-        break;
-      }
-      case DSP_INLET: {
-        DspInlet *inlet = (DspInlet *) object;
-        position = inlet->getCanvasPosition();
-        break;
-      }
-      case MESSAGE_OUTLET: {
-        MessageOutlet *outlet = (MessageOutlet *) object;
-        position = outlet->getCanvasPosition();
-        break;
-      }
+      case MESSAGE_INLET:
+      case DSP_INLET:
+      case MESSAGE_OUTLET:
       case DSP_OUTLET: {
-        DspOutlet *outlet = (DspOutlet *) object;
-        position = outlet->getCanvasPosition();
+        object->getCanvasPosition(&canvasX, &canvasY);
+        position = canvasX;
         break;
       }
-      default: {
-        break;
-      }
+      default: break;
     }
     if (newPosition < position) {
       letList->insert(it, inletObject);

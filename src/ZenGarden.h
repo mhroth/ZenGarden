@@ -127,7 +127,7 @@ typedef enum ZGConnectionType {
    * and canvasY arguments specify the canvas location of the object. This is only relevant for
    * input/~ and output/~ objects, otherwise 0 may be specified.
    */
-  void zg_graph_add_object(ZGGraph *graph, ZGObject *object, int canvasX, int canvasY);
+  void zg_graph_add_object(ZGGraph *graph, ZGObject *object, float canvasX, float canvasY);
   
   /**
    * Removes the object from the graph and deletes it from memory. Any connections that this object
@@ -241,6 +241,15 @@ typedef enum ZGConnectionType {
    * zg_context_send_message() and its variants in order to send the message to a named receiver.
    */
   void zg_object_send_message(ZGObject *object, unsigned int inletIndex, ZGMessage *message);
+  
+  /**
+   * Returns the canvas position of the object. Position coordinates are represented as floats
+   * and are real valued, though Pd uses only non-negative values.
+   */
+  void zg_object_get_canvas_position(ZGObject *object, float *x, float *y);
+  
+  /** Sets the canvas position of the object. Coordinates may be positive or negative. */
+  void zg_object_set_canvas_position(ZGObject *object, float x, float y);
   
 
 #pragma mark - Message

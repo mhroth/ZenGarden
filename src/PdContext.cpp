@@ -349,8 +349,10 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
     } else if (strcmp(hashType, "#X") == 0) {
       char *objectType = strtok(NULL, " ");
       if (strcmp(objectType, "obj") == 0) {
-        int canvasX = atoi(strtok(NULL, " ")); // read the first canvas coordinate
-        int canvasY = atoi(strtok(NULL, " ")); // read the second canvas coordinate
+        // read the canvas coordinates (Pd defines them to be integers, ZG represents them as floats internally)
+        float canvasX = (float) atoi(strtok(NULL, " "));
+        float canvasY = (float) atoi(strtok(NULL, " "));
+        
         char *objectLabel = strtok(NULL, " ;"); // delimit with " " or ";"
         char *objectInitString = strtok(NULL, ";"); // get the object initialisation string
         char resBuffer[RESOLUTION_BUFFER_LENGTH];
