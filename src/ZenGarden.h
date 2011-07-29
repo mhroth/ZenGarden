@@ -136,9 +136,6 @@ typedef enum ZGConnectionType {
    */
   void zg_object_remove(ZGObject *object);
   
-  /** Returns the object label, e.g. "osc~" or "+". */
-  const char *zg_object_get_label(ZGObject *object);
-  
   
 #pragma mark - Graph
   
@@ -250,6 +247,9 @@ typedef enum ZGConnectionType {
   
   /** Sets the canvas position of the object. Coordinates may be positive or negative. */
   void zg_object_set_canvas_position(ZGObject *object, float x, float y);
+  
+  /** Returns the object label, e.g. "osc~" or "+". */
+  const char *zg_object_get_label(ZGObject *object);
   
 
 #pragma mark - Message
