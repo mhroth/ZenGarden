@@ -28,11 +28,24 @@ public class Message {
   
   private double timestamp;
   private Object[] elements;
+  private String typeString;
+  
+  /**
+   * The <code>String</code> representation of a bang.
+   */
+  public static final String BANG_STRING = "!";
  
   /**
-   * Creates a new message.
+   * Creates a new message. Any number of elements (> 0) may be supplied to the <code>Message</code>
+   * either as floats (or <code>Float</code>) or <code>String</code>s. Bangs may also be entered
+   * in the form of a <code>String</code>, <code>"!"</code>. For instance, a message with one
+   * float element would be instantiated as <code>new Message(0.0, 1.0f)</code>. A message with
+   * one string is <code>new Message(0.0, "hello")</code>, and a message with a bang is
+   * <code>new Message(0.0, "!")</code>. The form of the bang as a <code>String</code> necessarily
+   * means that no strings in the form of "!" may be sent into ZenGarden. Hopefully this will not
+   * be a problem.
    * @param timestamp  The time in milliseconds at which this message is created.
-   * @param elements  The constituent elements of 
+   * @param elements  The constituent elements of the message.
    */
   public Message(double timestamp, Object... elements) {
     if (timestamp < 0.0) {
@@ -47,6 +60,24 @@ public class Message {
     }
     this.timestamp = timestamp;
     this.elements = elements;
+    
+    // construct the typeString which is used to quickly identify the elements of the message in JNI
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < elements.length; i++) {
+      switch (getType(i)) {
+        case FLOAT: sb.append("f"); break;
+        case SYMBOL: {
+          if (getSymbol(i).indexOf(" ") >= 0) {
+            throw new IllegalArgumentException("Symbols sent to ZenGarden may not contains spaces: " + 
+                getSymbol(i));
+          }
+          sb.append("s");
+          break;
+        }
+        default: sb.append("b"); break;
+      }
+    }
+    typeString = sb.toString();
   }
 
   double getTimestamp() {
@@ -73,7 +104,7 @@ public class Message {
   }
   
   boolean isSymbol(int index) {
-    return String.class.isInstance(elements[index]);
+    return String.class.isInstance(elements[index]) && !BANG_STRING.equals(elements[index]);
   }
   
   boolean isSymbol(int index, String symbol) {
@@ -90,7 +121,8 @@ public class Message {
   }
   
   boolean isBang(int index) {
-    return Bang.class.isInstance(elements[index]);
+    // an element is a bang if it is either the special bang string, or it is an unexpected object
+    return BANG_STRING.equals(elements[index]) || !(isFloat(index) || isSymbol(index));
   }
   
   @Override
@@ -98,16 +130,16 @@ public class Message {
     return "{" + Double.toString(timestamp) + "ms " + Arrays.toString(elements) + "}";
   }
   
+  // protected only such that the function can be used in tests
+  protected String getTypeString() {
+    return typeString;
+  }
+  
   @Override
   public boolean equals(Object o) {
     if (Message.class.isInstance(o)) {
       Message message = (Message) o;
-      if (timestamp != message.timestamp) return false;
-      if (elements.length != message.elements.length) return false;
-      for (int i = 0; i < elements.length; i++) {
-        if (getType(i) != message.getType(i)) return false;
-      }
-      return true;
+      return (timestamp == message.timestamp && Arrays.equals(elements, message.elements));
     } else {
       return false;
     }
@@ -116,13 +148,6 @@ public class Message {
   @Override
   public int hashCode() {
     return ((new Double(timestamp).hashCode()) + Arrays.hashCode(elements));
-  }
-  
-  public class Bang {
-    @Override
-    public String toString() {
-      return "!bang";
-    }
   }
   
   public enum MessageType {

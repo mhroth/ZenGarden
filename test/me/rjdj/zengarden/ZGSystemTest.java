@@ -25,13 +25,12 @@ package me.rjdj.zengarden;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertTrue;
+import me.rjdj.zengarden.Message.MessageType;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.File;
 
 public class ZGSystemTest {
   
@@ -163,4 +162,35 @@ public class ZGSystemTest {
     context.process(INPUT_BUFFER, OUTPUT_BUFFER);
   }
   */
+  
+  @Test(expected=IllegalArgumentException.class)
+  public void testMessage() {
+    Message message = new Message(0.0, 0.5f);
+    assertEquals("f", message.getTypeString());
+    assertEquals(MessageType.FLOAT, message.getType(0));
+    assertEquals(1, message.getNumElements());
+    assertTrue(0.5f == message.getFloat(0));
+    assertTrue(0.0 == message.getTimestamp());
+    
+    message = new Message(0.0, "hello");
+    assertEquals("s", message.getTypeString());
+    assertEquals(MessageType.SYMBOL, message.getType(0));
+    assertEquals(1, message.getNumElements());
+    assertEquals("hello", message.getSymbol(0));
+    
+    // this constructor will throw an IllegalArgumentException due to the space in the submitted
+    // symbol. This exception is expected.
+    message = new Message(0.0, "hello world");
+
+    message = new Message(0.0, "!");
+    assertEquals("b", message.getTypeString());
+    assertEquals(MessageType.BANG, message.getType(0));
+    assertEquals(1, message.getNumElements());
+    
+    message = new Message(0.0, new Object());
+    assertEquals(MessageType.BANG, message.getType(0));
+    
+    Message anotherBangMessage = new Message(0.0, Message.BANG_STRING);
+    assertEquals(message, anotherBangMessage);
+  }
 }

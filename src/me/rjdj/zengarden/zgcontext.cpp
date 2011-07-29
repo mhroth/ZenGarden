@@ -169,27 +169,30 @@ ZGMessage *javaMessageToZgMessage(JNIEnv *env, jobject jmessage) {
   jint numElements = env->CallIntMethod(jmessage,
       env->GetMethodID(env->GetObjectClass(jmessage), "getNumElements", "()I"));
   ZGMessage *zgMessage = zg_message_new(timestamp, numElements);
+  jstring jtypeString = (jstring) env->CallObjectMethod(jmessage, env->GetMethodID(env->GetObjectClass(jmessage), "getTypeString", "()Ljava/lang/String;"));
+  const char *ctypeString = env->GetStringUTFChars(jtypeString, NULL);
   for (int i = 0; i < numElements; i++) {
-    jobject jmessageType = env->CallObjectMethod(jmessage, env->GetMethodID(env->GetObjectClass(jmessage), "getType", "(I)Lme/rjdj/zengarden/Message.MessageType;"), i);
-    switch (env->CallIntMethod(jmessageType, env->GetMethodID(env->GetObjectClass(jmessageType), "ordinal", "()I"))) {
-      case 0: { // FLOAT
+    switch (ctypeString[i]) {
+      case 'f': {
         zg_message_set_float(zgMessage, i, env->CallFloatMethod(jmessage, env->GetMethodID(env->GetObjectClass(jmessage), "getFloat", "(I)F")));
         break;
       }
-      case 1: { // SYMBOL
+      case 's': {
+        /*
         jstring jstr = (jstring) env->CallObjectMethod(jmessage, env->GetMethodID(env->GetObjectClass(jmessage), "getSymbol", "(I)Ljava/lang/String;"));
         const char *cstr = env->GetStringUTFChars(jstr, NULL);
         // TODO(mhroth): put string into message
         env->ReleaseStringUTFChars(jstr, cstr);
+        */
         break;
       }
-      case 2: // BANG
       default: {
         zg_message_set_bang(zgMessage, i);
         break;
       }
     }
   }
+  env->ReleaseStringUTFChars(jtypeString, ctypeString);
   return zgMessage;
 }
 
