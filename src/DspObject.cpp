@@ -43,7 +43,6 @@ DspObject::DspObject(int numMessageInlets, int numDspInlets, int numMessageOutle
 
 void DspObject::init(int numDspInlets, int numDspOutlets, int blockSize) {
   blockSizeInt = blockSize;
-  blockSizeFloat = (float) blockSizeInt;
   blockIndexOfLastMessage = 0.0f;
   signalPrecedence = MESSAGE_MESSAGE; // default
   numBytesInBlock = blockSizeInt * sizeof(float);
@@ -258,7 +257,7 @@ void DspObject::processDsp() {
       
       blockIndexOfLastMessage = graph->getBlockIndex(message);
     } while (!messageQueue.empty());
-    processDspWithIndex(blockIndexOfLastMessage, blockSizeFloat);
+    processDspWithIndex(blockIndexOfLastMessage, (float) blockSizeInt);
     blockIndexOfLastMessage = 0.0f; // reset the block index of the last received message
   } else {
     processDspWithIndex(0, blockSizeInt);

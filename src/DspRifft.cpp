@@ -26,7 +26,7 @@
 
 DspRifft::DspRifft(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 2, 0, 1, graph) {
   #if __APPLE__
-  log2n = lrintf(log2f(blockSizeFloat));
+  log2n = lrintf(log2f((float) blockSizeInt));
   fftSetup = vDSP_create_fftsetup(log2n, kFFTRadix2);
   #else
   graph->printErr("[rifft~] is not supported on this platform. It is only supported on Apple OS X and iOS platforms.");

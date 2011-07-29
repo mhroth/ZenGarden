@@ -764,7 +764,6 @@ void PdGraph::setBlockSize(int blockSize) {
   if (blockSize <= parentGraph->getBlockSize()) {
     // TODO(mhroth)
     blockSizeInt = blockSize;
-    blockSizeFloat = (float) blockSize;
     // update blockDurationMs, etc.
     // notify all dsp objects and get them to resize their buffers accordingly
   }

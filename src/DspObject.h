@@ -134,7 +134,6 @@ class DspObject : public MessageObject {
     // both float and int versions of the blocksize are stored as different internal mechanisms
     // require different number formats
     int blockSizeInt;
-    float blockSizeFloat;
   
     /** The sample index of the last received message, relative to the beginning of the current block. */
     float blockIndexOfLastMessage;
