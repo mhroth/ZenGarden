@@ -49,8 +49,8 @@ libzengarden-static: ../libs/$(OS)/libzengarden.a
 
 libjnizengarden: ../libs/$(OS)/libjnizengarden.$(JNI_EXTENSION)
 
-../libs/$(OS)/libjnizengarden.$(JNI_EXTENSION):
-	$(call MAKE_SO, $@, $<, $(LOCAL_JNI_SRC_FILES) $(OBJS))
+../libs/$(OS)/libjnizengarden.$(JNI_EXTENSION): $(LOCAL_JNI_SRC_FILES)
+	$(call MAKE_SO, $@, $^, $(OBJS))
 
 libzengarden: ../libs/$(OS)/libzengarden.$(SO_EXTENSION)
 
