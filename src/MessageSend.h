@@ -35,8 +35,9 @@ class MessageSend : public MessageObject {
     const char *getObjectLabel();
     ObjectType getObjectType();
   
+    void receiveMessage(int inletIndex, PdMessage *message);
+  
   private:
-    void processMessage(int inletIndex, PdMessage *message);
     char *name;
   
 };

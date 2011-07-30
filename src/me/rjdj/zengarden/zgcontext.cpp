@@ -22,6 +22,7 @@
 
 #include "me_rjdj_zengarden_ZGContext.h"
 #include "ZenGarden.h"
+#include "zgmessage.h"
 
 #define JNI_VERSION JNI_VERSION_1_4
 
@@ -84,10 +85,7 @@ extern "C" {
               }
               case ZG_MESSAGE_ELEMENT_BANG:
               default: {
-                jclass clazz = env->FindClass("me/rjdj/zengarden/Message.Bang");
-                jobject jbangObject = env->NewObject(clazz,
-                    env->GetMethodID(clazz, "<init>", "V"));
-                env->SetObjectArrayElement(jelements, i, jbangObject);
+                env->SetObjectArrayElement(jelements, i, env->NewStringUTF("!"));
                 break;
               }
             }
@@ -163,43 +161,10 @@ JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZGContext_unregisterReceiver
   env->ReleaseStringUTFChars(jreceiverName, creceiverName);
 }
 
-ZGMessage *javaMessageToZgMessage(JNIEnv *env, jobject jmessage) {
-  double timestamp = env->CallDoubleMethod(jmessage,
-      env->GetMethodID(env->GetObjectClass(jmessage), "getTimestamp", "()D"));
-  jint numElements = env->CallIntMethod(jmessage,
-      env->GetMethodID(env->GetObjectClass(jmessage), "getNumElements", "()I"));
-  ZGMessage *zgMessage = zg_message_new(timestamp, numElements);
-  jstring jtypeString = (jstring) env->CallObjectMethod(jmessage, env->GetMethodID(env->GetObjectClass(jmessage), "getTypeString", "()Ljava/lang/String;"));
-  const char *ctypeString = env->GetStringUTFChars(jtypeString, NULL);
-  for (int i = 0; i < numElements; i++) {
-    switch (ctypeString[i]) {
-      case 'f': {
-        zg_message_set_float(zgMessage, i, env->CallFloatMethod(jmessage, env->GetMethodID(env->GetObjectClass(jmessage), "getFloat", "(I)F")));
-        break;
-      }
-      case 's': {
-        /*
-        jstring jstr = (jstring) env->CallObjectMethod(jmessage, env->GetMethodID(env->GetObjectClass(jmessage), "getSymbol", "(I)Ljava/lang/String;"));
-        const char *cstr = env->GetStringUTFChars(jstr, NULL);
-        // TODO(mhroth): put string into message
-        env->ReleaseStringUTFChars(jstr, cstr);
-        */
-        break;
-      }
-      default: {
-        zg_message_set_bang(zgMessage, i);
-        break;
-      }
-    }
-  }
-  env->ReleaseStringUTFChars(jtypeString, ctypeString);
-  return zgMessage;
-}
-
 JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZGContext_sendMessage
     (JNIEnv *env, jobject jobj, jstring jreceiverName, jobject jmessage, jlong nativePtr) {
   const char *creceiverName = env->GetStringUTFChars(jreceiverName, NULL);
-  ZGMessage *zgMessage = javaMessageToZgMessage(env, jmessage);
+  ZGMessage *zgMessage = zg_message_java_to_zg(env, jmessage);
   zg_context_send_message((ZGContext *) nativePtr, creceiverName, zgMessage);
   env->ReleaseStringUTFChars(jreceiverName, creceiverName);
   zg_message_delete(zgMessage);
@@ -248,7 +213,7 @@ JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZGContext_process
     foutputBuffer[i] = f;
   }
   
-  // interleave and float->short the samples from finputBuffer to cinputBuffer
+  // interleave and float->short the samples in finputBuffer to cinputBuffer
   switch (numOutputChannels) {
     default: {
       for (int k = 2; k < numOutputChannels; k++) {

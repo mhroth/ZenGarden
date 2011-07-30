@@ -26,11 +26,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import me.rjdj.zengarden.Message.MessageType;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.File;
 
 public class ZGSystemTest {
   
@@ -110,10 +113,9 @@ public class ZGSystemTest {
    * unregistered, and another message is sent to the TEST_TO_PATCH receiver. No message should
    * be returned.
    */
-  /*
   @Test
   public void testRegisterReceiver() {
-    final Message message = new Message(0.0, "Hello World!");
+    final Message message = new Message(0.0, "hello!");
     final boolean didReceiveMessage = false;
     
     // create a new context
@@ -161,7 +163,6 @@ public class ZGSystemTest {
     context.sendMessage(TEST_TO_PATCH, message);
     context.process(INPUT_BUFFER, OUTPUT_BUFFER);
   }
-  */
   
   @Test(expected=IllegalArgumentException.class)
   public void testMessage() {

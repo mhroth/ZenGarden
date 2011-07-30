@@ -1,4 +1,5 @@
 LOCAL_JNI_SRC_FILES := \
 ./me/rjdj/zengarden/zgcontext.cpp \
 ./me/rjdj/zengarden/zggraph.cpp \
+./me/rjdj/zengarden/zgmessage.cpp \
 ./me/rjdj/zengarden/zgobject.cpp

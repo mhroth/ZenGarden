@@ -259,35 +259,38 @@ unsigned int zg_graph_get_dollar_zero(ZGGraph *graph) {
 
 #pragma mark - Message
 
-ZGMessage *zg_message_new(double timestamp, unsigned int numElements) {
+ZGMessage *zg_message_new(double timetamp, unsigned int numElements) {
   PdMessage *message = PD_MESSAGE_ON_STACK(numElements);
-  memset(message, 0, sizeof(PdMessage) + (numElements-1)*sizeof(MessageAtom));
-  message->initWithTimestampAndNumElements(timestamp, numElements);
+  int numBytes = sizeof(PdMessage) + ((numElements<2)?0:(numElements-1))*sizeof(MessageAtom);
+  memset(message, 0, numBytes);
+  message->initWithTimestampAndNumElements(timetamp, numElements);
   return message->copyToHeap();
 }
 
-void zg_message_delete(ZGMessage *message) {
+void zg_message_delete(PdMessage *message) {
   message->freeMessage(); // also frees any symbols on the heap
 }
 
-void zg_message_set_float(ZGMessage *message, unsigned int index, float f) {
+void zg_message_set_float(PdMessage *message, unsigned int index, float f) {
   message->setFloat(index, f);
 }
 
-void zg_message_set_symbol(ZGMessage *message, unsigned int index, const char *s) {
+void zg_message_set_symbol(PdMessage *message, unsigned int index, const char *s) {
+  char *symbol = message->getSymbol(index);
+  free(symbol); // free it if it is not already NULL
   message->setSymbol(index, StaticUtils::copyString((char *) s));
 }
 
-void zg_message_set_bang(ZGMessage *message, unsigned int index) {
+void zg_message_set_bang(PdMessage *message, unsigned int index) {
   message->setBang(index);
 }
 
 unsigned int zg_message_get_num_elements(PdMessage *message) {
-  return (message != NULL) ? message->getNumElements() : 0;
+  return message->getNumElements();
 }
 
 double zg_message_get_timestamp(PdMessage *message) {
-  return (message != NULL) ? message->getTimestamp() : -1.0;
+  return message->getTimestamp();
 }
 
 ZGMessageElementType zg_message_get_element_type(unsigned int index, PdMessage *message) {

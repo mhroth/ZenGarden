@@ -21,6 +21,7 @@
  */
 
 #include "me_rjdj_zengarden_ZGObject.h"
+#include "zgmessage.h"
 #include "ZenGarden.h"
 
 JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZGObject_remove
@@ -31,6 +32,7 @@ JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZGObject_remove
 JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZGObject_sendMessage
     (JNIEnv *env, jobject jobj, jint inletIndex, jobject jmessage, jlong nativePtr) {
   ZGObject *zgObject = (ZGObject *) nativePtr;
-  ZGMessage *zgMessage = NULL; // TODO(mhroth): convert the java message into a ZG one
+  ZGMessage *zgMessage = zg_message_java_to_zg(env, jmessage);
   zg_object_send_message(zgObject, inletIndex, zgMessage);
+  zg_message_delete(zgMessage);
 }

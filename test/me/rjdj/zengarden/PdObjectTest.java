@@ -381,19 +381,15 @@ public class PdObjectTest implements ZenGardenListener {
    * Executes the generic message test for at least the given minimum runtime (in milliseconds).
    */
   private void genericMessageTest(String testFilename, float minmumRuntimeMs) {
-    ZenGarden graph = null;
-    try {
-      graph = new ZenGarden(new File(TEST_PATHNAME, testFilename),
-          BLOCK_SIZE, NUM_INPUT_CHANNELS, NUM_OUTPUT_CHANNELS, SAMPLE_RATE);
-    } catch (Exception e) {
-      fail(e.toString());
-    }
-    graph.addListener(this);
+    ZGContext context = new ZGContext(NUM_INPUT_CHANNELS, NUM_OUTPUT_CHANNELS, BLOCK_SIZE, SAMPLE_RATE);
+    context.addListener(this);
+    ZGGraph graph = context.newGraph(new File(TEST_PATHNAME, testFilename));
+    graph.attach();
     
     // process at least as many blocks as necessary to cover the givenruntime
     int numBlocksToProcess = (int) (Math.floor(((minmumRuntimeMs/1000.0f)*SAMPLE_RATE)/BLOCK_SIZE)+1);
     for (int i = 0; i < numBlocksToProcess; i++) {
-      graph.process(INPUT_BUFFER, OUTPUT_BUFFER);
+      context.process(INPUT_BUFFER, OUTPUT_BUFFER);
     }
     
     String goldenOutput = readTextFile(new File(TEST_PATHNAME,
@@ -401,8 +397,6 @@ public class PdObjectTest implements ZenGardenListener {
     
     // ensure that message standard output is same as golden file
     assertEquals(goldenOutput, printBuffer.toString());
-    
-    graph.unloadNativeComponentIfStillLoaded();
   }
   
   /**

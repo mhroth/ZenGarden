@@ -1012,7 +1012,7 @@ void PdContext::scheduleExternalMessageV(const char *receiverName, double timest
 
 void PdContext::scheduleExternalMessage(const char *receiverName, PdMessage *message) {
   lock();
-  int receiverNameIndex = sendController->getNameIndex((char *) receiverName);
+  int receiverNameIndex = sendController->getNameIndex(receiverName);
   if (receiverNameIndex >= 0) { // if the receiver exists
     scheduleMessage(sendController, receiverNameIndex, message);
   }

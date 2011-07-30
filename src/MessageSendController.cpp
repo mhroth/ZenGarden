@@ -41,7 +41,11 @@ const char *MessageSendController::getObjectLabel() {
   return "sendcontroller";
 }
 
-int MessageSendController::getNameIndex(char *receiverName) {
+bool MessageSendController::receiverExists(const char *receiverName) {
+  return (getNameIndex(receiverName) >= 0);
+}
+
+int MessageSendController::getNameIndex(const char *receiverName) {
   if (!strcmp("pd", receiverName)) {
     return SYSTEM_NAME_INDEX; // a special case for sending messages to the system
   }
@@ -54,7 +58,12 @@ int MessageSendController::getNameIndex(char *receiverName) {
 }
 
 void MessageSendController::receiveMessage(char *name, PdMessage *message) {
-  sendMessage(getNameIndex(name), message);
+  int index = getNameIndex(name);
+  
+  // if the receiver name is not registered, nothing to do
+  if (index >= 0) sendMessage(index, message);
+  
+  // check to see if the receiver name has been registered as an external receiver
   if (externalReceiverSet.find(string(name)) != externalReceiverSet.end()) {
     std::pair<char *, PdMessage *> pair = make_pair(name, message);
     context->callbackFunction(ZG_RECEIVER_MESSAGE, context->callbackUserData, &pair);
@@ -106,7 +115,7 @@ void MessageSendController::removeReceiver(RemoteMessageReceiver *receiver) {
 void MessageSendController::registerExternalReceiver(const char *receiverName) {
   string str = string(receiverName);
   // check to make sure that the same receiver name is not entered more than once
-  if (externalReceiverSet.find(str) != externalReceiverSet.end()) {
+  if (externalReceiverSet.find(str) == externalReceiverSet.end()) {
     externalReceiverSet.insert(str);
   }
 }

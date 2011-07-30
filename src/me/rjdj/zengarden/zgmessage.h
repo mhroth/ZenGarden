@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -20,27 +20,16 @@
  *
  */
 
-#include "MessageReceive.h"
+#include <jni.h>
+#include "ZenGarden.h"
 
-MessageReceive::MessageReceive(PdMessage *initMessage, PdGraph *graph) :
-    RemoteMessageReceiver(0, 1, graph) {
-  // a receive object can be instantiated with no name. It receives a default.
-  name = StaticUtils::copyString(initMessage->isSymbol(0)
-      ? initMessage->getSymbol(0) : (char *) "zg_default_sendreceive_name");
+#ifndef ZG_MESSAGE
+#define ZG_MESSAGE
+#ifdef __cplusplus
+extern "C" {
+#endif
+  ZGMessage *zg_message_java_to_zg(JNIEnv *env, jobject jmessage);
+#ifdef __cplusplus
 }
-
-MessageReceive::~MessageReceive() {
-  free(name);
-}
-
-const char *MessageReceive::getObjectLabel() {
-  return "receive";
-}
-
-ObjectType MessageReceive::getObjectType() {
-  return MESSAGE_RECEIVE;
-}
-
-void MessageReceive::receiveMessage(int inletIndex, PdMessage *message) {
-  sendMessage(0, message);
-}
+#endif
+#endif // ZG_MESSAGE

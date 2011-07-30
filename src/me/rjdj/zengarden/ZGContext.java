@@ -175,6 +175,12 @@ public class ZGContext {
    * @param message
    */
   public void sendMessage(String receiverName, Message message) {
+    if (receiverName == null) {
+      throw new NullPointerException("Receiver name may not be null.");
+    }
+    if (message == null) {
+      throw new NullPointerException("Message may not be null.");
+    }
     sendMessage(receiverName, message, contextPtr);
   }
   native private void sendMessage(String receiverName, Message message, long nativePtr);

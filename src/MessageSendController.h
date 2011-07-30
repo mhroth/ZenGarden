@@ -59,11 +59,14 @@ class MessageSendController : public MessageObject {
   
     void sendMessage(int outletIndex, PdMessage *message);
   
+    /** Returns true if a receiver by that name is already registered. False otherwise. */
+    bool receiverExists(const char *receiverName);
+  
     /**
      * Returns the index to which the given receiver name is referenced.
      * Used with <code>receiveMessage(int, PdMessage *)</code>.
      */
-    int getNameIndex(char *name);
+    int getNameIndex(const char *name);
   
     void addReceiver(RemoteMessageReceiver *receiver);
   

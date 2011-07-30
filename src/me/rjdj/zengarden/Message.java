@@ -68,7 +68,7 @@ public class Message {
         case FLOAT: sb.append("f"); break;
         case SYMBOL: {
           if (getSymbol(i).indexOf(" ") >= 0) {
-            throw new IllegalArgumentException("Symbols sent to ZenGarden may not contains spaces: " + 
+            throw new IllegalArgumentException("Symbols sent to ZenGarden may not contain spaces: " + 
                 getSymbol(i));
           }
           sb.append("s");

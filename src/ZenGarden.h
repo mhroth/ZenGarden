@@ -254,18 +254,15 @@ typedef enum ZGConnectionType {
 
 #pragma mark - Message
   
-  /** A new message at the given time and with the specified number of element is created on the heap. */
-  ZGMessage *zg_message_new(double timestamp, unsigned int numElements);
+  /** Returns a new message with the given timestamp and the number of elements. */
+  ZGMessage *zg_message_new(double timetamp, unsigned int numElemets);
   
-  /** The message is released from memory, and all of its symbol elements are freed. */
+  /** The message is released from memory. */
   void zg_message_delete(ZGMessage *message);
   
   void zg_message_set_float(ZGMessage *message, unsigned int index, float f);
   
-  /**
-   * The symbol pointer is stored but the symbol buffer is not. Note that when the message is
-   * deleted then the buffer <i>is</i> freed.
-   */
+  /** The symbol parameter is copied into the message. */
   void zg_message_set_symbol(ZGMessage *message, unsigned int index, const char *s);
   
   void zg_message_set_bang(ZGMessage *message, unsigned int index);

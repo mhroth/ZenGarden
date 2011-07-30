@@ -35,8 +35,7 @@ class MessageReceive : public RemoteMessageReceiver {
     const char *getObjectLabel();
     ObjectType getObjectType();
   
-  private:
-    void processMessage(int inletIndex, PdMessage *message);
+    void receiveMessage(int inletIndex, PdMessage *message);
 };
 
 #endif // _MESSAGE_RECEIVE_H_
