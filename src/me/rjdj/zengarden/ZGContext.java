@@ -201,7 +201,7 @@ public class ZGContext {
   }
   
   /**
-   * Add a <code>ZenGardenListener</code> to this graph.
+   * Add a <code>ZenGardenListener</code> to this context.
    * @param listener
    */
   public void addListener(ZenGardenListener listener) {
@@ -211,7 +211,7 @@ public class ZGContext {
   }
   
   /**
-   * Remove a <code>ZenGardenListener</code> from this graph.
+   * Remove a <code>ZenGardenListener</code> from this context.
    * @param listener
    */
   public void removeListener(ZenGardenListener listener) {

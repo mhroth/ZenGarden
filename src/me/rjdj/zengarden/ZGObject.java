@@ -22,6 +22,9 @@
 
 package me.rjdj.zengarden;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ZGObject {
   
   /**
@@ -67,6 +70,40 @@ public class ZGObject {
     sendMessage(inletIndex, message, objectPtr);
   }
   native private void sendMessage(int inletIndex, Message message, long nativePtr);
+  
+  /**
+   * Returns a <code>List</code> of objects connecting to the given inlet, and from which outlets.
+   * @param inletIndex  The inlet index of this object to which other objects connect to.s
+   */
+  List<ConnectionPair> getIncomingConnections(int inletIndex) {
+    ConnectionPair[] pairs = getIncomingConnections(inletIndex, objectPtr);
+    ArrayList<ConnectionPair> list = new ArrayList<ConnectionPair>(pairs.length);
+    for (ConnectionPair pair : pairs) {
+      list.add(pair);
+    }
+    return list;
+  }
+  native private ConnectionPair[] getIncomingConnections(int inletIndex, long nativePtr);
+  
+  /**
+   * Returns a <code>List</code> of objects connecting from the given outlet, and from which inlets.
+   * @param outletIndex  The outlet index of this object from which other objects connect.
+   */
+  List<ConnectionPair> getOutgoingConnections(int outletIndex) {
+    ConnectionPair[] pairs = getOutgoingConnections(outletIndex, objectPtr);
+    ArrayList<ConnectionPair> list = new ArrayList<ConnectionPair>(pairs.length);
+    for (ConnectionPair pair : pairs) {
+      list.add(pair);
+    }
+    return list;
+  }
+  native private ConnectionPair[] getOutgoingConnections(int outletIndex, long nativePtr);
+  
+  @Override
+  public String toString() {
+    return toString(objectPtr);
+  }
+  native private String toString(long nativePtr);
   
   @Override
   public boolean equals(Object o) {

@@ -82,8 +82,6 @@ unsigned int zg_object_get_num_outlets(ZGObject *object) {
 }
 
 ZGConnectionPair *zg_object_get_connections_at_inlet(ZGObject *object, unsigned int inletIndex, unsigned int *n) {
-  if (object == NULL || n == NULL) return NULL;
-  
   list<ObjectLetPair> connections = object->getIncomingConnections(inletIndex);
   *n = connections.size();
   int i = 0;
@@ -95,8 +93,6 @@ ZGConnectionPair *zg_object_get_connections_at_inlet(ZGObject *object, unsigned 
 }
 
 ZGConnectionPair *zg_object_get_connections_at_outlet(ZGObject *object, unsigned int outletIndex, unsigned int *n) {
-  if (object == NULL || n == NULL) return NULL;
-  
   list<ObjectLetPair> connections = object->getOutgoingConnections(outletIndex);
   *n = connections.size();
   int i = 0;

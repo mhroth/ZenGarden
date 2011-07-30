@@ -145,6 +145,7 @@ void PdGraph::removeObject(MessageObject *object) {
         list<ObjectLetPair>::iterator lend = incomingConnections.end();
         while (lit != lend) {
           removeConnection((*lit).first, (*lit).second, object, i);
+          lit++;
         }
       }
       
@@ -155,6 +156,7 @@ void PdGraph::removeObject(MessageObject *object) {
         list<ObjectLetPair>::iterator lend = outgoingConnections.end();
         while (lit != lend) {
           removeConnection(object, i, (*lit).first, (*lit).second);
+          lit++;
         }
       }
       

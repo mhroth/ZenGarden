@@ -35,6 +35,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.util.HashSet;
+import java.util.List;
 
 public class ZGSystemTest {
   
@@ -87,25 +88,22 @@ public class ZGSystemTest {
     ZGObject obj0 = graph.addObject("osc~ 440");
     ZGObject obj1 = graph.addObject("dac~");
     graph.addConnection(obj0, 0, obj1, 0);
-    /*
-    obj0.getConnectionsAtInlet(0).size()
-    assertEquals(1, obj0.getNumConnectionsAtOutlet(0), ""); // 1 connection at osc~ outlet
-    assertEquals(1, obj1.getNumConnectionsAtInlet(0), ""); // 1 connection at left dac~ inlet
-    assertEquals(0, obj1.getNumConnectionsAtInlet(1), ""); // 0 connections at right dac~ inlet
-    */
+    assertEquals(1, obj0.getOutgoingConnections(0).size()); // 1 connection at osc~ outlet
+    assertEquals(1, obj1.getIncomingConnections(0).size()); // 1 connection at left dac~ inlet
+    assertEquals(0, obj1.getIncomingConnections(1).size()); // 0 connections at right dac~ inlet
+    
     graph.addConnection(obj0, 0, obj1, 1);
-    /*
-    assertEquals(2, obj0.getNumConnectionsAtOutlet(0), ""); // 2 connections at osc~ outlet
-    assertEquals(1, obj1.getNumConnectionsAtInlet(0), ""); // 1 connection at left dac~ inlet
-    assertEquals(1, obj1.getNumConnectionsAtInlet(1), ""); // 1 connection at right dac~ inlet
-    */
+    assertEquals(2, obj0.getOutgoingConnections(0).size()); // 2 connections at osc~ outlet
+    assertEquals(1, obj1.getIncomingConnections(0).size()); // 1 connection at left dac~ inlet
+    assertEquals(1, obj1.getIncomingConnections(1).size()); // 1 connection at right dac~ inlet
+
     graph.removeConnection(obj0, 0, obj1, 0);
-    graph.removeConnection(obj0, 0, obj1, 1);
-    obj0.remove();
-    obj1.remove();
-    //graph.removeObject(obj0); // ???
-    //graph.removeObject(obj1);
-    //graph.unattach();
+    assertEquals(1, obj0.getOutgoingConnections(0).size()); // 1 connection at osc~ outlet
+    assertEquals(0, obj1.getIncomingConnections(0).size()); // 0 connection at left dac~ inlet
+    assertEquals(1, obj1.getIncomingConnections(1).size()); // 1 connections at right dac~ inlet
+    
+    obj0.remove(); // remove osc~ alltogether, should remove all remaining connections
+    assertEquals(0, obj1.getIncomingConnections(1).size()); // 0 connections at right dac~ inlet
   }
   
   /**

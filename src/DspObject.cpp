@@ -106,16 +106,16 @@ bool DspObject::doesProcessAudio() {
 
 list<ObjectLetPair> DspObject::getIncomingConnections(unsigned int inletIndex) {
   list<ObjectLetPair> messageConnectionList = MessageObject::getIncomingConnections(inletIndex);
-  list<ObjectLetPair> dspConnectionList = incomingMessageConnections.empty()
-      ? list<ObjectLetPair>() : incomingMessageConnections[inletIndex];
+  list<ObjectLetPair> dspConnectionList = incomingDspConnections.empty()
+      ? list<ObjectLetPair>() : incomingDspConnections[inletIndex];
   messageConnectionList.insert(messageConnectionList.end(), dspConnectionList.begin(), dspConnectionList.end());
   return messageConnectionList;
 }
 
 list<ObjectLetPair> DspObject::getOutgoingConnections(unsigned int outletIndex) {
   list<ObjectLetPair> messageConnectionList = MessageObject::getOutgoingConnections(outletIndex);
-  list<ObjectLetPair> dspConnectionList = outgoingMessageConnections.empty()
-      ? list<ObjectLetPair>() : outgoingMessageConnections[outletIndex];
+  list<ObjectLetPair> dspConnectionList = outgoingDspConnections.empty()
+      ? list<ObjectLetPair>() : outgoingDspConnections[outletIndex];
   messageConnectionList.insert(messageConnectionList.end(), dspConnectionList.begin(), dspConnectionList.end());
   return messageConnectionList;
 }
