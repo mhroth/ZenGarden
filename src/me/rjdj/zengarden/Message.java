@@ -107,6 +107,13 @@ public class Message {
     return String.class.isInstance(elements[index]) && !BANG_STRING.equals(elements[index]);
   }
   
+  /**
+   * Returns <code>true</code> if the given symbol is equal to the message symbol. <code>false</code>
+   * otherwise.
+   * @param index
+   * @param symbol
+   * @return
+   */
   boolean isSymbol(int index, String symbol) {
     if (isSymbol(index)) {
       String s = (String) elements[index];

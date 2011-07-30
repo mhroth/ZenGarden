@@ -55,7 +55,7 @@ class MessageSendController : public MessageObject {
     const char *getObjectLabel();
   
     /** Sends the message on to all receivers with the given name. */
-    void receiveMessage(char *name, PdMessage *message);
+    void receiveMessage(const char *name, PdMessage *message);
   
     void sendMessage(int outletIndex, PdMessage *message);
   

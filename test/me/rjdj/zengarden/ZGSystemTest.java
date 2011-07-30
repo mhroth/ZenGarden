@@ -34,6 +34,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.HashSet;
 
 public class ZGSystemTest {
   
@@ -116,7 +117,7 @@ public class ZGSystemTest {
   @Test
   public void testRegisterReceiver() {
     final Message message = new Message(0.0, "hello!");
-    final boolean didReceiveMessage = false;
+    final HashSet<Boolean> hashSet = new HashSet<Boolean>();
     
     // create a new context
     ZGContext context = new ZGContext(NUM_INPUT_CHANNELS, NUM_OUTPUT_CHANNELS, BLOCK_SIZE, SAMPLE_RATE);
@@ -128,7 +129,7 @@ public class ZGSystemTest {
       public void onMessage(String receiverName, Message receivedMessage) {
         assertEquals(PATCH_TO_TEST, receiverName);
         assertEquals(message, receivedMessage);
-        //didReceiveMessage = true;
+        hashSet.add(new Boolean(true));
       }
     };
     context.addListener(zgListener);
@@ -141,7 +142,7 @@ public class ZGSystemTest {
     graph.attach();
     context.sendMessage(TEST_TO_PATCH, message);
     context.process(INPUT_BUFFER, OUTPUT_BUFFER); // process once in order to process the message
-    if (!didReceiveMessage) {
+    if (!hashSet.contains(new Boolean(true))) {
       fail("Context did not receive a message callback.");
     }
     
@@ -155,7 +156,8 @@ public class ZGSystemTest {
     context.addListener(new ZenGardenAdapter() {
       @Override
       public void onMessage(String receiverName, Message receivedMessage) {
-        fail("A message was received despite no receiver being registered: " + receivedMessage.toString());
+        fail("A message was received from \"" + receiverName  +
+            "\" despite no receiver being registered: " + receivedMessage.toString());
       }
     });
     

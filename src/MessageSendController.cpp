@@ -57,7 +57,7 @@ int MessageSendController::getNameIndex(const char *receiverName) {
   return -1;
 }
 
-void MessageSendController::receiveMessage(char *name, PdMessage *message) {
+void MessageSendController::receiveMessage(const char *name, PdMessage *message) {
   int index = getNameIndex(name);
   
   // if the receiver name is not registered, nothing to do
@@ -65,7 +65,7 @@ void MessageSendController::receiveMessage(char *name, PdMessage *message) {
   
   // check to see if the receiver name has been registered as an external receiver
   if (externalReceiverSet.find(string(name)) != externalReceiverSet.end()) {
-    std::pair<char *, PdMessage *> pair = make_pair(name, message);
+    std::pair<const char *, PdMessage *> pair = make_pair(name, message);
     context->callbackFunction(ZG_RECEIVER_MESSAGE, context->callbackUserData, &pair);
   }
 }
@@ -104,11 +104,12 @@ void MessageSendController::removeReceiver(RemoteMessageReceiver *receiver) {
   if (nameIndex != -1) {
     set<RemoteMessageReceiver *> *receiverSet = &(sendStack[nameIndex].second);
     receiverSet->erase(receiver);
+    // NOTE(mhroth):
     // once the receiver set has been created, it should not be erased anymore from the sendStack.
     // PdContext depends on the nameIndex to be constant for all receiver names once they are
     // defined, as a message destined for that receiver may already be in the message queue
     // with the given index. If the indicies change, then message will be sent to the wrong
-    // receiver set.
+    // receiver set. This is a stupid constraint. Fix it.
   }
 }
 

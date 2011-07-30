@@ -63,13 +63,14 @@ extern "C" {
         }
         case ZG_RECEIVER_MESSAGE: {
           ZGReceiverMessagePair *rmPair = (ZGReceiverMessagePair *) ptr;
-          
+
           // create a new Message
           ZGMessage *zgMessage = rmPair->message;
-          int numMessageElements = zg_message_get_num_elements(zgMessage);
-          jobjectArray jelements = env->NewObjectArray(numMessageElements,
+          int numElements = zg_message_get_num_elements(zgMessage);
+          jobjectArray jelements = env->NewObjectArray(numElements,
               env->FindClass("java/lang/Object"), NULL);
-          for (int i = 0; i < numMessageElements; i++) {
+
+          for (int i = 0; i < numElements; i++) {
             switch (zg_message_get_element_type(i, zgMessage)) {
               case ZG_MESSAGE_ELEMENT_FLOAT: {
                 jclass clazz = env->FindClass("java/lang/Float");
@@ -90,11 +91,11 @@ extern "C" {
               }
             }
           }
-          
+
           jclass clazz = env->FindClass("me/rjdj/zengarden/Message");
           jobject jmessage = env->NewObject(clazz, env->GetMethodID(clazz, "<init>", "(D[Ljava/lang/Object;)V"),
               zg_message_get_timestamp(zgMessage), jelements);
-          
+
           env->CallVoidMethod(zgContext,
               env->GetMethodID(env->GetObjectClass(zgContext),
                   "onMessage", "(Ljava/lang/String;Lme/rjdj/zengarden/Message;)V"),
