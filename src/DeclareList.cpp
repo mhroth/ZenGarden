@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -20,6 +20,7 @@
  *
  */
 
+#include <string.h>
 #include "DeclareList.h"
 #include "StaticUtils.h"
 
