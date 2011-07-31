@@ -87,7 +87,7 @@ void DspSqrt::processDsp() {
     default: break;
   }
   #else
-  for (int i = fromIndex; i < toIndex; i++) {
+  for (int i = 0; i < blockSizeInt; i++) {
     dspBufferAtOutlet0[i] = sqrtf(dspBufferAtInlet0[i]);
   }
   #endif

@@ -73,7 +73,7 @@ void DspMinimum::processDsp() {
       vDSP_vfill(&constant, vconst, 1, blockSizeInt);
       vDSP_vmin(dspBufferAtInlet0, 1, vconst, 1, dspBufferAtOutlet0, 1, blockSizeInt);
       #else
-      for (int i = fromIndex; i < toIndex; i++) {
+      for (int i = 0; i < blockSizeInt; i++) {
         if (dspBufferAtInlet0[i] <= constant) {
           dspBufferAtOutlet0[i] = dspBufferAtInlet0[i];
         } else {

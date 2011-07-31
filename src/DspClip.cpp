@@ -81,7 +81,7 @@ void DspClip::processDsp() {
       // allow fallthrough
     }
     case DSP_CLIP_DSP1_MESSAGE0: {
-      vDSP_vclip(dspBufferAtInlet0, 1, &lowerBound, &upperBound, dspBufferAtOutlet0, 1, blockSizeInt);
+      processDspWithIndex(0, blockSizeInt);
       break;
     }
     default: {
