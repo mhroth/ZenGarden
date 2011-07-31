@@ -81,7 +81,7 @@ void DspDelayRead::processDspWithIndex(int fromIndex, int toIndex) {
     if (delayIndex < 0) {
       delayIndex += bufferLength;
     }
-    /*
+    
      * TODO(mhroth): finish this logic
     if (delayIndex > bufferLength - blockSizeInt) {
       int samplesInBuffer = bufferLength - delayIndex;
