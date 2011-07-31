@@ -20,7 +20,7 @@
  *
  */
 
-#include <sndfile.h>
+//#include <sndfile.h>
 #include "MessageSoundfiler.h"
 #include "MessageTable.h"
 #include "PdGraph.h"
