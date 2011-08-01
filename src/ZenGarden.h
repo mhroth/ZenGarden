@@ -118,7 +118,7 @@ typedef enum ZGConnectionType {
    * initialisation string (e.g. "5", "hello", or "f f f"). The object must be added to the same
    * context and graph as given to this function.
    */
-  ZGObject *zg_graph_new_object(ZGGraph *graph, char *objectString);
+  ZGObject *zg_graph_new_object(ZGGraph *graph, const char *objectString);
   
   /**
    * Add an object to a graph. If the graph is currently attached then audio may be interrupted

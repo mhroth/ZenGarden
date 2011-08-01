@@ -31,7 +31,7 @@ void zg_remove_graph(PdContext *context, PdGraph *graph) {
 }
 */
 
-ZGObject *zg_graph_new_object(ZGGraph *graph, char *objectString) {
+ZGObject *zg_graph_new_object(ZGGraph *graph, const char *objectString) {
   char *objectStringCopy = StaticUtils::copyString(objectString);
   char *objectLabel = strtok(objectStringCopy, " ;");
   char *initString = strtok(NULL, ";");
