@@ -31,7 +31,7 @@ void zg_remove_graph(PdContext *context, PdGraph *graph) {
 }
 */
 
-ZGObject *zg_graph_new_object(ZGGraph *graph, char *objectString) {
+void zg_graph_add_new_object(PdGraph *graph, const char *objectString, float canvasX, float canvasY) {
   char *objectStringCopy = StaticUtils::copyString(objectString);
   char *objectLabel = strtok(objectStringCopy, " ;");
   char *initString = strtok(NULL, ";");
@@ -40,11 +40,8 @@ ZGObject *zg_graph_new_object(ZGGraph *graph, char *objectString) {
   initMessage->initWithSARb(32, initString, graph->getArguments(), resolutionBuffer, 256);
   MessageObject *messageObject = graph->getContext()->newObject((char *) "obj", objectLabel, initMessage, graph);
   free(objectStringCopy);
-  return messageObject;
-}
-
-void zg_graph_add_object(PdGraph *graph, ZGObject *object, float canvasX, float canvasY) {
-  graph->addObject(canvasX, canvasY, object);
+  
+  graph->addObject(canvasX, canvasY, messageObject);
 }
 
 void zg_delete_graph(ZGGraph *graph) {

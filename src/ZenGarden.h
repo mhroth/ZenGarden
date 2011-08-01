@@ -109,33 +109,7 @@ typedef enum ZGConnectionType {
   
   /** Send a message to the named receiver. */
   void zg_context_send_message(ZGContext *context, const char *receiverName, ZGMessage *message);
-  
-  
-#pragma mark - Object Manipulation
-  
-  /**
-   * Create a new object with the given label (e.g. "+", "send~", or "pack"), and an optional
-   * initialisation string (e.g. "5", "hello", or "f f f"). The object must be added to the same
-   * context and graph as given to this function.
-   */
-  ZGObject *zg_graph_new_object(ZGGraph *graph, char *objectString);
-  
-  /**
-   * Add an object to a graph. If the graph is currently attached then audio may be interrupted
-   * while the object is attached the and graph reconfigured (if necessary). If the graph is unattached
-   * then no audio interruption will take place, even if reconfiguration takes place. The canvasX
-   * and canvasY arguments specify the canvas location of the object. This is only relevant for
-   * input/~ and output/~ objects, otherwise 0 may be specified.
-   */
-  void zg_graph_add_object(ZGGraph *graph, ZGObject *object, float canvasX, float canvasY);
-  
-  /**
-   * Removes the object from the graph and deletes it from memory. Any connections that this object
-   * may have had in the graph are also deleted. The reference to the object after this function
-   * completes is invalid.
-   */
-  void zg_object_remove(ZGObject *object);
-  
+
   
 #pragma mark - Graph
   
@@ -221,6 +195,23 @@ typedef enum ZGConnectionType {
 
   
 #pragma mark - Object
+  
+  /**
+   * Create a new object with a string, e.g. "osc~ 440", "+", or "pack t t s, and add it to the graph.
+   * If the graph is currently attached then audio may be interrupted
+   * while the object is attached the and graph reconfigured (if necessary). If the graph is unattached
+   * then no audio interruption will take place, even if reconfiguration takes place. The canvasX
+   * and canvasY arguments specify the canvas location of the object. This is only relevant for
+   * input/~ and output/~ objects, otherwise 0 may be specified.
+   */
+  void zg_graph_add_new_object(ZGGraph *graph, const char *objectString, float canvasX, float canvasY);
+  
+  /**
+   * Removes the object from the graph and deletes it from memory. Any connections that this object
+   * may have had in the graph are also deleted. The reference to the object after this function
+   * completes is invalid.
+   */
+  void zg_object_remove(ZGObject *object);
   
   /**
    * Returns an array of ZGConnectionPair structs indicating the objects and outlets from which
