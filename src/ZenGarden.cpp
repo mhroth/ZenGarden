@@ -44,7 +44,7 @@ void zg_graph_add_new_object(PdGraph *graph, const char *objectString, float can
   graph->addObject(canvasX, canvasY, messageObject);
 }
 
-void zg_delete_graph(ZGGraph *graph) {
+void zg_graph_delete(ZGGraph *graph) {
   if (graph != NULL) {
     /*
     if (graph->isAttachedToContext()) {
@@ -156,6 +156,11 @@ void *zg_context_get_userinfo(PdContext *context) {
   return context->callbackUserData;
 }
 
+ZGGraph *zg_context_get_graphs(ZGContext *context, unsigned int *n) {
+  *n = 0;
+  return NULL;
+}
+
 
 #pragma mark - Context Un/Register External Receivers
 
@@ -247,6 +252,11 @@ void zg_graph_remove_connection(ZGGraph *graph, ZGObject *fromObject, int outlet
 
 unsigned int zg_graph_get_dollar_zero(ZGGraph *graph) {
   return (graph != NULL) ? (unsigned int) graph->getArguments()->getFloat(0) : 0;
+}
+
+ZGObject *zg_graph_get_objects(ZGGraph *graph, unsigned int *n) {
+  *n = 0;
+  return NULL;
 }
 
 

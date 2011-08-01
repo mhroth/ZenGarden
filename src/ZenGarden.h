@@ -74,7 +74,7 @@ typedef enum ZGConnectionType {
 } ZGConnectionType;
   
   
-#pragma mark - New Context/Graph/Object
+#pragma mark - Context
   
   /** Create a new context to which graphs can be added. */
   ZGContext *zg_context_new(int numInputChannels, int numOutputChannels, int blockSize, float sampleRate,
@@ -95,23 +95,32 @@ typedef enum ZGConnectionType {
    */
   void zg_context_delete(ZGContext *context);
   
-  /** Deletes the given graph. If attached, the graph is automatically removed from its context. */
-  void zg_delete_graph(ZGGraph *graph);
-  
-  /** Returns the $0 argument to a graph, allowing graph-specific receivers to be addressed. */
-  unsigned int zg_graph_get_dollar_zero(ZGGraph *graph);
-  
   /** Returns the userinfo pointer used with the callback function. */
   void *zg_context_get_userinfo(ZGContext *context);
+ 
+  /**
+   * Returns all root graphs attached to this context. The returned array, with length n, must
+   * be freed by the caller.
+   */
+  ZGGraph *zg_context_get_graphs(ZGContext *context, unsigned int *n);
 
 
 #pragma mark - Graph
+  
+  /** Deletes the given graph. If attached, the graph is automatically removed from its context. */
+  void zg_graph_delete(ZGGraph *graph);
+  
+  /** Returns the $0 argument to a graph, allowing graph-specific receivers to be addressed. */
+  unsigned int zg_graph_get_dollar_zero(ZGGraph *graph);
   
   /** Attaches a graph to its context */
   void zg_graph_attach(ZGGraph *graph);
   
   /** Attaches a graph to its context */
   void zg_graph_unattach(ZGGraph *graph);
+  
+  /** Returns all objects in this graph. The returned array, with length n, must be freed by the caller. */
+  ZGObject *zg_graph_get_objects(ZGGraph *graph, unsigned int *n);
   
   
 #pragma mark - Manage Connections
