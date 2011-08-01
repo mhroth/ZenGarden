@@ -419,7 +419,6 @@
 		90337E2611D0D847009FCC01 /* DspVariableDelay.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337B8D11D0D847009FCC01 /* DspVariableDelay.h */; };
 		90337E2911D0D847009FCC01 /* DspWrap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B9011D0D847009FCC01 /* DspWrap.cpp */; };
 		90337E2A11D0D847009FCC01 /* DspWrap.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337B9111D0D847009FCC01 /* DspWrap.h */; };
-		90337E2D11D0D847009FCC01 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B9411D0D847009FCC01 /* main.cpp */; };
 		90337E3611D0D847009FCC01 /* MersenneTwister.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337BA811D0D847009FCC01 /* MersenneTwister.h */; };
 		90337E3711D0D847009FCC01 /* MessageAbsoluteValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337BA911D0D847009FCC01 /* MessageAbsoluteValue.cpp */; };
 		90337E3811D0D847009FCC01 /* MessageAbsoluteValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337BAA11D0D847009FCC01 /* MessageAbsoluteValue.h */; };
@@ -2049,7 +2048,6 @@
 				90337E2311D0D847009FCC01 /* DspThrow.cpp in Sources */,
 				90337E2511D0D847009FCC01 /* DspVariableDelay.cpp in Sources */,
 				90337E2911D0D847009FCC01 /* DspWrap.cpp in Sources */,
-				90337E2D11D0D847009FCC01 /* main.cpp in Sources */,
 				90337E3711D0D847009FCC01 /* MessageAbsoluteValue.cpp in Sources */,
 				90337E3911D0D847009FCC01 /* MessageAdd.cpp in Sources */,
 				90337E3B11D0D847009FCC01 /* MessageArcTangent.cpp in Sources */,
