@@ -35,7 +35,7 @@ StaticUtils::~StaticUtils() {
   // nothing to do
 }
 
-char *StaticUtils::copyString(char *str) {
+char *StaticUtils::copyString(const char *str) {
   if (str == NULL) {
     return NULL;
   } else {

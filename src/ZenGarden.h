@@ -104,13 +104,7 @@ typedef enum ZGConnectionType {
   /** Returns the userinfo pointer used with the callback function. */
   void *zg_context_get_userinfo(ZGContext *context);
 
-  
-#pragma mark - Context
-  
-  /** Send a message to the named receiver. */
-  void zg_context_send_message(ZGContext *context, const char *receiverName, ZGMessage *message);
 
-  
 #pragma mark - Graph
   
   /** Attaches a graph to its context */
@@ -151,6 +145,9 @@ typedef enum ZGConnectionType {
   
 #pragma mark - Context Send Message
   
+  /** Send a message to the named receiver. */
+  void zg_context_send_message(ZGContext *context, const char *receiverName, ZGMessage *message);
+  
   /**
    * Send a message to the named receiver with the given format at the beginning of the next audio block.
    * If no receiver exists with the given name, then this funtion does nothing.
@@ -160,7 +157,7 @@ typedef enum ZGConnectionType {
    * E.g., zg_send_message(graph, "test", "s", "hello");
    * E.g., zg_send_message(graph, "test", "b");
    */
-  //void zg_context_send_message(ZGContext *context, const char *receiverName, const char *messageFormat, ...);
+  void zg_context_send_messageV(ZGContext *context, const char *receiverName, const char *messageFormat, ...);
   
   /**
    * Send a message to the named receiver with the given format at the given block index. If the

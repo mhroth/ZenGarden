@@ -31,7 +31,7 @@ using namespace std;
 class StaticUtils {
   
   public:
-    static char *copyString(char *str);
+    static char *copyString(const char *str);
     static bool isNumeric(char *str);
     static inline float millisecondsToSamples(float delayInMs, float sampleRate) {
       return (delayInMs / 1000.0f) * sampleRate;

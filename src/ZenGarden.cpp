@@ -174,14 +174,14 @@ void zg_context_unregister_receiver(ZGContext *context, const char *receiverName
 void zg_context_send_message(ZGContext *context, const char *receiverName, ZGMessage *message) {
   context->scheduleExternalMessage(receiverName, message);
 }
-/*
-void zg_context_send_message(PdContext *context, const char *receiverName, const char *messageFormat, ...) {
+
+void zg_context_send_messageV(PdContext *context, const char *receiverName, const char *messageFormat, ...) {
   va_list ap;
   va_start(ap, messageFormat);
   context->scheduleExternalMessageV(receiverName, 0.0, messageFormat, ap);
   va_end(ap); // release the va_list
 }
-*/
+
 void zg_context_send_message_at_blockindex(PdContext *context, const char *receiverName, double blockIndex,
     const char *messageFormat, ...) {
   va_list ap;
