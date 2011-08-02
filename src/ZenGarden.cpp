@@ -21,6 +21,7 @@
  */
 
 #include <string.h>
+#include "MessageTable.h"
 #include "PdContext.h"
 #include "PdGraph.h"
 #include "ZenGarden.h"
@@ -105,10 +106,9 @@ const char *zg_object_get_label(ZGObject *object) {
 }
 
 void zg_object_send_message(MessageObject *object, unsigned int inletIndex, ZGMessage *message) {
-  // TODO(mhroth): lock only if the parent graph is attached!
-  object->getGraph()->getContext()->lock();
+  object->getGraph()->lockContextIfAttached();
   object->receiveMessage(inletIndex, message);
-  object->getGraph()->getContext()->unlock();
+  object->getGraph()->unlockContextIfAttached();
 }
 
 void zg_object_get_canvas_position(ZGObject *object, float *x, float *y) {
@@ -140,7 +140,7 @@ ZGGraph *zg_context_new_empty_graph(PdContext *context) {
   return graph;
 }
 
-ZGGraph *zg_context_new_graph(PdContext *context, char *directory, char *filename) {
+ZGGraph *zg_context_new_graph(PdContext *context, const char *directory, const char *filename) {
   PdMessage *initMessage = PD_MESSAGE_ON_STACK(0); // create an empty initMessage
   initMessage->initWithTimestampAndNumElements(0.0, 0);
   // no parent graph
@@ -157,8 +157,16 @@ void *zg_context_get_userinfo(PdContext *context) {
 }
 
 ZGGraph *zg_context_get_graphs(ZGContext *context, unsigned int *n) {
+  // TODO(mhroth): implement this
   *n = 0;
   return NULL;
+}
+
+
+#pragma mark - Objects from Context
+
+ZGObject *zg_context_get_table_for_name(ZGObject *table, const char *name) {
+  return NULL; // TODO(mhroth): implement this
 }
 
 
@@ -257,6 +265,31 @@ unsigned int zg_graph_get_dollar_zero(ZGGraph *graph) {
 ZGObject *zg_graph_get_objects(ZGGraph *graph, unsigned int *n) {
   *n = 0;
   return NULL;
+}
+
+
+#pragma mark - Table
+
+float *zg_table_get_buffer(MessageObject *table, unsigned int *n) {
+  if (table->getObjectType() == MESSAGE_TABLE) {
+    MessageTable *messageTable = (MessageTable *) table;
+    int x = 0;
+    float *buffer = messageTable->getBuffer(&x);
+    *n = x;
+    return buffer;
+  }
+  *n = 0;
+  return NULL;
+}
+
+void zg_table_set_buffer(MessageObject *table, float *buffer, unsigned int n) {
+  if (table->getObjectType() == MESSAGE_TABLE)  {
+    MessageTable *messageTable = (MessageTable *) table;
+    messageTable->getGraph()->lockContextIfAttached();
+    float *tableBuffer = messageTable->resizeBuffer(n);
+    memcpy(tableBuffer, buffer, n*sizeof(float));
+    messageTable->getGraph()->unlockContextIfAttached();
+  }
 }
 
 

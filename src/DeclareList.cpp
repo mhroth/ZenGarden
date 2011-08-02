@@ -32,7 +32,7 @@ DeclareList::~DeclareList() {
   // nothing to do
 }
 
-void DeclareList::addPath(char *path) {
+void DeclareList::addPath(const char *path) {
   if (isFullPath(path)) {
     // if the path is full, then just add it to the list
     if (hasTrailingSlash(path)) {
@@ -54,11 +54,11 @@ void DeclareList::addPath(char *path) {
   }
 }
 
-bool DeclareList::isFullPath(char *path) {
+bool DeclareList::isFullPath(const char *path) {
   return (path[0] == '/');
 }
 
-bool DeclareList::hasTrailingSlash(char *path) {
+bool DeclareList::hasTrailingSlash(const char *path) {
   return (path[strlen(path)-1] == '/');
 }
 

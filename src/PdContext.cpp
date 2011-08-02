@@ -288,7 +288,7 @@ void PdContext::process(float *inputBuffers, float *outputBuffers) {
 #pragma mark -
 #pragma mark New Graph
 
-PdGraph *PdContext::newGraph(char *directory, char *filename, PdMessage *initMessage, PdGraph *parentGraph) {
+PdGraph *PdContext::newGraph(const char *directory, const char *filename, PdMessage *initMessage, PdGraph *parentGraph) {
   // create file path based on directory and filename. Parse the file.
   char *filePath = StaticUtils::concatStrings(directory, filename);
   

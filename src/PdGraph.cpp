@@ -81,8 +81,8 @@ ObjectType PdGraph::getObjectType() {
   return OBJECT_PD;
 }
 
-#pragma mark -
-#pragma mark Lock/Unlock Context
+
+#pragma mark - Lock/Unlock Context
 
 void PdGraph::lockContextIfAttached() {
   if (isAttachedToContext) {
@@ -479,7 +479,7 @@ char *PdGraph::findFilePath(char *filename) {
   return isRootGraph() ? NULL : parentGraph->findFilePath(filename);
 }
 
-void PdGraph::addDeclarePath(char *path) {
+void PdGraph::addDeclarePath(const char *path) {
   if (isRootGraph()) {
     declareList->addPath(path);
   } else {

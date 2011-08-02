@@ -60,7 +60,7 @@ class PdContext {
      * Create a new graph using the given file, with the given arguments and parent graph.
      * The parent graph may be <code>NULL</code> in the case that it is a top-level graph.
      */
-    PdGraph *newGraph(char *directory, char *filename, PdMessage *initMessage, PdGraph *graph);
+    PdGraph *newGraph(const char *directory, const char *filename, PdMessage *initMessage, PdGraph *graph);
   
     /**
      * Attach the given <code>graph</code> to this <code>context</code>, also registering all

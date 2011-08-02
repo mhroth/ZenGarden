@@ -182,7 +182,7 @@ class PdGraph : public DspObject {
      * resolved relative to the path of the abstraction. If this graph is a subgraph (not an
      * abstraction), then the path will be handed off to the parent graph to be handled.
      */
-    void addDeclarePath(char *path);
+    void addDeclarePath(const char *path);
   
     /** Used with MessageValue for keeping track of global variables. */
     // TODO(mhroth): these are not yet fully implemented
@@ -202,15 +202,15 @@ class PdGraph : public DspObject {
     list<ObjectLetPair> getIncomingConnections(unsigned int inletIndex);
     list<ObjectLetPair> getOutgoingConnections(unsigned int outletIndex);
   
-  private:
-    /** Create a new object based on its initialisation string. */
-    MessageObject *newObject(char *objectType, char *objectLabel, PdMessage *initMessage, PdGraph *graph);
-  
     /** Locks the context if this graph is attached. */
     void lockContextIfAttached();
     
     /** Unlocks the context if this graph is attached. */
     void unlockContextIfAttached();
+  
+  private:
+    /** Create a new object based on its initialisation string. */
+    MessageObject *newObject(char *objectType, char *objectLabel, PdMessage *initMessage, PdGraph *graph);
   
     /**
      * Registers the object with all relevant global lists.

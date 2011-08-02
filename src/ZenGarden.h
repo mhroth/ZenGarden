@@ -84,7 +84,7 @@ typedef enum ZGConnectionType {
   ZGGraph *zg_context_new_empty_graph(ZGContext *context);
   
   /* Create a new graph from a Pd file. */
-  ZGGraph *zg_context_new_graph(ZGContext *context, char *directory, char *filename);
+  ZGGraph *zg_context_new_graph(ZGContext *context, const char *directory, const char *filename);
   
   /** Remove the graph from the context. */
   //void zg_remove_graph(ZGContext *context, ZGGraph *graph);
@@ -103,6 +103,12 @@ typedef enum ZGConnectionType {
    * be freed by the caller.
    */
   ZGGraph *zg_context_get_graphs(ZGContext *context, unsigned int *n);
+  
+
+#pragma mark - Objects from Context
+  
+  /** Returns the global table object with the given name. NULL if the table does not exist. */
+  ZGObject *zg_context_get_table_for_name(ZGObject *table, const char *name);
 
 
 #pragma mark - Graph
@@ -247,6 +253,22 @@ typedef enum ZGConnectionType {
   
   /** Returns the object label, e.g. "osc~" or "+". */
   const char *zg_object_get_label(ZGObject *object);
+  
+  
+#pragma mark - Table
+  
+  /**
+   * Returns a direct pointer to the table's buffer with a given length. Note that if elements
+   * of the buffer are modified while the context is being processed, a race condition may occur
+   * between the timing of the write and the read by zg_context_process().
+   */
+  float *zg_table_get_buffer(ZGObject *table, unsigned int *n);
+  
+  /**
+   * The table's buffer is resized and copied from the given buffer. This set operation is thread-safe
+   * especially with regards to zg_context_process().
+   */
+  void zg_table_set_buffer(ZGObject *table, float *buffer, unsigned int n);
   
 
 #pragma mark - Message

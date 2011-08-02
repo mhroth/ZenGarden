@@ -45,16 +45,16 @@ class DeclareList  {
      * Add a full or relative path to the list. Relative paths are resolved relative to the
      * root path (which should be the first entry in the list).
      */
-    void addPath(char *path);
+    void addPath(const char *path);
   
     /** A convenience function returning the first entryin the list. */
     char *getRootPath();
   
     /** Returns true if the given path defines a full path, from root. */
-    static bool isFullPath(char *path);
+    static bool isFullPath(const char *path);
   
     /** Returns true if the given path has a trailing slash (indicating that it is a directory). */
-    static bool hasTrailingSlash(char *path);
+    static bool hasTrailingSlash(const char *path);
   
     list<string>::iterator getIterator();
     list<string>::iterator getEnd();
