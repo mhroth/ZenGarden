@@ -63,9 +63,13 @@ float *MessageTable::resizeBuffer(int newBufferLength) {
     // the new buffer length must be positive
     buffer = (float *) realloc(buffer, newBufferLength * sizeof(float));
     if (newBufferLength > bufferLength) {
+      // clear the new portion of the buffer
       memset(buffer+bufferLength, 0, (newBufferLength-bufferLength) * sizeof(float));
     }
     bufferLength = newBufferLength;
+    // NOTE(mhroth): this code does not check to see if the returned buffer from realloc
+    // is non-NULL. It assumes that realloc is always successful. This is slightly dangerous and
+    // could lead to problems.
   }
   return buffer;
 }
