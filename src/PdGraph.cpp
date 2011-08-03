@@ -472,7 +472,7 @@ char *PdGraph::findFilePath(char *filename) {
   while (it != end) {
     string directory = *it++;
     string fullPath = directory + string(filename);
-    if (StaticUtils::fileExists((char *) fullPath.c_str())) {
+    if (StaticUtils::fileExists(fullPath.c_str())) {
       return (char *) directory.c_str();
     }
   }

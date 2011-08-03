@@ -43,7 +43,7 @@ class StaticUtils {
     /** This is a helper function for printing error (or info) messages. */
     static const char *messageElementTypeToString(MessageElementType type);
   
-    static bool fileExists(char *path);
+    static bool fileExists(const char *path);
   
   private:
     StaticUtils(); // a private constructor. No instances of this object should be made.
