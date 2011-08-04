@@ -54,16 +54,27 @@ int main(int argc, char * const argv[]) {
   const float sampleRate = 22050.0f;
   
   // pass directory and filename of the patch to load
-  PdContext *context = zg_new_context(numInputChannels, numOutputChannels, blockSize, sampleRate,
+  PdContext *context = zg_context_new(numInputChannels, numOutputChannels, blockSize, sampleRate,
       callbackFunction, NULL);
-  //PdGraph *graph = zg_new_graph(context, "/Users/mhroth/workspace/ZenGarden/demo/", "128_osc.pd");
-  PdGraph *graph = zg_new_graph(context, "/Users/mhroth/Desktop/", "csaw.pd");
+  
+  // create a graph from a file
+  /*
+  PdGraph *graph = zg_context_new_graph_from_file(context, "/Users/mhroth/Desktop/", "csaw.pd");
   if (graph == NULL) {
-    zg_delete_context(context);
+    zg_context_delete(context);
     return 1;
   }
+  */
   
-  zg_attach_graph(context, graph);
+  // create a graph manually
+  PdGraph *graph = zg_context_new_empty_graph(context);
+  ZGObject *objOsc = zg_graph_add_new_object(graph, "osc~ 440", 0.0f, 0.0f);
+  ZGObject *objDac = zg_graph_add_new_object(graph, "dac~", 0.0f, 0.0f);
+  zg_graph_add_connection(graph, objOsc, 0, objDac, 0);
+  zg_graph_add_connection(graph, objOsc, 0, objDac, 1);
+   
+  // attach the graph
+  zg_graph_attach(graph);
   
   float *inputBuffers = (float *) calloc(numInputChannels * blockSize, sizeof(float));
   float *outputBuffers = (float *) calloc(numOutputChannels * blockSize, sizeof(float));
@@ -72,7 +83,7 @@ int main(int argc, char * const argv[]) {
   gettimeofday(&start, NULL);
   for (int i = 0; i < NUM_ITERATIONS; i++) {
   //while (1) {
-    zg_process(context, inputBuffers, outputBuffers);
+    zg_context_process(context, inputBuffers, outputBuffers);
   }
   gettimeofday(&end, NULL);
   double elapsedTime = (end.tv_sec - start.tv_sec) * 1000.0; // sec to ms
@@ -82,7 +93,7 @@ int main(int argc, char * const argv[]) {
   double simulatedTime = ((double) blockSize / (double) sampleRate) * (double) NUM_ITERATIONS * 1000.0; // milliseconds
   printf("Runs in realtime: %s (x%.3f)\n", (simulatedTime >= elapsedTime) ? "YES" : "NO", simulatedTime/elapsedTime);
   
-  zg_delete_context(context);
+  zg_context_delete(context);
   free(inputBuffers);
   free(outputBuffers);
   
