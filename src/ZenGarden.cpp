@@ -142,12 +142,16 @@ ZGGraph *zg_context_new_empty_graph(PdContext *context) {
   return graph;
 }
 
-ZGGraph *zg_context_new_graph(PdContext *context, const char *directory, const char *filename) {
+ZGGraph *zg_context_new_graph_from_file(PdContext *context, const char *directory, const char *filename) {
   PdMessage *initMessage = PD_MESSAGE_ON_STACK(0); // create an empty initMessage
   initMessage->initWithTimestampAndNumElements(0.0, 0);
   // no parent graph
   PdGraph *graph = context->newGraph(directory, filename, initMessage, NULL);
   return graph;
+}
+
+ZGGraph *zg_context_new_graph_from_string(PdContext *context, const char *netlist) {
+  return NULL; // TODO(mhroth): implement this
 }
 
 void zg_context_process(PdContext *context, float *inputBuffers, float *outputBuffers) {

@@ -83,8 +83,11 @@ typedef enum ZGConnectionType {
   /** Create a new empty graph in the given context. Ideal for building graphs on the fly. */
   ZGGraph *zg_context_new_empty_graph(ZGContext *context);
   
-  /* Create a new graph from a Pd file. */
-  ZGGraph *zg_context_new_graph(ZGContext *context, const char *directory, const char *filename);
+  /** Create a new graph from a Pd file. */
+  ZGGraph *zg_context_new_graph_from_file(ZGContext *context, const char *directory, const char *filename);
+  
+  /** Create a new graph based on a string representation of the netlist. */
+  ZGGraph *zg_context_new_graph_from_string(ZGContext *context, const char *netlist);
   
   /** Remove the graph from the context. */
   //void zg_remove_graph(ZGContext *context, ZGGraph *graph);
