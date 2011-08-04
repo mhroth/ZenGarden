@@ -33,7 +33,8 @@ class DspOsc : public DspObject {
     ~DspOsc();
   
     const char *getObjectLabel();
-    
+    string toString();
+  
   protected:
     void processMessage(int inletIndex, PdMessage *message);
     void processDspWithIndex(int fromIndex, int toIndex);

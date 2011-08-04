@@ -42,7 +42,9 @@ ZGObject *zg_graph_add_new_object(PdGraph *graph, const char *objectString, floa
   MessageObject *messageObject = graph->getContext()->newObject((char *) "obj", objectLabel, initMessage, graph);
   free(objectStringCopy);
   
-  graph->addObject(canvasX, canvasY, messageObject);
+  if (messageObject != NULL) {
+    graph->addObject(canvasX, canvasY, messageObject);
+  }
   
   return messageObject;
 }
@@ -119,6 +121,14 @@ void zg_object_get_canvas_position(ZGObject *object, float *x, float *y) {
 
 void zg_object_set_canvas_position(ZGObject *object, float x, float y) {
   object->setCanvasPosition(x, y);
+}
+
+char *zg_object_to_string(ZGObject *object) {
+  string str = object->toString();
+  const char *strptr = str.c_str();
+  char *ret = (char *) malloc((strlen(strptr)+1)*sizeof(char));
+  strcpy(ret, strptr);
+  return ret;
 }
 
 

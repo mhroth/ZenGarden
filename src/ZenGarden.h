@@ -257,6 +257,13 @@ typedef enum ZGConnectionType {
   /** Returns the object label, e.g. "osc~" or "+". */
   const char *zg_object_get_label(ZGObject *object);
   
+  /**
+   * Returns a canonical string description of the object. The description reflects the state of the
+   * object when at the time of the request. The pointer must be freed by the caller.
+   * For example, "osc~ 440" or "trigger b b".
+   */
+  char *zg_object_to_string(ZGObject *object);
+  
   
 #pragma mark - Table
   

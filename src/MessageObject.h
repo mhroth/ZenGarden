@@ -105,6 +105,8 @@ class MessageObject {
   
     virtual ObjectType getObjectType();
   
+    virtual string toString();
+  
     /** Returns <code>true</code> if this object processes audio, <code>false</code> otherwise. */
     virtual bool doesProcessAudio();
   

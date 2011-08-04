@@ -55,6 +55,13 @@ const char *DspOsc::getObjectLabel() {
   return "osc~";
 }
 
+string DspOsc::toString() {
+  int len = snprintf(NULL, 0, "%s %g", getObjectLabel(), frequency)+1;
+  char strBuffer[len];
+  snprintf(strBuffer, len, "%s %g", getObjectLabel(), frequency);
+  return string(strBuffer);
+}
+
 void DspOsc::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: { // update the frequency

@@ -38,6 +38,14 @@ const char *DspMultiply::getObjectLabel() {
   return "*~";
 }
 
+string DspMultiply::toString() {
+  const char *fmt = (constant == 0.0f) ? "%s" : "%s %g";
+  int len = snprintf(NULL, 0, fmt, getObjectLabel(), constant)+1;
+  char str[len];
+  snprintf(str, len, fmt, getObjectLabel(), constant);
+  return string(str);
+}
+
 void DspMultiply::onInletConnectionUpdate() {
   // attempt to resolve common code paths for increased efficiency
   if (incomingDspConnections[1].size() == 0) {

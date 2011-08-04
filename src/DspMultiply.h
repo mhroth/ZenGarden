@@ -43,6 +43,7 @@ class DspMultiply : public DspObject {
     ~DspMultiply();
   
     const char *getObjectLabel();
+    string toString();
 
     void processDsp();
     

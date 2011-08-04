@@ -35,6 +35,10 @@ const char *DspBang::getObjectLabel() {
   return "bang~";
 }
 
+string DspBang::toString() {
+  return string(getObjectLabel());
+}
+
 ConnectionType DspBang::getConnectionType(int outletIndex) {
   return MESSAGE;
 }
