@@ -802,3 +802,7 @@ unsigned int PdGraph::getNumOutlets() {
 PdContext *PdGraph::getContext() {
   return context;
 }
+
+list<MessageObject *> PdGraph::getNodeList() {
+  return nodeList;
+}

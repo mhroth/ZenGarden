@@ -278,9 +278,16 @@ unsigned int zg_graph_get_dollar_zero(ZGGraph *graph) {
   return (graph != NULL) ? (unsigned int) graph->getArguments()->getFloat(0) : 0;
 }
 
-ZGObject *zg_graph_get_objects(ZGGraph *graph, unsigned int *n) {
-  *n = 0;
-  return NULL;
+ZGObject **zg_graph_get_objects(ZGGraph *graph, unsigned int *n) {
+  list<MessageObject *> nodeList = graph->getNodeList();
+  list<MessageObject *>::iterator it = nodeList.begin();
+  list<MessageObject *>::iterator end = nodeList.end();
+  *n = (unsigned int) nodeList.size();
+  ZGObject **nodeArray = (ZGObject **) malloc(nodeList.size() * sizeof(ZGObject *));
+  for (unsigned int i = 0; i < *n; i++, it++) {
+    nodeArray[i] = *it;
+  }
+  return nodeArray;
 }
 
 

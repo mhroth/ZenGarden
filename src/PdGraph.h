@@ -199,6 +199,9 @@ class PdGraph : public DspObject {
     /** Returns the context with which this graph is associated. */
     PdContext *getContext();
   
+    /** Returns this PdGraph's node list. */
+    list<MessageObject *> getNodeList();
+  
     list<ObjectLetPair> getIncomingConnections(unsigned int inletIndex);
     list<ObjectLetPair> getOutgoingConnections(unsigned int outletIndex);
   

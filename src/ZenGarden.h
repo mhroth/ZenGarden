@@ -125,11 +125,11 @@ typedef enum ZGConnectionType {
   /** Attaches a graph to its context */
   void zg_graph_attach(ZGGraph *graph);
   
-  /** Attaches a graph to its context */
+  /** Unattaches a graph to its context */
   void zg_graph_unattach(ZGGraph *graph);
   
   /** Returns all objects in this graph. The returned array, with length n, must be freed by the caller. */
-  ZGObject *zg_graph_get_objects(ZGGraph *graph, unsigned int *n);
+  ZGObject **zg_graph_get_objects(ZGGraph *graph, unsigned int *n);
   
   
 #pragma mark - Manage Connections
