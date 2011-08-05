@@ -37,6 +37,12 @@ const char *DspMinimum::getObjectLabel() {
   return "min~";
 }
 
+string DspMinimum::toString() {
+  char str[snprintf(NULL, 0, "%s %g", getObjectLabel(), constant)+1];
+  snprintf(str, sizeof(str), "%s %g", getObjectLabel(), constant);
+  return  string(str);
+}
+
 void DspMinimum::onInletConnectionUpdate() {
   if (incomingDspConnections[1].size() == 0) {
     if (incomingMessageConnections[1].size() == 0) {

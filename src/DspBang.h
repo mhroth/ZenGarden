@@ -33,7 +33,6 @@ class DspBang : public DspObject {
     ~DspBang();
     
     const char *getObjectLabel();
-    string toString();
   
     ConnectionType getConnectionType(int outletIndex);
     

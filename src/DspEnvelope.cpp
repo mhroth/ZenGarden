@@ -72,6 +72,12 @@ const char *DspEnvelope::getObjectLabel() {
   return "env~";
 }
 
+string DspEnvelope::toString() {
+  char str[snprintf(NULL, 0, "%s %i %i", getObjectLabel(), windowSize, windowInterval)+1];
+  snprintf(str, sizeof(str), "%s %i %i", getObjectLabel(), windowSize, windowInterval);
+  return string(str);
+}
+
 ConnectionType DspEnvelope::getConnectionType(int outletIndex) {
   return MESSAGE;
 }

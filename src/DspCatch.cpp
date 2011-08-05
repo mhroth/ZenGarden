@@ -47,9 +47,8 @@ ObjectType DspCatch::getObjectType() {
 }
 
 string DspCatch::toString() {
-  int len = snprintf(NULL, 0, "%s %s", getObjectLabel(), name)+1;
-  char str[len];
-  snprintf(str, len, "%s %s", getObjectLabel(), name);
+  char str[snprintf(NULL, 0, "%s %s", getObjectLabel(), name)+1];
+  snprintf(str, sizeof(str), "%s %s", getObjectLabel(), name);
   return string(str);
 }
 

@@ -40,6 +40,7 @@ class DspSend : public DspObject {
     float **getBuffer();
     char *getName();
     const char *getObjectLabel();
+    string toString();
     ObjectType getObjectType();
   
     void processDsp();

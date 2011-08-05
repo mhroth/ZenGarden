@@ -44,6 +44,7 @@ class DspMinimum : public DspObject {
     ~DspMinimum();
     
     const char *getObjectLabel();
+    string toString();
   
     void processDsp();
     

@@ -33,7 +33,6 @@ class DspCosine : public DspObject {
     ~DspCosine();
 
     const char *getObjectLabel();
-    string toString();
 
     void processDsp();
 

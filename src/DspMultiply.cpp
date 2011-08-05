@@ -40,9 +40,8 @@ const char *DspMultiply::getObjectLabel() {
 
 string DspMultiply::toString() {
   const char *fmt = (constant == 0.0f) ? "%s" : "%s %g";
-  int len = snprintf(NULL, 0, fmt, getObjectLabel(), constant)+1;
-  char str[len];
-  snprintf(str, len, fmt, getObjectLabel(), constant);
+  char str[snprintf(NULL, 0, fmt, getObjectLabel(), constant)+1];
+  snprintf(str, sizeof(str), fmt, getObjectLabel(), constant);
   return string(str);
 }
 

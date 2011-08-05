@@ -36,6 +36,12 @@ const char *DspSignal::getObjectLabel() {
   return "sig~";
 }
 
+string DspSignal::toString() {
+  char str[snprintf(NULL, 0, "%s %g", getObjectLabel(), constant)+1];
+  snprintf(str, sizeof(str), "%s %g", getObjectLabel(), constant);
+  return string(str);
+}
+
 void DspSignal::processMessage(int inletIndex, PdMessage *message) {
   if (message->isFloat(0)) {
     processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));

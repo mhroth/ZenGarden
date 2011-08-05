@@ -34,6 +34,12 @@ const char *MessageText::getObjectLabel() {
   return "text";
 }
 
+string MessageText::toString() {
+  char str[snprintf(NULL, 0, "%s %s", getObjectLabel(), comment)+1];
+  snprintf(str, sizeof(str), "%s %s", getObjectLabel(), comment);
+  return string(str);
+}
+
 char *MessageText::getComment() {
   return comment;
 }

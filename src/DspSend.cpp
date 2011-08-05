@@ -46,6 +46,12 @@ const char *DspSend::getObjectLabel() {
   return "send~";
 }
 
+string DspSend::toString() {
+  char str[snprintf(NULL, 0, "%s %s", getObjectLabel(), name)];
+  snprintf(str, sizeof(str), "%s %s", getObjectLabel(), name);
+  return string(str);
+}
+
 ObjectType DspSend::getObjectType() {
   return DSP_SEND;
 }

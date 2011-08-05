@@ -66,6 +66,12 @@ const char *DspPhasor::getObjectLabel() {
   return "phasor~";
 }
 
+string DspPhasor::toString() {
+  char str[snprintf(NULL, 0, "%s %g", getObjectLabel(), frequency)+1];
+  snprintf(str, sizeof(str), "%s %g", getObjectLabel(), frequency);
+  return string(str);
+}
+
 void DspPhasor::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: { // update the frequency

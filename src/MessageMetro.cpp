@@ -37,6 +37,12 @@ const char *MessageMetro::getObjectLabel() {
   return "metro";
 }
 
+string MessageMetro::toString() {
+  char str[snprintf(NULL, 0, "%s %g", getObjectLabel(), intervalInMs)+1];
+  snprintf(str, sizeof(str), "%s %g", getObjectLabel(), intervalInMs);
+  return string(str);
+}
+
 void MessageMetro::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {

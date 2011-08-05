@@ -39,6 +39,7 @@ class DspEnvelope : public DspObject {
     ~DspEnvelope();
   
     const char *getObjectLabel();
+    string toString();
 
     ConnectionType getConnectionType(int outletIndex);
   

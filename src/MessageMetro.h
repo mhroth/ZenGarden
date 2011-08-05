@@ -35,6 +35,7 @@ class MessageMetro : public MessageObject {
     ~MessageMetro();
   
     const char *getObjectLabel();
+    string toString();
   
     void sendMessage(int outletIndex, PdMessage *message);
     

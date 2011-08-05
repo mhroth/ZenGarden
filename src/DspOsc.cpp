@@ -56,10 +56,9 @@ const char *DspOsc::getObjectLabel() {
 }
 
 string DspOsc::toString() {
-  int len = snprintf(NULL, 0, "%s %g", getObjectLabel(), frequency)+1;
-  char strBuffer[len];
-  snprintf(strBuffer, len, "%s %g", getObjectLabel(), frequency);
-  return string(strBuffer);
+  char str[snprintf(NULL, 0, "%s %g", getObjectLabel(), frequency)+1];
+  snprintf(str, sizeof(str), "%s %g", getObjectLabel(), frequency);
+  return string(str);
 }
 
 void DspOsc::processMessage(int inletIndex, PdMessage *message) {

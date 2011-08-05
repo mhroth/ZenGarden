@@ -42,6 +42,7 @@ class DspSubtract : public DspObject {
     ~DspSubtract();
 
     const char *getObjectLabel();
+    string toString();
   
     void processDsp();
 

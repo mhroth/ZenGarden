@@ -33,6 +33,7 @@ class MessageText : public MessageObject {
     ~MessageText();
     
     const char *getObjectLabel();
+    string toString();
   
     char *getComment();
   

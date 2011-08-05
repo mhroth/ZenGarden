@@ -52,10 +52,6 @@ const char *DspCosine::getObjectLabel() {
   return "cos~";
 }
 
-string DspCosine::toString() {
-  return string(getObjectLabel());
-}
-
 void DspCosine::processDsp() {
   // as no messages are received and there is only one inlet, processDsp does not need much of the
   // infrastructure provided by DspObject

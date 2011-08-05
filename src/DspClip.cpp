@@ -38,6 +38,12 @@ const char *DspClip::getObjectLabel() {
   return "clip~";
 }
 
+string DspClip::toString() {
+  char str[snprintf(NULL, 0, "%s %g %g", getObjectLabel(), lowerBound, upperBound)+1];
+  snprintf(str, sizeof(str), "%s %g %g", getObjectLabel(), lowerBound, upperBound);
+  return string(str);
+}
+
 void DspClip::onInletConnectionUpdate() {
   if (incomingMessageConnections[1].size() == 0 &&
       incomingMessageConnections[2].size() == 0) {

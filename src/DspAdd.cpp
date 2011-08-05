@@ -36,6 +36,13 @@ const char *DspAdd::getObjectLabel() {
   return "+~";
 }
 
+string DspAdd::toString() {
+  const char *fmt = (constant == 0.0f) ? "%s" : "%s %g";
+  char str[snprintf(NULL, 0, fmt, getObjectLabel(), constant)+1];
+  snprintf(str, sizeof(str), fmt, getObjectLabel(), constant);
+  return string(str);
+}
+
 void DspAdd::onInletConnectionUpdate() {
   // attempt to resolve common code paths for increased efficiency
   if (incomingDspConnections[1].size() == 0) {

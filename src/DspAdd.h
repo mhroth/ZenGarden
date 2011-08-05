@@ -43,6 +43,7 @@ class DspAdd : public DspObject {
     ~DspAdd();
   
     const char *getObjectLabel();
+    string toString();
   
     void processDsp();
     

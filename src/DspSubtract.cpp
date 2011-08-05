@@ -37,6 +37,13 @@ const char *DspSubtract::getObjectLabel() {
   return "-~";
 }
 
+string DspSubtract::toString() {
+  const char *fmt = (constant == 0.0f) ? "%s" : "%s %g";
+  char str[snprintf(NULL, 0, fmt, getObjectLabel(), constant)+1];
+  snprintf(str, sizeof(str), fmt, getObjectLabel(), constant);
+  return string(str);
+}
+
 void DspSubtract::onInletConnectionUpdate() {
   if (incomingDspConnections[1].size() == 0) {
     if (incomingMessageConnections[1].size() == 0) {

@@ -40,6 +40,7 @@ class DspClip : public DspObject {
     ~DspClip();
   
     const char *getObjectLabel();
+    string toString();
   
     void processDsp();
     

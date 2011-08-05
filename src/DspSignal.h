@@ -33,6 +33,7 @@ public:
   ~DspSignal();
   
   const char *getObjectLabel();
+  string toString();
   
   private:
     void processMessage(int inletIndex, PdMessage *message);
