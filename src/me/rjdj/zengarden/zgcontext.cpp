@@ -142,7 +142,7 @@ JNIEXPORT jlong JNICALL Java_me_rjdj_zengarden_ZGContext_newGraph__Ljava_lang_St
     (JNIEnv *env, jobject jobj, jstring jdirectory, jstring jfilename, jlong nativePtr) {
   char *cdirectory = (char *) env->GetStringUTFChars(jdirectory, NULL);
   char *cfilename = (char *) env->GetStringUTFChars(jfilename, NULL);
-  ZGGraph *zgGraph = zg_context_new_graph((ZGContext *) nativePtr, cdirectory, cfilename);
+  ZGGraph *zgGraph = zg_context_new_graph_from_file((ZGContext *) nativePtr, cdirectory, cfilename);
   env->ReleaseStringUTFChars(jdirectory, cdirectory);
   env->ReleaseStringUTFChars(jfilename, cfilename);
   return (jlong) zgGraph;

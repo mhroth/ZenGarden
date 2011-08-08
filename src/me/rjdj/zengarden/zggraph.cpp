@@ -25,16 +25,10 @@
 
 JNIEXPORT jlong JNICALL Java_me_rjdj_zengarden_ZGGraph_addObject
     (JNIEnv *env, jobject jobj, jstring jinitString, jint canvasX, jint canvasY, jlong nativePtr) {
-  ZGGraph *zgGraph = (ZGGraph *) nativePtr;
   const char *cinitString = env->GetStringUTFChars(jinitString, NULL);
-  ZGObject *zgObject = zg_graph_new_object((ZGGraph *) nativePtr, (char *) cinitString);
+  ZGObject *zgObject = zg_graph_add_new_object((ZGGraph *) nativePtr, (char *) cinitString, canvasX, canvasY);
   env->ReleaseStringUTFChars(jinitString, cinitString);
-  if (zgObject != NULL) {
-    zg_graph_add_object(zgGraph, zgObject, canvasX, canvasY);
-    return (jlong) zgObject;
-  } else {
-    return (jlong) 0;
-  }
+  return (jlong) zgObject;
 }
 
 JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZGGraph_addConnection
