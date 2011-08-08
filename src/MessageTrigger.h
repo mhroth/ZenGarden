@@ -36,6 +36,7 @@ class MessageTrigger : public MessageObject {
     ~MessageTrigger();
   
     const char *getObjectLabel();
+    string toString();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);

@@ -25,8 +25,12 @@
 
 MessagePack::MessagePack(PdMessage *initMessage, PdGraph *graph) :
     MessageObject(initMessage->getNumElements(), 1, graph) {
-  outgoingMessage = initMessage->copyToHeap();
-  outgoingMessage->resolveSymbolsToType();
+  int numElements = initMessage->getNumElements();
+  PdMessage *message = PD_MESSAGE_ON_STACK(numElements);
+  message->initWithTimestampAndNumElements(0.0, numElements);
+  memcpy(message->getElement(0), initMessage->getElement(0), numElements*sizeof(MessageAtom));
+  message->resolveSymbolsToType();
+  outgoingMessage = message->copyToHeap();
 }
 
 MessagePack::~MessagePack() {
@@ -35,6 +39,21 @@ MessagePack::~MessagePack() {
 
 const char *MessagePack::getObjectLabel() {
   return "pack";
+}
+
+string MessagePack::toString() {
+  string out = string(getObjectLabel());
+  for (int i = 0; i < outgoingMessage->getNumElements(); i++) {
+    switch (outgoingMessage->getType(i)) {
+      case FLOAT: out += " f"; break;
+      case SYMBOL: out += " s"; break;
+      case BANG: out += " b"; break;
+      case LIST: out += " l"; break;
+      case ANYTHING:
+      default: out += " a"; break;
+    }
+  }
+  return out;
 }
 
 void MessagePack::processMessage(int inletIndex, PdMessage *message) {

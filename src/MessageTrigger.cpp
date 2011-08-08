@@ -43,6 +43,21 @@ const char *MessageTrigger::getObjectLabel() {
   return "trigger";
 }
 
+string MessageTrigger::toString() {
+  string out = string(getObjectLabel());
+  for (int i = 0; i < castMessage->getNumElements(); i++) {
+    switch (castMessage->getType(i)) {
+      case FLOAT: out += " f"; break;
+      case SYMBOL: out += " s"; break;
+      case BANG: out += " b"; break;
+      case LIST: out += " l"; break;
+      case ANYTHING:
+      default: out += " a"; break;
+    }
+  }
+  return out;
+}
+
 void MessageTrigger::processMessage(int inletIndex, PdMessage *message) {
   PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
   int numMessageOutlets = outgoingMessageConnections.size();

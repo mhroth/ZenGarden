@@ -46,6 +46,21 @@ const char *MessageUnpack::getObjectLabel() {
   return "unpack";
 }
 
+string MessageUnpack::toString() {
+  string out = string(getObjectLabel());
+  for (int i = 0; i < templateMessage->getNumElements(); i++) {
+    switch (templateMessage->getType(i)) {
+      case FLOAT: out += " f"; break;
+      case SYMBOL: out += " s"; break;
+      case BANG: out += " b"; break;
+      case LIST: out += " l"; break;
+      case ANYTHING:
+      default: out += " a"; break;
+    }
+  }
+  return out;
+}
+
 void MessageUnpack::processMessage(int inletIndex, PdMessage *message) {
   int numElements = message->getNumElements();
   if (templateMessage->getNumElements() < message->getNumElements()) {
