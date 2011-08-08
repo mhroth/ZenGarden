@@ -224,28 +224,8 @@ void zg_context_send_message_at_blockindex(PdContext *context, const char *recei
 }
 
 void zg_context_send_midinote(PdContext *context, int channel, int noteNumber, int velocity, double blockIndex) {
-  const char *receiverName;
-  switch (channel) {
-    case 0:  { receiverName = "zg_notein_0";  break; }
-    case 1:  { receiverName = "zg_notein_1";  break; }
-    case 2:  { receiverName = "zg_notein_2";  break; }
-    case 3:  { receiverName = "zg_notein_3";  break; }
-    case 4:  { receiverName = "zg_notein_4";  break; }
-    case 5:  { receiverName = "zg_notein_5";  break; }
-    case 6:  { receiverName = "zg_notein_6";  break; }
-    case 7:  { receiverName = "zg_notein_7";  break; }
-    case 8:  { receiverName = "zg_notein_8";  break; }
-    case 9:  { receiverName = "zg_notein_9";  break; }
-    case 10: { receiverName = "zg_notein_10"; break; }
-    case 11: { receiverName = "zg_notein_11"; break; }
-    case 12: { receiverName = "zg_notein_12"; break; }
-    case 13: { receiverName = "zg_notein_13"; break; }
-    case 14: { receiverName = "zg_notein_14"; break; }
-    case 15: { receiverName = "zg_notein_15"; break; }
-    default: {
-      return;
-    }
-  }
+  char receiverName[snprintf(NULL, 0, "zg_notein_%i", channel)+1];
+  snprintf(receiverName, sizeof(receiverName), "zg_notein_%i", channel);
   
   zg_context_send_message_at_blockindex(context, receiverName, blockIndex, "fff",
       (float) noteNumber, (float) velocity, (float) channel);
