@@ -22,27 +22,43 @@
 
 #include "PdFileParser.h"
 
-#define LINE_LENGTH 256
-
-PdFileParser::PdFileParser(char *filePath) {
-  fp = fopen(filePath, "r");
+PdFileParser::PdFileParser(const char *filePath) {
+  FILE *fp = fopen(filePath, "rb"); // open the file in binary mode
+  pos = 0; // initialise position in stringDesc
   if (fp == NULL) {
     // error condition
-    line = NULL;
     isDone = true;
   } else {
-    line = (char *) calloc(LINE_LENGTH, sizeof(char));
-    nextLine();
+    // find the size of the file
+    fseek(fp, 0, SEEK_SET);
+    long int posStart = ftell(fp);
+    fseek(fp, 0, SEEK_END);
+    long int posEnd = ftell(fp);
+    int numChars = posEnd - posStart;
+    char str[numChars+1];
+    fseek(fp, 0, SEEK_SET); // seek back to the beginning of the file
+    fread(str, sizeof(char), numChars, fp); // read the whole file into memory
+    fclose(fp); // close the file
+    str[numChars] = '\0';
+    stringDesc = string(str);
+    
+    nextLine(); // read the first line
     isDone = false;
   }
-  buffer = NULL;
+}
+
+PdFileParser::PdFileParser(string aString) {
+  if (aString.empty()) {
+    isDone = true;
+  } else {
+    stringDesc = aString;
+    nextLine(); // read the first line
+    isDone = false;
+  }
 }
 
 PdFileParser::~PdFileParser() {
-  free(line);
-  free(buffer);
-  fclose(fp);
-  fp = NULL;
+  // nothing to do
 }
 
 /*
@@ -50,35 +66,30 @@ PdFileParser::~PdFileParser() {
  * considered. I find this a bit dirty and would like to make it one buffer. However, for the time-
  * being, this approach works and is robust.
  */
-char *PdFileParser::nextMessage() {
+string PdFileParser::nextMessage() {
   if (!isDone) {
-    free(buffer);
-    buffer = StaticUtils::copyString(line); // copy line to buffer 
-    while (nextLine() != NULL &&
-        !(strncmp(line, "#X", 2) == 0 || strncmp(line, "#N", 2) == 0 || 
-        strncmp(line, "#A", 2) == 0)) {
-      char *temp = buffer;
-      // there is an implied space between lines
-      buffer = StaticUtils::concatStrings(buffer, " ");
-      free(temp);
-      temp = buffer;
-      buffer = StaticUtils::concatStrings(buffer, line);
-      free(temp);
+    message = line;
+    while (!nextLine().empty() &&
+        !(line.compare(0, 2, "#X") == 0 || line.compare(0, 2, "#N") == 0 || 
+        line.compare(0, 2, "#A") == 0)) {
+      message += " " + line; // there is an implied space between lines
     }
-    return buffer;
   } else {
-    return NULL;
+    message = string();
   }
+  return message;
 }
 
-char *PdFileParser::nextLine() {
-  char *out = fgets(line, LINE_LENGTH, fp);
-  if (out == NULL) {
+string PdFileParser::nextLine() {
+  size_t newPos = stringDesc.find_first_of('\n', pos);
+  if (newPos == string::npos) { // TODO(mhroth): works?
     isDone = true;
+    line = string();
+    return line;
   } else {
     // remove trailing '\n' from the line
-    int length = strlen(line);
-    line[length-1] = '\0';
+    line = string(stringDesc, pos, newPos-pos);
+    pos = newPos + 1; // one past the '\n'
+    return line;
   }
-  return out;
 }

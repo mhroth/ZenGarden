@@ -23,10 +23,12 @@
 #ifndef _PD_FILE_PARSER_H_
 #define _PD_FILE_PARSER_H_
 
+#include <string>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "StaticUtils.h"
+using namespace std;
 
 /**
  * The class parses a Pd file and iterates through each message, returning <code>NULL</code> when 
@@ -37,14 +39,15 @@
 class PdFileParser {
 
   public:
-    PdFileParser(char *fullPath);
+    PdFileParser(const char *fullPath);
+    PdFileParser(string aString);
     ~PdFileParser();
     
     /**
      * Returns the next logical message in the file, or <code>NULL</code> if the end of the file
      * has been reached.
      */
-    char *nextMessage();
+    string nextMessage();
   
   private:
     /**
@@ -52,12 +55,13 @@ class PdFileParser {
      * A pointer to the <code>line</code> buffer is returned, or <code>NULL</code> if the end of the
      * file has been reached.
      */
-    char *nextLine();
+    string nextLine();
   
     FILE *fp;
-    char *line;
-    char *buffer;
-    int bufferLength;
+    string stringDesc; // entire string description of graph. Entire file.
+    size_t pos; // current position in the string
+    string line;
+    string message;
     bool isDone;
 };
 

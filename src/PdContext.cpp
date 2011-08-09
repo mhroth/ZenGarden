@@ -303,7 +303,9 @@ PdGraph *PdContext::newGraph(const char *directory, const char *filename, PdMess
   PdFileParser *fileParser = new PdFileParser(filePath);
   
   PdGraph *graph = NULL;
-  char *line = fileParser->nextMessage();
+  string message = fileParser->nextMessage();
+  char line[message.size()+1]; // leave space for '\n'
+  strncpy(line, message.c_str(), sizeof(line));
   if (strncmp(line, "#N canvas", strlen("#N canvas")) == 0) {
     graph = new PdGraph(initMessage, parentGraph, this, getNextGraphId());
     graph->addDeclarePath(directory); // adds the root graph
@@ -330,8 +332,11 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
   PdMessage *initMessage = PD_MESSAGE_ON_STACK(INIT_MESSAGE_MAX_ELEMENTS);
   
   // configure the graph based on the messages
-  char *line = NULL;
-  while ((line = fileParser->nextMessage()) != NULL) {
+  string message;
+  while (!(message = fileParser->nextMessage()).empty()) {
+    char line[message.size()+1];
+    strncpy(line, message.c_str(), sizeof(line));
+    
     char *hashType = strtok(line, " ");
     if (strcmp(hashType, "#N") == 0) {
       char *objectType = strtok(NULL, " ");
@@ -425,7 +430,8 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
         int bufferLength = 0;
         float *buffer = table->getBuffer(&bufferLength);
         graph->addObject(0, 0, table);
-        
+        /*
+         * TODO(mhroth): review this code and ensure that it works!
         // next many lines should be elements of that array
         // while the next line begins with #A
         while (strcmp(strtok(line = fileParser->nextMessage(), " ;"), "#A") == 0) {
@@ -437,6 +443,7 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
           }
         }
         // ignore the #X coords line
+        */
       } else {
         printErr("Unrecognised #X object type on line: \"%s\"", line);
       }
