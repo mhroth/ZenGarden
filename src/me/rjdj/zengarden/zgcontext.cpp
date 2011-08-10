@@ -177,64 +177,8 @@ JNIEXPORT void JNICALL Java_me_rjdj_zengarden_ZGContext_process
 
   short *cinputBuffer = (short *) env->GetPrimitiveArrayCritical(jinputBuffer, NULL);
   short *coutputBuffer = (short *) env->GetPrimitiveArrayCritical(joutputBuffer, NULL);
-  int inputBufferLength = env->GetArrayLength(jinputBuffer);
-  int outputBufferLength = env->GetArrayLength(joutputBuffer);
-  float finputBuffer[inputBufferLength];
-  float foutputBuffer[outputBufferLength];
-  
-  // uninterleave and short->float the samples in cinputBuffer to finputBuffer
-  switch (numInputChannels) {
-    default: {
-      for (int k = 2; k < numInputChannels; k++) {
-        for (int i = k, j = k*blockSize; i < inputBufferLength; i+=numInputChannels, j++) {
-          finputBuffer[j] = ((float) cinputBuffer[i]) / 32768.0f;
-        }
-      } // allow fallthrough
-    }
-    case 2: {
-      for (int i = 1, j = blockSize; i < inputBufferLength; i+=numInputChannels, j++) {
-        finputBuffer[j] = ((float) cinputBuffer[i]) / 32768.0f;
-      }  // allow fallthrough
-    }
-    case 1: {
-      for (int i = 0, j = 0; i < inputBufferLength; i+=numInputChannels, j++) {
-        finputBuffer[j] = ((float) cinputBuffer[i]) / 32768.0f;
-      } // allow fallthrough
-    }
-    case 0: break;
-  }
 
-  zg_context_process((ZGContext *) nativePtr, finputBuffer, foutputBuffer);
-      
-  // clip the output to [-1,1]
-  for (int i = 0; i < outputBufferLength; i++) {
-    float f = foutputBuffer[i];
-    if (f < -1.0f) f = -1.0f;
-    else if (f > 1.0f) f = 1.0f;
-    foutputBuffer[i] = f;
-  }
-  
-  // interleave and float->short the samples in finputBuffer to cinputBuffer
-  switch (numOutputChannels) {
-    default: {
-      for (int k = 2; k < numOutputChannels; k++) {
-        for (int i = k, j = k*blockSize; i < outputBufferLength; i+=numOutputChannels, j++) {
-          coutputBuffer[i] = (short) (foutputBuffer[j] * 32767.0f);
-        }
-      } // allow fallthrough
-    }
-    case 2: {
-      for (int i = 1, j = blockSize; i < outputBufferLength; i+=numOutputChannels, j++) {
-        coutputBuffer[i] = (short) (foutputBuffer[j] * 32767.0f);
-      } // allow fallthrough
-    }
-    case 1: {
-      for (int i = 0, j = 0; i < outputBufferLength; i+=numOutputChannels, j++) {
-        coutputBuffer[i] = (short) (foutputBuffer[j] * 32767.0f);
-      } // allow fallthrough
-    }
-    case 0: break;
-  }
+  zg_context_process_s((ZGContext *) nativePtr, cinputBuffer, coutputBuffer);
       
   // no need to copy back changes. release native buffer.
   env->ReleasePrimitiveArrayCritical(jinputBuffer, cinputBuffer, JNI_ABORT);

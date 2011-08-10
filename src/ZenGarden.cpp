@@ -20,6 +20,9 @@
  *
  */
 
+#if __APPLE__
+#include <Accelerate/Accelerate.h>
+#endif
 #include <string.h>
 #include "MessageTable.h"
 #include "PdContext.h"
@@ -166,6 +169,115 @@ ZGGraph *zg_context_new_graph_from_string(PdContext *context, const char *netlis
 
 void zg_context_process(PdContext *context, float *inputBuffers, float *outputBuffers) {
   context->process(inputBuffers, outputBuffers);
+}
+
+void zg_context_process_s(ZGContext *context, short *inputBuffers, short *outputBuffers) {
+  int numInputChannels = context->getNumInputChannels();
+  int numOutputChannels = context->getNumOutputChannels();
+  int blockSize = context->getBlockSize();
+  int inputBufferLength = numInputChannels*blockSize;
+  int outputBufferLength = numOutputChannels*blockSize;
+  float finputBuffers[inputBufferLength];
+  float foutputBuffers[outputBufferLength];
+  
+  #if __APPLE__
+  // convert short to float, and uninterleave the samples into the float buffer
+  // allow fallthrough in all cases
+  switch (numInputChannels) {
+    default: { // input channels > 2
+      for (int i = 2; i < numInputChannels; ++i) {
+        vDSP_vflt16(inputBuffers+i, numInputChannels, finputBuffers+i*blockSize, 1, blockSize);
+      } // allow fallthrough
+    }
+    case 2: vDSP_vflt16(inputBuffers+1, numInputChannels, finputBuffers+blockSize, 1, blockSize);
+    case 1: vDSP_vflt16(inputBuffers, numInputChannels, finputBuffers, 1, blockSize);
+    case 0: break;
+  }
+  
+  // convert samples to range of [-1,+1], also accounting for microphone scale
+  float a = 0.000030517578125f;
+  vDSP_vsmul(finputBuffers, 1, &a, finputBuffers, 1, inputBufferLength);
+  
+  // process the samples
+  context->process(finputBuffers, foutputBuffers);
+  
+  // clip the output to [-1,+1]
+  float min = -1.0f;
+  float max = 1.0f;
+  vDSP_vclip(foutputBuffers, 1, &min, &max, foutputBuffers, 1, outputBufferLength);
+  
+  // scale the floating-point samples to short range
+  a = 32767.0f;
+  vDSP_vsmul(foutputBuffers, 1, &a, foutputBuffers, 1, outputBufferLength);
+  
+  // convert float to short and interleave into short buffer
+  // allow fallthrough in all cases
+  switch (numOutputChannels) {
+    default: { // output channels > 2
+      for (int i = 2; i < numOutputChannels; ++i) {
+        vDSP_vfix16(foutputBuffers+i*blockSize, numOutputChannels, outputBuffers+i, 1, blockSize);
+      } // allow fallthrough
+    }
+    case 2: vDSP_vfix16(foutputBuffers+blockSize, 1, outputBuffers+1, numOutputChannels, blockSize);
+    case 1: vDSP_vfix16(foutputBuffers, 1, outputBuffers, numOutputChannels, blockSize);
+    case 0: break;
+  }
+  #else
+  // uninterleave and short->float the samples in inputBuffers to finputBuffers
+  switch (numInputChannels) {
+    default: {
+      for (int k = 2; k < numInputChannels; k++) {
+        for (int i = k, j = k*blockSize; i < inputBufferLength; i+=numInputChannels, j++) {
+          finputBuffers[j] = ((float) inputBuffers[i]) / 32768.0f;
+        }
+      } // allow fallthrough
+    }
+    case 2: {
+      for (int i = 1, j = blockSize; i < inputBufferLength; i+=numInputChannels, j++) {
+        finputBuffers[j] = ((float) inputBuffers[i]) / 32768.0f;
+      }  // allow fallthrough
+    }
+    case 1: {
+      for (int i = 0, j = 0; i < inputBufferLength; i+=numInputChannels, j++) {
+        finputBuffers[j] = ((float) inputBuffers[i]) / 32768.0f;
+      } // allow fallthrough
+    }
+    case 0: break;
+  }
+  
+  // process the context
+  context->process(finputBuffers, foutputBuffers);
+  
+  // clip the output to [-1,1]
+  for (int i = 0; i < outputBufferLength; i++) {
+    float f = foutputBuffers[i];
+    if (f < -1.0f) f = -1.0f;
+    else if (f > 1.0f) f = 1.0f;
+    foutputBuffers[i] = f;
+  }
+  
+  // interleave and float->short the samples in finputBuffers to cinputBuffers
+  switch (numOutputChannels) {
+    default: {
+      for (int k = 2; k < numOutputChannels; k++) {
+        for (int i = k, j = k*blockSize; i < outputBufferLength; i+=numOutputChannels, j++) {
+          outputBuffers[i] = (short) (foutputBuffers[j] * 32767.0f);
+        }
+      } // allow fallthrough
+    }
+    case 2: {
+      for (int i = 1, j = blockSize; i < outputBufferLength; i+=numOutputChannels, j++) {
+        outputBuffers[i] = (short) (foutputBuffers[j] * 32767.0f);
+      } // allow fallthrough
+    }
+    case 1: {
+      for (int i = 0, j = 0; i < outputBufferLength; i+=numOutputChannels, j++) {
+        outputBuffers[i] = (short) (foutputBuffers[j] * 32767.0f);
+      } // allow fallthrough
+    }
+    case 0: break;
+  }
+  #endif
 }
 
 void *zg_context_get_userinfo(PdContext *context) {

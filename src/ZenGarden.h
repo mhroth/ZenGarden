@@ -157,8 +157,11 @@ typedef enum ZGConnectionType {
   
 #pragma mark - Context Process
 
-  /** Process the given context. */
+  /** Process the given context. Audio buffers are channel-uninterleaved with float (32-bit) samples. */
   void zg_context_process(ZGContext *context, float *inputBuffers, float *outputBuffers);
+  
+  /** Process the given context. Audio buffers are channel-interleaved with signed short (16-bit) samples. */
+  void zg_context_process_s(ZGContext *context, short *inputBuffers, short *outputBuffers);
   
   
 #pragma mark - Context Send Message
