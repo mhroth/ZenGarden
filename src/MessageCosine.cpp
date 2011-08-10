@@ -22,6 +22,10 @@
 
 #include "MessageCosine.h"
 
+MessageObject *MessageCosine::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageCosine(initMessage, graph);
+}
+
 MessageCosine::MessageCosine(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
   // nothing to do
 }

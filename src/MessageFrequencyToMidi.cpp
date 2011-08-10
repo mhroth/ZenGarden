@@ -22,6 +22,10 @@
 
 #include "MessageFrequencyToMidi.h"
 
+MessageObject *MessageFrequencyToMidi::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageFrequencyToMidi(graph);
+}
+
 MessageFrequencyToMidi::MessageFrequencyToMidi(PdGraph *graph) : MessageObject(1, 1, graph) {
   // nothing to do
 }

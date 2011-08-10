@@ -29,10 +29,11 @@
 class MessageListSplit : public MessageObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageListSplit(PdMessage *initMessage, PdGraph *graph);
     ~MessageListSplit();
 
-  const char *getObjectLabel();
+  static const char *getObjectLabel();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);

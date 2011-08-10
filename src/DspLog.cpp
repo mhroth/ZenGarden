@@ -23,6 +23,10 @@
 #include "DspLog.h"
 #include "PdGraph.h"
 
+MessageObject *DspLog::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspLog(initMessage, graph);
+}
+
 DspLog::DspLog(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
   // by default assume ln
   log2_base = initMessage->isFloat(0) ? log2f(initMessage->getFloat(0)) : M_LOG2E;

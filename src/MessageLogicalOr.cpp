@@ -22,6 +22,10 @@
 
 #include "MessageLogicalOr.h"
 
+MessageObject *MessageLogicalOr::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageLogicalOr(initMessage, graph);
+}
+
 MessageLogicalOr::MessageLogicalOr(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
   left = 0.0f;
   right = 0.0f;

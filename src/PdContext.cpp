@@ -154,7 +154,7 @@ int PdContext::globalGraphId = 0;
 #pragma mark Constructor/Deconstructor
 
 PdContext::PdContext(int numInputChannels, int numOutputChannels, int blockSize, float sampleRate,
-    void (*function)(ZGCallbackFunction, void *, void *), void *userData) {
+    void *(*function)(ZGCallbackFunction, void *, void *), void *userData) {
   this->numInputChannels = numInputChannels;
   this->numOutputChannels = numOutputChannels;
   this->blockSize = blockSize;
@@ -194,8 +194,45 @@ PdContext::~PdContext() {
   pthread_mutex_destroy(&contextLock);
 }
 
-#pragma mark -
-#pragma mark Get Context Attributes
+
+#pragma mark - ObjectInitMap and Un/Register External
+
+void PdContext::initObjectInitMap() {
+  // TODO(mhroth): initialise the object init map with all object labels and factory functions
+  objectInitMap[string(MessageAbsoluteValue::getObjectLabel())] = &MessageAbsoluteValue::newObject;
+  objectInitMap[string(MessageAdd::getObjectLabel())] = &MessageAdd::newObject;
+  objectInitMap[string(MessageArcTangent::getObjectLabel())] = &MessageArcTangent::newObject;
+  objectInitMap[string(MessageArcTangent2::getObjectLabel())] = &MessageArcTangent2::newObject;
+  objectInitMap[string(MessageBang::getObjectLabel())] = &MessageBang::newObject;
+  objectInitMap[string("bng")] = &MessageBang::newObject;
+  objectInitMap[string("b")] = &MessageBang::newObject;
+  objectInitMap[string(MessageChange::getObjectLabel())] = &MessageChange::newObject;
+  objectInitMap[string(MessageClip::getObjectLabel())] = &MessageClip::newObject;
+  objectInitMap[string(MessageCosine::getObjectLabel())] = &MessageCosine::newObject;
+  objectInitMap[string(MessageCputime::getObjectLabel())] = &MessageCputime::newObject;
+  objectInitMap[string(MessageDbToPow::getObjectLabel())] = &MessageDbToPow::newObject;
+  objectInitMap[string(MessageDbToRms::getObjectLabel())] = &MessageDbToRms::newObject;
+  objectInitMap[string(MessageDeclare::getObjectLabel())] = &MessageDeclare::newObject;
+  objectInitMap[string(MessageDelay::getObjectLabel())] = &MessageDelay::newObject;
+  objectInitMap[string(MessageDivide::getObjectLabel())] = &MessageDivide::newObject;
+  objectInitMap[string(MessageEqualsEquals::getObjectLabel())] = &MessageEqualsEquals::newObject;
+  objectInitMap[string(MessageExp::getObjectLabel())] = &MessageExp::newObject;
+  objectInitMap[string(MessageFloat::getObjectLabel())] = &MessageFloat::newObject;
+  objectInitMap[string(MessageFrequencyToMidi::getObjectLabel())] = &MessageFrequencyToMidi::newObject;
+  objectInitMap[string(MessageGreaterThan::getObjectLabel())] = &MessageGreaterThan::newObject;
+}
+
+void PdContext::registerExternal(const char *objectLabel,
+    MessageObject *(*objFactory)(PdMessage *, PdGraph *)) {
+  objectInitMap[string(objectLabel)] = objFactory;
+}
+
+void PdContext::unregisterExternal(const char *objectLabel) {
+  objectInitMap.erase(string(objectLabel));
+}
+
+
+#pragma mark - Get Context Attributes
 
 int PdContext::getNumInputChannels() {
   return numInputChannels;
@@ -368,6 +405,15 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
           char *filename = StaticUtils::concatStrings(objectLabel, ".pd");
           char *directory = graph->findFilePath(filename);
           if (directory == NULL) {
+            // if the system cannot find the file itself, make a final effort to find the file via
+            // the user supplied callback
+            if (callbackFunction != NULL) {
+              char *objectpath = (char *) callbackFunction(ZG_CANNOT_FIND_OBJECT, callbackUserData, objectLabel);
+              if (objectpath != NULL) {
+                // create new object based on returned path
+                free(objectpath); // free the returned objectpath
+              }
+            }
             free(filename);
             printErr("Unknown object or abstraction \"%s\".", objectLabel);
             return false;
@@ -406,7 +452,9 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
         int canvasX = atoi(strtok(NULL, " ")); // read the first canvas coordinate
         int canvasY = atoi(strtok(NULL, " ")); // read the second canvas coordinate
         char *comment = strtok(NULL, ";"); // get the comment
-        MessageText *messageText = new MessageText(comment, graph);
+        PdMessage *message = PD_MESSAGE_ON_STACK(1);
+        message->initWithTimestampAndSymbol(0.0, comment);
+        MessageText *messageText = new MessageText(message, graph);
         graph->addObject(canvasX, canvasY, messageText);
       } else if (strcmp(objectType, "declare") == 0) {
         // set environment for loading patch
@@ -475,6 +523,12 @@ void PdContext::unattachGraph(PdGraph *graph) {
 
 MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessage *initMessage, PdGraph *graph) {
   if (strcmp(objectType, "obj") == 0) {
+    
+    MessageObject *(*objFactory)(PdMessage *, PdGraph *) = objectInitMap[string(objectLabel)];
+    return (objFactory != NULL) ? objFactory(initMessage, graph) : NULL;
+    
+    
+    
     if (strcmp(objectLabel, "+") == 0) {
       return new MessageAdd(initMessage, graph);
     } else if (strcmp(objectLabel, "-") == 0) {
@@ -488,13 +542,13 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
     } else if (strcmp(objectLabel, "pow") == 0) {
       return new MessagePow(initMessage, graph);
     } else if (strcmp(objectLabel, "powtodb") == 0) {
-      return new MessagePowToDb(graph);
+      return new MessagePowToDb(initMessage, graph);
     } else if (strcmp(objectLabel, "dbtopow") == 0) {
       return new MessageDbToPow(graph);
     } else if (strcmp(objectLabel, "dbtorms") == 0) {
       return new MessageDbToRms(graph);
     } else if (strcmp(objectLabel, "rmstodb") == 0) {
-      return new MessageRmsToDb(graph);
+      return new MessageRmsToDb(initMessage, graph);
     } else if (strcmp(objectLabel, "log") == 0) {
       return new MessageLog(initMessage, graph);
     } else if (strcmp(objectLabel, "sqrt") == 0) {
@@ -546,7 +600,7 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
     } else if (strcmp(objectLabel, "ftom") == 0) {
       return new MessageFrequencyToMidi(graph);
     } else if (strcmp(objectLabel, "mtof") == 0) {
-      return new MessageMidiToFrequency(graph);
+      return new MessageMidiToFrequency(initMessage, graph);
     } else if (StaticUtils::isNumeric(objectLabel)){
       PdMessage *initMessage = PD_MESSAGE_ON_STACK(1);
       initMessage->initWithTimestampAndFloat(0.0, atof(objectLabel));
@@ -613,7 +667,7 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
     } else if (strcmp(objectLabel, "openpanel") == 0) {
       return new MessageOpenPanel(initMessage, graph);
     } else if (strcmp(objectLabel, "outlet") == 0) {
-      return new MessageOutlet(graph);
+      return new MessageOutlet(initMessage, graph);
     } else if (strcmp(objectLabel, "random") == 0) {
       return new MessageRandom(initMessage, graph);
     } else if (strcmp(objectLabel, "receive") == 0 ||
@@ -656,7 +710,7 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
                strcmp(objectLabel, "t") == 0) {
       return new MessageTrigger(initMessage, graph);
     } else if (strcmp(objectLabel, "until") == 0) {
-      return new MessageUntil(graph);
+      return new MessageUntil(initMessage, graph);
     } else if (strcmp(objectLabel, "unpack") == 0) {
       return new MessageUnpack(initMessage,graph);
     } else if (strcmp(objectLabel, "value") == 0 ||
@@ -664,7 +718,7 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
       return new MessageValue(initMessage, graph);
     } else if (strcmp(objectLabel, "vsl") == 0 ||
                strcmp(objectLabel, "hsl") == 0) {
-      // gui sliders are represented as a float objects
+      // gui sliders are represented as a float object
       PdMessage *message = PD_MESSAGE_ON_STACK(1);
       message->initWithTimestampAndFloat(0.0, 1.0f);
       return new MessageFloat(message, graph);
@@ -703,7 +757,7 @@ MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessa
     } else if (strcmp(objectLabel, "inlet~") == 0) {
       return new DspInlet(graph);
     } else if (strcmp(objectLabel, "line~") == 0) {
-      return new DspLine(graph);
+      return new DspLine(initMessage, graph);
     } else if (strcmp(objectLabel, "log~") == 0) {
       return new DspLog(initMessage, graph);
     } else if (strcmp(objectLabel, "lop~") == 0) {

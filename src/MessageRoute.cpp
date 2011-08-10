@@ -22,6 +22,10 @@
 
 #include "MessageRoute.h"
 
+MessageObject *MessageRoute::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageRoute(initMessage, graph);
+}
+
 MessageRoute::MessageRoute(PdMessage *initMessage, PdGraph *graph) : 
     MessageObject(1, initMessage->getNumElements()+1, graph) {
   routeMessage = initMessage->copyToHeap();

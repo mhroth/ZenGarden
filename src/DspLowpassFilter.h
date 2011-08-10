@@ -39,10 +39,11 @@ enum DspLopCodePath {
 class DspLowpassFilter : public DspObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     DspLowpassFilter(PdMessage *initMessage, PdGraph *graph);
     ~DspLowpassFilter();
   
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
   
     float *getDspBufferRefAtOutlet(int outletIndex);
   

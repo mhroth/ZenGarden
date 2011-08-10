@@ -23,6 +23,10 @@
 #include "MessagePrint.h"
 #include "PdGraph.h"
 
+MessageObject *MessagePrint::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessagePrint(initMessage, graph);
+}
+
 MessagePrint::MessagePrint(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 0, graph) {
   if (initMessage->isSymbol(0)) {
     name = initMessage->isSymbol(0, "-n") ? NULL : StaticUtils::copyString(initMessage->getSymbol(0));

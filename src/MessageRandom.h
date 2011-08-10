@@ -32,10 +32,11 @@ class PdGraph;
 class MessageRandom : public MessageObject {
 
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageRandom(PdMessage *initMessage, PdGraph *graph);
     ~MessageRandom();
 
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
 
     bool shouldDistributeMessageToInlets();
 

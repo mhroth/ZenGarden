@@ -28,10 +28,11 @@
 class DspAdc : public DspObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     DspAdc(PdGraph *graph);
     ~DspAdc();
   
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
   
     bool doesProcessAudio();
 };

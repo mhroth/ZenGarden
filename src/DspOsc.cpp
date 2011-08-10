@@ -27,6 +27,10 @@
 float *DspOsc::cos_table = NULL;
 int DspOsc::refCount = 0;
 
+MessageObject *DspOsc::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspOsc(initMessage, graph);
+}
+
 DspOsc::DspOsc(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
   frequency = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
   

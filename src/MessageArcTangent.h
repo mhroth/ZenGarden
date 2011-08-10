@@ -29,10 +29,11 @@
 class MessageArcTangent : public MessageObject {
 
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageArcTangent(PdMessage *initMessage, PdGraph *graph);
     ~MessageArcTangent();
 
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);

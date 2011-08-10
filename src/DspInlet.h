@@ -35,10 +35,11 @@ class PdGraph;
  */
 class DspInlet : public DspObject {
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     DspInlet(PdGraph *graph);
     ~DspInlet();
   
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     ObjectType getObjectType();
   
     list<MessageObject *> *getProcessOrder();

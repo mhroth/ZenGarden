@@ -24,6 +24,10 @@
 #include "DspReceive.h"
 #include "PdGraph.h"
 
+MessageObject *DspReceive::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspReceive(initMessage, graph);
+}
+
 DspReceive::DspReceive(PdMessage *initMessage, PdGraph *graph) : DspObject(1, 0, 0, 1, graph) {
   if (initMessage->isSymbol(0)) {
     name = StaticUtils::copyString(initMessage->getSymbol(0));

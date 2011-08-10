@@ -29,10 +29,11 @@
 class DspSnapshot : public DspObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     DspSnapshot(PdMessage *initMessage, PdGraph *graph);
     ~DspSnapshot();
     
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     
     ConnectionType getConnectionType(int outletIndex);
     

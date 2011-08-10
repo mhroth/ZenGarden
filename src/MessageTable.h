@@ -29,10 +29,11 @@
 class MessageTable : public RemoteMessageReceiver {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageTable(PdMessage *initMessage, PdGraph *graph);
     ~MessageTable();
   
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     ObjectType getObjectType();
   
     /** Get a pointer to the table's buffer. */

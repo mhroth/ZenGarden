@@ -22,6 +22,10 @@
 
 #include "MessageBang.h"
 
+MessageObject *MessageBang::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageBang(graph);
+}
+
 MessageBang::MessageBang(PdGraph *graph) : MessageObject(1, 1, graph) {
   // nothing to do
 }

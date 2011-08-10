@@ -22,6 +22,10 @@
 
 #include "MessageClip.h"
 
+MessageObject *MessageClip::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageClip(initMessage, graph);
+}
+
 MessageClip::MessageClip(PdMessage *initMessage, PdGraph *graph) : MessageObject(3, 1, graph) {
   if (initMessage->isFloat(0)) {
     if (initMessage->isFloat(1)) {

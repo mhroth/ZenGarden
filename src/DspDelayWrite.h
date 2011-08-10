@@ -28,10 +28,11 @@
 class DspDelayWrite : public DspObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     DspDelayWrite(PdMessage *initMessage, PdGraph *graph);
     ~DspDelayWrite();
   
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     ObjectType getObjectType();
   
     char *getName();

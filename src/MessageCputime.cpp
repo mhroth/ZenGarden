@@ -22,6 +22,10 @@
 
 #include "MessageCputime.h"
 
+MessageObject *MessageCputime::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageCputime(initMessage, graph);
+}
+
 MessageCputime::MessageCputime(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
   // nothing to do
 }

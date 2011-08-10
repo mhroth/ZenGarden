@@ -22,6 +22,10 @@
 
 #include "MessageSwap.h"
 
+MessageObject *MessageSwap::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageSwap(initMessage, graph);
+}
+
 MessageSwap::MessageSwap(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 2, graph) {
   left = 0.0f;
   right = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;

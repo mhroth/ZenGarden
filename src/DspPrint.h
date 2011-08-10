@@ -29,10 +29,11 @@
 class DspPrint : public DspObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     DspPrint(PdMessage *initMessage, PdGraph *graph);
     ~DspPrint();
 
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);

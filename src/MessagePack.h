@@ -29,10 +29,11 @@
 class MessagePack : public MessageObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessagePack(PdMessage *initMessage, PdGraph *graph);
     ~MessagePack();
   
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     string toString();
     
   private:

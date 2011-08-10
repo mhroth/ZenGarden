@@ -24,6 +24,10 @@
 #include "DspMultiply.h"
 #include "PdGraph.h"
 
+MessageObject *DspMultiply::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspMultiply(initMessage, graph);
+}
+
 DspMultiply::DspMultiply(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
   constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
   inputConstant = 0.0f;

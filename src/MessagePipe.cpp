@@ -23,6 +23,10 @@
 #include "MessagePipe.h"
 #include "PdGraph.h"
 
+MessageObject *MessagePipe::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessagePipe(initMessage, graph);
+}
+
 MessagePipe::MessagePipe(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
   delayMs = initMessage->isFloat(0) ? (double) initMessage->getFloat(0) : 0.0;
 }

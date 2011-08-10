@@ -22,6 +22,10 @@
 
 #include "MessageSqrt.h"
 
+MessageObject *MessageSqrt::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageSqrt(initMessage, graph);
+}
+
 MessageSqrt::MessageSqrt(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
   // nothing to do
 }

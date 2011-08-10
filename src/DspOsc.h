@@ -29,10 +29,11 @@
 class DspOsc : public DspObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     DspOsc(PdMessage *initMessage, PdGraph *graph); // and oscillator of default zero frequency
     ~DspOsc();
   
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     string toString();
   
   protected:

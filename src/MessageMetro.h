@@ -31,10 +31,11 @@ class PdGraph;
 class MessageMetro : public MessageObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageMetro(PdMessage *initMessage, PdGraph *graph);
     ~MessageMetro();
   
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     string toString();
   
     void sendMessage(int outletIndex, PdMessage *message);

@@ -24,6 +24,10 @@
 #include "DspDivide.h"
 #include "PdGraph.h"
 
+MessageObject *DspDivide::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspDivide(initMessage, graph);
+}
+
 DspDivide::DspDivide(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
   constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
 }

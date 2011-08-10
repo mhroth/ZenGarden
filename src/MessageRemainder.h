@@ -29,11 +29,12 @@
 class MessageRemainder : public MessageObject {
 
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageRemainder(PdMessage *initMessage, PdGraph *graph);
     MessageRemainder(float constant, PdGraph *graph);
     ~MessageRemainder();
 
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
 
   private:
     void init(float constant);

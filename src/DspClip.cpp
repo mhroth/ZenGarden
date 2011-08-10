@@ -24,6 +24,10 @@
 #include "DspClip.h"
 #include "PdGraph.h"
 
+MessageObject *DspClip::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspClip(initMessage, graph);
+}
+
 DspClip::DspClip(PdMessage *initMessage, PdGraph *graph) : DspObject(3, 1, 0, 1, graph) {
   lowerBound = initMessage->isFloat(0) ? initMessage->getFloat(0) : -1.0f;
   upperBound = initMessage->isFloat(1) ? initMessage->getFloat(1) : 1.0f;

@@ -24,6 +24,10 @@
 #include "DspAdd.h"
 #include "PdGraph.h"
 
+MessageObject *DspAdd::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspAdd(initMessage, graph);
+}
+
 DspAdd::DspAdd(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
   constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
 }

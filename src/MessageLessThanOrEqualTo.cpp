@@ -22,6 +22,10 @@
 
 #include "MessageLessThanOrEqualTo.h"
 
+MessageObject *MessageLessThanOrEqualTo::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageLessThanOrEqualTo(initMessage, graph);
+}
+
 MessageLessThanOrEqualTo::MessageLessThanOrEqualTo(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
   constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
   lastOutput = 0.0f;

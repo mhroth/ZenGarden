@@ -29,10 +29,11 @@
 class MessageLog : public MessageObject {
 
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageLog(PdMessage *initMessage, PdGraph *graph);
     ~MessageLog();
 
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);

@@ -29,10 +29,11 @@
 class MessageSubtract : public MessageObject {
 
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageSubtract(PdMessage *initMessage, PdGraph *graph);
     ~MessageSubtract();
 
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);

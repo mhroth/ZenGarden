@@ -38,10 +38,11 @@ class PdGraph;
 class DspOutlet : public DspObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     DspOutlet(PdGraph *graph);
     ~DspOutlet();
   
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     ObjectType getObjectType();
 
     bool isLeafNode();

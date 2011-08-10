@@ -24,6 +24,10 @@
 #include "DspDac.h"
 #include "PdGraph.h"
 
+MessageObject *DspDac::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspDac(graph);
+}
+
 DspDac::DspDac(PdGraph *graph) : DspObject(0, graph->getNumOutputChannels(), 0, 0, graph) {
   // nothing to do
 }

@@ -22,6 +22,10 @@
 
 #include "MessageDivide.h"
 
+MessageObject *MessageDivide::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageDivide(initMessage, graph);
+}
+
 MessageDivide::MessageDivide(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
   constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
 }

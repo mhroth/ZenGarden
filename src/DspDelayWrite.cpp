@@ -24,6 +24,10 @@
 #include "DspDelayWrite.h"
 #include "PdGraph.h"
 
+MessageObject *DspDelayWrite::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspDelayWrite(initMessage, graph);
+}
+
 DspDelayWrite::DspDelayWrite(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0, 0, graph) {
   if (initMessage->isSymbol(0) && initMessage->isFloat(1)) {
     bufferLength = (int) ceilf(StaticUtils::millisecondsToSamples(initMessage->getFloat(1), 

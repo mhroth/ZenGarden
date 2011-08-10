@@ -29,10 +29,11 @@
 class MessageMultiply : public MessageObject {
 
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageMultiply(PdMessage *initMessage, PdGraph *graph);
     ~MessageMultiply();
 
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);

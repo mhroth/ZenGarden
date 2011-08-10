@@ -22,6 +22,10 @@
 
 #include "MessageListAppend.h"
 
+MessageObject *MessageListAppend::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageListAppend(initMessage, graph);
+}
+
 MessageListAppend::MessageListAppend(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
   appendMessage = initMessage->copyToHeap();
 }

@@ -23,6 +23,10 @@
 #include "MessageUnpack.h"
 #include "PdGraph.h"
 
+MessageObject *MessageUnpack::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageUnpack(initMessage, graph);
+}
+
 MessageUnpack::MessageUnpack(PdMessage *initMessage, PdGraph *graph) :
     MessageObject(1, (initMessage->getNumElements() < 2) ? 2 : initMessage->getNumElements(), graph) {
   if (initMessage->getNumElements() < 2) {

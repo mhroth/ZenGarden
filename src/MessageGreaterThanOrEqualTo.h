@@ -29,10 +29,11 @@
 class MessageGreaterThanOrEqualTo : public MessageObject {
 
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageGreaterThanOrEqualTo(PdMessage *initMessage, PdGraph *graph);
     ~MessageGreaterThanOrEqualTo();
 
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
 
   private:
     void init(float constant);

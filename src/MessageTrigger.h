@@ -32,10 +32,11 @@ class PdGraph;
 class MessageTrigger : public MessageObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageTrigger(PdMessage *initMessage, PdGraph *graph);
     ~MessageTrigger();
   
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     string toString();
 
   private:

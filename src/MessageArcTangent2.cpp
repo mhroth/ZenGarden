@@ -22,6 +22,10 @@
 
 #include "MessageArcTangent2.h"
 
+MessageObject *MessageArcTangent2::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageArcTangent2(initMessage, graph);
+}
+
 MessageArcTangent2::MessageArcTangent2(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
   constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
 }

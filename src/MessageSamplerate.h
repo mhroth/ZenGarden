@@ -29,10 +29,11 @@
 class MessageSamplerate : public MessageObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageSamplerate(PdMessage *initMessage, PdGraph *graph);
     ~MessageSamplerate();
     
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);

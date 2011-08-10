@@ -22,6 +22,10 @@
 
 #include "MessageStripNote.h"
 
+MessageObject *MessageStripNote::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageStripNote(initMessage, graph);
+}
+
 MessageStripNote::MessageStripNote(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 2, graph) {
   // nothing to do
 }

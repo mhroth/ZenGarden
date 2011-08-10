@@ -23,6 +23,10 @@
 #include "MessageOpenPanel.h"
 #include "PdGraph.h"
 
+MessageObject *MessageOpenPanel::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageOpenPanel(initMessage, graph);
+}
+
 MessageOpenPanel::MessageOpenPanel(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
   // nothing to do
 }

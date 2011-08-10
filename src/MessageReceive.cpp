@@ -22,6 +22,10 @@
 
 #include "MessageReceive.h"
 
+MessageObject *MessageReceive::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageReceive(initMessage, graph);
+}
+
 MessageReceive::MessageReceive(PdMessage *initMessage, PdGraph *graph) :
     RemoteMessageReceiver(0, 1, graph) {
   // a receive object can be instantiated with no name. It receives a default.

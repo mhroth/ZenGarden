@@ -28,6 +28,10 @@
 float *DspCosine::cos_table = NULL;
 int DspCosine::refCount = 0;
 
+MessageObject *DspCosine::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspCosine(initMessage, graph);
+}
+
 DspCosine::DspCosine(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0, 1, graph) {
   this->sampleRate = graph->getSampleRate();
   refCount++;

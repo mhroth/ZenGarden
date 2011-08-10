@@ -25,6 +25,10 @@
 #include "DspHighpassFilter.h"
 #include "PdGraph.h"
 
+MessageObject *DspHighpassFilter::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspHighpassFilter(initMessage, graph);
+}
+
 DspHighpassFilter::DspHighpassFilter(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 1, 0, 1, graph) {
   sampleRate = graph->getSampleRate();
   tapIn = 0.0f;

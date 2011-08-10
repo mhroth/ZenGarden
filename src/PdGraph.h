@@ -81,7 +81,7 @@ class PdGraph : public DspObject {
 
 #pragma mark -
   
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     ObjectType getObjectType();
   
     ConnectionType getConnectionType(int outletIndex);

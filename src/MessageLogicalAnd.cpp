@@ -22,6 +22,10 @@
 
 #include "MessageLogicalAnd.h"
 
+MessageObject *MessageLogicalAnd::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageLogicalAnd(initMessage, graph);
+}
+
 MessageLogicalAnd::MessageLogicalAnd(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
   left = 0.0f;
   right = 0.0f;

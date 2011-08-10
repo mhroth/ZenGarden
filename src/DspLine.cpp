@@ -24,7 +24,11 @@
 #include "DspLine.h"
 #include "PdGraph.h"
 
-DspLine::DspLine(PdGraph *graph) : DspObject(2, 0, 0, 1, graph) {
+MessageObject *DspLine::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspLine(initMessage, graph);
+}
+
+DspLine::DspLine(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 0, 0, 1, graph) {
   target = 0.0f;
   slope = 0.0f;
   numSamplesToTarget = 0.0f;

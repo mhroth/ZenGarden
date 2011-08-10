@@ -22,7 +22,11 @@
 
 #include "MessageRmsToDb.h"
 
-MessageRmsToDb::MessageRmsToDb(PdGraph *graph) : MessageObject(1, 1, graph) {
+MessageObject *MessageRmsToDb::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageRmsToDb(initMessage, graph);
+}
+
+MessageRmsToDb::MessageRmsToDb(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
   // nothing to do
 }
 

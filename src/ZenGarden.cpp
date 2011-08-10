@@ -138,7 +138,7 @@ char *zg_object_to_string(ZGObject *object) {
 #pragma mark - Context
 
 ZGContext *zg_context_new(int numInputChannels, int numOutputChannels, int blockSize, float sampleRate,
-      void (*callbackFunction)(ZGCallbackFunction function, void *userData, void *ptr), void *userData) {
+      void *(*callbackFunction)(ZGCallbackFunction function, void *userData, void *ptr), void *userData) {
   return new PdContext(numInputChannels, numOutputChannels, blockSize, sampleRate,
       callbackFunction, userData);
 }

@@ -30,10 +30,11 @@
 class MessageTableWrite : public MessageObject, public TableReceiverInterface {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageTableWrite(PdMessage *initMessage, PdGraph *graph);
     ~MessageTableWrite();
     
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     ObjectType getObjectType();
     
     char *getName();

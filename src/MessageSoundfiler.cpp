@@ -25,6 +25,10 @@
 #include "MessageTable.h"
 #include "PdGraph.h"
 
+MessageObject *MessageSoundfiler::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageSoundfiler(initMessage, graph);
+}
+
 MessageSoundfiler::MessageSoundfiler(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
   // TODO(mhroth)
 }

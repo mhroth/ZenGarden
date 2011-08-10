@@ -34,10 +34,11 @@
 class MessageDeclare : public MessageObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageDeclare(PdMessage *initMessage, PdGraph *graph);
     ~MessageDeclare();
     
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     
   private:
     char *target;

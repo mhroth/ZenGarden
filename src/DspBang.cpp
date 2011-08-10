@@ -23,6 +23,10 @@
 #include "DspBang.h"
 #include "PdGraph.h"
 
+MessageObject *DspBang::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspBang(initMessage, graph);
+}
+
 DspBang::DspBang(PdMessage *initMessage, PdGraph *graph) : DspObject(1, 0, 1, 0, graph) {
   // nothing to do
 }

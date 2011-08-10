@@ -39,10 +39,11 @@ enum DspAddCodePath {
 class DspAdd : public DspObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     DspAdd(PdMessage *initMessage, PdGraph *graph);
     ~DspAdd();
   
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     string toString();
   
     void processDsp();

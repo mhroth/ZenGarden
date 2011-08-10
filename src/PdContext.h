@@ -23,6 +23,7 @@
 #ifndef _PD_CONTEXT_H_
 #define _PD_CONTEXT_H_
 
+#include <map>
 #include <pthread.h>
 #include "OrderedMessageQueue.h"
 #include "PdGraph.h"
@@ -39,6 +40,7 @@ class MessageTable;
 class PdFileParser;
 class RemoteMessageReceiver;
 class TableReceiverInterface;
+class PdMessage;
 
 /**
  * The <code>PdContext</code> is a container for a set of <code>PdGraph</code>s operating in
@@ -48,7 +50,7 @@ class PdContext {
   
   public:
     PdContext(int numInputChannels, int numOutputChannels, int blockSize, float sampleRate,
-        void (*function)(ZGCallbackFunction, void *, void *), void *userData);
+        void *(*function)(ZGCallbackFunction, void *, void *), void *userData);
     ~PdContext();
   
     int getNumInputChannels();
@@ -191,11 +193,20 @@ class PdContext {
     void *callbackUserData;
   
     /** The registered callback function for sending data outside of the graph. */
-    void (*callbackFunction)(ZGCallbackFunction, void *, void *);
+    void *(*callbackFunction)(ZGCallbackFunction, void *, void *);
+  
+    /** */
+    void registerExternal(const char *objectLabel,
+        MessageObject *(*newObject)(PdMessage *, PdGraph *));
+  
+    /** */
+    void unregisterExternal(const char *objectLabel);
   
   private:
     /** Returns <code>true</code> if the graph was successfully configured. <code>false</code> otherwise. */
     bool configureEmptyGraphWithParser(PdGraph *graph, PdFileParser *fileParser);
+  
+    void initObjectInitMap();
 
     int numInputChannels;
     int numOutputChannels;
@@ -252,6 +263,8 @@ class PdContext {
     
     /** A global list of all table receivers (e.g., [tabread4~] and [tabplay~]) */
     list<TableReceiverInterface *> tableReceiverList;
+  
+    map<string, MessageObject *(*)(PdMessage *, PdGraph *)> objectInitMap;
 };
 
 #endif // _PD_CONTEXT_H_

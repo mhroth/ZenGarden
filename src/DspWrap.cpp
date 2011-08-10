@@ -23,6 +23,10 @@
 #include "ArrayArithmetic.h"
 #include "DspWrap.h"
 
+MessageObject *DspWrap::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspWrap(initMessage, graph);
+}
+
 DspWrap::DspWrap(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0, 1, graph) {
   // nothing to do
 }

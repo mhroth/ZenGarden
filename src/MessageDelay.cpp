@@ -23,6 +23,10 @@
 #include "MessageDelay.h"
 #include "PdGraph.h"
 
+MessageObject *MessageDelay::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageDelay(initMessage, graph);
+}
+
 MessageDelay::MessageDelay(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
   delayMs = initMessage->isFloat(0) ? (double) initMessage->getFloat(0) : 0.0;
   scheduledMessage = NULL;

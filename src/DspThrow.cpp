@@ -23,6 +23,10 @@
 #include "DspThrow.h"
 #include "PdGraph.h"
 
+MessageObject *DspThrow::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspThrow(initMessage, graph);
+}
+
 DspThrow::DspThrow(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0, 0, graph) {
   if (initMessage->isSymbol(0)) {
     name = StaticUtils::copyString(initMessage->getSymbol(0));

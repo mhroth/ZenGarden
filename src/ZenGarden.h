@@ -78,7 +78,7 @@ typedef enum ZGConnectionType {
   
   /** Create a new context to which graphs can be added. */
   ZGContext *zg_context_new(int numInputChannels, int numOutputChannels, int blockSize, float sampleRate,
-      void (*callbackFunction)(ZGCallbackFunction function, void *userData, void *ptr), void *userData);
+      void *(*callbackFunction)(ZGCallbackFunction function, void *userData, void *ptr), void *userData);
 
   /** Create a new empty graph in the given context. Ideal for building graphs on the fly. */
   ZGGraph *zg_context_new_empty_graph(ZGContext *context);
@@ -235,7 +235,6 @@ typedef enum ZGConnectionType {
    * Returns an array of ZGConnectionPair structs indicating the objects and outlets from which
    * the connections are comming. The result in n is the length of the array (i.e. the number of
    * connections at the given inlet). The returned array is owned and must be freed by the caller.
-   * NOTE(mhroth): This function currently only returns MESSAGE connections.
    */
   ZGConnectionPair *zg_object_get_connections_at_inlet(ZGObject *object, unsigned int inletIndex, unsigned int *n);
   ZGConnectionPair *zg_object_get_connections_at_outlet(ZGObject *object, unsigned int outletIndex, unsigned int *n);

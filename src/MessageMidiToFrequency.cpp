@@ -22,7 +22,11 @@
 
 #include "MessageMidiToFrequency.h"
 
-MessageMidiToFrequency::MessageMidiToFrequency(PdGraph *graph) : MessageObject(1, 1, graph) {
+MessageObject *MessageMidiToFrequency::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageMidiToFrequency(initMessage, graph);
+}
+
+MessageMidiToFrequency::MessageMidiToFrequency(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
   // nothing to do
 }
 

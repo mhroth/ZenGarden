@@ -22,6 +22,10 @@
 
 #include "MessageToggle.h"
 
+MessageObject *MessageToggle::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageToggle(initMessage, graph);
+}
+
 MessageToggle::MessageToggle(PdMessage *initString, PdGraph *graph) : MessageObject(1, 1, graph) {
   isOn = false;
   lastOutput = 0.0f;

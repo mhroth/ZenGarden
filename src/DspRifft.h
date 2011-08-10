@@ -30,10 +30,11 @@
 class DspRifft : public DspObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     DspRifft(PdMessage *initMessage, PdGraph *graph);
     ~DspRifft();
     
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     
   private:
     void processDspWithIndex(int fromIndex, int toIndex);

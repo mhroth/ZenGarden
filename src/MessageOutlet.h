@@ -29,10 +29,11 @@
 class MessageOutlet : public MessageObject {
   
   public:
-    MessageOutlet(PdGraph *graph);
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
+    MessageOutlet(PdMessage *initMessage, PdGraph *graph);
     ~MessageOutlet();
     
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     ObjectType getObjectType();
   
     bool isLeafNode();

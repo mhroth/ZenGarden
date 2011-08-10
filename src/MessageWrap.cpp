@@ -22,6 +22,10 @@
 
 #include "MessageWrap.h"
 
+MessageObject *MessageWrap::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageWrap(initMessage, graph);
+}
+
 // TODO(mhroth): This object is almost definitely NOT working correctly
 MessageWrap::MessageWrap(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
   switch (initMessage->getNumElements()) {

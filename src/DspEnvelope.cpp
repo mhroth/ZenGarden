@@ -27,6 +27,10 @@
 /** By default, the analysis window size is 1024 samples. */
 #define DEFAULT_WINDOW_SIZE 1024
 
+MessageObject *DspEnvelope::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspEnvelope(initMessage, graph);
+}
+
 DspEnvelope::DspEnvelope(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 1, 0, graph) {
   if (initMessage->isFloat(0)) {
     if (initMessage->isFloat(1)) {

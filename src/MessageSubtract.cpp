@@ -22,6 +22,10 @@
 
 #include "MessageSubtract.h"
 
+MessageObject *MessageSubtract::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageSubtract(initMessage, graph);
+}
+
 MessageSubtract::MessageSubtract(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
   constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
 }

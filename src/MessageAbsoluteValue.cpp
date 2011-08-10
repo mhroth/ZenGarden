@@ -22,6 +22,10 @@
 
 #include "MessageAbsoluteValue.h"
 
+MessageObject *MessageAbsoluteValue::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageAbsoluteValue(initMessage, graph);
+}
+
 MessageAbsoluteValue::MessageAbsoluteValue(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
   // nothing to do
 }

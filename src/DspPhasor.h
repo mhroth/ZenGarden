@@ -29,10 +29,11 @@
 class DspPhasor : public DspObject {
 
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     DspPhasor(PdMessage *initMessage, PdGraph *graph); // and Phasorillator of default zero frequency
     ~DspPhasor();
 
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     string toString();
 
   protected:

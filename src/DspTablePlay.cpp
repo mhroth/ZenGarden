@@ -24,6 +24,10 @@
 #include "MessageTable.h"
 #include "PdGraph.h"
 
+MessageObject *DspTablePlay::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspTablePlay(initMessage, graph);
+}
+
 DspTablePlay::DspTablePlay(PdMessage *initMessage, PdGraph *graph) : DspObject(1, 0, 2, 1, graph) {
   name = initMessage->isSymbol(0) ? StaticUtils::copyString(initMessage->getSymbol(0)) : NULL;
   table = NULL;

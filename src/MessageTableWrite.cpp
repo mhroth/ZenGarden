@@ -23,6 +23,10 @@
 #include "MessageTableWrite.h"
 #include "PdGraph.h"
 
+MessageObject *MessageTableWrite::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageTableWrite(initMessage, graph);
+}
+
 MessageTableWrite::MessageTableWrite(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 0, graph) {
   name = initMessage->isSymbol(0) ? StaticUtils::copyString(initMessage->getSymbol(0)) : NULL;
   table = NULL;

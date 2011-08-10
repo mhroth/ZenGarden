@@ -25,6 +25,10 @@
 #include "DspReciprocalSqrt.h"
 #include "PdGraph.h"
 
+MessageObject *DspReciprocalSqrt::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspReciprocalSqrt(initMessage, graph);
+}
+
 DspReciprocalSqrt::DspReciprocalSqrt(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0, 1, graph) {
   // nothign to do
 }

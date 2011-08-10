@@ -23,9 +23,13 @@
 #include "MessageOutlet.h"
 #include "PdGraph.h"
 
+MessageObject *MessageOutlet::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageOutlet(initMessage, graph);
+}
+
 // MessageOutlets is initialised with one outlet because it handles all outgoing connections
 // for the containing graph.
-MessageOutlet::MessageOutlet(PdGraph *graph) : MessageObject(1, 1, graph) {
+MessageOutlet::MessageOutlet(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
   canvasX = 0;
 }
 

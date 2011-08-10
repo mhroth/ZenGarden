@@ -29,10 +29,11 @@
 class DspWrap : public DspObject {
 
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     DspWrap(PdMessage *initMessage, PdGraph *graph);
     ~DspWrap();
 
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
   
     void processDsp();
 };

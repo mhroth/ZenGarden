@@ -22,6 +22,10 @@
 
 #include "MessageFloat.h"
 
+MessageObject *MessageFloat::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageFloat(initMessage, graph);
+}
+
 MessageFloat::MessageFloat(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
   constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
 }

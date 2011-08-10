@@ -30,10 +30,11 @@
 class DspTablePlay : public DspObject, public TableReceiverInterface {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     DspTablePlay(PdMessage *initMessage, PdGraph *graph);
     ~DspTablePlay();
   
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     ObjectType getObjectType();
   
     ConnectionType getConnectionType(int outletIndex);

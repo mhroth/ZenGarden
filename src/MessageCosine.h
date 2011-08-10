@@ -29,10 +29,11 @@
 class MessageCosine : public MessageObject {
 
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageCosine(PdMessage *initMessage, PdGraph *graph);
     ~MessageCosine();
 
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);

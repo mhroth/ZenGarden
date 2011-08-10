@@ -29,10 +29,11 @@
 class MessageUnpack : public MessageObject {
 
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageUnpack(PdMessage *initMessage, PdGraph *graph);
     ~MessageUnpack();
 
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     string toString();
 
   private:

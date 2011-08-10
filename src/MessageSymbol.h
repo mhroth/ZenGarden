@@ -30,10 +30,11 @@
 class MessageSymbol : public MessageObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageSymbol(PdMessage *initMessage, PdGraph *graph);
     ~MessageSymbol();
   
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);

@@ -23,6 +23,10 @@
 #include "MessageTrigger.h"
 #include "PdGraph.h"
 
+MessageObject *MessageTrigger::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageTrigger(initMessage, graph);
+}
+
 MessageTrigger::MessageTrigger(PdMessage *initMessage, PdGraph *graph) :
     MessageObject(1, initMessage->getNumElements(), graph) {
   // resolve the symbols to type in a copy of the original message on the stack. That way the

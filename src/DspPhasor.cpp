@@ -34,6 +34,10 @@ union tabfudge {
   int tf_i[2];
 };
 
+MessageObject *DspPhasor::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspPhasor(initMessage, graph);
+}
+
 DspPhasor::DspPhasor(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
   frequency = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
   

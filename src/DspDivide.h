@@ -28,10 +28,11 @@
 class DspDivide : public DspObject {
 
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     DspDivide(PdMessage *initMessage, PdGraph *graph);
     ~DspDivide();
 
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     string toString();
 
   private:

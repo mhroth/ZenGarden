@@ -22,6 +22,10 @@
 
 #include "MessageInteger.h"
 
+MessageObject *MessageInteger::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageInteger(initMessage, graph);
+}
+
 MessageInteger::MessageInteger(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
   constant = initMessage->isFloat(0) ? truncf(initMessage->getFloat(0)) : 0.0f;
 }

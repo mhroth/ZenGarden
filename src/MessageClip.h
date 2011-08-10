@@ -29,10 +29,11 @@
 class MessageClip : public MessageObject {
 
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageClip(PdMessage *initMessage, PdGraph *graph);
     ~MessageClip();
 
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
 
   private:
     void init(float lowerBound, float upperBound);

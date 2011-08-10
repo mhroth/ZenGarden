@@ -24,6 +24,10 @@
 #include "DspLowpassFilter.h"
 #include "PdGraph.h"
 
+MessageObject *DspLowpassFilter::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspLowpassFilter(initMessage, graph);
+}
+
 DspLowpassFilter::DspLowpassFilter(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 1, 0, 1, graph) {
   calculateFilterCoefficients(initMessage->isFloat(0) ? initMessage->getFloat(0) : graph->getSampleRate()/2.0f);
   signalConstant = 0.0f;

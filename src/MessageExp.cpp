@@ -22,6 +22,10 @@
 
 #include "MessageExp.h"
 
+MessageObject *MessageExp::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageExp(initMessage, graph);
+}
+
 MessageExp::MessageExp(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
   // nothing to do
 }

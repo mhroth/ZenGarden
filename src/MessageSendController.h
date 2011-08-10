@@ -52,7 +52,7 @@ class MessageSendController : public MessageObject {
     MessageSendController(PdContext *context);
     ~MessageSendController();
   
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
   
     /** Sends the message on to all receivers with the given name. */
     void receiveMessage(const char *name, PdMessage *message);

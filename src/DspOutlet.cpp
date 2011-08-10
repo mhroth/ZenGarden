@@ -22,8 +22,12 @@
 
 #include "DspOutlet.h"
 
+MessageObject *DspOutlet::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspOutlet(graph);
+}
+
 DspOutlet::DspOutlet(PdGraph *graph) : DspObject(0, 1, 0, 1, graph) {
-  canvasX = 0;
+  canvasX = 0.0f;
 }
 
 DspOutlet::~DspOutlet() {

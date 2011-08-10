@@ -22,6 +22,10 @@
 
 #include "MessageListPrepend.h"
 
+MessageObject *MessageListPrepend::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageListPrepend(initMessage, graph);
+}
+
 MessageListPrepend::MessageListPrepend(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
   prependMessage = initMessage->copyToHeap();
 }
