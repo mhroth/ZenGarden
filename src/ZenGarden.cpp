@@ -194,7 +194,7 @@ void zg_context_process_s(ZGContext *context, short *inputBuffers, short *output
     case 0: break;
   }
   
-  // convert samples to range of [-1,+1], also accounting for microphone scale
+  // convert samples to range of [-1,+1]
   float a = 0.000030517578125f;
   vDSP_vsmul(finputBuffers, 1, &a, finputBuffers, 1, inputBufferLength);
   
