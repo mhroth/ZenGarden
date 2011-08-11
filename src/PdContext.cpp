@@ -218,6 +218,7 @@ void PdContext::initObjectInitMap() {
   objectInitMap[string(MessageEqualsEquals::getObjectLabel())] = &MessageEqualsEquals::newObject;
   objectInitMap[string(MessageExp::getObjectLabel())] = &MessageExp::newObject;
   objectInitMap[string(MessageFloat::getObjectLabel())] = &MessageFloat::newObject;
+  objectInitMap[string("f")] = &MessageFloat::newObject;
   objectInitMap[string(MessageFrequencyToMidi::getObjectLabel())] = &MessageFrequencyToMidi::newObject;
   objectInitMap[string(MessageGreaterThan::getObjectLabel())] = &MessageGreaterThan::newObject;
 }
