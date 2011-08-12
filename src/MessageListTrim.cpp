@@ -22,10 +22,6 @@
 
 #include "MessageListTrim.h"
 
-MessageObject *MessageListTrim::newObject(PdMessage *initMessage, PdGraph *graph) {
-  return new MessageListTrim(initMessage, graph);
-}
-
 MessageListTrim::MessageListTrim(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
   // nothing to do
 }

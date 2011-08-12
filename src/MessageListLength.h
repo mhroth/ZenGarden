@@ -29,7 +29,6 @@
 class MessageListLength : public MessageObject {
   
   public:
-    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageListLength(PdMessage *initMessage, PdGraph *graph);
     ~MessageListLength();
   

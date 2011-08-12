@@ -164,6 +164,7 @@ PdContext::PdContext(int numInputChannels, int numOutputChannels, int blockSize,
   blockStartTimestamp = 0.0;
   blockDurationMs = ((double) blockSize / (double) sampleRate) * 1000.0;
   messageCallbackQueue = new OrderedMessageQueue();
+  initObjectInitMap(); // initialise the object factory map
   
   numBytesInInputBuffers = blockSize * numInputChannels * sizeof(float);
   numBytesInOutputBuffers = blockSize * numOutputChannels * sizeof(float);
@@ -229,7 +230,7 @@ void PdContext::initObjectInitMap() {
   objectInitMap[string(MessageLessThan::getObjectLabel())] = &MessageLessThan::newObject;
   objectInitMap[string(MessageLessThanOrEqualTo::getObjectLabel())] = &MessageLessThanOrEqualTo::newObject;
   objectInitMap[string(MessageLine::getObjectLabel())] = &MessageLine::newObject;
-  objectInitMap[string()] = &MessageLine::newObject; // TODO(mhroth): MessageList collection
+  objectInitMap[string("list")] = &MessageListAppend::newObject; // MessageListAppend factory creates any kind of list object
   objectInitMap[string(MessageLoadbang::getObjectLabel())] = &MessageLoadbang::newObject;
   objectInitMap[string(MessageLog::getObjectLabel())] = &MessageLog::newObject;
   objectInitMap[string(MessageLogicalAnd::getObjectLabel())] = &MessageLogicalAnd::newObject;
@@ -245,6 +246,7 @@ void PdContext::initObjectInitMap() {
   objectInitMap[string(MessageNotein::getObjectLabel())] = &MessageNotein::newObject;
   objectInitMap[string(MessageNotEquals::getObjectLabel())] = &MessageNotEquals::newObject;
   objectInitMap[string(MessageOpenPanel::getObjectLabel())] = &MessageOpenPanel::newObject;
+  objectInitMap[string(MessageOutlet::getObjectLabel())] = &MessageOutlet::newObject;
   objectInitMap[string(MessagePack::getObjectLabel())] = &MessagePack::newObject;
   objectInitMap[string(MessagePipe::getObjectLabel())] = &MessagePipe::newObject;
   objectInitMap[string(MessagePow::getObjectLabel())] = &MessagePow::newObject;
@@ -316,6 +318,7 @@ void PdContext::initObjectInitMap() {
   objectInitMap[string(DspRfft::getObjectLabel())] = &DspRfft::newObject;
   objectInitMap[string(DspRifft::getObjectLabel())] = &DspRifft::newObject;
   objectInitMap[string(DspSend::getObjectLabel())] = &DspSend::newObject;
+  objectInitMap[string("s~")] = &DspSend::newObject;
   objectInitMap[string(DspSignal::getObjectLabel())] = &DspSignal::newObject;
   objectInitMap[string(DspSnapshot::getObjectLabel())] = &DspSnapshot::newObject;
   objectInitMap[string(DspSqrt::getObjectLabel())] = &DspSqrt::newObject;
@@ -506,7 +509,7 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
         char resBuffer[RESOLUTION_BUFFER_LENGTH];
         initMessage->initWithSARb(INIT_MESSAGE_MAX_ELEMENTS, objectInitString, graph->getArguments(),
             resBuffer, RESOLUTION_BUFFER_LENGTH);
-        MessageObject *messageObject = newObject(objectType, objectLabel, initMessage, graph);
+        MessageObject *messageObject = newObject(objectLabel, initMessage, graph);
         if (messageObject == NULL) {
           char *filename = StaticUtils::concatStrings(objectLabel, ".pd");
           char *directory = graph->findFilePath(filename);
@@ -627,21 +630,21 @@ void PdContext::unattachGraph(PdGraph *graph) {
   unlock();
 }
 
-MessageObject *PdContext::newObject(const char *objectType, const char *objectLabel, PdMessage *initMessage, PdGraph *graph) {
+MessageObject *PdContext::newObject(const char *objectLabel, PdMessage *initMessage, PdGraph *graph) {
+  MessageObject *(*objFactory)(PdMessage *, PdGraph *) = objectInitMap[string(objectLabel)];
+  if (objFactory != NULL) {
+    // the factory has been indenified.
+    return objFactory(initMessage, graph);
+  } else if(StaticUtils::isNumeric(objectLabel)) {
+    // special case for constructing a float object from a number
+    PdMessage *initMessage = PD_MESSAGE_ON_STACK(1);
+    initMessage->initWithTimestampAndFloat(0.0, atof(objectLabel));
+    return new MessageFloat(initMessage, graph);
+  } else {
+    return NULL; // unknown object
+  }
+  /*
   if (strcmp(objectType, "obj") == 0) {
-    
-    MessageObject *(*objFactory)(PdMessage *, PdGraph *) = objectInitMap[string(objectLabel)];
-    if (objFactory != NULL) {
-      return objFactory(initMessage, graph);
-    } else if(StaticUtils::isNumeric(objectLabel)) {
-      PdMessage *initMessage = PD_MESSAGE_ON_STACK(1);
-      initMessage->initWithTimestampAndFloat(0.0, atof(objectLabel));
-      return new MessageFloat(initMessage, graph);
-    } else {
-      return NULL;
-    }
-    
-    
     if (strcmp(objectLabel, "+") == 0) {
       return new MessageAdd(initMessage, graph);
     } else if (strcmp(objectLabel, "-") == 0) {
@@ -932,6 +935,7 @@ MessageObject *PdContext::newObject(const char *objectType, const char *objectLa
   
   // object was not recognised. It has probably not been implemented yet or exists as an abstraction
   return NULL;
+  */
 }
 
 #pragma mark -

@@ -23,10 +23,6 @@
 #include <string.h>
 #include "MessageListSplit.h"
 
-MessageObject *MessageListSplit::newObject(PdMessage *initMessage, PdGraph *graph) {
-  return new MessageListSplit(initMessage, graph);
-}
-
 MessageListSplit::MessageListSplit(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 3, graph) {
   splitIndex = initMessage->isFloat(0) ? (int) initMessage->getFloat(0) : 0;
 }

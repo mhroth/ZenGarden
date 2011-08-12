@@ -29,7 +29,6 @@
 class MessageListPrepend : public MessageObject {
   
   public:
-    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageListPrepend(PdMessage *initMessage, PdGraph *graph);
     ~MessageListPrepend();
     

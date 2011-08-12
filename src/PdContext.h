@@ -184,8 +184,7 @@ class PdContext {
     float getValueForName(char *name);
   
     /** Create a new object in a graph. */
-    MessageObject *newObject(const char *objectType, const char *objectLabel,
-        PdMessage *initMessage, PdGraph *graph);
+    MessageObject *newObject(const char *objectLabel, PdMessage *initMessage, PdGraph *graph);
   
     void registerExternalReceiver(const char *receiverName);
     void unregisterExternalReceiver(const char *receiverName);

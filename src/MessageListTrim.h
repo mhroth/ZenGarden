@@ -36,7 +36,6 @@
 class MessageListTrim : public MessageObject {
   
   public:
-    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageListTrim(PdMessage *initMessage, PdGraph *graph);
     ~MessageListTrim();
     

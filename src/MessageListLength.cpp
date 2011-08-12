@@ -22,10 +22,6 @@
 
 #include "MessageListLength.h"
 
-MessageObject *MessageListLength::newObject(PdMessage *initMessage, PdGraph *graph) {
-  return new MessageListLength(initMessage, graph);
-}
-
 MessageListLength::MessageListLength(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
   // nothing to do
 }

@@ -42,7 +42,7 @@ ZGObject *zg_graph_add_new_object(PdGraph *graph, const char *objectString, floa
   char resolutionBuffer[256];
   PdMessage *initMessage = PD_MESSAGE_ON_STACK(32);
   initMessage->initWithSARb(32, initString, graph->getArguments(), resolutionBuffer, 256);
-  MessageObject *messageObject = graph->getContext()->newObject((char *) "obj", objectLabel, initMessage, graph);
+  MessageObject *messageObject = graph->getContext()->newObject(objectLabel, initMessage, graph);
   free(objectStringCopy);
   
   if (messageObject != NULL) {
