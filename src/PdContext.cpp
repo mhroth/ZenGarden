@@ -217,11 +217,13 @@ void PdContext::initObjectInitMap() {
   objectInitMap[string(MessageDbToRms::getObjectLabel())] = &MessageDbToRms::newObject;
   objectInitMap[string(MessageDeclare::getObjectLabel())] = &MessageDeclare::newObject;
   objectInitMap[string(MessageDelay::getObjectLabel())] = &MessageDelay::newObject;
+  objectInitMap[string("del")] = &MessageDelay::newObject;
   objectInitMap[string(MessageDivide::getObjectLabel())] = &MessageDivide::newObject;
   objectInitMap[string(MessageEqualsEquals::getObjectLabel())] = &MessageEqualsEquals::newObject;
   objectInitMap[string(MessageExp::getObjectLabel())] = &MessageExp::newObject;
   objectInitMap[string(MessageFloat::getObjectLabel())] = &MessageFloat::newObject;
   objectInitMap[string("f")] = &MessageFloat::newObject;
+  objectInitMap[string("nbx")] = &MessageFloat::newObject; // number boxes are represented as float objects
   objectInitMap[string(MessageFrequencyToMidi::getObjectLabel())] = &MessageFrequencyToMidi::newObject;
   objectInitMap[string(MessageGreaterThan::getObjectLabel())] = &MessageGreaterThan::newObject;
   objectInitMap[string(MessageInlet::getObjectLabel())] = &MessageInlet::newObject;
@@ -260,6 +262,7 @@ void PdContext::initObjectInitMap() {
   objectInitMap[string(MessageRoute::getObjectLabel())] = &MessageRoute::newObject;
   objectInitMap[string(MessageSamplerate::getObjectLabel())] = &MessageSamplerate::newObject;
   objectInitMap[string(MessageSelect::getObjectLabel())] = &MessageSelect::newObject;
+  objectInitMap[string("sel")] = &MessageSelect::newObject;
   objectInitMap[string(MessageSend::getObjectLabel())] = &MessageSend::newObject;
   objectInitMap[string("s")] = &MessageSend::newObject;
   objectInitMap[string(MessageSine::getObjectLabel())] = &MessageSine::newObject;
@@ -286,6 +289,8 @@ void PdContext::initObjectInitMap() {
   objectInitMap[string(MessageValue::getObjectLabel())] = &MessageValue::newObject;
   objectInitMap[string("v")] = &MessageValue::newObject;
   objectInitMap[string(MessageWrap::getObjectLabel())] = &MessageWrap::newObject;
+  
+  // TODO(mhroth): vsl and hsl
   
   // dsp objects
   objectInitMap[string(DspAdc::getObjectLabel())] = &DspAdc::newObject;
@@ -643,299 +648,6 @@ MessageObject *PdContext::newObject(const char *objectLabel, PdMessage *initMess
   } else {
     return NULL; // unknown object
   }
-  /*
-  if (strcmp(objectType, "obj") == 0) {
-    if (strcmp(objectLabel, "+") == 0) {
-      return new MessageAdd(initMessage, graph);
-    } else if (strcmp(objectLabel, "-") == 0) {
-      return new MessageSubtract(initMessage, graph);
-    } else if (strcmp(objectLabel, "*") == 0) {
-      return new MessageMultiply(initMessage, graph);
-    } else if (strcmp(objectLabel, "/") == 0) {
-      return new MessageDivide(initMessage, graph);
-    } else if (strcmp(objectLabel, "%") == 0) {
-      return new MessageRemainder(initMessage, graph);
-    } else if (strcmp(objectLabel, "pow") == 0) {
-      return new MessagePow(initMessage, graph);
-    } else if (strcmp(objectLabel, "powtodb") == 0) {
-      return new MessagePowToDb(initMessage, graph);
-    } else if (strcmp(objectLabel, "dbtopow") == 0) {
-      return new MessageDbToPow(graph);
-    } else if (strcmp(objectLabel, "dbtorms") == 0) {
-      return new MessageDbToRms(graph);
-    } else if (strcmp(objectLabel, "rmstodb") == 0) {
-      return new MessageRmsToDb(initMessage, graph);
-    } else if (strcmp(objectLabel, "log") == 0) {
-      return new MessageLog(initMessage, graph);
-    } else if (strcmp(objectLabel, "sqrt") == 0) {
-      return new MessageSqrt(initMessage, graph);
-    } else if (strcmp(objectLabel, ">") == 0) {
-      return new MessageGreaterThan(initMessage, graph);
-    } else if (strcmp(objectLabel, ">=") == 0) {
-      return new MessageGreaterThanOrEqualTo(initMessage, graph);
-    } else if (strcmp(objectLabel, "<") == 0) {
-      return new MessageLessThan(initMessage, graph);
-    } else if (strcmp(objectLabel, "<=") == 0) {
-      return new MessageLessThanOrEqualTo(initMessage, graph);
-    } else if (strcmp(objectLabel, "==") == 0) {
-      return new MessageEqualsEquals(initMessage, graph);
-    } else if (strcmp(objectLabel, "!=") == 0) {
-      return new MessageNotEquals(initMessage, graph);
-    } else if (strcmp(objectLabel, "||") == 0) {
-      return new MessageLogicalOr(initMessage, graph);
-    } else if (strcmp(objectLabel, "&&") == 0) {
-      return new MessageLogicalAnd(initMessage, graph);
-    } else if (strcmp(objectLabel, "abs") == 0) {
-      return new MessageAbsoluteValue(initMessage, graph);
-    } else if (strcmp(objectLabel, "atan") == 0) {
-      return new MessageArcTangent(initMessage, graph);
-    } else if (strcmp(objectLabel, "atan2") == 0) {
-      return new MessageArcTangent2(initMessage, graph);
-    } else if (strcmp(objectLabel, "bang") == 0 ||
-               strcmp(objectLabel, "bng") == 0 ||
-               strcmp(objectLabel, "b") == 0) {
-      return new MessageBang(graph);
-    } else if (strcmp(objectLabel, "change") == 0) {
-      return new MessageChange(initMessage, graph);
-    } else if (strcmp(objectLabel, "cos") == 0) {
-      return new MessageCosine(initMessage, graph);
-    } else if (strcmp(objectLabel, "cputime") == 0) {
-      return new MessageCputime(initMessage, graph);
-    } else if (strcmp(objectLabel, "clip") == 0) {
-      return new MessageClip(initMessage, graph);
-    } else if (strcmp(objectLabel, "declare") == 0) {
-      return new MessageDeclare(initMessage, graph);
-    } else if (strcmp(objectLabel, "delay") == 0 ||
-               strcmp(objectLabel, "del") == 0) {
-      return new MessageDelay(initMessage, graph);
-    } else if (strcmp(objectLabel, "exp") == 0) {
-      return new MessageExp(initMessage, graph);
-    } else if (strcmp(objectLabel, "float") == 0 ||
-               strcmp(objectLabel, "f") == 0) {
-      return new MessageFloat(initMessage, graph);
-    } else if (strcmp(objectLabel, "ftom") == 0) {
-      return new MessageFrequencyToMidi(graph);
-    } else if (strcmp(objectLabel, "mtof") == 0) {
-      return new MessageMidiToFrequency(initMessage, graph);
-    } else if (StaticUtils::isNumeric(objectLabel)){
-      PdMessage *initMessage = PD_MESSAGE_ON_STACK(1);
-      initMessage->initWithTimestampAndFloat(0.0, atof(objectLabel));
-      return new MessageFloat(initMessage, graph);
-    } else if (strcmp(objectLabel, "inlet") == 0) {
-      return new MessageInlet(graph);
-    } else if (strcmp(objectLabel, "int") == 0 ||
-               strcmp(objectLabel, "i") == 0) {
-      return new MessageInteger(initMessage, graph);
-    } else if (strcmp(objectLabel, "line") == 0) {
-      return new MessageLine(initMessage, graph);
-    } else if (strcmp(objectLabel, "list") == 0) {
-      if (initMessage->isSymbol(0)) {
-        if (initMessage->isSymbol(0, "append") ||
-            initMessage->isSymbol(0, "prepend") ||
-            initMessage->isSymbol(0, "split")) {
-          int numElements = initMessage->getNumElements()-1;
-          PdMessage *message = PD_MESSAGE_ON_STACK(numElements);
-          message->initWithTimestampAndNumElements(0.0, numElements);
-          memcpy(message->getElement(0), initMessage->getElement(1), numElements*sizeof(MessageAtom));
-          MessageObject *messageObject = NULL;
-          if (initMessage->isSymbol(0, "append")) {
-            messageObject = new MessageListAppend(message, graph);
-          } else if (initMessage->isSymbol(0, "prepend")) {
-            messageObject = new MessageListPrepend(message, graph);
-          } else if (initMessage->isSymbol(0, "split")) {
-            messageObject = new MessageListSplit(message, graph);
-          }
-          return messageObject;
-        } else if (initMessage->isSymbol(0, "trim")) {
-          // trim and length do not act on the initMessage
-          return new MessageListTrim(initMessage, graph);
-        } else if (initMessage->isSymbol(0, "length")) {
-          return new MessageListLength(initMessage, graph);
-        } else {
-          return new MessageListAppend(initMessage, graph);
-        }
-      } else {
-        return new MessageListAppend(initMessage, graph);
-      }
-    } else if (strcmp(objectLabel, "loadbang") == 0) {
-      return new MessageLoadbang(graph);
-    } else if (strcmp(objectLabel, "max") == 0) {
-      return new MessageMaximum(initMessage, graph);
-    } else if (strcmp(objectLabel, "min") == 0) {
-      return new MessageMinimum(initMessage, graph);
-    } else if (strcmp(objectLabel, "metro") == 0) {
-      return new MessageMetro(initMessage, graph);
-    } else if (strcmp(objectLabel, "moses") == 0) {
-      return new MessageMoses(initMessage, graph);
-    } else if (strcmp(objectLabel, "mod") == 0) {
-      return new MessageModulus(initMessage, graph);
-    } else if (strcmp(objectLabel, "nbx") == 0) {
-      // gui number boxes are represented as float objects
-      return new MessageFloat(initMessage, graph);
-    } else if (strcmp(objectLabel, "notein") == 0) {
-      return new MessageNotein(initMessage, graph);
-    } else if (strcmp(objectLabel, "pack") == 0) {
-      return new MessagePack(initMessage, graph);
-    } else if (strcmp(objectLabel, "pipe") == 0) {
-      return new MessagePipe(initMessage, graph);
-    } else if (strcmp(objectLabel, "print") == 0) {
-      return new MessagePrint(initMessage, graph);
-    } else if (strcmp(objectLabel, "openpanel") == 0) {
-      return new MessageOpenPanel(initMessage, graph);
-    } else if (strcmp(objectLabel, "outlet") == 0) {
-      return new MessageOutlet(initMessage, graph);
-    } else if (strcmp(objectLabel, "random") == 0) {
-      return new MessageRandom(initMessage, graph);
-    } else if (strcmp(objectLabel, "receive") == 0 ||
-               strcmp(objectLabel, "r") == 0) {
-      return new MessageReceive(initMessage, graph);
-    } else if (strcmp(objectLabel, "route") == 0) {
-      return new MessageRoute(initMessage, graph);
-    } else if (strcmp(objectLabel, "select") == 0 ||
-               strcmp(objectLabel, "sel") == 0) {
-      return new MessageSelect(initMessage, graph);
-    } else if (strcmp(objectLabel, "send") == 0 ||
-               strcmp(objectLabel, "s") == 0) {
-      return new MessageSend(initMessage, graph);
-    } else if (strcmp(objectLabel, "sin") == 0) {
-      return new MessageSine(initMessage, graph);
-    } else if (strcmp(objectLabel, "soundfiler") == 0) {
-      return new MessageSoundfiler(initMessage, graph);
-    } else if (strcmp(objectLabel, "spigot") == 0) {
-      return new MessageSpigot(initMessage, graph);
-    } else if (strcmp(objectLabel, "stripnote") == 0) {
-      return new MessageStripNote(initMessage, graph);
-    } else if (strcmp(objectLabel, "swap") == 0) {
-      return new MessageSwap(initMessage, graph);
-    } else if (strcmp(objectLabel, "symbol") == 0) {
-      return new MessageSymbol(initMessage, graph);
-    } else if (strcmp(objectLabel, "table") == 0) {
-      return new MessageTable(initMessage, graph);
-    } else if (strcmp(objectLabel, "tabread") == 0) {
-      return new MessageTableRead(initMessage, graph);
-    } else if (strcmp(objectLabel, "tabwrite") == 0) {
-      return new MessageTableWrite(initMessage, graph);
-    } else if (strcmp(objectLabel, "tan") == 0) {
-      return new MessageTangent(initMessage, graph);
-    } else if (strcmp(objectLabel, "timer") == 0) {
-      return new MessageTimer(initMessage, graph);
-    } else if (strcmp(objectLabel, "toggle") == 0 ||
-               strcmp(objectLabel, "tgl") == 0) {
-      return new MessageToggle(initMessage, graph);
-    } else if (strcmp(objectLabel, "trigger") == 0 ||
-               strcmp(objectLabel, "t") == 0) {
-      return new MessageTrigger(initMessage, graph);
-    } else if (strcmp(objectLabel, "until") == 0) {
-      return new MessageUntil(initMessage, graph);
-    } else if (strcmp(objectLabel, "unpack") == 0) {
-      return new MessageUnpack(initMessage,graph);
-    } else if (strcmp(objectLabel, "value") == 0 ||
-               strcmp(objectLabel, "v") == 0) {
-      return new MessageValue(initMessage, graph);
-    } else if (strcmp(objectLabel, "vsl") == 0 ||
-               strcmp(objectLabel, "hsl") == 0) {
-      // gui sliders are represented as a float object
-      PdMessage *message = PD_MESSAGE_ON_STACK(1);
-      message->initWithTimestampAndFloat(0.0, 1.0f);
-      return new MessageFloat(message, graph);
-    } else if (strcmp(objectLabel, "wrap") == 0) {
-      return new MessageWrap(initMessage, graph);
-    } else if (strcmp(objectLabel, "+~") == 0) {
-      return new DspAdd(initMessage, graph);
-    } else if (strcmp(objectLabel, "-~") == 0) {
-      return new DspSubtract(initMessage, graph);
-    } else if (strcmp(objectLabel, "*~") == 0) {
-      return new DspMultiply(initMessage, graph);
-    } else if (strcmp(objectLabel, "/~") == 0) {
-      return new DspDivide(initMessage, graph);
-    } else if (strcmp(objectLabel, "adc~") == 0) {
-      return new DspAdc(graph);
-    } else if (strcmp(objectLabel, "bp~") == 0) {
-      return new DspBandpassFilter(initMessage, graph);
-    } else if (strcmp(objectLabel, "bang~") == 0) {
-      return new DspBang(initMessage, graph);
-    } else if (strcmp(objectLabel, "catch~") == 0) {
-      return new DspCatch(initMessage, graph);
-    } else if (strcmp(objectLabel, "clip~") == 0) {
-      return new DspClip(initMessage, graph);
-    } else if (strcmp(objectLabel, "cos~") == 0) {
-      return new DspCosine(initMessage,graph);
-    } else if (strcmp(objectLabel, "dac~") == 0) {
-      return new DspDac(graph);
-    } else if (strcmp(objectLabel, "delread~") == 0) {
-      return new DspDelayRead(initMessage, graph);
-    } else if (strcmp(objectLabel, "delwrite~") == 0) {
-      return new DspDelayWrite(initMessage, graph);
-    } else if (strcmp(objectLabel, "env~") == 0) {
-      return new DspEnvelope(initMessage, graph);
-    } else if (strcmp(objectLabel, "hip~") == 0) {
-      return new DspHighpassFilter(initMessage, graph);
-    } else if (strcmp(objectLabel, "inlet~") == 0) {
-      return new DspInlet(graph);
-    } else if (strcmp(objectLabel, "line~") == 0) {
-      return new DspLine(initMessage, graph);
-    } else if (strcmp(objectLabel, "log~") == 0) {
-      return new DspLog(initMessage, graph);
-    } else if (strcmp(objectLabel, "lop~") == 0) {
-      return new DspLowpassFilter(initMessage, graph);
-    } else if (strcmp(objectLabel, "min~") == 0) {
-      return new DspMinimum(initMessage, graph);
-    } else if (strcmp(objectLabel, "noise~") == 0) {
-      return new DspNoise(graph);
-    } else if (strcmp(objectLabel, "osc~") == 0) {
-      return new DspOsc(initMessage, graph);
-    } else if (strcmp(objectLabel, "outlet~") == 0) {
-      return new DspOutlet(graph);
-    } else if (strcmp(objectLabel, "phasor~") == 0) {
-      return new DspPhasor(initMessage, graph);
-    } else if (strcmp(objectLabel, "print~") == 0) {
-      return new DspPrint(initMessage, graph);
-    } else if (strcmp(objectLabel, "receive~") == 0 ||
-               strcmp(objectLabel, "r~") == 0) {
-      return new DspReceive(initMessage, graph);
-    } else if (strcmp(objectLabel, "rfft~") == 0) {
-      return new DspRfft(initMessage, graph);
-    } else if (strcmp(objectLabel, "rifft~") == 0) {
-      return new DspRifft(initMessage, graph);
-    } else if (strcmp(objectLabel, "rsqrt~") == 0 ||
-               strcmp(objectLabel, "q8_rsqrt~") == 0) {
-      return new DspReciprocalSqrt(initMessage, graph);
-    } else if (strcmp(objectLabel, "samplerate~") == 0) {
-      return new MessageSamplerate(initMessage, graph);
-    } else if (strcmp(objectLabel, "send~") == 0 ||
-               strcmp(objectLabel, "s~") == 0) {
-      return new DspSend(initMessage, graph);
-    } else if (strcmp(objectLabel, "sig~") == 0) {
-      return new DspSignal(initMessage, graph);
-    } else if (strcmp(objectLabel, "snapshot~") == 0) {
-      return new DspSnapshot(initMessage, graph);
-    } else if (strcmp(objectLabel, "sqrt~") == 0 ||
-               strcmp(objectLabel, "q8_sqrt~") == 0) {
-      return new DspSqrt(initMessage, graph);
-    } else if (strcmp(objectLabel, "switch~") == 0) {
-      return new MessageSwitch(initMessage, graph);
-    } else if (strcmp(objectLabel, "tabplay~") == 0) {
-      return new DspTablePlay(initMessage, graph);
-    } else if (strcmp(objectLabel, "tabread~") == 0) {
-      return new DspTableRead(initMessage, graph);
-    } else if (strcmp(objectLabel, "tabread4~") == 0) {
-      return new DspTableRead4(initMessage, graph);
-    } else if (strcmp(objectLabel, "throw~") == 0) {
-      return new DspThrow(initMessage, graph);
-    } else if (strcmp(objectLabel, "vcf~") == 0) {
-      return new DspVCF(initMessage, graph);
-    } else if (strcmp(objectLabel, "vd~") == 0) {
-      return new DspVariableDelay(initMessage, graph);
-    } else if (strcmp(objectLabel, "wrap~") == 0) {
-      return new DspWrap(initMessage, graph);
-    }
-  } else if (strcmp(objectType, "msg") == 0) {
-    // TODO(mhroth)
-  }
-  
-  // object was not recognised. It has probably not been implemented yet or exists as an abstraction
-  return NULL;
-  */
 }
 
 #pragma mark -

@@ -107,6 +107,16 @@ typedef enum ZGConnectionType {
    */
   ZGGraph *zg_context_get_graphs(ZGContext *context, unsigned int *n);
   
+  /**
+   * Register an external such that the context can instantiate instances of it. If an object
+   * with the same label already exists, then the factory method is replaced with the new one.
+   */
+  void zg_context_register_external_object(ZGContext *context, const char *objectLabel,
+      ZGObject *(*factory)(ZGMessage *message, ZGGraph *graph));
+  
+  /** Unregister an external such that the context will be unaware of it. */
+  void zg_context_unregister_external_object(ZGContext *context, const char *objectLabel);
+  
 
 #pragma mark - Objects from Context
   

@@ -290,6 +290,15 @@ ZGGraph *zg_context_get_graphs(ZGContext *context, unsigned int *n) {
   return NULL;
 }
 
+void zg_context_register_external_object(ZGContext *context, const char *objectLabel,
+    ZGObject *(*factory)(ZGMessage *message, ZGGraph *graph)) {
+  context->registerExternal(objectLabel, factory);
+}
+
+void zg_context_unregister_external_object(ZGContext *context, const char *objectLabel) {
+  context->unregisterExternal(objectLabel);
+}
+
 
 #pragma mark - Objects from Context
 
