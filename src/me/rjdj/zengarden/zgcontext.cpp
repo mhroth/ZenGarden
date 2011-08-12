@@ -41,7 +41,7 @@ typedef struct {
 } PureDataMobileNativeVars;
 
 extern "C" {
-  void zg_callback(ZGCallbackFunction function, void *userData, void *ptr) {
+  void *zg_callback(ZGCallbackFunction function, void *userData, void *ptr) {
     JNIEnv *env = NULL;
     jint result = zg_jvm->GetEnv((void **)&env, JNI_VERSION);
     if (result == JNI_OK && env != NULL) {
@@ -107,6 +107,7 @@ extern "C" {
         }
       }
     }
+    return NULL;
   }
 }
 

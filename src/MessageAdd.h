@@ -33,7 +33,7 @@ class MessageAdd : public MessageObject {
     MessageAdd(PdMessage *initMessage, PdGraph *graph);
     ~MessageAdd();
 
-    static static const char *getObjectLabel();
+    static const char *getObjectLabel();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);

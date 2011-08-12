@@ -36,7 +36,7 @@ MessageEqualsEquals::~MessageEqualsEquals() {
 }
 
 const char *MessageEqualsEquals::getObjectLabel() {
-  return "!=";
+  return "==";
 }
 
 void MessageEqualsEquals::processMessage(int inletIndex, PdMessage *message) {

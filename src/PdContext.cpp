@@ -196,7 +196,7 @@ PdContext::~PdContext() {
 }
 
 
-#pragma mark - ObjectInitMap and Un/Register External
+#pragma mark - External Object Management
 
 void PdContext::initObjectInitMap() {
   // these objects represent the core set of supported objects
@@ -226,6 +226,7 @@ void PdContext::initObjectInitMap() {
   objectInitMap[string("nbx")] = &MessageFloat::newObject; // number boxes are represented as float objects
   objectInitMap[string(MessageFrequencyToMidi::getObjectLabel())] = &MessageFrequencyToMidi::newObject;
   objectInitMap[string(MessageGreaterThan::getObjectLabel())] = &MessageGreaterThan::newObject;
+  objectInitMap[string(MessageGreaterThanOrEqualTo::getObjectLabel())] = &MessageGreaterThanOrEqualTo::newObject;
   objectInitMap[string(MessageInlet::getObjectLabel())] = &MessageInlet::newObject;
   objectInitMap[string(MessageInteger::getObjectLabel())] = &MessageInteger::newObject;
   objectInitMap[string("i")] = &MessageInteger::newObject;
@@ -238,7 +239,6 @@ void PdContext::initObjectInitMap() {
   objectInitMap[string(MessageLogicalAnd::getObjectLabel())] = &MessageLogicalAnd::newObject;
   objectInitMap[string(MessageLogicalOr::getObjectLabel())] = &MessageLogicalOr::newObject;
   objectInitMap[string(MessageMaximum::getObjectLabel())] = &MessageMaximum::newObject;
-  //objectInitMap[string(MessageMessageBox::getObjectLabel())] = &MessageMessageBox::newObject; // NOTE(mhroth): not now
   objectInitMap[string(MessageMetro::getObjectLabel())] = &MessageMetro::newObject;
   objectInitMap[string(MessageMidiToFrequency::getObjectLabel())] = &MessageMidiToFrequency::newObject;
   objectInitMap[string(MessageMinimum::getObjectLabel())] = &MessageMinimum::newObject;
@@ -385,8 +385,7 @@ int PdContext::getNextGraphId() {
 }
 
 
-#pragma mark -
-#pragma mark process
+#pragma mark - process
 
 void PdContext::process(float *inputBuffers, float *outputBuffers) {
   lock(); // lock the context
@@ -401,8 +400,7 @@ void PdContext::process(float *inputBuffers, float *outputBuffers) {
   ObjectMessageLetPair omlPair;
   double nextBlockStartTimestamp = blockStartTimestamp + blockDurationMs;
   while (!messageCallbackQueue->empty() &&
-      (omlPair = messageCallbackQueue->peek()).first != NULL &&
-      omlPair.second.first->getTimestamp() < nextBlockStartTimestamp) {
+      (omlPair = messageCallbackQueue->peek()).second.first->getTimestamp() < nextBlockStartTimestamp) {
     
     messageCallbackQueue->pop(); // remove the message from the queue
 
@@ -485,6 +483,8 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
   // configure the graph based on the messages
   string message;
   while (!(message = fileParser->nextMessage()).empty()) {
+    
+    // create a non-const copy of line
     char line[message.size()+1];
     strncpy(line, message.c_str(), sizeof(line));
     
@@ -539,8 +539,8 @@ bool PdContext::configureEmptyGraphWithParser(PdGraph *emptyGraph, PdFileParser 
         // add the object to the local graph and make any necessary registrations
         graph->addObject(canvasX, canvasY, messageObject);
       } else if (strcmp(objectType, "msg") == 0) {
-        int canvasX = atoi(strtok(NULL, " ")); // read the first canvas coordinate
-        int canvasY = atoi(strtok(NULL, " ")); // read the second canvas coordinate
+        float canvasX = (float) atoi(strtok(NULL, " ")); // read the first canvas coordinate
+        float canvasY = (float) atoi(strtok(NULL, " ")); // read the second canvas coordinate
         char *objectInitString = strtok(NULL, ";"); // get the message initialisation string
         graph->addObject(canvasX, canvasY ,new MessageMessageBox(objectInitString, graph));
       } else if (strcmp(objectType, "connect") == 0) {
@@ -630,7 +630,7 @@ void PdContext::attachGraph(PdGraph *graph) {
 
 void PdContext::unattachGraph(PdGraph *graph) {
   lock();
-  //graphList.erase(NULL);
+  //graphList.erase(graph); // TODO(mhroth): remove the graph from the graphList
   graph->attachToContext(false);
   unlock();
 }
@@ -650,8 +650,8 @@ MessageObject *PdContext::newObject(const char *objectLabel, PdMessage *initMess
   }
 }
 
-#pragma mark -
-#pragma mark Lock/Unlock Context
+
+#pragma mark - Lock/Unlock Context
 
 void PdContext::lock() {
   pthread_mutex_lock(&contextLock);
@@ -661,8 +661,8 @@ void PdContext::unlock() {
   pthread_mutex_unlock(&contextLock);
 }
 
-#pragma mark -
-#pragma mark PrintStd/PrintErr
+
+#pragma mark - PrintStd/PrintErr
 
 void PdContext::printErr(char *msg) {
   if (callbackFunction != NULL) {
@@ -671,11 +671,10 @@ void PdContext::printErr(char *msg) {
 }
 
 void PdContext::printErr(const char *msg, ...) {
-  int maxStringLength = 1024;
-  char stringBuffer[maxStringLength];
+  char stringBuffer[1024];
   va_list ap;
   va_start(ap, msg);
-  vsnprintf(stringBuffer, maxStringLength-1, msg, ap);
+  vsnprintf(stringBuffer, sizeof(stringBuffer), msg, ap);
   va_end(ap);
   
   printErr(stringBuffer);
@@ -688,11 +687,10 @@ void PdContext::printStd(char *msg) {
 }
 
 void PdContext::printStd(const char *msg, ...) {
-  int maxStringLength = 1024;
-  char stringBuffer[maxStringLength];
+  char stringBuffer[1024];
   va_list ap;
   va_start(ap, msg);
-  vsnprintf(stringBuffer, maxStringLength-1, msg, ap);
+  vsnprintf(stringBuffer, sizeof(stringBuffer), msg, ap);
   va_end(ap);
   
   printStd(stringBuffer);
