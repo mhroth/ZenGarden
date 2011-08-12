@@ -45,7 +45,7 @@ char *StaticUtils::copyString(const char *str) {
   }
 }
 
-bool StaticUtils::isNumeric(char *str) {
+bool StaticUtils::isNumeric(const char *str) {
   // http://www.regular-expressions.info/floatingpoint.html
   regex_t preg;
   regcomp(&preg, "^[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?$", REG_NOSUB | REG_EXTENDED);

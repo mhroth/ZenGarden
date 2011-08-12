@@ -198,7 +198,9 @@ PdContext::~PdContext() {
 #pragma mark - ObjectInitMap and Un/Register External
 
 void PdContext::initObjectInitMap() {
-  // TODO(mhroth): initialise the object init map with all object labels and factory functions
+  // these objects represent the core set of supported objects
+  
+  // message objects
   objectInitMap[string(MessageAbsoluteValue::getObjectLabel())] = &MessageAbsoluteValue::newObject;
   objectInitMap[string(MessageAdd::getObjectLabel())] = &MessageAdd::newObject;
   objectInitMap[string(MessageArcTangent::getObjectLabel())] = &MessageArcTangent::newObject;
@@ -221,6 +223,109 @@ void PdContext::initObjectInitMap() {
   objectInitMap[string("f")] = &MessageFloat::newObject;
   objectInitMap[string(MessageFrequencyToMidi::getObjectLabel())] = &MessageFrequencyToMidi::newObject;
   objectInitMap[string(MessageGreaterThan::getObjectLabel())] = &MessageGreaterThan::newObject;
+  objectInitMap[string(MessageInlet::getObjectLabel())] = &MessageInlet::newObject;
+  objectInitMap[string(MessageInteger::getObjectLabel())] = &MessageInteger::newObject;
+  objectInitMap[string("i")] = &MessageInteger::newObject;
+  objectInitMap[string(MessageLessThan::getObjectLabel())] = &MessageLessThan::newObject;
+  objectInitMap[string(MessageLessThanOrEqualTo::getObjectLabel())] = &MessageLessThanOrEqualTo::newObject;
+  objectInitMap[string(MessageLine::getObjectLabel())] = &MessageLine::newObject;
+  objectInitMap[string()] = &MessageLine::newObject; // TODO(mhroth): MessageList collection
+  objectInitMap[string(MessageLoadbang::getObjectLabel())] = &MessageLoadbang::newObject;
+  objectInitMap[string(MessageLog::getObjectLabel())] = &MessageLog::newObject;
+  objectInitMap[string(MessageLogicalAnd::getObjectLabel())] = &MessageLogicalAnd::newObject;
+  objectInitMap[string(MessageLogicalOr::getObjectLabel())] = &MessageLogicalOr::newObject;
+  objectInitMap[string(MessageMaximum::getObjectLabel())] = &MessageMaximum::newObject;
+  //objectInitMap[string(MessageMessageBox::getObjectLabel())] = &MessageMessageBox::newObject; // NOTE(mhroth): not now
+  objectInitMap[string(MessageMetro::getObjectLabel())] = &MessageMetro::newObject;
+  objectInitMap[string(MessageMidiToFrequency::getObjectLabel())] = &MessageMidiToFrequency::newObject;
+  objectInitMap[string(MessageMinimum::getObjectLabel())] = &MessageMinimum::newObject;
+  objectInitMap[string(MessageModulus::getObjectLabel())] = &MessageModulus::newObject;
+  objectInitMap[string(MessageMoses::getObjectLabel())] = &MessageMoses::newObject;
+  objectInitMap[string(MessageMultiply::getObjectLabel())] = &MessageMultiply::newObject;
+  objectInitMap[string(MessageNotein::getObjectLabel())] = &MessageNotein::newObject;
+  objectInitMap[string(MessageNotEquals::getObjectLabel())] = &MessageNotEquals::newObject;
+  objectInitMap[string(MessageOpenPanel::getObjectLabel())] = &MessageOpenPanel::newObject;
+  objectInitMap[string(MessagePack::getObjectLabel())] = &MessagePack::newObject;
+  objectInitMap[string(MessagePipe::getObjectLabel())] = &MessagePipe::newObject;
+  objectInitMap[string(MessagePow::getObjectLabel())] = &MessagePow::newObject;
+  objectInitMap[string(MessagePowToDb::getObjectLabel())] = &MessagePowToDb::newObject;
+  objectInitMap[string(MessagePrint::getObjectLabel())] = &MessagePrint::newObject;
+  objectInitMap[string(MessageRandom::getObjectLabel())] = &MessageRandom::newObject;
+  objectInitMap[string(MessageReceive::getObjectLabel())] = &MessageReceive::newObject;
+  objectInitMap[string("r")] = &MessageReceive::newObject;
+  objectInitMap[string(MessageRemainder::getObjectLabel())] = &MessageRemainder::newObject;
+  objectInitMap[string(MessageRmsToDb::getObjectLabel())] = &MessageRmsToDb::newObject;
+  objectInitMap[string(MessageRoute::getObjectLabel())] = &MessageRoute::newObject;
+  objectInitMap[string(MessageSamplerate::getObjectLabel())] = &MessageSamplerate::newObject;
+  objectInitMap[string(MessageSelect::getObjectLabel())] = &MessageSelect::newObject;
+  objectInitMap[string(MessageSend::getObjectLabel())] = &MessageSend::newObject;
+  objectInitMap[string("s")] = &MessageSend::newObject;
+  objectInitMap[string(MessageSine::getObjectLabel())] = &MessageSine::newObject;
+  objectInitMap[string(MessageSoundfiler::getObjectLabel())] = &MessageSoundfiler::newObject;
+  objectInitMap[string(MessageSpigot::getObjectLabel())] = &MessageSpigot::newObject;
+  objectInitMap[string(MessageSqrt::getObjectLabel())] = &MessageSqrt::newObject;
+  objectInitMap[string(MessageStripNote::getObjectLabel())] = &MessageStripNote::newObject;
+  objectInitMap[string(MessageSubtract::getObjectLabel())] = &MessageSubtract::newObject;
+  objectInitMap[string(MessageSwap::getObjectLabel())] = &MessageSwap::newObject;
+  objectInitMap[string(MessageSwitch::getObjectLabel())] = &MessageSwitch::newObject;
+  objectInitMap[string(MessageSymbol::getObjectLabel())] = &MessageSymbol::newObject;
+  objectInitMap[string(MessageTable::getObjectLabel())] = &MessageTable::newObject;
+  objectInitMap[string(MessageTableRead::getObjectLabel())] = &MessageTableRead::newObject;
+  objectInitMap[string(MessageTableWrite::getObjectLabel())] = &MessageTableWrite::newObject;
+  objectInitMap[string(MessageTangent::getObjectLabel())] = &MessageTangent::newObject;
+  objectInitMap[string(MessageText::getObjectLabel())] = &MessageText::newObject;
+  objectInitMap[string(MessageTimer::getObjectLabel())] = &MessageTimer::newObject;
+  objectInitMap[string(MessageToggle::getObjectLabel())] = &MessageToggle::newObject;
+  objectInitMap[string("tgl")] = &MessageToggle::newObject;
+  objectInitMap[string(MessageTrigger::getObjectLabel())] = &MessageTrigger::newObject;
+  objectInitMap[string("t")] = &MessageTrigger::newObject;
+  objectInitMap[string(MessageUnpack::getObjectLabel())] = &MessageUnpack::newObject;
+  objectInitMap[string(MessageUntil::getObjectLabel())] = &MessageUntil::newObject;
+  objectInitMap[string(MessageValue::getObjectLabel())] = &MessageValue::newObject;
+  objectInitMap[string("v")] = &MessageValue::newObject;
+  objectInitMap[string(MessageWrap::getObjectLabel())] = &MessageWrap::newObject;
+  
+  // dsp objects
+  objectInitMap[string(DspAdc::getObjectLabel())] = &DspAdc::newObject;
+  objectInitMap[string(DspAdd::getObjectLabel())] = &DspAdd::newObject;
+  objectInitMap[string(DspBandpassFilter::getObjectLabel())] = &DspBandpassFilter::newObject;
+  objectInitMap[string(DspBang::getObjectLabel())] = &DspBang::newObject;
+  objectInitMap[string(DspCatch::getObjectLabel())] = &DspCatch::newObject;
+  objectInitMap[string(DspClip::getObjectLabel())] = &DspClip::newObject;
+  objectInitMap[string(DspDac::getObjectLabel())] = &DspDac::newObject;
+  objectInitMap[string(DspDelayRead::getObjectLabel())] = &DspDelayRead::newObject;
+  objectInitMap[string(DspDelayWrite::getObjectLabel())] = &DspDelayWrite::newObject;
+  objectInitMap[string(DspDivide::getObjectLabel())] = &DspDivide::newObject;
+  objectInitMap[string(DspEnvelope::getObjectLabel())] = &DspEnvelope::newObject;
+  objectInitMap[string(DspHighpassFilter::getObjectLabel())] = &DspHighpassFilter::newObject;
+  objectInitMap[string(DspInlet::getObjectLabel())] = &DspInlet::newObject;
+  objectInitMap[string(DspLine::getObjectLabel())] = &DspLine::newObject;
+  objectInitMap[string(DspLog::getObjectLabel())] = &DspLog::newObject;
+  objectInitMap[string(DspLowpassFilter::getObjectLabel())] = &DspLowpassFilter::newObject;
+  objectInitMap[string(DspMinimum::getObjectLabel())] = &DspMinimum::newObject;
+  objectInitMap[string(DspMultiply::getObjectLabel())] = &DspMultiply::newObject;
+  objectInitMap[string(DspNoise::getObjectLabel())] = &DspNoise::newObject;
+  objectInitMap[string(DspOsc::getObjectLabel())] = &DspOsc::newObject;
+  objectInitMap[string(DspOutlet::getObjectLabel())] = &DspOutlet::newObject;
+  objectInitMap[string(DspPhasor::getObjectLabel())] = &DspPhasor::newObject;
+  objectInitMap[string(DspPrint::getObjectLabel())] = &DspPrint::newObject;
+  objectInitMap[string(DspReceive::getObjectLabel())] = &DspReceive::newObject;
+  objectInitMap[string("r~")] = &DspReceive::newObject;
+  objectInitMap[string(DspReciprocalSqrt::getObjectLabel())] = &DspReciprocalSqrt::newObject;
+  objectInitMap[string("q8_rsqrt~")] = &DspReciprocalSqrt::newObject;
+  objectInitMap[string(DspRfft::getObjectLabel())] = &DspRfft::newObject;
+  objectInitMap[string(DspRifft::getObjectLabel())] = &DspRifft::newObject;
+  objectInitMap[string(DspSend::getObjectLabel())] = &DspSend::newObject;
+  objectInitMap[string(DspSignal::getObjectLabel())] = &DspSignal::newObject;
+  objectInitMap[string(DspSnapshot::getObjectLabel())] = &DspSnapshot::newObject;
+  objectInitMap[string(DspSqrt::getObjectLabel())] = &DspSqrt::newObject;
+  objectInitMap[string("q8_sqrt~")] = &DspSqrt::newObject;
+  objectInitMap[string(DspSubtract::getObjectLabel())] = &DspSubtract::newObject;
+  objectInitMap[string(DspTablePlay::getObjectLabel())] = &DspTablePlay::newObject;
+  objectInitMap[string(DspTableRead::getObjectLabel())] = &DspTableRead::newObject;
+  objectInitMap[string(DspTableRead4::getObjectLabel())] = &DspTableRead4::newObject;
+  objectInitMap[string(DspThrow::getObjectLabel())] = &DspThrow::newObject;
+  objectInitMap[string(DspVariableDelay::getObjectLabel())] = &DspVariableDelay::newObject;
 }
 
 void PdContext::registerExternal(const char *objectLabel,
@@ -522,12 +627,19 @@ void PdContext::unattachGraph(PdGraph *graph) {
   unlock();
 }
 
-MessageObject *PdContext::newObject(char *objectType, char *objectLabel, PdMessage *initMessage, PdGraph *graph) {
+MessageObject *PdContext::newObject(const char *objectType, const char *objectLabel, PdMessage *initMessage, PdGraph *graph) {
   if (strcmp(objectType, "obj") == 0) {
     
     MessageObject *(*objFactory)(PdMessage *, PdGraph *) = objectInitMap[string(objectLabel)];
-    return (objFactory != NULL) ? objFactory(initMessage, graph) : NULL;
-    
+    if (objFactory != NULL) {
+      return objFactory(initMessage, graph);
+    } else if(StaticUtils::isNumeric(objectLabel)) {
+      PdMessage *initMessage = PD_MESSAGE_ON_STACK(1);
+      initMessage->initWithTimestampAndFloat(0.0, atof(objectLabel));
+      return new MessageFloat(initMessage, graph);
+    } else {
+      return NULL;
+    }
     
     
     if (strcmp(objectLabel, "+") == 0) {

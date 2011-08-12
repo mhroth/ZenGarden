@@ -32,7 +32,7 @@ class StaticUtils {
   
   public:
     static char *copyString(const char *str);
-    static bool isNumeric(char *str);
+    static bool isNumeric(const char *str);
     static inline float millisecondsToSamples(float delayInMs, float sampleRate) {
       return (delayInMs / 1000.0f) * sampleRate;
     };
