@@ -41,6 +41,7 @@ class PdFileParser;
 class RemoteMessageReceiver;
 class TableReceiverInterface;
 class PdMessage;
+class ObjectFactoryMap;
 
 /**
  * The <code>PdContext</code> is a container for a set of <code>PdGraph</code>s operating in
@@ -196,11 +197,11 @@ class PdContext {
     void *(*callbackFunction)(ZGCallbackFunction, void *, void *);
   
     /** */
-    void registerExternal(const char *objectLabel,
+    void registerExternalObject(const char *objectLabel,
         MessageObject *(*newObject)(PdMessage *, PdGraph *));
   
     /** */
-    void unregisterExternal(const char *objectLabel);
+    void unregisterExternalObject(const char *objectLabel);
   
   private:
     /** Returns <code>true</code> if the graph was successfully configured. <code>false</code> otherwise. */
@@ -264,7 +265,7 @@ class PdContext {
     /** A global list of all table receivers (e.g., [tabread4~] and [tabplay~]) */
     list<TableReceiverInterface *> tableReceiverList;
   
-    map<string, MessageObject *(*)(PdMessage *, PdGraph *)> objectInitMap;
+    ObjectFactoryMap *objectFactoryMap;
 };
 
 #endif // _PD_CONTEXT_H_
