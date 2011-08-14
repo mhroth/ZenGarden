@@ -59,7 +59,6 @@ void DspTableRead4::processMessage(int inletIndex, PdMessage *message) {
     case 0: {
       if (message->isSymbol(0, "set") && message->isSymbol(1)) {
         // change the table from which this object reads
-        processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
         free(name);
         name = StaticUtils::copyString(message->getSymbol(1));
         table = graph->getTable(name);

@@ -71,7 +71,6 @@ void DspVCF::processMessage(int inletIndex, PdMessage *message) {
   // not sure what the other inlets do wrt messages
   if (inletIndex == 2) {
     if (message->isFloat(0)) {
-      processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
       q = message->getFloat(0); // update the resonance (q)
     }
   }

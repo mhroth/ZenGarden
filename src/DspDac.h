@@ -34,8 +34,7 @@ class DspDac : public DspObject {
   
     static const char *getObjectLabel();
   
-  private:
-    void processDspWithIndex(int fromIndex, int toIndex);
+    void processDsp();
 };
 
 #endif // _DSP_DAC_H_

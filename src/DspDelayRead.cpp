@@ -55,7 +55,6 @@ ObjectType DspDelayRead::getObjectType() {
 void DspDelayRead::processMessage(int inletIndex, PdMessage *message) {
   if (message->isFloat(0)) {
     // update the delay time
-    processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
     delayInSamples = StaticUtils::millisecondsToSamples(message->getFloat(0), graph->getSampleRate());
     delayInSamplesInt = (int) delayInSamples;
   }

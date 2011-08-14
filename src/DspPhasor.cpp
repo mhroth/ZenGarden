@@ -80,7 +80,6 @@ void DspPhasor::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: { // update the frequency
       if (message->isFloat(0)) {
-        processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
         frequency = message->getFloat(0);
       }
       break;

@@ -66,14 +66,12 @@ void DspClip::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 1: {
       if (message->isFloat(0)) {
-        processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
         lowerBound = message->getFloat(0); // set the lower bound
       }
       break;
     }
     case 2: {
       if (message->isFloat(0)) {
-        processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
         upperBound = message->getFloat(0); // set the upper bound
       }
       break;

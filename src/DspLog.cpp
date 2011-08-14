@@ -43,7 +43,6 @@ const char *DspLog::getObjectLabel() {
 void DspLog::processMessage(int inletIndex, PdMessage *message) {
   if (inletIndex == 1) {
     if (message->isFloat(0)) {
-      processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
       if (message->getFloat(0) <= 0.0f) {
         graph->printErr("log~ base cannot be set to a non-positive number: %d\n", message->getFloat(0));
       } else {

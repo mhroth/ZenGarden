@@ -40,25 +40,26 @@ const char *DspDac::getObjectLabel() {
   return "dac~";
 }
 
-void DspDac::processDspWithIndex(int fromIndex, int toIndex) {
-  float *globalOutputBuffer;
+void DspDac::processDsp() {
   switch (incomingDspConnections.size()) {
     default: {
       /* TODO(mhroth): fit this into the new buffer reference architecture
       for (int i = 2; i < numDspInlets; i++) {
-        globalOutputBuffer = graph->getGlobalDspBufferAtOutlet(i);
+        float *globalOutputBuffer = graph->getGlobalDspBufferAtOutlet(i);
         ArrayArithmetic::add(globalOutputBuffer, localDspBufferAtInlet[i], globalOutputBuffer, 0, blockSizeInt);
       }
       */
       // allow fallthrough
     }
     case 2: {
-      globalOutputBuffer = graph->getGlobalDspBufferAtOutlet(1);
+      RESOLVE_DSPINLET1_IF_NECESSARY();
+      float *globalOutputBuffer = graph->getGlobalDspBufferAtOutlet(1);
       ArrayArithmetic::add(globalOutputBuffer, dspBufferAtInlet1, globalOutputBuffer, 0, blockSizeInt);
       // allow fallthrough
     }
     case 1: {
-      globalOutputBuffer = graph->getGlobalDspBufferAtOutlet(0);
+      RESOLVE_DSPINLET0_IF_NECESSARY();
+      float *globalOutputBuffer = graph->getGlobalDspBufferAtOutlet(0);
       ArrayArithmetic::add(globalOutputBuffer, dspBufferAtInlet0, globalOutputBuffer, 0, blockSizeInt);
       // allow fallthrough
     }

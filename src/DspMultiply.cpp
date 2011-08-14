@@ -78,14 +78,12 @@ void DspMultiply::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
       if (message->isFloat(0)) {
-        processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
         inputConstant = message->getFloat(0);
       }
       break;
     }
     case 1: {
       if (message->isFloat(0)) {
-        processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
         constant = message->getFloat(0);
       }
       break;

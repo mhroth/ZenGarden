@@ -251,11 +251,13 @@ void DspObject::processDsp() {
       PdMessage *message = messageLetPair.first;
       unsigned int inletIndex = messageLetPair.second;
       
+      float blockIndexOfCurrentMessage = graph->getBlockIndex(message);
+      processDspWithIndex(blockIndexOfLastMessage, blockIndexOfCurrentMessage);
       processMessage(inletIndex, message);
       message->freeMessage(); // free the message from the head, the message has been consumed.
       messageQueue.pop();
       
-      blockIndexOfLastMessage = graph->getBlockIndex(message);
+      blockIndexOfLastMessage = blockIndexOfCurrentMessage;
     } while (!messageQueue.empty());
     processDspWithIndex(blockIndexOfLastMessage, (float) blockSizeInt);
     blockIndexOfLastMessage = 0.0f; // reset the block index of the last received message
