@@ -4,7 +4,7 @@ ZenGarden
 Overview
 --------
 
-ZenGarden (ZG) is a runtime for the Pure Data audio programming language. It is implemented as an extensible audio library allowing full control over signal processing, message passing, and graph manipulation. ZenGarden does not have a GUI, but easily allows one to be built on top of it.
+ZenGarden (ZG) is a runtime for the [Pure Data]:http://http://puredata.info/ (Pd) audio programming language. It is implemented as an extensible audio library allowing full control over signal processing, message passing, and graph manipulation. ZenGarden does not have a GUI, but easily allows one to be built on top of it.
 
 The library is written in C++ and exposes a pure C interface described in exclusively in ZenGarden.h. It allows externals to be built for it, also allowing the overriding of default object functionality.
 
@@ -116,6 +116,7 @@ int main(int argc, char * const argv[]) {
 ```
 
 It is also possible to manipulate graphs programmatically. For example instead of creating a graph via zg_context_new_graph_from_file(),
+
 ```C
 PdGraph *graph = zg_context_new_empty_graph(context);                      // create a new empty graph in a context
 ZGObject *objOsc = zg_graph_add_new_object(graph, "osc~ 440", 0.0f, 0.0f); // create a new [osc~ 440] object in the graph
@@ -126,6 +127,7 @@ zg_graph_attach(graph);                                                    // at
 ```
 
 It is possible to send messages into a context or even directly to objects. If the message has a known structure, use:
+
 ```C
 zg_context_send_messageV(context, "receverName", 0.0, "fff", 0.0f, 0.0f, 0.0f);
 ```
