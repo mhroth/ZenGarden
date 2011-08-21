@@ -4,7 +4,7 @@ ZenGarden
 Overview
 --------
 
-ZenGarden (ZG) is a runtime for the [Pure Data]:http://http://puredata.info/ (Pd) audio programming language. It is implemented as an extensible audio library allowing full control over signal processing, message passing, and graph manipulation. ZenGarden does not have a GUI, but easily allows one to be built on top of it.
+ZenGarden (ZG) is a runtime for the [Pure Data]:http://puredata.info/ (Pd) audio programming language. It is implemented as an extensible audio library allowing full control over signal processing, message passing, and graph manipulation. ZenGarden does not have a GUI, but easily allows one to be built on top of it.
 
 The library is written in C++ and exposes a pure C interface described in exclusively in ZenGarden.h. It allows externals to be built for it, also allowing the overriding of default object functionality.
 
