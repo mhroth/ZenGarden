@@ -34,7 +34,9 @@ ZenGarden includes many tests meant to estabilsh the correct operation of the sy
 API Usage
 ===========
 
-A few examples showing the basics of the ZenGarden API are detailed below.
+ZenGarden implements a core C API and a Java wrapper. The C API is the official interface to ZenGarden. The Java wrapper is fully functional and is used by the project for testing with JUnit. Other language wrappers may be added.
+
+A few examples showing the basic usage of the ZenGarden C API are detailed below.
 
 + Create a context, add a preexisting graph, and then process it.
 + Programmatically create a graph is also described.
