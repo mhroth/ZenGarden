@@ -34,7 +34,12 @@ ZenGarden includes many tests meant to estabilsh the correct operation of the sy
 API Usage
 ===========
 
-A few examples showing the basics of the ZenGarden API are detailed below. Most importantly is how to create a context, add a preexisting graph, and then process it. An example of how to programmatically create a graph is also described. Finally it is shown how to send arbitrary messages into a context.
+A few examples showing the basics of the ZenGarden API are detailed below.
+
++ Create a context, add a preexisting graph, and then process it.
++ Programmatically create a graph is also described.
++ Send a message with a known structure into a context.
++ Send a message with an unknown structure into a context.
 
 Creating and Processing a Context
 ---------------------------------
