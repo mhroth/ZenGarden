@@ -11,7 +11,18 @@ ZenGarden is licensed under the [LGPL](http://www.gnu.org/licenses/lgpl.html). A
 + If you extend the library (not including externals), you must make that code public.
 + You may use this library for any application, including commerical ones.
 
-Symantics
+## Communication
+
++ Most discussion takes place on the Google Groups [mailing list](http://groups.google.com/group/zengarden).
++ Twitter user [ZenGardenPd](http://twitter.com/#!/zengardenpd) will post commits and other news.
+
+## Acknowledgements
+
++ ZenGarden makes use of an [implementation](http://www-personal.umich.edu/~wagnerr/MersenneTwister.html) of the [Mersenne Twister](http://en.wikipedia.org/wiki/Mersenne_twister) in order to reliably produce random numbers.
++ ZenGarden uses [JUnit](http://www.junit.org/) in order to test the behaviour of objects. `junit-4.8.2.jar` is included in the repository in order to make it quick and easy to test the library after building it. See the JUnit [repository](http://github.com/KentBeck/junit) for more details.
+
+
+Semantics
 ---------
 
 ZenGarden consists of four basic object types. There are the context (ZGContext), graph (ZGGraph), object (ZGObject), and message (ZGMessage). The first three have to do with how the signal graph is organised. The latter represents discrete messages which are sent into, processed by, and out of the graph.
