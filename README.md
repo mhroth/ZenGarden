@@ -201,28 +201,125 @@ zg_context_send_message(context, "receiverName", message);
 zg_message_delete(message);
 ```
 
-Making an External
-------------------
+## On Externals
 
+### Making an External
 
-Registering an External
-------------------
+Current externals can only be made using ZenGarden's native C++ API. There are two basic types of objects, each with their own base type. There are objects which only process messages, the `MessageObject`, and those objects which process messages and audio, the `DspObject`.
+
+#### A MessageObject External
+
+Here is an example of a simple message object, `[+]`, made available as an external. First [MessageAdd.h](https://github.com/mhroth/ZenGarden/blob/master/src/MessageAdd.h) is defined.
+
+```C++
+#include "MessageObject.h"
+
+extern "C" {
+  // This is a factory function which will be used to register the external
+  MessageObject *newMessageAddObject(PdMessage *initMessage, PdGraph *graph);
+}
+
+/** [+], [+ float] */
+class MessageAdd : public MessageObject {
+
+  public:
+    MessageAdd(PdMessage *initMessage, PdGraph *graph);
+    ~MessageAdd();
+
+    // This function is not required, but it may be helpful for debugging. It returns the name by which this
+    // object is known, in this case "+".
+    static const char *getObjectLabel();
+
+  private:
+    // This function must be overridden in order to implement the object functionality
+    void processMessage(int inletIndex, PdMessage *message);
+
+    float constant;
+};
+```
+
+[MessageAdd.cpp](https://github.com/mhroth/ZenGarden/blob/master/src/MessageAdd.cpp) is then defined as below.
+
+```C++
+#include "MessageAdd.h"
+
+MessageObject *newMessageAddObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageAdd(initMessage, graph);
+}
+
+// The MessageAdd object as two inlets and one outlet. It exists in the given graph.
+MessageAdd::MessageAdd(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
+  // If the object is initialised with a number, then store it. Otherwise default to zero.
+  constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
+}
+
+MessageAdd::~MessageAdd() {
+  // nothing to do
+}
+
+const char *MessageAdd::getObjectLabel() {
+  return "+";
+}
+
+void MessageAdd::processMessage(int inletIndex, PdMessage *message) {
+  switch (inletIndex) {
+    case 0: {
+      if (message->isFloat(0)) {
+        // When a message arrives at the left inlet (inlet 0) with a number as the first element...
+      
+        // ZenGarden messages are typically created on the stack as this is faster an easier than creating them
+        // on the heap. A macro is provided for convenience, taking as an argument the number of elements. In
+        // this case, the [+] object only outputs messages with one element, namely the numberical result of its
+        // operation.
+        PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+        
+        // The outgoing message is configured with the time at which it is sent (the same time as the incoming
+        // message, and the result.
+        outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), message->getFloat(0) + constant);
+        
+        // The mesasge is then sent from outlet 0 (the left-most and only outlet).
+        sendMessage(0, outgoingMessage);
+      }
+      break;
+    }
+    case 1: {
+      if (message->isFloat(0)) {
+        // When a message arrived at the right inlet (inlet 1) with a number as the first element...
+        
+        // Store the number.
+        constant = message->getFloat(0);
+      }
+      break;
+    }
+    default: break;
+  }
+}
+```
+
+#### A DspObject External
+
+*TODO!*
+
+### Registering an External
 
 Externals can be easily registered with individual contexts. Remember that contexts are independent and thus an external registered with one will not be visible to any others. Externals consist firstly of an indentifying string, and secondly of a factory function taking an initialisation message and the graph in which the object exists. The indentifying string, or object label, may also refer to a preexisting or default object (such as "+") in which case the functionality will be overridden. The factory function is a C function (or static C++ function). The same function can be registered many times with different labels in order to indicate that an object is known by many names. An example of this is the `[bang]` object which is known alternatively as "bang", "bng", and "b".
 
 ```C
 #include "ZenGarden.h"
 
-extern ZGObject *newObject(ZGMessage *initMessage, ZGGraph *graph);
+extern ZGObject *newMessageAddObject(ZGMessage *initMessage, ZGGraph *graph);
 
 int main(int argc, char * const argv[]) {
   // you know what to do here
   ZGContext *context = ...;
   
-  // register an external named "wow~"
-  zg_context_register_external_object(context, "wow~", newObject);
+  // register an external named "+"
+  zg_context_register_external_object(context, "+", newMessageAddObject);
   
-  // forget it, unregister the "wow~" external
-  zg_context_unregister_external_object(context, "wow~");
+  // also register it with the label "plus"
+  zg_context_register_external_object(context, "plus", newMessageAddObject);
+  
+  // forget it, unregister the "plus" label
+  zg_context_unregister_external_object(context, "plus");
 }
 ```
