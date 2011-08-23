@@ -25,13 +25,13 @@ ZenGarden is licensed under the [LGPL](http://www.gnu.org/licenses/lgpl.html). A
 Semantics
 ---------
 
-ZenGarden consists of four basic object types. There are the context (ZGContext), graph (ZGGraph), object (ZGObject), and message (ZGMessage). The first three have to do with how the signal graph is organised. The latter represents discrete messages which are sent into, processed by, and out of the graph.
+ZenGarden consists of four basic object types. These are the context (`ZGContext`), graph (`ZGGraph`), object (`ZGObject`), and message (`ZGMessage`). The first three have to do with how the signal graph is organised. The latter represents discrete messages which are sent into, processed by, and out of the graph.
 
-A context (known as a ZGContext) in code represents a unique and independent instance of Pure Data. Think of it as Pure Data's console window. A context is defined by its block size, sample rate, and the number of input and output channels. Contexts are entirely independent and messages and objects cannot be exchanged between them.
+A context represents a unique and independent instance of Pure Data. Think of it as Pure Data's console window. A context is defined by its block size, sample rate, and the number of input and output channels. Contexts are entirely independent and messages and objects cannot be exchanged between them.
 
-A graph (ZGGraph) is a collection of objects (ZGObject) and the connections between them. A ZGGraph is a subclass of ZGObject, and thus ZGGraphs can contain other ZGGraphs (such as abstraction or subgraphs).
+A graph is a collection of objects and the connections between them. A ZGGraph is a subclass of ZGObject, and thus ZGGraphs can contain other ZGGraphs (such as abstraction or subgraphs). However, this does not mean that ZGGraphs and ZGObjects are interchangeable in the API. Specific functions are made available for each.
 
-Messages (ZGMessage) represent any Pd message, be it a single float or a list of assorted float, symbols, or bangs.
+Messages represent any Pd message, be it a bang or a list of assorted float, symbols, or bangs. Messages are timestamped and contain at least one element, and may otherwise contain any number and any combination of primitives. ZenGarden messages do not distinguish between lists or arrays or singleton elementary types as in Pd. ZG messages are always lists of typed elementary types.
 
 How to Get Started
 ------------------
