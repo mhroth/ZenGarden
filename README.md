@@ -27,8 +27,9 @@ How to Get Started
 
   + Download the ZenGarden repository at https://github.com/mhroth/ZenGarden
   
-  + The repository contains an Xcode project if you are using a Mac, and also a `make` file for other platforms. It is st
-  rongly recommended to use the Xcode project to compile ZG for either iOS or OS X. Targets exist for both cases.
+  + The repository contains an Xcode project if you are using a Mac, and also a `make` file for other platforms. It is strongly recommended to use the Xcode project to compile ZG for either iOS or OS X. Targets exist for both cases.
+  
+  + ZenGarden is dependent on [libsndfile](http://www.mega-nerd.com/libsndfile/) for reading and writing audio files in a platform independent way. Download it, install it.
   
   + Once you have built `libzengarden.a`, it may be included in any of your projects also with `ZenGarden.h`
   
