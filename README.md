@@ -5,6 +5,12 @@ ZenGarden (ZG) is a runtime for the [Pure Data](http://puredata.info/) (Pd) audi
 
 The library is written in C++ and exposes a pure C interface described exclusively in [ZenGarden.h](https://github.com/mhroth/ZenGarden/blob/master/src/ZenGarden.h). Many audio objects are accelerated with vector operations on ARM (NEON) and x86 (SSE) platforms, and works especially well on Apple platforms (both OS X and iOS). ZenGarden allows externals to be built, also ones that override default object functionality.
 
+ZenGarden is licensed under the [LGPL](http://www.gnu.org/licenses/lgpl.html). Among other things, this means that if you are going to use the libary in a public application you must:
+
++ Indicate that you are using the ZenGarden library.
++ If you extend the library (not including externals), you must make that code public.
++ You may use this library for any application, including commerical ones.
+
 Symantics
 ---------
 
@@ -49,7 +55,7 @@ Creating and Processing a Context
 A basic example is shown below, describing how to set up a context and graph, and then process the audio blocks. The C API as described in `ZenGarden.h` is used, though wrappers may exist for other languages as well.
 
 ```C
-// include the ZenGarden API defintion
+// include the ZenGarden API definition
 #include "ZenGarden.h"
 
 
@@ -174,7 +180,7 @@ zg_context_send_messageV(context, "receverName", 0.0, "fff", 0.0f, 0.0f, 0.0f);
 ```
 A message with three floats each set to 0.0f will be sent at time 0 (i.e., immediately) to receivers named "receiverName".
 
-Sending a Message with an Unnown Structure
+Sending a Message with an Unknown Structure
 ----------------------------------------
 
 On the other hand if the structure of the message is not known beforehand then it can be created programmatically.
@@ -193,3 +199,6 @@ zg_context_send_message(context, "receiverName", message);
 // The message is copied by context and can be freed after it is sent.
 zg_message_delete(message);
 ```
+
+Making an External
+------------------
