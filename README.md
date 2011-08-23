@@ -202,3 +202,26 @@ zg_message_delete(message);
 
 Making an External
 ------------------
+
+
+Registering an External
+------------------
+
+Externals can be easily registered with individual contexts. Remember that contexts are independent and thus an external registered with one will not be visible to any others. Externals consist firstly of an indentifying string, and secondly of a factory function taking an initialisation message and the graph in which the object exists. The indentifying string, or object label, may also refer to a preexisting or default object (such as "+") in which case the functionality will be overridden. The factory function is a C function (or static C++ function). The same function can be registered many times with different labels in order to indicate that an object is known by many names. An example of this is the `[bang]` object which is known alternatively as "bang", "bng", and "b".
+
+```C
+#include "ZenGarden.h"
+
+extern ZGObject *newObject(ZGMessage *initMessage, ZGGraph *graph);
+
+int main(int argc, char * const argv[]) {
+  // you know what to do here
+  ZGContext *context = ...;
+  
+  // register an external named "wow~"
+  zg_context_register_external_object(context, "wow~", newObject);
+  
+  // forget it, unregister the "wow~" external
+  zg_context_unregister_external_object(context, "wow~");
+}
+```
