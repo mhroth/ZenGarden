@@ -312,7 +312,62 @@ void MessageAdd::processMessage(int inletIndex, PdMessage *message) {
 
 #### A DspObject External
 
-*TODO!*
+Here, a basic `[+~]` object is described. The `DspObject` class is extended in [DspAdd.h](https://github.com/mhroth/ZenGarden/blob/master/src/DspAdd.h), and the `processDspWithIndex` function is overridden in addition to `processMessage` seen in the previous example. Receiving messages and evaluating which parts of the audio buffer must be evalutated when is taken care of by the `DspObject` superclass. The implementation is responsible for actually filling in the buffer.
+
+```C++
+#include "DspObject.h"
+
+/** [+~], [+~ float] */
+class DspAdd : public DspObject {
+  
+  public:
+    DspAdd(PdMessage *initMessage, PdGraph *graph);
+    ~DspAdd();
+  
+    static const char *getObjectLabel();
+    
+  private:
+    void processMessage(int inletIndex, PdMessage *message);
+    void processDspWithIndex(int fromIndex, int toIndex);
+    
+    float constant;
+};
+```
+
+[DspAdd.cpp](https://github.com/mhroth/ZenGarden/blob/master/src/DspAdd.cpp)
+
+*TODO BELOW CODE NOT CORRECT*
+
+```C++
+#include "DspAdd.h"
+#include "PdGraph.h"
+
+DspAdd::DspAdd(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
+  constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
+}
+
+DspAdd::~DspAdd() {
+  // nothing to do
+}
+
+const char *DspAdd::getObjectLabel() {
+  return "+~";
+}
+
+void DspAdd::processMessage(int inletIndex, PdMessage *message) {
+  if (inletIndex == 1) {
+    if (message->isFloat(0)) {
+      constant = message->getFloat(0);
+    }
+  }
+}
+
+void DspAdd::processDspWithIndex(int fromIndex, int toIndex) {
+  for (int i = fromIndex; i < toIndex; i++) {
+    dspBufferAtOutlet0[i] = dspBufferAtInlet0[i] + constant;
+  }
+}
+```
 
 ### Registering an External
 
