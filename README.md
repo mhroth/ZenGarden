@@ -3,7 +3,7 @@ ZenGarden
 
 ZenGarden (ZG) is a runtime for the [Pure Data](http://puredata.info/) (Pd) audio programming language. It is implemented as an extensible audio library allowing full control over signal processing, message passing, and graph manipulation. ZenGarden does not have a GUI, but easily allows one to be built on top of it.
 
-The library is written in C++ and exposes a pure C interface described exclusively in [ZenGarden.h](https://github.com/mhroth/ZenGarden/blob/master/src/ZenGarden.h). Many audio objects are accelerated with vector operations on ARM (NEON) and x86 (SSE) platforms, and works especially well on Apple platforms (both OS X and iOS). ZenGarden allows externals to be built, also ones that override default object functionality.
+The library is written in C++ and exposes a pure C interface described exclusively in [ZenGarden.h](https://github.com/mhroth/ZenGarden/blob/master/src/ZenGarden.h). Many audio objects are accelerated with vector operations on ARM (NEON) and x86 (SSE) platforms, and works especially well on Apple platforms (both OS X and iOS). ZenGarden allows externals to be built, also ones that override default object functionality. A language wrapper exists for [Java](https://github.com/mhroth/ZenGarden/blob/master/src/me/rjdj/zengarden/ZGContext.java).
 
 ZenGarden is licensed under the [LGPL](http://www.gnu.org/licenses/lgpl.html). Among other things, this means that if you are going to use the libary in a public application you must:
 
