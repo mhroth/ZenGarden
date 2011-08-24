@@ -22,8 +22,7 @@ ZenGarden is licensed under the [LGPL](http://www.gnu.org/licenses/lgpl.html). A
 + ZenGarden uses [JUnit](http://www.junit.org/) in order to test the behaviour of objects. `junit-4.8.2.jar` is included in the repository in order to make it quick and easy to test the library after building it. See the JUnit [repository](http://github.com/KentBeck/junit) for more details.
 
 
-Semantics
----------
+## Semantics
 
 ZenGarden consists of four basic object types. These are the context (`ZGContext`), graph (`ZGGraph`), object (`ZGObject`), and message (`ZGMessage`). The first three have to do with how the signal graph is organised. The latter represents discrete messages which are sent into, processed by, and out of the graph.
 
@@ -32,6 +31,10 @@ A context represents a unique and independent instance of Pure Data. Think of it
 A graph is a collection of objects and the connections between them. A ZGGraph is a subclass of ZGObject, and thus ZGGraphs can contain other ZGGraphs (such as abstraction or subgraphs). However, this does not mean that ZGGraphs and ZGObjects are interchangeable in the API. Specific functions are made available for each.
 
 Messages represent any Pd message, be it a bang or a list of assorted float, symbols, or bangs. Messages are timestamped and contain at least one element, and may otherwise contain any number and any combination of primitives. ZenGarden messages do not distinguish between lists or arrays or singleton elementary types as in Pd. ZG messages are always lists of typed elementary types.
+
+### Graph Attachement
+
+ZenGarden introduces the concept of graph attachement. Whenever any change in the signal graph takes place in Pd, the audio thread must wait until the reconfiguration is finished. For minor changes such as removing a connection this can be very fast and no audio underrun will occur. For larger changes, such as adding an object requiring significant initialisation, or many changes at once, such as adding a complex abstraction, audio underruns are almost guaranteed. ZenGarden solves this problem by allowing an new object or graph to be created on another thread, and then attached to a context at a convenient time. As the graph has already been instantiated, the attachement process is a relatively quick one and can thus be accomplished without causing any audio dropouts. Graph attachement generally involves registering global senders and receivers and ensuring that existing objects are aware of the new ones. Similarly, a graph can be unattached from a context, leaving it in memory yet inert.
 
 How to Get Started
 ------------------
