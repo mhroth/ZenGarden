@@ -392,3 +392,16 @@ int main(int argc, char * const argv[]) {
   zg_context_unregister_external_object(context, "plus");
 }
 ```
+
+## A Final Note: Why ZenGarden? - by mhroth
+
+Many people have asked me why the ZenGarden library came into existance, and why work continues on it today, especially in light of the successful [libpd](http://gitorious.org/pdlib) project. Here is my answer, offering personal opinions, some ranting, and hopefully constructive critisism. So don't take it all too seriously, ok? First, a few (obvious?) points that make me excited.
+
++ Pd is a great language to write audio code in.
++ A general purpose audio language that is free and open to all has a great deal of potential as a standard for many audio applications.
++ An audio library that is easy to work with can be installed on many platforms, including desktop, mobile, and [web](https://github.com/mhroth/Cynical). Write once run anywhere audio? ;)
+    + Let's be honest, you know that writing audio code according to the proposed [Web Audio API](https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html) is going to be a massive pain.
+
+I spend a lot of time working with the Pd audio engine at [RjDj](http://rjdj.me) and I have rarely seen such an antiquated, obfuscated, unmaintainable, and undocumented mess as Pd (the other example that I can think of is [Vorbis](http://www.vorbis.com/setup/), but that's another story). If a student or employee of mine ever wrote such code, I would fire them immediately. I have been working with Pd (the engine, not the language) for some years and I know it quite well by now. I have the highest respect for Miller that Pd works as well as it does; it is truly a technical tour-de-force. There are plenty of clever tricks and architectural innovations to learn from. But I found it incredibly difficult to find and modify functional parts of the program, for instance if you don't know where to look finding the code for something as simple as `[*~]` is not obvious, let alone anything more complex such as Pd's audio object ordering algorithm. The reason that libpd (i.e., Pd in the form of a traditional signal processing library) only appeared in 2010 is because everyone else who had tried before (at least since 2008), even people otherwise intimately familiar with the project, had failed (including myself). I am aware of at least two previous libpd-style implementations used in Spore (EAPd [[1](http://www.adigitaldreamer.com/game-development/the-beat-goes-on-dynamic-music-in-spore)] [[2](http://uk.pc.gamespy.com/pc/spore/853810p1.html)]) and early RjDj, but neither of those were public. The Pd community owes much more than a debt of gratitude to Peter Brinkmann. But ultimately no piece of software should be so difficult to modify or extend.
+
+And so I began to work on ZenGarden. It is intended to be a completely new runtime for the Pure Data audio programming language using modern software languages and design principles. It is written in object-oriented C++, uses the C++ STL, has plenty of comments, takes direct advantage of modern processors via vector operations, and also unit tests. It should also be easy to compile and run on all major operating systems and hardware architectures. Furthermore it is completely independent of any GUI. (Naturally all of these things could be improved, but that's the goal anyway :)
