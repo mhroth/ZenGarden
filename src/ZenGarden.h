@@ -188,7 +188,8 @@ typedef enum ZGConnectionType {
    * E.g., zg_send_message(graph, "test", "s", "hello");
    * E.g., zg_send_message(graph, "test", "b");
    */
-  void zg_context_send_messageV(ZGContext *context, const char *receiverName, const char *messageFormat, ...);
+  void zg_context_send_messageV(ZGContext *context, const char *receiverName, double timestamp,
+      const char *messageFormat, ...);
   
   /**
    * Send a message to the named receiver with the given format at the given block index. If the
@@ -303,7 +304,7 @@ typedef enum ZGConnectionType {
   
   void zg_message_set_float(ZGMessage *message, unsigned int index, float f);
   
-  /** The symbol parameter is copied into the message. */
+  /** The symbol parameter is copied into the message. Any previous symbol is freed from memory. */
   void zg_message_set_symbol(ZGMessage *message, unsigned int index, const char *s);
   
   void zg_message_set_bang(ZGMessage *message, unsigned int index);
@@ -312,11 +313,11 @@ typedef enum ZGConnectionType {
   
   double zg_message_get_timestamp(ZGMessage *message);
   
-  ZGMessageElementType zg_message_get_element_type(unsigned int index, ZGMessage *message);
+  ZGMessageElementType zg_message_get_element_type(ZGMessage *message, unsigned int index);
   
-  float zg_message_get_float(unsigned int index, ZGMessage *message);
+  float zg_message_get_float(ZGMessage *message, unsigned int index);
   
-  const char *zg_message_get_symbol(unsigned int index, ZGMessage *message);
+  const char *zg_message_get_symbol(ZGMessage *message, unsigned int index);
   
   
 #ifdef __cplusplus

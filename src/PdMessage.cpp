@@ -292,7 +292,7 @@ void PdMessage::setList(unsigned int index) {
 #pragma mark copy/free
 
 PdMessage *PdMessage::copyToHeap() {
-  int numMessageBytes = sizeof(PdMessage) + ((numElements <= 1 ? 0 : numElements-1)*sizeof(MessageAtom));
+  int numMessageBytes = sizeof(PdMessage) + ((numElements > 0 ? numElements-1 : 0)*sizeof(MessageAtom));
   PdMessage *pdMessage = (PdMessage *) malloc(numMessageBytes);
   pdMessage->initWithTimestampAndNumElements(timestamp, numElements);
   // copy all message type and float info (but symbol pointers must be replaced)

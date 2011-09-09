@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -27,10 +27,9 @@
 #include "ZenGarden.h"
 
 #define NUM_ITERATIONS 9999985
-// 9999985
 
 extern "C" {
-  void callbackFunction(ZGCallbackFunction function, void *userData, void *ptr) {
+  void *callbackFunction(ZGCallbackFunction function, void *userData, void *ptr) {
     switch (function) {
       case ZG_PRINT_STD: {
         printf("%s\n", (char *) ptr);
@@ -44,6 +43,7 @@ extern "C" {
         break;
       }
     }
+    return NULL;
   }
 };
 
@@ -58,21 +58,21 @@ int main(int argc, char * const argv[]) {
       callbackFunction, NULL);
   
   // create a graph from a file
-  /*
-  PdGraph *graph = zg_context_new_graph_from_file(context, "/Users/mhroth/Desktop/", "csaw.pd");
+  
+  PdGraph *graph = zg_context_new_graph_from_file(context, "/Users/mhroth/workspace/ZenGarden/demo/", "echolon_test0.pd");
   if (graph == NULL) {
     zg_context_delete(context);
     return 1;
   }
-  */
   
+  /*
   // create a graph manually
   PdGraph *graph = zg_context_new_empty_graph(context);
   ZGObject *objOsc = zg_graph_add_new_object(graph, "osc~ 440", 0.0f, 0.0f);
   ZGObject *objDac = zg_graph_add_new_object(graph, "dac~", 0.0f, 0.0f);
   zg_graph_add_connection(graph, objOsc, 0, objDac, 0);
   zg_graph_add_connection(graph, objOsc, 0, objDac, 1);
-   
+  */
   // attach the graph
   zg_graph_attach(graph);
   

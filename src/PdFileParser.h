@@ -28,6 +28,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include "StaticUtils.h"
+
+class PdContext;
+class PdGraph;
+
 using namespace std;
 
 /**
@@ -42,14 +46,18 @@ class PdFileParser {
     PdFileParser(const char *fullPath);
     PdFileParser(string aString);
     ~PdFileParser();
-    
+  
+    PdGraph *execute(PdContext *context);
+  
+  private:
+    PdGraph *execute(PdMessage *initMsg, PdGraph *graph, PdContext *context);
+  
     /**
      * Returns the next logical message in the file, or <code>NULL</code> if the end of the file
      * has been reached.
      */
     string nextMessage();
   
-  private:
     /**
      * Reads the next line and puts the contents into the <code>line</code> buffer.
      * A pointer to the <code>line</code> buffer is returned, or <code>NULL</code> if the end of the
@@ -57,7 +65,6 @@ class PdFileParser {
      */
     string nextLine();
   
-    FILE *fp;
     string stringDesc; // entire string description of graph. Entire file.
     size_t pos; // current position in the string
     string line;

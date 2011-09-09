@@ -60,12 +60,6 @@ class PdContext {
     float getSampleRate();
   
     /**
-     * Create a new graph using the given file, with the given arguments and parent graph.
-     * The parent graph may be <code>NULL</code> in the case that it is a top-level graph.
-     */
-    PdGraph *newGraph(const char *directory, const char *filename, PdMessage *initMessage, PdGraph *graph);
-  
-    /**
      * Attach the given <code>graph</code> to this <code>context</code>, also registering all
      * necessary objects, and computing the dsp object compute order if necessary.
      */
@@ -178,7 +172,7 @@ class PdContext {
     void printStd(const char *msg, ...);
   
     /** Returns the next globally unique graph id. */
-    static int getNextGraphId();
+    int getNextGraphId();
   
     /** Used with MessageValue for keeping track of global variables. */
     void setValueForName(char *name, float constant);
@@ -196,11 +190,11 @@ class PdContext {
     /** The registered callback function for sending data outside of the graph. */
     void *(*callbackFunction)(ZGCallbackFunction, void *, void *);
   
-    /** */
+    /** Register an object label and its associated factory method. */
     void registerExternalObject(const char *objectLabel,
         MessageObject *(*newObject)(PdMessage *, PdGraph *));
   
-    /** */
+    /** Unregister an object label. */
     void unregisterExternalObject(const char *objectLabel);
   
   private:
@@ -215,7 +209,7 @@ class PdContext {
     float sampleRate;
   
     /** Keeps track of the current global graph id. */
-    static int globalGraphId;
+    unsigned int globalGraphId;
   
     /** A list of all top-level graphs in this context. */
     vector<PdGraph *> graphList;
