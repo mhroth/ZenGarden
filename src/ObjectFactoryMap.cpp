@@ -188,6 +188,7 @@ ObjectFactoryMap::ObjectFactoryMap() {
   objectFactoryMap[string(MessageLogicalAnd::getObjectLabel())] = &MessageLogicalAnd::newObject;
   objectFactoryMap[string(MessageLogicalOr::getObjectLabel())] = &MessageLogicalOr::newObject;
   objectFactoryMap[string(MessageMaximum::getObjectLabel())] = &MessageMaximum::newObject;
+  objectFactoryMap[string(MessageMessageBox::getObjectLabel())] = &MessageMessageBox::newObject;
   objectFactoryMap[string(MessageMetro::getObjectLabel())] = &MessageMetro::newObject;
   objectFactoryMap[string(MessageMidiToFrequency::getObjectLabel())] = &MessageMidiToFrequency::newObject;
   objectFactoryMap[string(MessageMinimum::getObjectLabel())] = &MessageMinimum::newObject;
