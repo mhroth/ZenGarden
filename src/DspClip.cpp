@@ -64,38 +64,17 @@ void DspClip::onInletConnectionUpdate() {
 
 void DspClip::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
-    case 1: {
-      if (message->isFloat(0)) {
-        lowerBound = message->getFloat(0); // set the lower bound
-      }
-      break;
-    }
-    case 2: {
-      if (message->isFloat(0)) {
-        upperBound = message->getFloat(0); // set the upper bound
-      }
-      break;
-    }
-    default: {
-      break;
-    }
+    case 1: if (message->isFloat(0)) lowerBound = message->getFloat(0); break; // set the lower bound
+    case 2: if (message->isFloat(0)) upperBound = message->getFloat(0); break; // set the upper bound
+    default: break;
   }
 }
 
 void DspClip::processDsp() {
   switch (codePath) {
-    case DSP_CLIP_DSPX_MESSAGE0: {
-      resolveInputBuffers(0, dspBufferAtInlet0);
-      // allow fallthrough
-    }
-    case DSP_CLIP_DSP1_MESSAGE0: {
-      processDspWithIndex(0, blockSizeInt);
-      break;
-    }
-    default: {
-      DspObject::processDsp();
-      break;
-    }
+    case DSP_CLIP_DSPX_MESSAGE0: resolveInputBuffers(0, dspBufferAtInlet0); // allow fallthrough
+    case DSP_CLIP_DSP1_MESSAGE0: processDspWithIndex(0, blockSizeInt); break;
+    default: DspObject::processDsp(); break;
   }
 }
 
