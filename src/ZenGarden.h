@@ -319,6 +319,9 @@ typedef enum ZGConnectionType {
   
   const char *zg_message_get_symbol(ZGMessage *message, unsigned int index);
   
+  /** Returns a string representation of the message. The string must be freed by the caller. */
+  char *zg_message_to_string(ZGMessage *message);
+  
   
 #ifdef __cplusplus
 }

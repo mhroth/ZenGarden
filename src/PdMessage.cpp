@@ -343,9 +343,7 @@ char *PdMessage::toString() {
         lengths[i] = snprintf(NULL, 0, "%s", getSymbol(i));
         break;
       }
-      default: {
-        break;
-      }
+      default: break;
     }
     // total length of our string is each atom plus a space, or \0 on the end
     size += lengths[i] + 1;
@@ -373,9 +371,7 @@ char *PdMessage::toString() {
         snprintf(&finalString[pos], lengths[i] + 1, "%s", getSymbol(i));
         break;
       }
-      default: {
-        break;
-      }
+      default: break;
     }
     pos += lengths[i];
   }

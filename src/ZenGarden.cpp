@@ -476,3 +476,7 @@ float zg_message_get_float(PdMessage *message, unsigned int index) {
 const char *zg_message_get_symbol(PdMessage *message, unsigned int index) {
   return message->getSymbol(index);
 }
+
+char *zg_message_to_string(ZGMessage *message) {
+  return message->toString();
+}
