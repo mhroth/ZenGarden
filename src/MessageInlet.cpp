@@ -23,10 +23,14 @@
 #include "MessageInlet.h"
 #include "PdGraph.h"
 
+MessageObject *MessageInlet::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageInlet(graph);
+}
+
 // MessageInlet is initialised with an inlet because it manages connections from outside of the
 // containing graph.
 MessageInlet::MessageInlet(PdGraph *graph) : MessageObject(1, 1, graph) {
-  canvasX = 0;
+  canvasX = 0.0f;
 }
 
 MessageInlet::~MessageInlet() {

@@ -29,10 +29,11 @@
 class MessageNotEquals : public MessageObject {
 
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageNotEquals(PdMessage *initMessage, PdGraph *graph);
     ~MessageNotEquals();
 
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);

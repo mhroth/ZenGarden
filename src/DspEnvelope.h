@@ -29,6 +29,8 @@
 class DspEnvelope : public DspObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
+  
     /*
      * @param windowSize  The window size in samples of the analysis. Defaults to 1024.
      * @param windowInterval  The window interval in samples of the analysis.
@@ -38,7 +40,7 @@ class DspEnvelope : public DspObject {
     DspEnvelope(PdMessage *initMessage, PdGraph *graph);
     ~DspEnvelope();
   
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     string toString();
 
     ConnectionType getConnectionType(int outletIndex);

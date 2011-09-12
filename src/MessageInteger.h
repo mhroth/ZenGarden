@@ -29,10 +29,11 @@
 class MessageInteger : public MessageObject {
 
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageInteger(PdMessage *initMessage, PdGraph *graph);
     ~MessageInteger();
 
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
 
   private:
     void init(float constant);

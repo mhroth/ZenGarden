@@ -101,7 +101,7 @@ class MessageObject {
         int inletIndex, int newOutletIndex);
   
     /** Returns the label for this object. */
-    virtual const char *getObjectLabel();
+    static const char *getObjectLabel();
   
     virtual ObjectType getObjectType();
   

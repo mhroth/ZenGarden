@@ -34,10 +34,11 @@ class DspDelayWrite;
 class DspVariableDelay : public DelayReceiver {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     DspVariableDelay(PdMessage *initMessage, PdGraph *graph);
     ~DspVariableDelay();
   
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     ObjectType getObjectType();
     
   private:

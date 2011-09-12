@@ -23,6 +23,10 @@
 #include <stdio.h>
 #include "MessageNotein.h"
 
+MessageObject *MessageNotein::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageNotein(initMessage, graph);
+}
+
 MessageNotein::MessageNotein(PdMessage *initMessage, PdGraph *graph) :
     RemoteMessageReceiver(0, 3, graph) {
   if (initMessage->isFloat(0) &&

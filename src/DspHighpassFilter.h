@@ -32,10 +32,11 @@
 class DspHighpassFilter : public DspObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     DspHighpassFilter(PdMessage *initMessage, PdGraph *graph);
     ~DspHighpassFilter();
   
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
   
   private:
     void processMessage(int inletIndex, PdMessage *message);

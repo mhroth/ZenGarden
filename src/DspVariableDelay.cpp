@@ -25,6 +25,10 @@
 #include "DspVariableDelay.h"
 #include "PdGraph.h"
 
+MessageObject *DspVariableDelay::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspVariableDelay(initMessage, graph);
+}
+
 DspVariableDelay::DspVariableDelay(PdMessage *initMessage, PdGraph *graph) : DelayReceiver(0, 1, 0, 1, graph) {
   if (initMessage->isSymbol(0)) {
     name = StaticUtils::copyString(initMessage->getSymbol(0));

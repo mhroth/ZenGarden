@@ -29,10 +29,11 @@
 class MessageSpigot : public MessageObject {
 
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageSpigot(PdMessage *initMessage, PdGraph *graph);
     ~MessageSpigot();
 
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);

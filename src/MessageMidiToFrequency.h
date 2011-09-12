@@ -29,10 +29,11 @@
 class MessageMidiToFrequency : public MessageObject {
 
   public:
-    MessageMidiToFrequency(PdGraph *graph);
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
+    MessageMidiToFrequency(PdMessage *initMessage, PdGraph *graph);
     ~MessageMidiToFrequency();
 
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);

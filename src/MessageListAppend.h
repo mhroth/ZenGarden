@@ -29,10 +29,11 @@
 class MessageListAppend : public MessageObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageListAppend(PdMessage *initMessage, PdGraph *graph);
     ~MessageListAppend();
     
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
   
     bool shouldDistributeMessageToInlets();
     

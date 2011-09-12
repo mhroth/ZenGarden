@@ -23,6 +23,10 @@
 #include "MessageSamplerate.h"
 #include "PdGraph.h"
 
+MessageObject *MessageSamplerate::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageSamplerate(initMessage, graph);
+}
+
 MessageSamplerate::MessageSamplerate(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
   // nothing to do
 }

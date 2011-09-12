@@ -23,6 +23,10 @@
 #include "MessagePack.h"
 #include "PdGraph.h"
 
+MessageObject *MessagePack::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessagePack(initMessage, graph);
+}
+
 MessagePack::MessagePack(PdMessage *initMessage, PdGraph *graph) :
     MessageObject(initMessage->getNumElements(), 1, graph) {
   int numElements = initMessage->getNumElements();

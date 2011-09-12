@@ -23,6 +23,7 @@
 #ifndef _PD_CONTEXT_H_
 #define _PD_CONTEXT_H_
 
+#include <map>
 #include <pthread.h>
 #include "OrderedMessageQueue.h"
 #include "PdGraph.h"
@@ -39,6 +40,8 @@ class MessageTable;
 class PdFileParser;
 class RemoteMessageReceiver;
 class TableReceiverInterface;
+class PdMessage;
+class ObjectFactoryMap;
 
 /**
  * The <code>PdContext</code> is a container for a set of <code>PdGraph</code>s operating in
@@ -48,19 +51,13 @@ class PdContext {
   
   public:
     PdContext(int numInputChannels, int numOutputChannels, int blockSize, float sampleRate,
-        void (*function)(ZGCallbackFunction, void *, void *), void *userData);
+        void *(*function)(ZGCallbackFunction, void *, void *), void *userData);
     ~PdContext();
   
     int getNumInputChannels();
     int getNumOutputChannels();
     int getBlockSize();
     float getSampleRate();
-  
-    /**
-     * Create a new graph using the given file, with the given arguments and parent graph.
-     * The parent graph may be <code>NULL</code> in the case that it is a top-level graph.
-     */
-    PdGraph *newGraph(const char *directory, const char *filename, PdMessage *initMessage, PdGraph *graph);
   
     /**
      * Attach the given <code>graph</code> to this <code>context</code>, also registering all
@@ -175,14 +172,14 @@ class PdContext {
     void printStd(const char *msg, ...);
   
     /** Returns the next globally unique graph id. */
-    static int getNextGraphId();
+    int getNextGraphId();
   
     /** Used with MessageValue for keeping track of global variables. */
     void setValueForName(char *name, float constant);
     float getValueForName(char *name);
   
-    /** Create a new object based on its initialisation string. */
-    MessageObject *newObject(char *objectType, char *objectLabel, PdMessage *initMessage, PdGraph *graph);
+    /** Create a new object in a graph. */
+    MessageObject *newObject(const char *objectLabel, PdMessage *initMessage, PdGraph *graph);
   
     void registerExternalReceiver(const char *receiverName);
     void unregisterExternalReceiver(const char *receiverName);
@@ -191,11 +188,20 @@ class PdContext {
     void *callbackUserData;
   
     /** The registered callback function for sending data outside of the graph. */
-    void (*callbackFunction)(ZGCallbackFunction, void *, void *);
+    void *(*callbackFunction)(ZGCallbackFunction, void *, void *);
+  
+    /** Register an object label and its associated factory method. */
+    void registerExternalObject(const char *objectLabel,
+        MessageObject *(*newObject)(PdMessage *, PdGraph *));
+  
+    /** Unregister an object label. */
+    void unregisterExternalObject(const char *objectLabel);
   
   private:
     /** Returns <code>true</code> if the graph was successfully configured. <code>false</code> otherwise. */
     bool configureEmptyGraphWithParser(PdGraph *graph, PdFileParser *fileParser);
+  
+    void initObjectInitMap();
 
     int numInputChannels;
     int numOutputChannels;
@@ -203,7 +209,7 @@ class PdContext {
     float sampleRate;
   
     /** Keeps track of the current global graph id. */
-    static int globalGraphId;
+    unsigned int globalGraphId;
   
     /** A list of all top-level graphs in this context. */
     vector<PdGraph *> graphList;
@@ -252,6 +258,8 @@ class PdContext {
     
     /** A global list of all table receivers (e.g., [tabread4~] and [tabplay~]) */
     list<TableReceiverInterface *> tableReceiverList;
+  
+    ObjectFactoryMap *objectFactoryMap;
 };
 
 #endif // _PD_CONTEXT_H_

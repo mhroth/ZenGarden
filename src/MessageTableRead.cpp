@@ -23,6 +23,10 @@
 #include "MessageTableRead.h"
 #include "PdGraph.h"
 
+MessageObject *MessageTableRead::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageTableRead(initMessage, graph);
+}
+
 MessageTableRead::MessageTableRead(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
   name = initMessage->isSymbol(0) ? StaticUtils::copyString(initMessage->getSymbol(0)) : NULL;
   table = NULL; // registration process will set the correct pointer

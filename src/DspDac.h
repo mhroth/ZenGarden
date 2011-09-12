@@ -28,13 +28,13 @@
 class DspDac : public DspObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     DspDac(PdGraph *graph);
     ~DspDac();
   
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
   
-  private:
-    void processDspWithIndex(int fromIndex, int toIndex);
+    void processDsp();
 };
 
 #endif // _DSP_DAC_H_

@@ -27,6 +27,10 @@
 float *DspOsc::cos_table = NULL;
 int DspOsc::refCount = 0;
 
+MessageObject *DspOsc::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspOsc(initMessage, graph);
+}
+
 DspOsc::DspOsc(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
   frequency = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
   
@@ -65,7 +69,6 @@ void DspOsc::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: { // update the frequency
       if (message->isFloat(0)) {
-        processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
         frequency = fabsf(message->getFloat(0));
       }
       break;

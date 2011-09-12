@@ -25,6 +25,10 @@
 
 #define DEFAULT_GRAIN_RATE 20.0 // 20ms
 
+MessageObject *MessageLine::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageLine(initMessage, graph);
+}
+
 MessageLine::MessageLine(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
   currentValue = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
   grainRate = initMessage->isFloat(1) ? (double) initMessage->getFloat(1) : DEFAULT_GRAIN_RATE;

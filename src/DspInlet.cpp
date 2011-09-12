@@ -24,8 +24,12 @@
 #include "DspInlet.h"
 #include "PdGraph.h"
 
+MessageObject *DspInlet::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspInlet(graph);
+}
+
 DspInlet::DspInlet(PdGraph *graph) : DspObject(0, 1, 0, 1, graph) {
-  canvasX = 0;
+  canvasX = 0.0f;
 }
 
 DspInlet::~DspInlet() {

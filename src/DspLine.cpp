@@ -24,7 +24,11 @@
 #include "DspLine.h"
 #include "PdGraph.h"
 
-DspLine::DspLine(PdGraph *graph) : DspObject(2, 0, 0, 1, graph) {
+MessageObject *DspLine::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspLine(initMessage, graph);
+}
+
+DspLine::DspLine(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 0, 0, 1, graph) {
   target = 0.0f;
   slope = 0.0f;
   numSamplesToTarget = 0.0f;
@@ -48,7 +52,6 @@ void DspLine::processMessage(int inletIndex, PdMessage *message) {
       case 1: {
         // jump to value
         if (message->isFloat(0)) {
-          processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
           target = message->getFloat(0);
           lastOutputSample = target;
           slope = 0.0f;
@@ -59,7 +62,6 @@ void DspLine::processMessage(int inletIndex, PdMessage *message) {
       default: { // at least two inputs
         // new ramp
         if (message->isFloat(0) && message->isFloat(1)) {
-          processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
           target = message->getFloat(0);
           float timeToTargetMs = message->getFloat(1); // no negative time to targets!
           numSamplesToTarget = StaticUtils::millisecondsToSamples(

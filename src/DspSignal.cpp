@@ -24,6 +24,10 @@
 #include "DspSignal.h"
 #include "PdGraph.h"
 
+MessageObject *DspSignal::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspSignal(initMessage, graph);
+}
+
 DspSignal::DspSignal(PdMessage *initMessage, PdGraph *graph) : DspObject(1, 0, 0, 1, graph) {
   constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
 }
@@ -44,7 +48,6 @@ string DspSignal::toString() {
 
 void DspSignal::processMessage(int inletIndex, PdMessage *message) {
   if (message->isFloat(0)) {
-    processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
     constant = message->getFloat(0);
   }
 }

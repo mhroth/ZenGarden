@@ -34,8 +34,8 @@
 #include "PdGraph.h"
 #include "StaticUtils.h"
 
-#pragma mark -
-#pragma mark Constructor/Deconstructor
+
+#pragma mark - Constructor/Deconstructor
 
 // a PdGraph begins with zero inlets and zero outlets. thses will be added as inlet/~ and outlet/~
 // objects are added to the graph
@@ -67,10 +67,10 @@ PdGraph::~PdGraph() {
   delete declareList;
 
   // delete all constituent nodes
-//  for (int i = 0; i < nodeList.size(); i++) {
-//    delete nodeList[i];
-//  }
-  // is the destructor of MessageObject called when the list itself is destory? do we need to do this manually?
+  list<MessageObject *>::iterator it = nodeList.begin();
+  while (it != nodeList.end()) {
+    delete *it++;
+  }
 }
 
 const char *PdGraph::getObjectLabel() {

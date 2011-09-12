@@ -24,6 +24,10 @@
 #include "DspLowpassFilter.h"
 #include "PdGraph.h"
 
+MessageObject *DspLowpassFilter::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspLowpassFilter(initMessage, graph);
+}
+
 DspLowpassFilter::DspLowpassFilter(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 1, 0, 1, graph) {
   calculateFilterCoefficients(initMessage->isFloat(0) ? initMessage->getFloat(0) : graph->getSampleRate()/2.0f);
   signalConstant = 0.0f;
@@ -82,13 +86,11 @@ void DspLowpassFilter::processMessage(int inletIndex, PdMessage *message) {
     case 0: {
       switch (message->getType(0)) {
         case FLOAT: {
-          processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
           signalConstant = message->getFloat(0);
           break;
         }
         case SYMBOL: {
           if (message->isSymbol(0, "clear")) {
-            processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
             dspBufferAtOutlet0[0] = dspBufferAtOutlet0[1] = 0.0f;
           }
           break;
@@ -101,7 +103,6 @@ void DspLowpassFilter::processMessage(int inletIndex, PdMessage *message) {
     }
     case 1: {
       if (message->isFloat(0)) {
-        processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
         calculateFilterCoefficients(message->getFloat(0));
       }
       break;

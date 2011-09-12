@@ -22,6 +22,10 @@
 
 #include "MessageSine.h"
 
+MessageObject *MessageSine::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageSine(initMessage, graph);
+}
+
 MessageSine::MessageSine(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
   // nothing to do
 }

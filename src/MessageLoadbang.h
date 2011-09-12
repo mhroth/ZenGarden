@@ -29,10 +29,11 @@
 class MessageLoadbang : public MessageObject {
     
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageLoadbang(PdGraph *graph);
     ~MessageLoadbang();
   
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
 };
 
 #endif // _MESSAGE_LOADBANG_H_

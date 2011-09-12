@@ -29,10 +29,11 @@
 class MessageOpenPanel : public MessageObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageOpenPanel(PdMessage *initMessage, PdGraph *graph);
     ~MessageOpenPanel();
     
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     
   private:
   void processMessage(int inletIndex, PdMessage *message);

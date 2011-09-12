@@ -675,6 +675,11 @@
 		90EC947E120EDF2A00F65F49 /* MessageValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90EC947B120EDF2A00F65F49 /* MessageValue.cpp */; };
 		90EC947F120EDF2A00F65F49 /* MessageValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 90EC947A120EDF2A00F65F49 /* MessageValue.h */; };
 		90EC9480120EDF2A00F65F49 /* MessageValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90EC947B120EDF2A00F65F49 /* MessageValue.cpp */; };
+		90F3D68813F82F5F0058E68D /* ObjectFactoryMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90F3D68713F82F5E0058E68D /* ObjectFactoryMap.cpp */; };
+		90F3D68913F82F5F0058E68D /* ObjectFactoryMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90F3D68713F82F5E0058E68D /* ObjectFactoryMap.cpp */; };
+		90F3D68A13F82F5F0058E68D /* ObjectFactoryMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90F3D68713F82F5E0058E68D /* ObjectFactoryMap.cpp */; };
+		90F3D68C13F82F700058E68D /* ObjectFactoryMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 90F3D68B13F82F6E0058E68D /* ObjectFactoryMap.h */; };
+		90F3D68D13F82F700058E68D /* ObjectFactoryMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 90F3D68B13F82F6E0058E68D /* ObjectFactoryMap.h */; };
 		90F4C18D12328AC1001182CF /* MessageLogicalAnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90F4C18B12328AC1001182CF /* MessageLogicalAnd.cpp */; };
 		90F4C18E12328AC1001182CF /* MessageLogicalAnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90F4C18B12328AC1001182CF /* MessageLogicalAnd.cpp */; };
 		90F4C18F12328AC1001182CF /* MessageLogicalAnd.h in Headers */ = {isa = PBXBuildFile; fileRef = 90F4C18C12328AC1001182CF /* MessageLogicalAnd.h */; };
@@ -983,6 +988,8 @@
 		90E90A041208EF8600A48B72 /* TableReceiverInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TableReceiverInterface.h; path = ../src/TableReceiverInterface.h; sourceTree = SOURCE_ROOT; };
 		90EC947A120EDF2A00F65F49 /* MessageValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageValue.h; path = ../src/MessageValue.h; sourceTree = SOURCE_ROOT; };
 		90EC947B120EDF2A00F65F49 /* MessageValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageValue.cpp; path = ../src/MessageValue.cpp; sourceTree = SOURCE_ROOT; };
+		90F3D68713F82F5E0058E68D /* ObjectFactoryMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ObjectFactoryMap.cpp; path = ../src/ObjectFactoryMap.cpp; sourceTree = "<group>"; };
+		90F3D68B13F82F6E0058E68D /* ObjectFactoryMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ObjectFactoryMap.h; path = ../src/ObjectFactoryMap.h; sourceTree = "<group>"; };
 		90F4C18B12328AC1001182CF /* MessageLogicalAnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageLogicalAnd.cpp; path = ../src/MessageLogicalAnd.cpp; sourceTree = SOURCE_ROOT; };
 		90F4C18C12328AC1001182CF /* MessageLogicalAnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageLogicalAnd.h; path = ../src/MessageLogicalAnd.h; sourceTree = SOURCE_ROOT; };
 		90F4C19812328CFC001182CF /* MessageLogicalOr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageLogicalOr.cpp; path = ../src/MessageLogicalOr.cpp; sourceTree = SOURCE_ROOT; };
@@ -1297,6 +1304,8 @@
 				90EC947A120EDF2A00F65F49 /* MessageValue.h */,
 				90337C4011D0D847009FCC01 /* MessageWrap.cpp */,
 				90337C4111D0D847009FCC01 /* MessageWrap.h */,
+				90F3D68713F82F5E0058E68D /* ObjectFactoryMap.cpp */,
+				90F3D68B13F82F6E0058E68D /* ObjectFactoryMap.h */,
 				90BB31C811FE3F62008A0628 /* ObjectType.h */,
 				90337C4311D0D847009FCC01 /* OrderedMessageQueue.cpp */,
 				90337C4411D0D847009FCC01 /* OrderedMessageQueue.h */,
@@ -1495,6 +1504,7 @@
 				907B1F52129965D900B263E2 /* DspBang.h in Headers */,
 				90CCEBE31299CD7D009D36DF /* DspReciprocalSqrt.h in Headers */,
 				9086906C129AC67B00D3BD5D /* DspSqrt.h in Headers */,
+				90F3D68C13F82F700058E68D /* ObjectFactoryMap.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1644,6 +1654,7 @@
 				907B1F55129965D900B263E2 /* DspBang.h in Headers */,
 				90CCEBE61299CD7D009D36DF /* DspReciprocalSqrt.h in Headers */,
 				9086906E129AC67B00D3BD5D /* DspSqrt.h in Headers */,
+				90F3D68D13F82F700058E68D /* ObjectFactoryMap.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1870,6 +1881,7 @@
 				90869070129AC67B00D3BD5D /* DspSqrt.cpp in Sources */,
 				9099A82C13D0437E0091E9FF /* MessageCputime.cpp in Sources */,
 				9099A82F13D043D60091E9FF /* DspVCF.cpp in Sources */,
+				90F3D68813F82F5F0058E68D /* ObjectFactoryMap.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2010,6 +2022,7 @@
 				9086906D129AC67B00D3BD5D /* DspSqrt.cpp in Sources */,
 				9099A82D13D0437E0091E9FF /* MessageCputime.cpp in Sources */,
 				9099A83013D043D70091E9FF /* DspVCF.cpp in Sources */,
+				90F3D68913F82F5F0058E68D /* ObjectFactoryMap.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2150,6 +2163,7 @@
 				9086906F129AC67B00D3BD5D /* DspSqrt.cpp in Sources */,
 				9099A82E13D0437F0091E9FF /* MessageCputime.cpp in Sources */,
 				9099A83113D043D80091E9FF /* DspVCF.cpp in Sources */,
+				90F3D68A13F82F5F0058E68D /* ObjectFactoryMap.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

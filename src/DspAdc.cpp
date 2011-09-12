@@ -23,6 +23,10 @@
 #include "DspAdc.h"
 #include "PdGraph.h"
 
+MessageObject *DspAdc::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspAdc(graph);
+}
+
 DspAdc::DspAdc(PdGraph *graph) : DspObject(0, 0, 0, graph->getNumInputChannels(), graph) {
   /* In order to avoid lots of <code>memcpy</code>ing to separate input buffers, all ADCs refer to
    * the same input buffers.

@@ -29,10 +29,11 @@
 class MessagePowToDb : public MessageObject {
 
   public:
-    MessagePowToDb(PdGraph *graph);
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
+    MessagePowToDb(PdMessage *initMessage, PdGraph *graph);
     ~MessagePowToDb();
 
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);

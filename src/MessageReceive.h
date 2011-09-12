@@ -29,10 +29,11 @@
 class MessageReceive : public RemoteMessageReceiver {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageReceive(PdMessage *initMessage, PdGraph *graph);
     ~MessageReceive();
     
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     ObjectType getObjectType();
   
     void receiveMessage(int inletIndex, PdMessage *message);

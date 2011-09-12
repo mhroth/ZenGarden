@@ -32,7 +32,7 @@ class MessageListSplit : public MessageObject {
     MessageListSplit(PdMessage *initMessage, PdGraph *graph);
     ~MessageListSplit();
 
-  const char *getObjectLabel();
+  static const char *getObjectLabel();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);

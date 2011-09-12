@@ -29,10 +29,11 @@
 class MessageSwap : public MessageObject {
 
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageSwap(PdMessage *initMessage, PdGraph *graph);
     ~MessageSwap();
 
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);

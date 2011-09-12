@@ -32,7 +32,7 @@ class MessageListPrepend : public MessageObject {
     MessageListPrepend(PdMessage *initMessage, PdGraph *graph);
     ~MessageListPrepend();
     
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);

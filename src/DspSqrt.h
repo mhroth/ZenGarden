@@ -30,10 +30,11 @@
 class DspSqrt : public DspObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     DspSqrt(PdMessage *initMessage, PdGraph *graph);
     ~DspSqrt();
     
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
   
     void processDsp();
 };

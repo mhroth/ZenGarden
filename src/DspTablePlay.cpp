@@ -24,6 +24,10 @@
 #include "MessageTable.h"
 #include "PdGraph.h"
 
+MessageObject *DspTablePlay::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspTablePlay(initMessage, graph);
+}
+
 DspTablePlay::DspTablePlay(PdMessage *initMessage, PdGraph *graph) : DspObject(1, 0, 2, 1, graph) {
   name = initMessage->isSymbol(0) ? StaticUtils::copyString(initMessage->getSymbol(0)) : NULL;
   table = NULL;
@@ -65,7 +69,6 @@ void DspTablePlay::sendMessage(int outletIndex, PdMessage *message) {
 void DspTablePlay::processMessage(int inletIndex, PdMessage *message) {
   switch (message->getType(0)) {
     case FLOAT: {
-      processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
       playTable((int) message->getFloat(0),
           message->isFloat(1) ? (int) message->getFloat(1) : -1,
           message->getTimestamp());
@@ -73,13 +76,11 @@ void DspTablePlay::processMessage(int inletIndex, PdMessage *message) {
     }
     case SYMBOL: {
       if (message->isSymbol(0, "set") && message->isSymbol(1)) {
-        processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
         table = graph->getTable(message->getSymbol(1));
       }
       break;
     }
     case BANG: {
-      processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
       playTable(0, -1, message->getTimestamp());
       break;
     }

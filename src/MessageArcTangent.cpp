@@ -22,6 +22,10 @@
 
 #include "MessageArcTangent.h"
 
+MessageObject *MessageArcTangent::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageArcTangent(initMessage, graph);
+}
+
 MessageArcTangent::MessageArcTangent(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
   // nothing to do
 }

@@ -23,6 +23,10 @@
 #include "MessageMessageBox.h"
 #include "PdGraph.h"
 
+MessageObject *MessageMessageBox::newObject(PdMessage *initString, PdGraph *graph) {
+  return new MessageMessageBox(initString->getSymbol(0), graph);
+}
+
 /*
  * The message box is overloaded with many kinds of functionality.
  * A) The simplest case is one where only one message is specified, including a list of primitives

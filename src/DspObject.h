@@ -36,6 +36,12 @@
     resolveInputBuffers(0, dspBufferAtInlet0); \
   }
 
+#define RESOLVE_DSPINLET1_IF_NECESSARY() \
+  if (incomingDspConnections[1].size() > 1) { \
+    dspBufferAtInlet1 = (float *) alloca(numBytesInBlock); \
+    resolveInputBuffers(1, dspBufferAtInlet1); \
+  }
+
 typedef std::pair<PdMessage *, unsigned int> MessageLetPair;
 
 /**

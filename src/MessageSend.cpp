@@ -23,6 +23,10 @@
 #include "MessageSend.h"
 #include "PdGraph.h"
 
+MessageObject *MessageSend::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageSend(initMessage, graph);
+}
+
 MessageSend::MessageSend(PdMessage *initMessage, PdGraph *graph) :
     MessageObject((initMessage->getNumElements() == 0) ? 2 : 1, 0, graph) {
   name = StaticUtils::copyString(initMessage->isSymbol(0)

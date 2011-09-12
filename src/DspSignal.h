@@ -28,12 +28,13 @@
 /** [sig~] */
 class DspSignal : public DspObject {
   
-public:
-  DspSignal(PdMessage *initMessage, PdGraph *graph);
-  ~DspSignal();
+  public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
+    DspSignal(PdMessage *initMessage, PdGraph *graph);
+    ~DspSignal();
   
-  const char *getObjectLabel();
-  string toString();
+    static const char *getObjectLabel();
+    string toString();
   
   private:
     void processMessage(int inletIndex, PdMessage *message);

@@ -23,6 +23,10 @@
 #include "DspLog.h"
 #include "PdGraph.h"
 
+MessageObject *DspLog::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspLog(initMessage, graph);
+}
+
 DspLog::DspLog(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
   // by default assume ln
   log2_base = initMessage->isFloat(0) ? log2f(initMessage->getFloat(0)) : M_LOG2E;
@@ -39,7 +43,6 @@ const char *DspLog::getObjectLabel() {
 void DspLog::processMessage(int inletIndex, PdMessage *message) {
   if (inletIndex == 1) {
     if (message->isFloat(0)) {
-      processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
       if (message->getFloat(0) <= 0.0f) {
         graph->printErr("log~ base cannot be set to a non-positive number: %d\n", message->getFloat(0));
       } else {

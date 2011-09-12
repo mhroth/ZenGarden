@@ -21,6 +21,42 @@
  */
 
 #include "MessageListAppend.h"
+#include "MessageListLength.h"
+#include "MessageListPrepend.h"
+#include "MessageListSplit.h"
+#include "MessageListTrim.h"
+
+// MessageListAppend is the default factor for all list objects
+MessageObject *MessageListAppend::newObject(PdMessage *initMessage, PdGraph *graph) {
+  if (initMessage->isSymbol(0)) {
+    if (initMessage->isSymbol(0, "append") ||
+        initMessage->isSymbol(0, "prepend") ||
+        initMessage->isSymbol(0, "split")) {
+      int numElements = initMessage->getNumElements()-1;
+      PdMessage *message = PD_MESSAGE_ON_STACK(numElements);
+      message->initWithTimestampAndNumElements(0.0, numElements);
+      memcpy(message->getElement(0), initMessage->getElement(1), numElements*sizeof(MessageAtom));
+      MessageObject *messageObject = NULL;
+      if (initMessage->isSymbol(0, "append")) {
+        messageObject = new MessageListAppend(message, graph);
+      } else if (initMessage->isSymbol(0, "prepend")) {
+        messageObject = new MessageListPrepend(message, graph);
+      } else if (initMessage->isSymbol(0, "split")) {
+        messageObject = new MessageListSplit(message, graph);
+      }
+      return messageObject;
+    } else if (initMessage->isSymbol(0, "trim")) {
+      // trim and length do not act on the initMessage
+      return new MessageListTrim(initMessage, graph);
+    } else if (initMessage->isSymbol(0, "length")) {
+      return new MessageListLength(initMessage, graph);
+    } else {
+      return new MessageListAppend(initMessage, graph);
+    }
+  } else {
+    return new MessageListAppend(initMessage, graph);
+  }
+}
 
 MessageListAppend::MessageListAppend(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
   appendMessage = initMessage->copyToHeap();

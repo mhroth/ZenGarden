@@ -22,6 +22,10 @@
 
 #include "MessageRandom.h"
 
+MessageObject *MessageRandom::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageRandom(initMessage, graph);
+}
+
 MessageRandom::MessageRandom(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
   max_inc = initMessage->isFloat(0) ? ((int) initMessage->getFloat(0))-1 : 1;
   twister = new MTRand();

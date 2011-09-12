@@ -41,7 +41,7 @@ typedef struct {
 } PureDataMobileNativeVars;
 
 extern "C" {
-  void zg_callback(ZGCallbackFunction function, void *userData, void *ptr) {
+  void *zg_callback(ZGCallbackFunction function, void *userData, void *ptr) {
     JNIEnv *env = NULL;
     jint result = zg_jvm->GetEnv((void **)&env, JNI_VERSION);
     if (result == JNI_OK && env != NULL) {
@@ -71,17 +71,17 @@ extern "C" {
               env->FindClass("java/lang/Object"), NULL);
 
           for (int i = 0; i < numElements; i++) {
-            switch (zg_message_get_element_type(i, zgMessage)) {
+            switch (zg_message_get_element_type(zgMessage, i)) {
               case ZG_MESSAGE_ELEMENT_FLOAT: {
                 jclass clazz = env->FindClass("java/lang/Float");
                 jobject jfloatObject = env->NewObject(clazz,
                     env->GetMethodID(clazz, "<init>", "(F)V"),
-                    zg_message_get_float(i, zgMessage));
+                    zg_message_get_float(zgMessage, i));
                 env->SetObjectArrayElement(jelements, i, jfloatObject);
                 break;
               }
               case ZG_MESSAGE_ELEMENT_SYMBOL: {
-                env->SetObjectArrayElement(jelements, i, env->NewStringUTF(zg_message_get_symbol(i, zgMessage)));
+                env->SetObjectArrayElement(jelements, i, env->NewStringUTF(zg_message_get_symbol(zgMessage, i)));
                 break;
               }
               case ZG_MESSAGE_ELEMENT_BANG:
@@ -107,6 +107,7 @@ extern "C" {
         }
       }
     }
+    return NULL;
   }
 }
 

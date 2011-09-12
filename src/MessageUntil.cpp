@@ -22,7 +22,11 @@
 
 #include "MessageUntil.h"
 
-MessageUntil::MessageUntil(PdGraph *graph) : MessageObject(2, 1, graph) {
+MessageObject *MessageUntil::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageUntil(initMessage, graph);
+}
+
+MessageUntil::MessageUntil(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
   // nothing to do
 }
 

@@ -26,6 +26,10 @@
 
 #define DEFAULT_BUFFER_LENGTH 1024
 
+MessageObject *MessageTable::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageTable(initMessage, graph);
+}
+
 MessageTable::MessageTable(PdMessage *initMessage, PdGraph *graph) : RemoteMessageReceiver(0, 0, graph) {
   if (initMessage->isSymbol(0)) {
     name = StaticUtils::copyString(initMessage->getSymbol(0));

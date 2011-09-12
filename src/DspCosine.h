@@ -29,10 +29,11 @@
 class DspCosine : public DspObject {
 
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     DspCosine(PdMessage *initMessage, PdGraph *graph);
     ~DspCosine();
 
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
 
     void processDsp();
 

@@ -24,6 +24,10 @@
 #include "DspVCF.h"
 #include "PdGraph.h"
 
+MessageObject *DspVCF::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspVCF(initMessage, graph);
+}
+
 DspVCF::DspVCF(PdMessage *initMessage, PdGraph *graph) : DspObject(3, 3, 0, 2, graph) {
   sampleRate = graph->getSampleRate();
   calculateFilterCoefficients(this->sampleRate/2.0f, 1.0f); // initialise the filter completely open
@@ -67,7 +71,6 @@ void DspVCF::processMessage(int inletIndex, PdMessage *message) {
   // not sure what the other inlets do wrt messages
   if (inletIndex == 2) {
     if (message->isFloat(0)) {
-      processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
       q = message->getFloat(0); // update the resonance (q)
     }
   }

@@ -29,10 +29,11 @@
 class MessageInlet : public MessageObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageInlet(PdGraph *graph);
     ~MessageInlet();
     
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     ObjectType getObjectType();
   
     list<MessageObject *> *getProcessOrder();

@@ -22,6 +22,10 @@
 
 #include "MessageChange.h"
 
+MessageObject *MessageChange::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageChange(initMessage, graph);
+}
+
 MessageChange::MessageChange(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
    prevValue = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
 }

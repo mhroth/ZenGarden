@@ -31,10 +31,11 @@ class PdGraph;
 class MessageUntil : public MessageObject {
   
   public:
-    MessageUntil(PdGraph *graph);
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
+    MessageUntil(PdMessage *initMessage, PdGraph *graph);
     ~MessageUntil();
     
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);

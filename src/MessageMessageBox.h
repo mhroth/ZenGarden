@@ -31,10 +31,11 @@ typedef std::pair<char *, PdMessage *> MessageNamedDestination;
 class MessageMessageBox : public MessageObject {
     
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageMessageBox(char *initString, PdGraph *graph);
     ~MessageMessageBox();
   
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
   
   private:
     void processMessage(int inletIndex, PdMessage *message);

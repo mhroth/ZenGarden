@@ -22,6 +22,10 @@
 
 #include "MessageDeclare.h"
 
+MessageObject *MessageDeclare::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageDeclare(initMessage, graph);
+}
+
 MessageDeclare::MessageDeclare(PdMessage *initMessage, PdGraph *graph) : MessageObject(0, 0, graph) {
   target = initMessage->isSymbol(0) ? StaticUtils::copyString(initMessage->getSymbol(0)) : NULL;
   argument = initMessage->isSymbol(1) ? StaticUtils::copyString(initMessage->getSymbol(1)) : NULL;

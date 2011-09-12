@@ -32,10 +32,11 @@ class PdGraph;
 class DspNoise : public DspObject {
     
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     DspNoise(PdGraph *graph);
     ~DspNoise();
   
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
   
     void processDsp();
   

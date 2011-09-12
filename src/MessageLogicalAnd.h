@@ -29,10 +29,11 @@
 class MessageLogicalAnd : public MessageObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageLogicalAnd(PdMessage *initMessage, PdGraph *graph);
     ~MessageLogicalAnd();
   
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);

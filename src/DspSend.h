@@ -29,6 +29,7 @@
 class DspSend : public DspObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     DspSend(PdMessage *initMessage, PdGraph *graph);
     ~DspSend();
     
@@ -39,7 +40,7 @@ class DspSend : public DspObject {
      */
     float **getBuffer();
     char *getName();
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     string toString();
     ObjectType getObjectType();
   

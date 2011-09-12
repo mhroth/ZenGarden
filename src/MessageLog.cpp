@@ -22,6 +22,10 @@
 
 #include "MessageLog.h"
 
+MessageObject *MessageLog::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageLog(initMessage, graph);
+}
+
 MessageLog::MessageLog(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
   // nothing to do
 }

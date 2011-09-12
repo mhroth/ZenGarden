@@ -39,10 +39,11 @@ enum DspMultiplyCodePath {
 class DspMultiply : public DspObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     DspMultiply(PdMessage *initMessage, PdGraph *graph);
     ~DspMultiply();
   
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     string toString();
 
     void processDsp();

@@ -22,6 +22,10 @@
 
 #include "MessageTimer.h"
 
+MessageObject *MessageTimer::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageTimer(initMessage, graph);
+}
+
 MessageTimer::MessageTimer(PdMessage *initMessage, PdGraph *grap) : MessageObject(2, 1, graph) {
   timestampStart = 0.0;
 }

@@ -29,10 +29,11 @@
 class MessageMaximum : public MessageObject {
 
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageMaximum(PdMessage *initMessage, PdGraph *graph);
     ~MessageMaximum();
 
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);

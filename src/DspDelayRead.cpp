@@ -25,6 +25,10 @@
 #include "DspDelayWrite.h"
 #include "PdGraph.h"
 
+MessageObject *DspDelayRead::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspDelayRead(initMessage, graph);
+}
+
 DspDelayRead::DspDelayRead(PdMessage *initMessage, PdGraph *graph) : DelayReceiver(1, 0, 0, 1, graph) {
   if (initMessage->isSymbol(0) && initMessage->isFloat(1)) {
     name = StaticUtils::copyString(initMessage->getSymbol(0));
@@ -51,7 +55,6 @@ ObjectType DspDelayRead::getObjectType() {
 void DspDelayRead::processMessage(int inletIndex, PdMessage *message) {
   if (message->isFloat(0)) {
     // update the delay time
-    processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
     delayInSamples = StaticUtils::millisecondsToSamples(message->getFloat(0), graph->getSampleRate());
     delayInSamplesInt = (int) delayInSamples;
   }

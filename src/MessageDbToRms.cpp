@@ -22,6 +22,10 @@
 
 #include "MessageDbToRms.h"
 
+MessageObject *MessageDbToRms::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageDbToRms(graph);
+}
+
 MessageDbToRms::MessageDbToRms(PdGraph *graph) : MessageObject(1, 1, graph) {
   // nothing to do
 }

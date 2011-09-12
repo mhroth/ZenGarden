@@ -38,10 +38,11 @@ enum DspSubtractCodePath {
 class DspSubtract : public DspObject {
 
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     DspSubtract(PdMessage *initMessage, PdGraph *graph);
     ~DspSubtract();
 
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     string toString();
   
     void processDsp();

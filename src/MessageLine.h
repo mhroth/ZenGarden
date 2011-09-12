@@ -31,13 +31,14 @@ class PdGraph;
 class MessageLine : public MessageObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageLine(PdMessage *initMessage, PdGraph *graph);
     ~MessageLine();
   
     bool shouldDistributeMessageToInlets();
     void sendMessage(int outletIndex, PdMessage *message);
   
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);

@@ -23,6 +23,10 @@
 #include "DspSnapshot.h"
 #include "PdGraph.h"
 
+MessageObject *DspSnapshot::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspSnapshot(initMessage, graph);
+}
+
 DspSnapshot::DspSnapshot(PdMessage *initMessage, PdGraph *graph) : DspObject(1, 1, 1, 0, graph) {
   // nothing to do
 }

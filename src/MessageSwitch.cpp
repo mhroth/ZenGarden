@@ -23,6 +23,10 @@
 #include "MessageSwitch.h"
 #include "PdGraph.h"
 
+MessageObject *MessageSwitch::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageSwitch(initMessage, graph);
+}
+
 MessageSwitch::MessageSwitch(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 0, graph) {
   // TODO(mhroth): parse object arguments 
 }

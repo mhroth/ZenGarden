@@ -35,10 +35,11 @@
 class MessageDelay : public MessageObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageDelay(PdMessage *initMessage, PdGraph *graph);
     ~MessageDelay();
   
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
   
     void sendMessage(int outletIndex, PdMessage *message);
     

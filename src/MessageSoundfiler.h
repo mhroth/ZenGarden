@@ -29,10 +29,11 @@
 class MessageSoundfiler : public MessageObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageSoundfiler(PdMessage *initMessage, PdGraph *pdGraph);
     ~MessageSoundfiler();
   
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);

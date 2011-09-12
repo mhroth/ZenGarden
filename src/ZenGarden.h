@@ -78,7 +78,7 @@ typedef enum ZGConnectionType {
   
   /** Create a new context to which graphs can be added. */
   ZGContext *zg_context_new(int numInputChannels, int numOutputChannels, int blockSize, float sampleRate,
-      void (*callbackFunction)(ZGCallbackFunction function, void *userData, void *ptr), void *userData);
+      void *(*callbackFunction)(ZGCallbackFunction function, void *userData, void *ptr), void *userData);
 
   /** Create a new empty graph in the given context. Ideal for building graphs on the fly. */
   ZGGraph *zg_context_new_empty_graph(ZGContext *context);
@@ -106,6 +106,16 @@ typedef enum ZGConnectionType {
    * be freed by the caller.
    */
   ZGGraph *zg_context_get_graphs(ZGContext *context, unsigned int *n);
+  
+  /**
+   * Register an external such that the context can instantiate instances of it. If an object
+   * with the same label already exists, then the factory method is replaced with the new one.
+   */
+  void zg_context_register_external_object(ZGContext *context, const char *objectLabel,
+      ZGObject *(*factory)(ZGMessage *message, ZGGraph *graph));
+  
+  /** Unregister an external such that the context will be unaware of it. */
+  void zg_context_unregister_external_object(ZGContext *context, const char *objectLabel);
   
 
 #pragma mark - Objects from Context
@@ -178,7 +188,8 @@ typedef enum ZGConnectionType {
    * E.g., zg_send_message(graph, "test", "s", "hello");
    * E.g., zg_send_message(graph, "test", "b");
    */
-  void zg_context_send_messageV(ZGContext *context, const char *receiverName, const char *messageFormat, ...);
+  void zg_context_send_messageV(ZGContext *context, const char *receiverName, double timestamp,
+      const char *messageFormat, ...);
   
   /**
    * Send a message to the named receiver with the given format at the given block index. If the
@@ -235,7 +246,6 @@ typedef enum ZGConnectionType {
    * Returns an array of ZGConnectionPair structs indicating the objects and outlets from which
    * the connections are comming. The result in n is the length of the array (i.e. the number of
    * connections at the given inlet). The returned array is owned and must be freed by the caller.
-   * NOTE(mhroth): This function currently only returns MESSAGE connections.
    */
   ZGConnectionPair *zg_object_get_connections_at_inlet(ZGObject *object, unsigned int inletIndex, unsigned int *n);
   ZGConnectionPair *zg_object_get_connections_at_outlet(ZGObject *object, unsigned int outletIndex, unsigned int *n);
@@ -294,7 +304,7 @@ typedef enum ZGConnectionType {
   
   void zg_message_set_float(ZGMessage *message, unsigned int index, float f);
   
-  /** The symbol parameter is copied into the message. */
+  /** The symbol parameter is copied into the message. Any previous symbol is freed from memory. */
   void zg_message_set_symbol(ZGMessage *message, unsigned int index, const char *s);
   
   void zg_message_set_bang(ZGMessage *message, unsigned int index);
@@ -303,11 +313,14 @@ typedef enum ZGConnectionType {
   
   double zg_message_get_timestamp(ZGMessage *message);
   
-  ZGMessageElementType zg_message_get_element_type(unsigned int index, ZGMessage *message);
+  ZGMessageElementType zg_message_get_element_type(ZGMessage *message, unsigned int index);
   
-  float zg_message_get_float(unsigned int index, ZGMessage *message);
+  float zg_message_get_float(ZGMessage *message, unsigned int index);
   
-  const char *zg_message_get_symbol(unsigned int index, ZGMessage *message);
+  const char *zg_message_get_symbol(ZGMessage *message, unsigned int index);
+  
+  /** Returns a string representation of the message. The string must be freed by the caller. */
+  char *zg_message_to_string(ZGMessage *message);
   
   
 #ifdef __cplusplus

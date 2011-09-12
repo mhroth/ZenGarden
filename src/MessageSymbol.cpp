@@ -22,6 +22,10 @@
 
 #include "MessageSymbol.h"
 
+MessageObject *MessageSymbol::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageSymbol(initMessage, graph);
+}
+
 MessageSymbol::MessageSymbol(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
   if (initMessage->isSymbol(0)) {
     copyString(initMessage->getSymbol(0));

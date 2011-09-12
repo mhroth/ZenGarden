@@ -33,10 +33,11 @@
 class DspTableRead4 : public DspObject, public TableReceiverInterface {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     DspTableRead4(PdMessage *initMessage, PdGraph *graph);
     ~DspTableRead4();
   
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     ObjectType getObjectType();
   
     char *getName();

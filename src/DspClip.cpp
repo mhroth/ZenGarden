@@ -24,6 +24,10 @@
 #include "DspClip.h"
 #include "PdGraph.h"
 
+MessageObject *DspClip::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspClip(initMessage, graph);
+}
+
 DspClip::DspClip(PdMessage *initMessage, PdGraph *graph) : DspObject(3, 1, 0, 1, graph) {
   lowerBound = initMessage->isFloat(0) ? initMessage->getFloat(0) : -1.0f;
   upperBound = initMessage->isFloat(1) ? initMessage->getFloat(1) : 1.0f;
@@ -60,40 +64,17 @@ void DspClip::onInletConnectionUpdate() {
 
 void DspClip::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
-    case 1: {
-      if (message->isFloat(0)) {
-        processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
-        lowerBound = message->getFloat(0); // set the lower bound
-      }
-      break;
-    }
-    case 2: {
-      if (message->isFloat(0)) {
-        processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
-        upperBound = message->getFloat(0); // set the upper bound
-      }
-      break;
-    }
-    default: {
-      break;
-    }
+    case 1: if (message->isFloat(0)) lowerBound = message->getFloat(0); break; // set the lower bound
+    case 2: if (message->isFloat(0)) upperBound = message->getFloat(0); break; // set the upper bound
+    default: break;
   }
 }
 
 void DspClip::processDsp() {
   switch (codePath) {
-    case DSP_CLIP_DSPX_MESSAGE0: {
-      resolveInputBuffers(0, dspBufferAtInlet0);
-      // allow fallthrough
-    }
-    case DSP_CLIP_DSP1_MESSAGE0: {
-      processDspWithIndex(0, blockSizeInt);
-      break;
-    }
-    default: {
-      DspObject::processDsp();
-      break;
-    }
+    case DSP_CLIP_DSPX_MESSAGE0: resolveInputBuffers(0, dspBufferAtInlet0); // allow fallthrough
+    case DSP_CLIP_DSP1_MESSAGE0: processDspWithIndex(0, blockSizeInt); break;
+    default: DspObject::processDsp(); break;
   }
 }
 

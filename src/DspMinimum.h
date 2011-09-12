@@ -40,10 +40,11 @@ enum DspMinimumCodePath {
 class DspMinimum : public DspObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     DspMinimum(PdMessage *initMessage, PdGraph *graph);
     ~DspMinimum();
     
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     string toString();
   
     void processDsp();

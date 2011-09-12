@@ -36,10 +36,11 @@ enum DspClipCodePath {
 class DspClip : public DspObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     DspClip(PdMessage *initMessage, PdGraph *graph);
     ~DspClip();
   
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     string toString();
   
     void processDsp();

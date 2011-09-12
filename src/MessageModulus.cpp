@@ -22,6 +22,10 @@
 
 #include "MessageModulus.h"
 
+MessageObject *MessageModulus::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageModulus(initMessage, graph);
+}
+
 MessageModulus::MessageModulus(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
   constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
   lastOutput = 0.0f;

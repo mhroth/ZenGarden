@@ -22,6 +22,10 @@
 
 #include "MessageDbToPow.h"
 
+MessageObject *MessageDbToPow::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageDbToPow(graph);
+}
+
 MessageDbToPow::MessageDbToPow(PdGraph *graph) : MessageObject(1, 1, graph) {
   // nothing to do
 }

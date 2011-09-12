@@ -34,6 +34,7 @@ class DspCatch;
 class DspThrow : public DspObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     DspThrow(PdMessage *initMessage, PdGraph *graph);
     ~DspThrow();
     
@@ -42,7 +43,7 @@ class DspThrow : public DspObject {
   
     char *getName();
   
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
   
     void processMessage(int inletIndex, PdMessage *message);
     

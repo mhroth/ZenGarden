@@ -28,10 +28,11 @@
 class MessagePipe : public MessageObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessagePipe(PdMessage *initMessage, PdGraph *pdGraph);
     ~MessagePipe();
   
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
   
     bool shouldDistributeMessageToInlets();
   

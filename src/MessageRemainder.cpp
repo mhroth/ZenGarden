@@ -22,6 +22,10 @@
 
 #include "MessageRemainder.h"
 
+MessageObject *MessageRemainder::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageRemainder(initMessage, graph);
+}
+
 MessageRemainder::MessageRemainder(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
   constant = initMessage->isFloat(0) ? (int) initMessage->getFloat(0) : 0;
 }

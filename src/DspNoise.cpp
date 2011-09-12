@@ -23,6 +23,10 @@
 #include "DspNoise.h"
 #include "PdGraph.h"
 
+MessageObject *DspNoise::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspNoise(graph);
+}
+
 DspNoise::DspNoise(PdGraph *graph) : DspObject(1, 0, 0, 1, graph) {
   twister = new MTRand(); // use new seed
 }

@@ -23,6 +23,10 @@
 #include "MessageLoadbang.h"
 #include "PdGraph.h"
 
+MessageObject *MessageLoadbang::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageLoadbang(graph);
+}
+
 MessageLoadbang::MessageLoadbang(PdGraph *graph) : MessageObject(0, 1, graph) {
   PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
   outgoingMessage->initWithTimestampAndBang(0.0);

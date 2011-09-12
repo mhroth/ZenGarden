@@ -32,10 +32,11 @@
 class DspBandpassFilter : public DspObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     DspBandpassFilter(PdMessage *initMessage, PdGraph *graph);
     ~DspBandpassFilter();
   
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);

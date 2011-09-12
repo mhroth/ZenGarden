@@ -292,7 +292,7 @@ void PdMessage::setList(unsigned int index) {
 #pragma mark copy/free
 
 PdMessage *PdMessage::copyToHeap() {
-  int numMessageBytes = sizeof(PdMessage) + ((numElements <= 1 ? 0 : numElements-1)*sizeof(MessageAtom));
+  int numMessageBytes = sizeof(PdMessage) + ((numElements > 0 ? numElements-1 : 0)*sizeof(MessageAtom));
   PdMessage *pdMessage = (PdMessage *) malloc(numMessageBytes);
   pdMessage->initWithTimestampAndNumElements(timestamp, numElements);
   // copy all message type and float info (but symbol pointers must be replaced)
@@ -343,9 +343,7 @@ char *PdMessage::toString() {
         lengths[i] = snprintf(NULL, 0, "%s", getSymbol(i));
         break;
       }
-      default: {
-        break;
-      }
+      default: break;
     }
     // total length of our string is each atom plus a space, or \0 on the end
     size += lengths[i] + 1;
@@ -373,9 +371,7 @@ char *PdMessage::toString() {
         snprintf(&finalString[pos], lengths[i] + 1, "%s", getSymbol(i));
         break;
       }
-      default: {
-        break;
-      }
+      default: break;
     }
     pos += lengths[i];
   }

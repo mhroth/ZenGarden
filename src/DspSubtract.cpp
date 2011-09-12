@@ -24,6 +24,10 @@
 #include "DspSubtract.h"
 #include "PdGraph.h"
 
+MessageObject *DspSubtract::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspSubtract(initMessage, graph);
+}
+
 DspSubtract::DspSubtract(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
   constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
   codePath = DSP_SUBTRACT_DEFAULT;
@@ -97,7 +101,6 @@ void DspSubtract::processDsp() {
 void DspSubtract::processMessage(int inletIndex, PdMessage *message) {
   if (inletIndex == 1) {
     if (message->isFloat(0)) {
-      processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
       constant = message->getFloat(0);
     }
   }

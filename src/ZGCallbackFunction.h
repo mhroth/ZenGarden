@@ -41,7 +41,14 @@ typedef enum {
   /**
    * A message is being sent to the callback via a previously registered receiver.
    */
-  ZG_RECEIVER_MESSAGE
+  ZG_RECEIVER_MESSAGE,
+  
+  /**
+   * An object/abstraction/external referenced in the current patch cannot be found. ptr is a
+   * char* string to the name of the object. If the path to the object definition can be supplied
+   * by the callback then it should be returns as a char*. The memory will be freed by the caller.
+   */
+  ZG_CANNOT_FIND_OBJECT
 } ZGCallbackFunction;
 
 #endif // _ZG_CALLBACK_FUNCTION_H_

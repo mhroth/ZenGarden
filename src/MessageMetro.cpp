@@ -23,6 +23,10 @@
 #include "MessageMetro.h"
 #include "PdGraph.h"
 
+MessageObject *MessageMetro::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageMetro(initMessage, graph);
+}
+
 MessageMetro::MessageMetro(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
   // default to interval of one second
   intervalInMs = initMessage->isFloat(0) ? (double) initMessage->getFloat(0) : 1000.0;

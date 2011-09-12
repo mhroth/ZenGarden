@@ -26,6 +26,7 @@
 #include <string.h>
 #include "MessageTable.h"
 #include "PdContext.h"
+#include "PdFileParser.h"
 #include "PdGraph.h"
 #include "ZenGarden.h"
 
@@ -42,7 +43,7 @@ ZGObject *zg_graph_add_new_object(PdGraph *graph, const char *objectString, floa
   char resolutionBuffer[256];
   PdMessage *initMessage = PD_MESSAGE_ON_STACK(32);
   initMessage->initWithSARb(32, initString, graph->getArguments(), resolutionBuffer, 256);
-  MessageObject *messageObject = graph->getContext()->newObject((char *) "obj", objectLabel, initMessage, graph);
+  MessageObject *messageObject = graph->getContext()->newObject(objectLabel, initMessage, graph);
   free(objectStringCopy);
   
   if (messageObject != NULL) {
@@ -138,7 +139,7 @@ char *zg_object_to_string(ZGObject *object) {
 #pragma mark - Context
 
 ZGContext *zg_context_new(int numInputChannels, int numOutputChannels, int blockSize, float sampleRate,
-      void (*callbackFunction)(ZGCallbackFunction function, void *userData, void *ptr), void *userData) {
+      void *(*callbackFunction)(ZGCallbackFunction function, void *userData, void *ptr), void *userData) {
   return new PdContext(numInputChannels, numOutputChannels, blockSize, sampleRate,
       callbackFunction, userData);
 }
@@ -150,21 +151,27 @@ void zg_context_delete(ZGContext *context) {
 ZGGraph *zg_context_new_empty_graph(PdContext *context) {
   PdMessage *initMessage = PD_MESSAGE_ON_STACK(0); // create an empty message to use for initialisation
   initMessage->initWithTimestampAndNumElements(0.0, 0);
-  // the new graph has no parent graph and is created in the given context
+  // the new graph has no parent graph and is created in the given context with a unique id
   PdGraph *graph = new PdGraph(initMessage, NULL, context, context->getNextGraphId());
   return graph;
 }
 
 ZGGraph *zg_context_new_graph_from_file(PdContext *context, const char *directory, const char *filename) {
-  PdMessage *initMessage = PD_MESSAGE_ON_STACK(0); // create an empty initMessage
-  initMessage->initWithTimestampAndNumElements(0.0, 0);
-  // no parent graph
-  PdGraph *graph = context->newGraph(directory, filename, initMessage, NULL);
+  char path[snprintf(NULL, 0, "%s%s", directory, filename)+1]; // directory assumed to have trailing path seperator
+  snprintf(path, sizeof(path), "%s%s", directory, filename);
+  
+  // TODO(mhroth): ensure that directory is added to declared path set
+  PdFileParser *parser = new PdFileParser(path);
+  PdGraph *graph = parser->execute(context);
+  delete parser;
   return graph;
 }
 
 ZGGraph *zg_context_new_graph_from_string(PdContext *context, const char *netlist) {
-  return NULL; // TODO(mhroth): implement this
+  PdFileParser *parser = new PdFileParser(netlist);
+  PdGraph *graph = parser->execute(context);
+  delete parser;
+  return graph;
 }
 
 void zg_context_process(PdContext *context, float *inputBuffers, float *outputBuffers) {
@@ -194,8 +201,8 @@ void zg_context_process_s(ZGContext *context, short *inputBuffers, short *output
     case 0: break;
   }
   
-  // convert samples to range of [-1,+1], also accounting for microphone scale
-  float a = 0.000030517578125f;
+  // convert samples to range of [-1,+1]
+  float a = 0.000030517578125f; // == 2^-15
   vDSP_vsmul(finputBuffers, 1, &a, finputBuffers, 1, inputBufferLength);
   
   // process the samples
@@ -290,6 +297,15 @@ ZGGraph *zg_context_get_graphs(ZGContext *context, unsigned int *n) {
   return NULL;
 }
 
+void zg_context_register_external_object(ZGContext *context, const char *objectLabel,
+    ZGObject *(*factory)(ZGMessage *message, ZGGraph *graph)) {
+  context->registerExternalObject(objectLabel, factory);
+}
+
+void zg_context_unregister_external_object(ZGContext *context, const char *objectLabel) {
+  context->unregisterExternalObject(objectLabel);
+}
+
 
 #pragma mark - Objects from Context
 
@@ -316,7 +332,8 @@ void zg_context_send_message(ZGContext *context, const char *receiverName, ZGMes
   context->scheduleExternalMessage(receiverName, message);
 }
 
-void zg_context_send_messageV(PdContext *context, const char *receiverName, const char *messageFormat, ...) {
+void zg_context_send_messageV(PdContext *context, const char *receiverName, double timestamp,
+    const char *messageFormat, ...) {
   va_list ap;
   va_start(ap, messageFormat);
   context->scheduleExternalMessageV(receiverName, 0.0, messageFormat, ap);
@@ -444,7 +461,7 @@ double zg_message_get_timestamp(PdMessage *message) {
   return message->getTimestamp();
 }
 
-ZGMessageElementType zg_message_get_element_type(unsigned int index, PdMessage *message) {
+ZGMessageElementType zg_message_get_element_type(PdMessage *message, unsigned int index) {
   switch (message->getType(index)) {
     case FLOAT: return ZG_MESSAGE_ELEMENT_FLOAT;
     case SYMBOL: return ZG_MESSAGE_ELEMENT_SYMBOL;
@@ -452,10 +469,14 @@ ZGMessageElementType zg_message_get_element_type(unsigned int index, PdMessage *
   }
 }
 
-float zg_message_get_float(unsigned int index, PdMessage *message) {
-  return (message != NULL) ? message->getFloat(index) : 0.0f;
+float zg_message_get_float(PdMessage *message, unsigned int index) {
+  return message->getFloat(index);
 }
 
-const char *zg_message_get_symbol(unsigned int index, PdMessage *message) {
-  return (message != NULL) ? message->getSymbol(index) : "";
+const char *zg_message_get_symbol(PdMessage *message, unsigned int index) {
+  return message->getSymbol(index);
+}
+
+char *zg_message_to_string(ZGMessage *message) {
+  return message->toString();
 }

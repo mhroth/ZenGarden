@@ -30,10 +30,11 @@
 class MessageMinimum : public MessageObject {
 
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageMinimum(PdMessage *initMessage, PdGraph *graph);
     ~MessageMinimum();
 
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);

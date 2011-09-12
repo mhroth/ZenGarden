@@ -22,7 +22,11 @@
 
 #include "MessagePowToDb.h"
 
-MessagePowToDb::MessagePowToDb(PdGraph *graph) : MessageObject(1, 1, graph) {
+MessageObject *MessagePowToDb::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessagePowToDb(initMessage, graph);
+}
+
+MessagePowToDb::MessagePowToDb(PdMessage *initMessage, PdGraph *graph) : MessageObject(1, 1, graph) {
   // nothing to do
 }
 

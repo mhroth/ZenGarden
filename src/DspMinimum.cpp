@@ -24,6 +24,10 @@
 #include "DspMinimum.h"
 #include "PdGraph.h"
 
+MessageObject *DspMinimum::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspMinimum(initMessage, graph);
+}
+
 DspMinimum::DspMinimum(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
   constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
   codePath = DSP_MINIMUM_DEFAULT;
@@ -116,7 +120,6 @@ void DspMinimum::processDsp() {
 void DspMinimum::processMessage(int inletIndex, PdMessage *message) {
   if (inletIndex == 1) {
     if (message->isFloat(0)) {
-      processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
       constant = message->getFloat(0);
     }
   }

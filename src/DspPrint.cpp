@@ -23,6 +23,10 @@
 #include "DspPrint.h"
 #include "PdGraph.h"
 
+MessageObject *DspPrint::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspPrint(initMessage, graph);
+}
+
 DspPrint::DspPrint(PdMessage *initMessage, PdGraph *graph) : DspObject(1, 1, 0, 0, graph) {
   name = StaticUtils::copyString(initMessage->isSymbol(0) ? initMessage->getSymbol(0) : (char *) "print~");
 }

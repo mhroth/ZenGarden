@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -20,32 +20,28 @@
  *
  */
 
-#include "DspBang.h"
-#include "PdGraph.h"
+#ifndef _OBJECT_FACTORY_MAP_H_
+#define _OBJECT_FACTORY_MAP_H_
 
-MessageObject *DspBang::newObject(PdMessage *initMessage, PdGraph *graph) {
-  return new DspBang(initMessage, graph);
-}
+#include <map>
+using namespace std;
 
-DspBang::DspBang(PdMessage *initMessage, PdGraph *graph) : DspObject(1, 0, 1, 0, graph) {
-  // nothing to do
-}
+class MessageObject;
+class PdGraph;
+class PdMessage;
 
-DspBang::~DspBang() {
-  // nothing to do
-}
+class ObjectFactoryMap {
+  public:
+    ObjectFactoryMap();
+    ~ObjectFactoryMap();
+  
+    void registerExternalObject(const char *objectLabel, MessageObject *(*newObject)(PdMessage *, PdGraph *));
+    void unregisterExternalObject(const char *objectLabel);
+  
+    MessageObject *newObject(const char *objectLable, PdMessage *initMessage, PdGraph *graph);
+  
+  private:
+    map<string, MessageObject *(*)(PdMessage *, PdGraph *)> objectFactoryMap;
+};
 
-const char *DspBang::getObjectLabel() {
-  return "bang~";
-}
-
-ConnectionType DspBang::getConnectionType(int outletIndex) {
-  return MESSAGE;
-}
-
-void DspBang::processDsp() {
-  // message will be automatically rescheduled for beginning of next block
-  PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
-  outgoingMessage->initWithTimestampAndBang(0.0);
-  graph->scheduleMessage(this, 0, outgoingMessage);
-}
+#endif // _OBJECT_FACTORY_MAP_H_

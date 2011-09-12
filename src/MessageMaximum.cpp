@@ -22,6 +22,10 @@
 
 #include "MessageMaximum.h"
 
+MessageObject *MessageMaximum::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageMaximum(initMessage, graph);
+}
+
 MessageMaximum::MessageMaximum(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
   constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
   lastOutput = 0.0f;

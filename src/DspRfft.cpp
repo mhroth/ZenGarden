@@ -24,6 +24,10 @@
 #include "DspRfft.h"
 #include "PdGraph.h"
 
+MessageObject *DspRfft::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspRfft(initMessage, graph);
+}
+
 DspRfft::DspRfft(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0, 2, graph) {
   #if __APPLE__
   log2n = lrintf(log2f((float) blockSizeInt));

@@ -25,6 +25,10 @@
 #include "DspHighpassFilter.h"
 #include "PdGraph.h"
 
+MessageObject *DspHighpassFilter::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspHighpassFilter(initMessage, graph);
+}
+
 DspHighpassFilter::DspHighpassFilter(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 1, 0, 1, graph) {
   sampleRate = graph->getSampleRate();
   tapIn = 0.0f;
@@ -57,8 +61,7 @@ void DspHighpassFilter::calculateFilterCoefficients(float cutoffFrequency) {
 void DspHighpassFilter::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
-      if (message->isSymbol(0) && strcmp(message->getSymbol(0), "clear") == 0) {
-        processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
+      if (message->isSymbol(0, "clear")) {
         tapIn = 0.0f;
         tapOut = 0.0f;
       }
@@ -66,7 +69,6 @@ void DspHighpassFilter::processMessage(int inletIndex, PdMessage *message) {
     }
     case 1: {
       if (message->isFloat(0)) {
-        processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
         calculateFilterCoefficients(message->getFloat(0));
       }
       break;

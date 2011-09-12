@@ -23,6 +23,10 @@
 #include "DspSqrt.h"
 #include "PdGraph.h"
 
+MessageObject *DspSqrt::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspSqrt(initMessage, graph);
+}
+
 DspSqrt::DspSqrt(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0, 1, graph) {
   // nothign to do
 }

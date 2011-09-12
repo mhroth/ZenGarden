@@ -29,11 +29,12 @@
 class MessageGreaterThan : public MessageObject {
 
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageGreaterThan(PdMessage *initMessage, PdGraph *graph);
     MessageGreaterThan(float constant, PdGraph *graph);
     ~MessageGreaterThan();
 
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
 
   private:
     void init(float constant);

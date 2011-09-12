@@ -29,10 +29,11 @@
 class MessageNotein : public RemoteMessageReceiver {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageNotein(PdMessage *initMessage, PdGraph *graph);
     ~MessageNotein();
     
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     ObjectType getObjectType();
   
     /** Returns the zero-indexed midi channel which this object outputs. -1 if omni. */

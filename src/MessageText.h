@@ -29,10 +29,11 @@
 class MessageText : public MessageObject {
   
   public:
-    MessageText(char *initString, PdGraph *graph);
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
+    MessageText(PdMessage *initMessage, PdGraph *graph);
     ~MessageText();
     
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     string toString();
   
     char *getComment();

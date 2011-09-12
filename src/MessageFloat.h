@@ -29,10 +29,11 @@
 class MessageFloat : public MessageObject {
     
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageFloat(PdMessage *initMessage, PdGraph *graph);
     ~MessageFloat();
   
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);

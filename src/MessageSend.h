@@ -29,10 +29,11 @@
 class MessageSend : public MessageObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageSend(PdMessage *initMessage, PdGraph *graph);
     ~MessageSend();
     
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     ObjectType getObjectType();
   
     void receiveMessage(int inletIndex, PdMessage *message);

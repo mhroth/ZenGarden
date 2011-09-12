@@ -23,6 +23,10 @@
 #include "MessageSelect.h"
 #include "PdGraph.h"
 
+MessageObject *MessageSelect::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new MessageSelect(initMessage, graph);
+}
+
 MessageSelect::MessageSelect(PdMessage *initMessage, PdGraph *graph) : 
     MessageObject((initMessage->getNumElements() < 2) ? 2 : 1, 
                   (initMessage->getNumElements() < 2) ? 2 : initMessage->getNumElements()+1, graph) {

@@ -29,10 +29,11 @@
 class DspBang : public DspObject {
   
   public:
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     DspBang(PdMessage *initMessage, PdGraph *graph);
     ~DspBang();
     
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
   
     ConnectionType getConnectionType(int outletIndex);
     

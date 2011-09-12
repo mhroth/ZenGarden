@@ -23,6 +23,10 @@
 #include "DspBandpassFilter.h"
 #include "PdGraph.h"
 
+MessageObject *DspBandpassFilter::newObject(PdMessage *initMessage, PdGraph *graph) {
+  return new DspBandpassFilter(initMessage, graph);
+}
+
 DspBandpassFilter::DspBandpassFilter(PdMessage *initMessage, PdGraph *graph) : DspObject(3, 1, 0, 1, graph) {
   sampleRate = graph->getSampleRate();
   tap_0 = 0.0f;
@@ -77,14 +81,12 @@ void DspBandpassFilter::processMessage(int inletIndex, PdMessage *message) {
     }
     case 1: {
       if (message->isFloat(0)) {
-        processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
         calculateFilterCoefficients(message->getFloat(0), q);
       }
       break;
     }
     case 2: {
       if (message->isFloat(0)) {
-        processDspWithIndex(blockIndexOfLastMessage, graph->getBlockIndex(message));
         calculateFilterCoefficients(centerFrequency, message->getFloat(0));
       }
       break;

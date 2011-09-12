@@ -29,10 +29,11 @@
 class DspLine : public DspObject {
   
   public:
-    DspLine(PdGraph *graph);
+    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
+    DspLine(PdMessage *initMessage, PdGraph *graph);
     ~DspLine();
   
-    const char *getObjectLabel();
+    static const char *getObjectLabel();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
