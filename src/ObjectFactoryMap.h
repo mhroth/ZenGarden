@@ -24,6 +24,7 @@
 #define _OBJECT_FACTORY_MAP_H_
 
 #include <map>
+#include <string>
 using namespace std;
 
 class MessageObject;

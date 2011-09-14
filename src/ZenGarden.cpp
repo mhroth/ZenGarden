@@ -168,7 +168,7 @@ ZGGraph *zg_context_new_graph_from_file(PdContext *context, const char *director
 }
 
 ZGGraph *zg_context_new_graph_from_string(PdContext *context, const char *netlist) {
-  PdFileParser *parser = new PdFileParser(netlist);
+  PdFileParser *parser = new PdFileParser(string(netlist));
   PdGraph *graph = parser->execute(context);
   delete parser;
   return graph;
