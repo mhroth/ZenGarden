@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -39,7 +39,7 @@ class MessageToggle : public MessageObject {
     void processMessage(int inletIndex, PdMessage *message);
   
     bool isOn;
-    float lastOutput;
+    float onOutput;
 };
 
 #endif // _MESSAGE_TOGGLE_H_

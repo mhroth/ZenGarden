@@ -28,7 +28,7 @@ MessageObject *MessageToggle::newObject(PdMessage *initMessage, PdGraph *graph) 
 
 MessageToggle::MessageToggle(PdMessage *initString, PdGraph *graph) : MessageObject(1, 1, graph) {
   isOn = false;
-  lastOutput = 0.0f;
+  onOutput = 1.0f;
 }
 
 MessageToggle::~MessageToggle() {
@@ -43,30 +43,28 @@ void MessageToggle::processMessage(int inletIndex, PdMessage *message) {
   switch (message->getType(0)) {
     case FLOAT: {
       isOn = (message->getFloat(0) != 0.0f);
-      if (isOn) lastOutput = message->getFloat(0);
+      if (isOn) onOutput = message->getFloat(0);
       PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
-      outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), isOn ? message->getFloat(0) : 0.0f);
+      outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), isOn ? onOutput : 0.0f);
       sendMessage(0, outgoingMessage);
       break;
     }
     case BANG: {
       isOn = !isOn;
       PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
-      outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), isOn ? lastOutput : 0.0f);
+      outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), isOn ? onOutput : 0.0f);
       sendMessage(0, outgoingMessage);
       break;
     }
     case SYMBOL: {
       if (message->isSymbol(0, "set")) {
-        lastOutput = 1.0f;
         if (message->isFloat(1)) {
           isOn = (message->getFloat(1) != 0.0f);
+          if (isOn) onOutput = message->getFloat(1);
         }
       }
       break;
     }
-    default: {
-      break;
-    }
+    default: break;
   }
 }
