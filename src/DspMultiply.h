@@ -26,15 +26,9 @@
 #include "DspObject.h"
 
 enum DspMultiplyCodePath {
-  DSP_MULTIPLY_DSP1_MESSAGE0, // zero or one dsp inputs on left inlet, no message inputs on right inlet
-  DSP_MULTIPLY_DSPX_MESSAGE0, // many dsp inputs on left inlet, no message inputs on right inlet
-  DSP_MULTIPLY_DSPX_MESSAGEX, // many dsp inputs on left inlets, many message inputs on right inlet
-  DSP_MULTIPLY_DSP1_DSP1,     // zero or one dsp inputs on left inlet, one dsp input on the right inlet
-  DSP_MULTIPLY_DSPX_DSP1,     // many dsp inputs on left inlets, one dsp input on right inlet
-  DSP_MULTIPLY_DSPX_DSPX,     // many dsp inputs on left inlets, many dsp inputs on right inlet
-  DSP_MULTIPLY_DEFAULT        // corner cases
+  DSP_MULTIPLY_DSP_DSP,
+  DSP_MULTIPLY_DSP_MESSAGE
 };
-
 
 class DspMultiply : public DspObject {
   
@@ -45,7 +39,7 @@ class DspMultiply : public DspObject {
   
     static const char *getObjectLabel();
     string toString();
-
+  
     void processDsp();
     
   private:

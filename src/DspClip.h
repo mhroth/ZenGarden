@@ -23,13 +23,6 @@
 #ifndef _DSP_CLIP_H_
 #define _DSP_CLIP_H_
 
-enum DspClipCodePath {
-  DSP_CLIP_DSP1_MESSAGE0,
-  DSP_CLIP_DSPX_MESSAGE0,
-  DSP_CLIP_DEFAULT
-};
-
-
 #include "DspObject.h"
 
 /** [clip~ float float] */
@@ -42,17 +35,11 @@ class DspClip : public DspObject {
   
     static const char *getObjectLabel();
     string toString();
-  
-    void processDsp();
-    
+
   private:
     void processMessage(int inletIndex, PdMessage *message);
     void processDspWithIndex(int fromIndex, int toIndex);
-  
-    void onInletConnectionUpdate();
-  
-    DspClipCodePath codePath;
-  
+    
     float lowerBound;
     float upperBound;
 };

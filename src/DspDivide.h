@@ -25,6 +25,11 @@
 
 #include "DspObject.h"
 
+enum DspDivideCodePath {
+  DSP_DIVIDE_DSP_DSP,
+  DSP_DIVIDE_DSP_MESSAGE
+}
+
 class DspDivide : public DspObject {
 
   public:
@@ -38,6 +43,10 @@ class DspDivide : public DspObject {
   private:
     void processMessage(int inletIndex, PdMessage *message);
     void processDspWithIndex(int fromIndex, int toIndex);
+  
+    void onInletConnectionUpdate();
+  
+    DspDivideCodePath codePath;
 
     float constant;
 };

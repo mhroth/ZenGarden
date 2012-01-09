@@ -59,14 +59,17 @@ const char *DspCosine::getObjectLabel() {
 void DspCosine::processDsp() {
   // as no messages are received and there is only one inlet, processDsp does not need much of the
   // infrastructure provided by DspObject
-  RESOLVE_DSPINLET0_IF_NECESSARY();
   
   #if __APPLE__
-  float tempBuffer[blockSizeInt];
-  vDSP_vabs(dspBufferAtInlet0, 1, tempBuffer, 1, blockSizeInt); // abs(x)
-  vDSP_vfrac(tempBuffer, 1, tempBuffer, 1, blockSizeInt); // get the fractional part of x
-  vDSP_vsmul(tempBuffer, 1, &sampleRate, tempBuffer, 1, blockSizeInt); // * sampleRate
-  vDSP_vindex(cos_table, tempBuffer, 1, dspBufferAtOutlet0, 1, blockSizeInt); // perform a table lookup
+  float twoPi = 2.0f*M_PI;
+  vDSP_vsmul(dspBufferAtInlet[0], 1, &twoPi, dspBufferAtOutlet0, 1, blockSizeInt);
+  vvcosf(dspBufferAtOutlet0, dspBufferAtInlet[0], &blockSizeInt);
+  
+//  float tempBuffer[blockSizeInt];
+//  vDSP_vabs(dspBufferAtInlet0, 1, tempBuffer, 1, blockSizeInt); // abs(x)
+//  vDSP_vfrac(tempBuffer, 1, tempBuffer, 1, blockSizeInt); // get the fractional part of x
+//  vDSP_vsmul(tempBuffer, 1, &sampleRate, tempBuffer, 1, blockSizeInt); // * sampleRate
+//  vDSP_vindex(cos_table, tempBuffer, 1, dspBufferAtOutlet0, 1, blockSizeInt); // perform a table lookup
   #else
   for (int i = 0; i < blockSizeInt; i++) {
     // works because cosine is symmetric about zero

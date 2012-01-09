@@ -123,10 +123,8 @@ void DspEnvelope::initBuffers() {
 
 // windowSize and windowInterval are constrained to be multiples of the block size
 void DspEnvelope::processDsp() {
-  RESOLVE_DSPINLET0_IF_NECESSARY();
-  
   // copy the input into the signal buffer
-  memcpy(signalBuffer + numSamplesReceived, dspBufferAtInlet0, numBytesInBlock);
+  memcpy(signalBuffer + numSamplesReceived, dspBufferAtInlet[0], numBytesInBlock);
   numSamplesReceived += blockSizeInt;
   numSamplesReceivedSinceLastInterval += blockSizeInt;
   if (numSamplesReceived >= windowSize) {

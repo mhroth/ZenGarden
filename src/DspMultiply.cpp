@@ -31,7 +31,6 @@ MessageObject *DspMultiply::newObject(PdMessage *initMessage, PdGraph *graph) {
 DspMultiply::DspMultiply(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
   constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
   inputConstant = 0.0f;
-  codePath = DSP_MULTIPLY_DEFAULT; // default
 }
 
 DspMultiply::~DspMultiply() {
@@ -50,71 +49,31 @@ string DspMultiply::toString() {
 }
 
 void DspMultiply::onInletConnectionUpdate() {
-  // attempt to resolve common code paths for increased efficiency
-  if (incomingDspConnections[1].size() == 0) {
-    if (incomingMessageConnections[1].size() == 0) {
-      if (incomingDspConnections[0].size() < 2) {
-        codePath = DSP_MULTIPLY_DSP1_MESSAGE0;
-      } else {
-        codePath = DSP_MULTIPLY_DSPX_MESSAGE0;
-      }      
-    } else {
-      codePath = DSP_MULTIPLY_DSPX_MESSAGEX;
-    }
-  } else if (incomingDspConnections[1].size() == 1) {
-    if (incomingDspConnections[0].size() < 2) {
-      codePath = DSP_MULTIPLY_DSP1_DSP1;
-    } else {
-      codePath = DSP_MULTIPLY_DSPX_DSP1;
-    }
-  } else if (incomingDspConnections[0].size() >= 2) {
-    codePath = DSP_MULTIPLY_DSPX_DSPX;
-  } else {
-    codePath = DSP_MULTIPLY_DEFAULT;
-  }
+  codePath = (incomingDspConnections[0].size() > 0 && incomingDspConnections[1].size() > 0)
+      ? DSP_MULTIPLY_DSP_DSP : DSP_MULTIPLY_DSP_MESSAGE;
 }
 
 void DspMultiply::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
-      if (message->isFloat(0)) {
-        inputConstant = message->getFloat(0);
-      }
+      if (message->isFloat(0)) inputConstant = message->getFloat(0);
       break;
     }
     case 1: {
-      if (message->isFloat(0)) {
-        constant = message->getFloat(0);
-      }
+      if (message->isFloat(0)) constant = message->getFloat(0);
       break;
     }
-    default: {
-      break;
-    }
+    default: break;
   }
 }
 
 void DspMultiply::processDsp() {
   switch (codePath) {
-    case DSP_MULTIPLY_DSPX_MESSAGE0: {
-      resolveInputBuffers(0, dspBufferAtInlet0);
-      // allow fallthrough
-    }
-    case DSP_MULTIPLY_DSP1_MESSAGE0: {
-      ArrayArithmetic::multiply(dspBufferAtInlet0, constant, dspBufferAtOutlet0, 0, blockSizeInt);
-      break;
-    }
-    case DSP_MULTIPLY_DSPX_DSP1: {
-      resolveInputBuffers(0, dspBufferAtInlet0);
-      // allow fallthrough
-    }
-    case DSP_MULTIPLY_DSP1_DSP1: {
-      ArrayArithmetic::multiply(dspBufferAtInlet0, dspBufferAtInlet1, dspBufferAtOutlet0,
-          0, blockSizeInt);
+    case DSP_MULTIPLY_DSP_DSP: {
+      ArrayArithmetic::multiply(dspBufferAtInlet[0], constant, dspBufferAtOutlet0, 0, blockSizeInt);
       break;
     }
     default: {
-      // default. Resolve right dsp inlet and/or process messages
       DspObject::processDsp();
       break;
     }
@@ -122,32 +81,5 @@ void DspMultiply::processDsp() {
 }
 
 void DspMultiply::processDspWithIndex(int fromIndex, int toIndex) {
-  switch (codePath) {
-    /*
-     * NOTE(mhroth): not sure what to do in this case
-    case MESSAGE_DSP: {
-      ArrayArithmetic::fill(dspBufferAtInlet0, inputConstant, fromIndex, toIndex);
-      // allow fallthrough
-    }
-    */
-    case DSP_MULTIPLY_DSPX_DSPX: {
-      ArrayArithmetic::multiply(dspBufferAtInlet0, dspBufferAtInlet1, dspBufferAtOutlet0,
-          fromIndex, toIndex);
-      break;
-    }
-    case DSP_MULTIPLY_DSPX_MESSAGEX: {
-      ArrayArithmetic::multiply(dspBufferAtInlet0, constant, dspBufferAtOutlet0, fromIndex, toIndex);
-      break;
-    }
-    /*
-     * NOTE(mhroth): not sure what to do in this case
-    case MESSAGE_MESSAGE: {
-      ArrayArithmetic::fill(dspBufferAtOutlet0, inputConstant*constant, fromIndex, toIndex);
-      break;
-    }
-    */
-    default: {
-      break; // nothing to do
-    }
-  }
+  ArrayArithmetic::multiply(dspBufferAtInlet[0], constant, dspBufferAtOutlet0, fromIndex, toIndex);
 }

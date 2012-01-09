@@ -30,7 +30,6 @@ MessageObject *DspSubtract::newObject(PdMessage *initMessage, PdGraph *graph) {
 
 DspSubtract::DspSubtract(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
   constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
-  codePath = DSP_SUBTRACT_DEFAULT;
 }
 
 DspSubtract::~DspSubtract() {
@@ -49,49 +48,17 @@ string DspSubtract::toString() {
 }
 
 void DspSubtract::onInletConnectionUpdate() {
-  if (incomingDspConnections[1].size() == 0) {
-    if (incomingMessageConnections[1].size() == 0) {
-      if (incomingDspConnections[0].size() < 2) {
-        codePath = DSP_SUBTRACT_DSP1_MESSAGE0;
-      } else {
-        codePath = DSP_SUBTRACT_DSPX_MESSAGE0;
-      }      
-    } else {
-      codePath = DSP_SUBTRACT_DSPX_MESSAGEX;
-    }
-  } else if (incomingDspConnections[1].size() == 1) {
-    if (incomingDspConnections[0].size() < 2) {
-      codePath = DSP_SUBTRACT_DSP1_DSP1;
-    } else {
-      codePath = DSP_SUBTRACT_DSPX_DSP1;
-    }
-  } else if (incomingDspConnections[0].size() >= 2) {
-    codePath = DSP_SUBTRACT_DSPX_DSPX;
-  } else {
-    codePath = DSP_SUBTRACT_DEFAULT;
-  }
+  codePath = (incomingDspConnections[0].size() > 0 && incomingDspConnections[1].size() > 0)
+      ? DSP_SUBTRACT_DSP_DSP : DSP_SUBTRACT_DSP_MESSAGE;
 }
 
 void DspSubtract::processDsp() {
   switch (codePath) {
-    case DSP_SUBTRACT_DSPX_MESSAGE0: {
-      resolveInputBuffers(0, dspBufferAtInlet0);
-      // allow fallthrough
-    }
-    case DSP_SUBTRACT_DSP1_MESSAGE0: {
-      ArrayArithmetic::subtract(dspBufferAtInlet0, constant, dspBufferAtOutlet0, 0, blockSizeInt);
-      break;
-    }
-    case DSP_SUBTRACT_DSPX_DSP1: {
-      resolveInputBuffers(0, dspBufferAtInlet0);
-      // allow fallthrough
-    }
-    case DSP_SUBTRACT_DSP1_DSP1: {
-      ArrayArithmetic::subtract(dspBufferAtInlet0, dspBufferAtInlet1, dspBufferAtOutlet0, 0, blockSizeInt);
+    case DSP_SUBTRACT_DSP_DSP: {
+      ArrayArithmetic::subtract(dspBufferAtInlet[0], dspBufferAtInlet[1], dspBufferAtOutlet0, 0, blockSizeInt);
       break;
     }
     default: {
-      // default. Resolve right dsp inlet and/or process messages
       DspObject::processDsp();
       break;
     }
@@ -107,19 +74,5 @@ void DspSubtract::processMessage(int inletIndex, PdMessage *message) {
 }
 
 void DspSubtract::processDspWithIndex(int fromIndex, int toIndex) {
-  switch (codePath) {
-    case DSP_SUBTRACT_DSPX_DSPX: {
-      ArrayArithmetic::subtract(dspBufferAtInlet0, dspBufferAtInlet1, dspBufferAtOutlet0,
-          fromIndex, toIndex);
-      break;
-    }
-    case DSP_SUBTRACT_DSPX_MESSAGEX: {
-      ArrayArithmetic::subtract(dspBufferAtInlet0, constant, dspBufferAtOutlet0, fromIndex, toIndex);
-      break;
-    }
-    default: {
-      ArrayArithmetic::fill(dspBufferAtOutlet0, 0, fromIndex, toIndex);
-      break; // nothing to do
-    }
-  }
+  ArrayArithmetic::subtract(dspBufferAtInlet[0], constant, dspBufferAtOutlet0, fromIndex, toIndex);
 }

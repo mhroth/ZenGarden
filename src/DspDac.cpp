@@ -52,15 +52,13 @@ void DspDac::processDsp() {
       // allow fallthrough
     }
     case 2: {
-      RESOLVE_DSPINLET1_IF_NECESSARY();
       float *globalOutputBuffer = graph->getGlobalDspBufferAtOutlet(1);
-      ArrayArithmetic::add(globalOutputBuffer, dspBufferAtInlet1, globalOutputBuffer, 0, blockSizeInt);
+      ArrayArithmetic::add(globalOutputBuffer, dspBufferAtInlet[1], globalOutputBuffer, 0, blockSizeInt);
       // allow fallthrough
     }
     case 1: {
-      RESOLVE_DSPINLET0_IF_NECESSARY();
       float *globalOutputBuffer = graph->getGlobalDspBufferAtOutlet(0);
-      ArrayArithmetic::add(globalOutputBuffer, dspBufferAtInlet0, globalOutputBuffer, 0, blockSizeInt);
+      ArrayArithmetic::add(globalOutputBuffer, dspBufferAtInlet[0], globalOutputBuffer, 0, blockSizeInt);
       // allow fallthrough
     }
     case 0: {

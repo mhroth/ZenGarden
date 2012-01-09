@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -40,6 +40,11 @@ const char *DspDivide::getObjectLabel() {
   return "/~";
 }
 
+void DspDivide::onInletConnectionUpdate() {
+  codePath = (incomingDspConnections[0].size() > 0 && incomingDspConnections[1].size() > 0)
+      ? DSP_DIVIDE_DSP_DSP : DSP_DIVIDE_DSP_MESSAGE;
+}
+
 string DspDivide::toString() {
   const char *fmt = (constant == 0.0f) ? "%s" : "%s %g";
   char str[snprintf(NULL, 0, fmt, getObjectLabel(), constant)+1];
@@ -48,34 +53,23 @@ string DspDivide::toString() {
 }
 
 void DspDivide::processMessage(int inletIndex, PdMessage *message) {
-  switch (inletIndex) {
-    case 1: {
-      if (message->isFloat(0)) {
-        constant = message->getFloat(0);
-      }
-      break;
-    }
-    default: {
-      break;
+  if (inletIndex == 1) {
+    if (message->isFloat(0)) {
+      constant = message->getFloat(0);
     }
   }
 }
 
 void DspDivide::processDspWithIndex(int fromIndex, int toIndex) {
-  switch (signalPrecedence) {
-    case DSP_DSP: {
-      ArrayArithmetic::divide(dspBufferAtInlet0, dspBufferAtInlet1, dspBufferAtOutlet0,
+  switch (codePath) {
+    case DSP_DIVIDE_DSP_DSP: {
+      ArrayArithmetic::divide(dspBufferAtInlet[1], dspBufferAtInlet[1], dspBufferAtOutlet0,
           fromIndex, toIndex);
       break;
     }
-    case DSP_MESSAGE: {
-      ArrayArithmetic::divide(dspBufferAtInlet0, constant, dspBufferAtOutlet0, fromIndex, toIndex);
+    case DSP_DIVIDE_DSP_MESSAGE: {
+      ArrayArithmetic::divide(dspBufferAtInlet[0], constant, dspBufferAtOutlet0, fromIndex, toIndex);
       break;
-    }
-    case MESSAGE_DSP:
-    case MESSAGE_MESSAGE:
-    default: {
-      break; // nothing to do
     }
   }
 }

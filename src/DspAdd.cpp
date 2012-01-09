@@ -36,6 +36,11 @@ DspAdd::~DspAdd() {
   // nothing to do
 }
 
+void DspAdd::onInletConnectionUpdate() {
+  codePath = (incomingDspConnections[0].size() > 0 && incomingDspConnections[1].size() > 0)
+      ? DSP_ADD_DSP_DSP : DSP_ADD_DSP_MESSAGE;
+}
+
 const char *DspAdd::getObjectLabel() {
   return "+~";
 }
@@ -45,31 +50,6 @@ string DspAdd::toString() {
   char str[snprintf(NULL, 0, fmt, getObjectLabel(), constant)+1];
   snprintf(str, sizeof(str), fmt, getObjectLabel(), constant);
   return string(str);
-}
-
-void DspAdd::onInletConnectionUpdate() {
-  // attempt to resolve common code paths for increased efficiency
-  if (incomingDspConnections[1].size() == 0) {
-    if (incomingMessageConnections[1].size() == 0) {
-      if (incomingDspConnections[0].size() < 2) {
-        codePath = DSP_ADD_DSP1_MESSAGE0;
-      } else {
-        codePath = DSP_ADD_DSPX_MESSAGE0;
-      }      
-    } else {
-      codePath = DSP_ADD_DSPX_MESSAGEX;
-    }
-  } else if (incomingDspConnections[1].size() == 1) {
-    if (incomingDspConnections[0].size() < 2) {
-      codePath = DSP_ADD_DSP1_DSP1;
-    } else {
-      codePath = DSP_ADD_DSPX_DSP1;
-    }
-  } else if (incomingDspConnections[0].size() >= 2) {
-    codePath = DSP_ADD_DSPX_DSPX;
-  } else {
-    codePath = DSP_ADD_DEFAULT;
-  }
 }
 
 void DspAdd::processMessage(int inletIndex, PdMessage *message) {
@@ -82,24 +62,11 @@ void DspAdd::processMessage(int inletIndex, PdMessage *message) {
 
 void DspAdd::processDsp() {
   switch (codePath) {
-    case DSP_ADD_DSPX_MESSAGE0: {
-      resolveInputBuffers(0, dspBufferAtInlet0);
-      // allow fallthrough
-    }
-    case DSP_ADD_DSP1_MESSAGE0: {
-      ArrayArithmetic::add(dspBufferAtInlet0, constant, dspBufferAtOutlet0, 0, blockSizeInt);
-      break;
-    }
-    case DSP_ADD_DSPX_DSP1: {
-      resolveInputBuffers(0, dspBufferAtInlet0);
-      // allow fallthrough
-    }
-    case DSP_ADD_DSP1_DSP1: {
-      ArrayArithmetic::add(dspBufferAtInlet0, dspBufferAtInlet1, dspBufferAtOutlet0, 0, blockSizeInt);
+    case DSP_ADD_DSP_DSP: {
+      ArrayArithmetic::add(dspBufferAtInlet[0], dspBufferAtInlet[1], dspBufferAtOutlet0, 0, blockSizeInt);
       break;
     }
     default: {
-      // default. Resolve right dsp inlet and/or process messages
       DspObject::processDsp();
       break;
     }
@@ -107,18 +74,5 @@ void DspAdd::processDsp() {
 }
 
 void DspAdd::processDspWithIndex(int fromIndex, int toIndex) {
-  switch (codePath) {
-    case DSP_ADD_DSPX_DSPX: {
-      ArrayArithmetic::add(dspBufferAtInlet0, dspBufferAtInlet1, dspBufferAtOutlet0, fromIndex, toIndex);
-      break;
-    }
-    case DSP_ADD_DSPX_MESSAGEX: {
-      ArrayArithmetic::add(dspBufferAtInlet0, constant, dspBufferAtOutlet0, fromIndex, toIndex);
-      break;
-    }
-    default: {
-      ArrayArithmetic::fill(dspBufferAtOutlet0, 0, fromIndex, toIndex);
-      break; // nothing to do
-    }
-  }
+  ArrayArithmetic::add(dspBufferAtInlet[0], constant, dspBufferAtOutlet0, fromIndex, toIndex);
 }

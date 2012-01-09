@@ -41,16 +41,13 @@ const char *DspSqrt::getObjectLabel() {
 
 void DspSqrt::processDsp() {
   // [sqrt~] takes no messages, so the full block will be computed every time
-  
-  RESOLVE_DSPINLET0_IF_NECESSARY();
-  
+    
   #if __ARM_NEON__
-  float *inBuff = dspBufferAtInlet0;
+  float *inBuff = dspBufferAtInlet[0];
   float *outBuff = dspBufferAtOutlet0;
   float32x4_t inVec, outVec;
   float32x4_t zeroVec = vdupq_n_f32(0.0f);
-  int n = blockSizeInt;
-  int n4 = n & 0xFFFFFFFC;
+  int n4 = blockSizeInt & 0xFFFFFFFC;
   while (n4) {
     inVec = vld1q_f32(inBuff);
     inVec = vmaxq_f32(inVec, zeroVec);
@@ -62,21 +59,20 @@ void DspSqrt::processDsp() {
     inBuff += 4;
     outBuff += 4;
   }
-  switch (n & 0x3) {
+  switch (blockSizeInt & 0x3) {
     case 3: *outBuff++ = (*inBuff > 0.0f) ? sqrtf(*inBuff) : 0.0f; ++inBuff;
     case 2: *outBuff++ = (*inBuff > 0.0f) ? sqrtf(*inBuff) : 0.0f; ++inBuff;
     case 1: *outBuff++ = (*inBuff > 0.0f) ? sqrtf(*inBuff) : 0.0f; ++inBuff;
     default: break;
   }
   #elif __SSE__
-  float *inBuff = dspBufferAtInlet0;
+  float *inBuff = dspBufferAtInlet[0];
   float *outBuff = dspBufferAtOutlet0;
   __m128 inVec, outVec;
   __m128 zeroVec = _mm_set1_ps(0.0f);
-  int n = blockSizeInt;
-  int n4 = n & 0xFFFFFFFC;
+  int n4 = blockSizeInt & 0xFFFFFFFC;
   while (n4) {
-    inVec = _mm_loadu_ps(inBuff);
+    inVec = _mm_load_ps(inBuff);
     inVec = _mm_max_ps(inVec, zeroVec); // ensure that all inputs are non-negative, max(0, inVec)
     outVec = _mm_sqrt_ps(inVec);
     _mm_store_ps(outBuff, outVec);
@@ -84,7 +80,7 @@ void DspSqrt::processDsp() {
     inBuff += 4;
     outBuff += 4;
   }
-  switch (n & 0x3) {
+  switch (blockSizeInt & 0x3) {
     case 3: *outBuff++ = (*inBuff > 0.0f) ? sqrtf(*inBuff) : 0.0f; ++inBuff;
     case 2: *outBuff++ = (*inBuff > 0.0f) ? sqrtf(*inBuff) : 0.0f; ++inBuff;
     case 1: *outBuff++ = (*inBuff > 0.0f) ? sqrtf(*inBuff) : 0.0f; ++inBuff;
@@ -92,7 +88,7 @@ void DspSqrt::processDsp() {
   }
   #else
   for (int i = 0; i < blockSizeInt; i++) {
-    dspBufferAtOutlet0[i] = sqrtf(dspBufferAtInlet0[i]);
+    dspBufferAtOutlet0[i] = sqrtf(dspBufferAtInlet[i]);
   }
   #endif
 }

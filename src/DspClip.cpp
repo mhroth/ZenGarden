@@ -31,7 +31,6 @@ MessageObject *DspClip::newObject(PdMessage *initMessage, PdGraph *graph) {
 DspClip::DspClip(PdMessage *initMessage, PdGraph *graph) : DspObject(3, 1, 0, 1, graph) {
   lowerBound = initMessage->isFloat(0) ? initMessage->getFloat(0) : -1.0f;
   upperBound = initMessage->isFloat(1) ? initMessage->getFloat(1) : 1.0f;
-  codePath = DSP_CLIP_DEFAULT;
 }
 
 DspClip::~DspClip() {
@@ -48,20 +47,6 @@ string DspClip::toString() {
   return string(str);
 }
 
-void DspClip::onInletConnectionUpdate() {
-  if (incomingMessageConnections[1].size() == 0 &&
-      incomingMessageConnections[2].size() == 0) {
-    if (incomingDspConnections[0].size() < 2) {
-      codePath = DSP_CLIP_DSP1_MESSAGE0;
-    } else {
-      // use the simple case if no message connections to the object exist
-      codePath = DSP_CLIP_DSPX_MESSAGE0;
-    }
-  } else {
-    codePath = DSP_CLIP_DEFAULT; // use DspObject infrastructure
-  }
-}
-
 void DspClip::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 1: if (message->isFloat(0)) lowerBound = message->getFloat(0); break; // set the lower bound
@@ -70,17 +55,9 @@ void DspClip::processMessage(int inletIndex, PdMessage *message) {
   }
 }
 
-void DspClip::processDsp() {
-  switch (codePath) {
-    case DSP_CLIP_DSPX_MESSAGE0: resolveInputBuffers(0, dspBufferAtInlet0); // allow fallthrough
-    case DSP_CLIP_DSP1_MESSAGE0: processDspWithIndex(0, blockSizeInt); break;
-    default: DspObject::processDsp(); break;
-  }
-}
-
 void DspClip::processDspWithIndex(int fromIndex, int toIndex) {
   #if __APPLE__
-  vDSP_vclip(dspBufferAtInlet0+fromIndex, 1, &lowerBound, &upperBound,
+  vDSP_vclip(*dspBufferAtInlet+fromIndex, 1, &lowerBound, &upperBound,
       dspBufferAtOutlet0+fromIndex, 1, toIndex-fromIndex);
   #else
   for (int i = fromIndex; i < toIndex; i++) {
