@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010,2011 Reality Jockey, Ltd.
+ *  Copyright 2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -30,7 +30,7 @@ MessageObject *DspMinimum::newObject(PdMessage *initMessage, PdGraph *graph) {
 
 DspMinimum::DspMinimum(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
   constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
-  codePath = DSP_MINIMUM_DEFAULT;
+  codePath = DSP_MINIMUM_DSP_MESSAGE;
 }
 
 DspMinimum::~DspMinimum() {
@@ -48,73 +48,8 @@ string DspMinimum::toString() {
 }
 
 void DspMinimum::onInletConnectionUpdate() {
-  if (incomingDspConnections[1].size() == 0) {
-    if (incomingMessageConnections[1].size() == 0) {
-      if (incomingDspConnections[0].size() < 2) {
-        codePath = DSP_MINIMUM_DSP1_MESSAGE0;
-      } else {
-        codePath = DSP_MINIMUM_DSPX_MESSAGE0;
-      }      
-    } else {
-      codePath = DSP_MINIMUM_DSPX_MESSAGEX;
-    }
-  } else if (incomingDspConnections[1].size() == 1) {
-    if (incomingDspConnections[0].size() < 2) {
-      codePath = DSP_MINIMUM_DSP1_DSP1;
-    } else {
-      codePath = DSP_MINIMUM_DSPX_DSP1;
-    }
-  } else if (incomingDspConnections[0].size() >= 2) {
-    codePath = DSP_MINIMUM_DSPX_DSPX;
-  } else {
-    codePath = DSP_MINIMUM_DEFAULT;
-  }
-}
-
-void DspMinimum::processDsp() {
-  switch (codePath) {
-    case DSP_MINIMUM_DSPX_MESSAGE0: {
-      resolveInputBuffers(0, dspBufferAtInlet0);
-      // allow fallthrough
-    }
-    case DSP_MINIMUM_DSP1_MESSAGE0: {
-      #if __APPLE__
-      float vconst[blockSizeInt];
-      vDSP_vfill(&constant, vconst, 1, blockSizeInt);
-      vDSP_vmin(dspBufferAtInlet0, 1, vconst, 1, dspBufferAtOutlet0, 1, blockSizeInt);
-      #else
-      for (int i = 0; i < blockSizeInt; i++) {
-        if (dspBufferAtInlet0[i] <= constant) {
-          dspBufferAtOutlet0[i] = dspBufferAtInlet0[i];
-        } else {
-          dspBufferAtOutlet0[i] = constant;
-        }
-      }
-      #endif
-      break;
-    }
-    case DSP_MINIMUM_DSPX_DSP1: {
-      resolveInputBuffers(0, dspBufferAtInlet0);
-      // allow fallthrough
-    }
-    case DSP_MINIMUM_DSP1_DSP1: {
-      #if __APPLE__
-      vDSP_vmin(dspBufferAtInlet0, 1, dspBufferAtInlet1, 1, dspBufferAtOutlet0, 1, blockSizeInt);
-      #else
-      for (int i = 0; i < blockSizeInt; i++) {
-        if (dspBufferAtInlet0[i] <= dspBufferAtInlet1[i]) {
-          dspBufferAtOutlet0[i] = dspBufferAtInlet0[i];
-        } else {
-          dspBufferAtOutlet0[i] = dspBufferAtInlet1[i];
-        }
-      }
-      #endif
-    }
-    default: {
-      DspObject::processDsp();
-      break;
-    }
-  }
+  codePath = (incomingDspConnections[0].size() > 0 && incomingDspConnections[1].size() > 0)
+      ? DSP_MINIMUM_DSP_DSP : DSP_MINIMUM_DSP_MESSAGE;
 }
 
 void DspMinimum::processMessage(int inletIndex, PdMessage *message) {
@@ -127,9 +62,9 @@ void DspMinimum::processMessage(int inletIndex, PdMessage *message) {
 
 void DspMinimum::processDspWithIndex(int fromIndex, int toIndex) {
   switch (codePath) {
-    case DSP_MINIMUM_DSPX_DSPX: {
+    case DSP_MINIMUM_DSP_DSP: {
       #if __APPLE__
-      vDSP_vmin(dspBufferAtInlet0+fromIndex, 1, dspBufferAtInlet1+fromIndex, 1,
+      vDSP_vmin(dspBufferAtInlet[0]+fromIndex, 1, dspBufferAtInlet[1]+fromIndex, 1,
           dspBufferAtOutlet0+fromIndex, 1, toIndex-fromIndex);
       #else
       for (int i = fromIndex; i < toIndex; i++) {
@@ -142,12 +77,12 @@ void DspMinimum::processDspWithIndex(int fromIndex, int toIndex) {
       #endif
       break;
     }
-    case DSP_MINIMUM_DSPX_MESSAGEX: {
+    case DSP_MINIMUM_DSP_MESSAGE: {
       #if __APPLE__
       int duration = toIndex - fromIndex;
       float vconst[duration];
       vDSP_vfill(&constant, vconst, 1, duration);
-      vDSP_vmin(dspBufferAtInlet0 + fromIndex, 1, vconst, 1, dspBufferAtOutlet0 + fromIndex, 1,
+      vDSP_vmin(dspBufferAtInlet[0] + fromIndex, 1, vconst, 1, dspBufferAtOutlet0 + fromIndex, 1,
           duration);
       #else
       for (int i = fromIndex; i < toIndex; i++) {
@@ -158,11 +93,6 @@ void DspMinimum::processDspWithIndex(int fromIndex, int toIndex) {
         }
       }
       #endif
-      break;
-    }
-    case DSP_MINIMUM_DEFAULT:
-    default: {
-      memset(dspBufferAtOutlet0, 0, numBytesInBlock);
       break;
     }
   }

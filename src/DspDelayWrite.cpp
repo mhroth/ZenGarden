@@ -74,19 +74,9 @@ float *DspDelayWrite::getBuffer(int *headIndex, int *bufferLength) {
 }
 
 void DspDelayWrite::processDsp() {
-  RESOLVE_DSPINLET0_IF_NECESSARY();
-  
   // copy inlet buffer to delay buffer
-  if (dspBufferAtInlet0 == NULL) {
-    // TODO(mhroth): refer buffer to a zero buffer
-  } else {
-    memcpy(buffer + headIndex, dspBufferAtInlet0, numBytesInBlock);
-    if (headIndex == 0) {
-      buffer[bufferLength] = buffer[0];
-    }
-    headIndex += blockSizeInt;
-    if (headIndex >= bufferLength) {
-      headIndex = 0;
-    }
-  }
+  memcpy(buffer + headIndex, dspBufferAtInlet[0], numBytesInBlock);
+  if (headIndex == 0) buffer[bufferLength] = buffer[0];
+  headIndex += blockSizeInt;
+  if (headIndex >= bufferLength) headIndex = 0;
 }

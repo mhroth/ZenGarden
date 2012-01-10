@@ -120,6 +120,7 @@ class PdMessage {
     bool isSymbol(unsigned int index);
     bool isSymbol(unsigned int index, const char *test);
     bool isBang(unsigned int index);
+    bool hasFormat(const char *format);
     MessageElementType getType(unsigned int index);
   
     /**

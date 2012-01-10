@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -25,6 +25,11 @@
 
 #include "DspObject.h"
 
+enum DspLogCodePath {
+  DSP_LOG_DSP_DSP,
+  DSP_LOG_DSP_MESSAGE
+};
+
 /** [log~], [log~ float] */
 class DspLog : public DspObject {
     
@@ -39,9 +44,17 @@ class DspLog : public DspObject {
     void processMessage(int inletIndex, PdMessage *message);
     void processDspWithIndex(int fromIndex, int toIndex);
   
-    inline float log2Approx(float x);
+    void onInletConnectionUpdate(unsigned int inletIndex);
   
-    float log2_base;
+    DspLogCodePath codePath;
+  
+    // this implementation is reproduced from http://www.musicdsp.org/showone.php?id=91
+    inline float log2Approx(float x) {
+      int y = (*(int *)&x); // input is assumed to be positive
+      return (((y & 0x7f800000)>>23)-0x7f)+(y & 0x007fffff)/(float)0x800000;
+    }
+  
+    float invLog2Base; // 1/log2(base)
 };
 
 #endif // _DSP_LOG_H_

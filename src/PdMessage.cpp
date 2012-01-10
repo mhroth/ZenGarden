@@ -242,6 +242,21 @@ bool PdMessage::isBang(unsigned int index) {
   }
 }
 
+bool PdMessage::hasFormat(const char *format) {
+  if (format == NULL) return false;
+  int n = strlen(format);
+  if (n != numElements) return false;
+  for (int i = 0; i < n; i++) {
+    switch (format[i]) {
+      case 'f': if (!isFloat(i)) return false; break;
+      case 's': if (!isSymbol(i)) return false; break;
+      case 'b': if (!isBang(i)) return false; break;
+      default: return false; // unrecognised format!
+    }
+  }
+  return true;
+}
+
 MessageElementType PdMessage::getType(unsigned int index) {
   if (index < numElements) {
     return (&messageAtom)[index].type;

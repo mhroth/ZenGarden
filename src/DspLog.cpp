@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -29,7 +29,8 @@ MessageObject *DspLog::newObject(PdMessage *initMessage, PdGraph *graph) {
 
 DspLog::DspLog(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
   // by default assume ln
-  log2_base = initMessage->isFloat(0) ? log2f(initMessage->getFloat(0)) : M_LOG2E;
+  invLog2Base = initMessage->isFloat(0) ? 1.0f/log2f(initMessage->getFloat(0)) : 1.0f/M_LOG2E;
+  codePath = DSP_LOG_DSP_MESSAGE;
 }
 
 DspLog::~DspLog() {
@@ -40,51 +41,53 @@ const char *DspLog::getObjectLabel() {
   return "log~";
 }
 
+void DspLog::onInletConnectionUpdate(unsigned int inletIndex) {
+  codePath = (incomingDspConnections[0].size() > 0 && incomingDspConnections[1].size() > 0)
+      ? DSP_LOG_DSP_DSP : DSP_LOG_DSP_MESSAGE;
+}
+
 void DspLog::processMessage(int inletIndex, PdMessage *message) {
   if (inletIndex == 1) {
     if (message->isFloat(0)) {
       if (message->getFloat(0) <= 0.0f) {
         graph->printErr("log~ base cannot be set to a non-positive number: %d\n", message->getFloat(0));
       } else {
-        log2_base = log2f(message->getFloat(0));
+        invLog2Base = 1.0f/log2f(message->getFloat(0));
       }
     }
   }
 }
 
 void DspLog::processDspWithIndex(int fromIndex, int toIndex) {
-  switch (signalPrecedence) {
-    case DSP_DSP: {
+  switch (codePath) {
+    case DSP_LOG_DSP_DSP: {
+      float a[blockSizeInt];
+      #if __APPLE__
+      int length = toIndex - fromIndex;
+      vvlog2f(dspBufferAtOutlet0+fromIndex, dspBufferAtInlet[0]+fromIndex, &length);
+      vvlog2f(a, dspBufferAtInlet[1]+fromIndex, &length);
+      #else
+      float *buffer0 = dspBufferAtInlet[0];
+      float *buffer1 = dspBufferAtInlet[1];
       for (int i = fromIndex; i < toIndex; i++) {
-        if (dspBufferAtInlet0[i] <= 0.0f || dspBufferAtInlet1[i] <= 0.0f) {
-          dspBufferAtOutlet0[i] = -1000.0f; // Pd's "error" float value
-        } else {
-          dspBufferAtOutlet0[i] = log2Approx(dspBufferAtInlet0[i]) / log2Approx(dspBufferAtInlet1[i]);
-        }
+        dspBufferAtOutlet0[i] = (buffer0[i] <= 0.0f) ? -1000.0f : log2Approx(buffer0[i]);
+        a[i] = (buffer1[i] <= 0.0f) ? -1000.0f : log2Approx(buffer1[i]);
       }
+      #endif
+      ArrayArithmetic::divide(dspBufferAtOutlet0, a, dspBufferAtOutlet0, fromIndex, toIndex);
       break;
     }
-    case DSP_MESSAGE: {
+    case DSP_LOG_DSP_MESSAGE: {
+      #if __APPLE__
+      vvlog2f(dspBufferAtOutlet0, dspBufferAtInlet[0], &blockSizeInt);
+      #else
+      float *buffer = dspBufferAtInlet[0];
       for (int i = fromIndex; i < toIndex; i++) {
-        if (dspBufferAtInlet0[i] <= 0.0f) {
-          dspBufferAtOutlet0[i] = -1000.0f;
-        } else {
-          dspBufferAtOutlet0[i] = log2Approx(dspBufferAtInlet0[i]) / log2_base;
-        }
+        dspBufferAtOutlet0[i] = (buffer[i] <= 0.0f) ? -1000.0f : log2Approx(buffer[i]);
       }
+      #endif
+      ArrayArithmetic::multiply(dspBufferAtOutlet0, invLog2Base, dspBufferAtOutlet0, fromIndex, toIndex);
       break;
-    }
-    case MESSAGE_DSP:
-    case MESSAGE_MESSAGE:
-    default: {
-      break; // nothing to do
     }
   }
-}
-
-// this implementation is reproduced from http://www.musicdsp.org/showone.php?id=91
-float DspLog::log2Approx(float x) {
-  // input is assumed to be positive
-  int y = (*(int *)&x);
-  return (((y & 0x7f800000)>>23)-0x7f)+(y & 0x007fffff)/(float)0x800000;
 }

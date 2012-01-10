@@ -52,9 +52,7 @@ void MessageFloat::processMessage(int inletIndex, PdMessage *message) {
           sendMessage(0, outgoingMessage);
           break;
         }
-        default: {
-          break;
-        }
+        default: break;
       }
       break;
     }
@@ -64,8 +62,6 @@ void MessageFloat::processMessage(int inletIndex, PdMessage *message) {
       }
       break;
     }
-    default: {
-      break;
-    }
+    default: break;
   }  
 }

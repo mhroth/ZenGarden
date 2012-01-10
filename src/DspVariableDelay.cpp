@@ -63,7 +63,7 @@ void DspVariableDelay::processDspWithIndex(int fromIndex, int toIndex) {
   #if __APPLE__
   // calculate delay in samples (vector version of StaticUtils::millisecondsToSamples)
   float samplesPerMillisecond = sampleRate / 1000.0f;
-  vDSP_vsmul(dspBufferAtInlet0, 1, &samplesPerMillisecond, xArray, 1, blockSizeInt);
+  vDSP_vsmul(dspBufferAtInlet[0], 1, &samplesPerMillisecond, xArray, 1, blockSizeInt);
   
   float zero = 0.0f;
   float one = 1.0f;

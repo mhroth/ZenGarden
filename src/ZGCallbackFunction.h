@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,7 +23,7 @@
 #ifndef _ZG_CALLBACK_FUNCTION_H_
 #define _ZG_CALLBACK_FUNCTION_H_
 
-/** An enumeration of the different operations available from a graph's callback function. */
+/** An enumeration of the different operations available from a context's callback function. */
 typedef enum {
   /** Print to standard out. Argument is char* to message buffer. */
   ZG_PRINT_STD,

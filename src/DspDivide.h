@@ -28,7 +28,7 @@
 enum DspDivideCodePath {
   DSP_DIVIDE_DSP_DSP,
   DSP_DIVIDE_DSP_MESSAGE
-}
+};
 
 class DspDivide : public DspObject {
 

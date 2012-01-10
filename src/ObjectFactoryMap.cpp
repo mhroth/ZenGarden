@@ -287,7 +287,7 @@ ObjectFactoryMap::ObjectFactoryMap() {
 }
 
 ObjectFactoryMap::~ObjectFactoryMap() {
-  
+  // nothing to do
 }
 
 void ObjectFactoryMap::registerExternalObject(const char *objectLabel, MessageObject *(*newObject)(PdMessage *, PdGraph *)) {
