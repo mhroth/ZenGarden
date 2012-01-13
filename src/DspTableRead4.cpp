@@ -89,7 +89,7 @@ void DspTableRead4::processDspWithIndex(int fromIndex, int toIndex) {
     // NOTE(mhroth): is isn't clear what the clipping behaviour of vDSP_vlint is, but I
     // *think* that it is doing the right thing (i.e., clipping OOB indicies)
     int duration = toIndex - fromIndex;
-    vDSP_vsadd(dspBufferAtInlet0+fromIndex, 1, &offset, dspBufferAtOutlet0+fromIndex, 1, duration);
+    vDSP_vsadd(dspBufferAtInlet[0]+fromIndex, 1, &offset, dspBufferAtOutlet0+fromIndex, 1, duration);
     vDSP_vlint(buffer, dspBufferAtOutlet0+fromIndex, 1, dspBufferAtOutlet0+fromIndex, 1,
         duration, bufferLength);
     #else

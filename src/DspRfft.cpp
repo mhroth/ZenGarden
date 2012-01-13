@@ -48,11 +48,9 @@ const char *DspRfft::getObjectLabel() {
 }
 
 void DspRfft::processDsp() {
-  RESOLVE_DSPINLET0_IF_NECESSARY();
-  
   #if __APPLE__
   DSPSplitComplex inputVector;
-  inputVector.realp = dspBufferAtInlet0;
+  inputVector.realp = dspBufferAtInlet[0];
   inputVector.imagp = DspObject::zeroBuffer;
   DSPSplitComplex outputVector;
   outputVector.realp = dspBufferAtOutlet0;

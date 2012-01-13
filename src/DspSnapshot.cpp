@@ -52,7 +52,7 @@ void DspSnapshot::processMessage(int inletIndex, PdMessage *message) {
     case BANG: {
       PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
       float blockIndex = graph->getBlockIndex(message);
-      outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), dspBufferAtInlet0[(int) blockIndex]);
+      outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), dspBufferAtInlet[0][(int) blockIndex]);
       sendMessage(0, outgoingMessage);
       break;
     }

@@ -47,7 +47,7 @@ string DspMinimum::toString() {
   return  string(str);
 }
 
-void DspMinimum::onInletConnectionUpdate() {
+void DspMinimum::onInletConnectionUpdate(unsigned int inletIndex) {
   codePath = (incomingDspConnections[0].size() > 0 && incomingDspConnections[1].size() > 0)
       ? DSP_MINIMUM_DSP_DSP : DSP_MINIMUM_DSP_MESSAGE;
 }

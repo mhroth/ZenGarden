@@ -63,7 +63,7 @@ void DspCosine::processDsp() {
   #if __APPLE__
   float twoPi = 2.0f*M_PI;
   vDSP_vsmul(dspBufferAtInlet[0], 1, &twoPi, dspBufferAtOutlet0, 1, blockSizeInt);
-  vvcosf(dspBufferAtOutlet0, dspBufferAtInlet[0], &blockSizeInt);
+  vvcosf(dspBufferAtOutlet0, dspBufferAtOutlet0, &blockSizeInt);
   
 //  float tempBuffer[blockSizeInt];
 //  vDSP_vabs(dspBufferAtInlet0, 1, tempBuffer, 1, blockSizeInt); // abs(x)
@@ -73,7 +73,7 @@ void DspCosine::processDsp() {
   #else
   for (int i = 0; i < blockSizeInt; i++) {
     // works because cosine is symmetric about zero
-    float f = fabsf(dspBufferAtInlet0[i]);
+    float f = fabsf(dspBufferAtInlet[0][i]);
     f -= floorf(f);
     dspBufferAtOutlet0[i] = cos_table[(int) (f * sampleRate)];
   }

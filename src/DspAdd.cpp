@@ -30,13 +30,14 @@ MessageObject *DspAdd::newObject(PdMessage *initMessage, PdGraph *graph) {
 
 DspAdd::DspAdd(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
   constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
+  codePath = DSP_ADD_DSP_MESSAGE;
 }
 
 DspAdd::~DspAdd() {
   // nothing to do
 }
 
-void DspAdd::onInletConnectionUpdate() {
+void DspAdd::onInletConnectionUpdate(unsigned int inletIndex) {
   codePath = (incomingDspConnections[0].size() > 0 && incomingDspConnections[1].size() > 0)
       ? DSP_ADD_DSP_DSP : DSP_ADD_DSP_MESSAGE;
 }

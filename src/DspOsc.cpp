@@ -33,6 +33,7 @@ MessageObject *DspOsc::newObject(PdMessage *initMessage, PdGraph *graph) {
 
 DspOsc::DspOsc(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
   frequency = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
+  codePath = DSP_OSC_MESSAGE;
   
   this->sampleRate = graph->getSampleRate();
   phase = 0.0f;
@@ -59,6 +60,10 @@ const char *DspOsc::getObjectLabel() {
   return "osc~";
 }
 
+void DspOsc::onInletConnectionUpdate(unsigned int inletIndex) {
+  codePath = (incomingDspConnections[0].size() > 0) ? DSP_OSC_DSP : DSP_OSC_MESSAGE;
+}
+
 string DspOsc::toString() {
   char str[snprintf(NULL, 0, "%s %g", getObjectLabel(), frequency)+1];
   snprintf(str, sizeof(str), "%s %g", getObjectLabel(), frequency);
@@ -77,20 +82,15 @@ void DspOsc::processMessage(int inletIndex, PdMessage *message) {
       // TODO(mhroth)
       break;
     }
-    default: {
-      break;
-    }
+    default: break;
   }
 }
 
 void DspOsc::processDspWithIndex(int fromIndex, int toIndex) {
-  switch (signalPrecedence) {
-    case DSP_DSP: {
-      // TODO(mhroth)
-      break;
-    }
-    case DSP_MESSAGE: {
-      for (int i = fromIndex; i < toIndex; index += dspBufferAtInlet0[i++]) {
+  switch (codePath) {
+    case DSP_OSC_DSP: {
+      float *buffer = dspBufferAtInlet[0];
+      for (int i = fromIndex; i < toIndex; index += buffer[i++]) {
         if (index < 0.0f) {
           index += sampleRate;
         } else if (index >= sampleRate) {
@@ -100,11 +100,7 @@ void DspOsc::processDspWithIndex(int fromIndex, int toIndex) {
       }
       break;
     }
-    case MESSAGE_DSP: {
-      // TODO(mhroth)
-      break;
-    }
-    case MESSAGE_MESSAGE: {
+    case DSP_OSC_MESSAGE: {
       for (int i = fromIndex; i < toIndex; i++, index += frequency) {
         if (index < 0.0f) {
           // allow negative frequencies (read the wavetable backwards)

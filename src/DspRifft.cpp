@@ -50,8 +50,8 @@ const char *DspRifft::getObjectLabel() {
 void DspRifft::processDspWithIndex(int fromIndex, int toIndex) {
   #if __APPLE__
   DSPSplitComplex inputVector;
-  inputVector.realp = dspBufferAtInlet0;
-  inputVector.imagp = dspBufferAtInlet1;
+  inputVector.realp = dspBufferAtInlet[0];
+  inputVector.imagp = dspBufferAtInlet[1];
   DSPSplitComplex outputVector;
   outputVector.realp = dspBufferAtOutlet0;
   outputVector.imagp = (float *) alloca(numBytesInBlock); // this buffer will not contain any useful data

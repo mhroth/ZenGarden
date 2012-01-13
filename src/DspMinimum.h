@@ -45,7 +45,7 @@ class DspMinimum : public DspObject {
     void processMessage(int inletIndex, PdMessage *message);
     void processDspWithIndex(int fromIndex, int toIndex);
   
-    void onInletConnectionUpdate();
+    void onInletConnectionUpdate(unsigned int inletIndex);
   
     DspMinimumCodePath codePath;
     

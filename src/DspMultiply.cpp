@@ -30,6 +30,7 @@ MessageObject *DspMultiply::newObject(PdMessage *initMessage, PdGraph *graph) {
 
 DspMultiply::DspMultiply(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
   constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
+  codePath = DSP_MULTIPLY_DSP_MESSAGE;
   inputConstant = 0.0f;
 }
 
@@ -48,21 +49,15 @@ string DspMultiply::toString() {
   return string(str);
 }
 
-void DspMultiply::onInletConnectionUpdate() {
+void DspMultiply::onInletConnectionUpdate(unsigned int inletIndex) {
   codePath = (incomingDspConnections[0].size() > 0 && incomingDspConnections[1].size() > 0)
       ? DSP_MULTIPLY_DSP_DSP : DSP_MULTIPLY_DSP_MESSAGE;
 }
 
 void DspMultiply::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
-    case 0: {
-      if (message->isFloat(0)) inputConstant = message->getFloat(0);
-      break;
-    }
-    case 1: {
-      if (message->isFloat(0)) constant = message->getFloat(0);
-      break;
-    }
+    case 0: if (message->isFloat(0)) inputConstant = message->getFloat(0); break;
+    case 1: if (message->isFloat(0)) constant = message->getFloat(0); break;
     default: break;
   }
 }
@@ -73,10 +68,7 @@ void DspMultiply::processDsp() {
       ArrayArithmetic::multiply(dspBufferAtInlet[0], constant, dspBufferAtOutlet0, 0, blockSizeInt);
       break;
     }
-    default: {
-      DspObject::processDsp();
-      break;
-    }
+    default: DspObject::processDsp(); break;
   }
 }
 

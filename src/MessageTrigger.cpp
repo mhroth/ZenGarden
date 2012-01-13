@@ -77,7 +77,7 @@ void MessageTrigger::processMessage(int inletIndex, PdMessage *message) {
             break;
           }
           case SYMBOL: {
-            outgoingMessage->initWithTimestampAndSymbol(message->getTimestamp(), "float");
+            outgoingMessage->initWithTimestampAndSymbol(message->getTimestamp(), (char *) "float");
             sendMessage(i, outgoingMessage);
             break;
           }
@@ -131,7 +131,7 @@ void MessageTrigger::processMessage(int inletIndex, PdMessage *message) {
             break;
           }
           case SYMBOL: {
-            outgoingMessage->initWithTimestampAndSymbol(message->getTimestamp(), "symbol");
+            outgoingMessage->initWithTimestampAndSymbol(message->getTimestamp(), (char *) "symbol");
             sendMessage(i, outgoingMessage);
             break;
           }

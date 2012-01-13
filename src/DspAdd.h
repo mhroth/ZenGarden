@@ -41,7 +41,7 @@ class DspAdd : public DspObject {
     static const char *getObjectLabel();
     string toString();
   
-    void onInletConnectionUpdate();
+    void onInletConnectionUpdate(unsigned int inletIndex);
   
     void processDsp();
   

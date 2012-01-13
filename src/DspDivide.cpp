@@ -40,7 +40,7 @@ const char *DspDivide::getObjectLabel() {
   return "/~";
 }
 
-void DspDivide::onInletConnectionUpdate() {
+void DspDivide::onInletConnectionUpdate(unsigned int inletIndex) {
   codePath = (incomingDspConnections[0].size() > 0 && incomingDspConnections[1].size() > 0)
       ? DSP_DIVIDE_DSP_DSP : DSP_DIVIDE_DSP_MESSAGE;
 }

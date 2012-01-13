@@ -25,6 +25,11 @@
 
 #include "DspObject.h"
 
+enum DspOscCodePath {
+  DSP_OSC_DSP,
+  DSP_OSC_MESSAGE
+};
+
 /** [osc~], [osc~ float] */
 class DspOsc : public DspObject {
   
@@ -40,13 +45,16 @@ class DspOsc : public DspObject {
     void processMessage(int inletIndex, PdMessage *message);
     void processDspWithIndex(int fromIndex, int toIndex);
     
-  private:    
+  private:
+    void onInletConnectionUpdate(unsigned int inletIndex);
+  
     int sampleRate;
     float frequency; // frequency and phase are stored as integers because they are used
     int phase;     // in for-loops to traverse the lookup table
     float index; // indexes the current place in the cosine lookup table
     static float *cos_table; // the cosine lookup table
     static int refCount; // a reference counter for cos_table. Now we know when to free it.
+    DspOscCodePath codePath;
 };
 
 #endif // _DSP_OSC_H_

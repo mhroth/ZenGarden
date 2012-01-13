@@ -43,10 +43,8 @@ const char *DspReciprocalSqrt::getObjectLabel() {
 
 void DspReciprocalSqrt::processDsp() {
   // [rsqrt~] takes no messages, so the full block will be computed every time
-  RESOLVE_DSPINLET0_IF_NECESSARY();
-  
   #if __ARM_NEON__
-  float *inBuff = dspBufferAtInlet0;
+  float *inBuff = dspBufferAtInlet[0];
   float *outBuff = dspBufferAtOutlet0;
   float32x4_t inVec, outVec;
   float32x4_t zeroVec = vdupq_n_f32(FLT_MIN);
@@ -69,7 +67,7 @@ void DspReciprocalSqrt::processDsp() {
   }
   #elif __SSE__
   // NOTE: for all non-positive numbers, this routine will output a very large number (not Inf) == 1/sqrt(FLT_MIN)
-  float *inBuff = dspBufferAtInlet0;
+  float *inBuff = dspBufferAtInlet[0];
   float *outBuff = dspBufferAtOutlet0;
   __m128 inVec, outVec;
   __m128 zeroVec = _mm_set1_ps(FLT_MIN);
@@ -97,7 +95,7 @@ void DspReciprocalSqrt::processDsp() {
   int j;
   float y;
   for (int i = 0; i < blockSizeInt; ++i) {
-    float f = dspBufferAtInlet0[i];
+    float f = dspBufferAtInlet[0][i];
     if (f <= 0.0f) {
       dspBufferAtOutlet0[i] = 0.0f;
     } else {

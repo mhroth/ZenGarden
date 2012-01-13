@@ -86,7 +86,7 @@ void DspTableRead::processDspWithIndex(int fromIndex, int toIndex) {
     float *outBuff = dspBufferAtOutlet0+fromIndex;
     
     // add the offset
-    vDSP_vsadd(dspBufferAtInlet0+fromIndex, 1, &offset, outBuff, 1, duration);
+    vDSP_vsadd(dspBufferAtInlet[0]+fromIndex, 1, &offset, outBuff, 1, duration);
     
     // clip to the bounds of the table
     // NOTE(mhroth): is this necessary? Or does vDSP_vindex clip automatically? What is the

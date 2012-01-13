@@ -30,6 +30,7 @@ MessageObject *DspSubtract::newObject(PdMessage *initMessage, PdGraph *graph) {
 
 DspSubtract::DspSubtract(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
   constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
+  codePath = DSP_SUBTRACT_DSP_MESSAGE;
 }
 
 DspSubtract::~DspSubtract() {
@@ -47,7 +48,7 @@ string DspSubtract::toString() {
   return string(str);
 }
 
-void DspSubtract::onInletConnectionUpdate() {
+void DspSubtract::onInletConnectionUpdate(unsigned int inletIndex) {
   codePath = (incomingDspConnections[0].size() > 0 && incomingDspConnections[1].size() > 0)
       ? DSP_SUBTRACT_DSP_DSP : DSP_SUBTRACT_DSP_MESSAGE;
 }
@@ -58,10 +59,7 @@ void DspSubtract::processDsp() {
       ArrayArithmetic::subtract(dspBufferAtInlet[0], dspBufferAtInlet[1], dspBufferAtOutlet0, 0, blockSizeInt);
       break;
     }
-    default: {
-      DspObject::processDsp();
-      break;
-    }
+    default: DspObject::processDsp(); break;
   }
 }
 

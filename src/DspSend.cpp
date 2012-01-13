@@ -69,9 +69,5 @@ float **DspSend::getBuffer() {
 }
 
 void DspSend::processDsp() {
-  if (incomingDspConnections[0].size() > 1) {
-    resolveInputBuffers(0, dspBufferAtOutlet0);
-  } else {
-    memcpy(dspBufferAtOutlet0, dspBufferAtInlet0, numBytesInBlock);
-  }
+  memcpy(dspBufferAtOutlet0, dspBufferAtInlet[0], numBytesInBlock);
 }
