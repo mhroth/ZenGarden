@@ -230,7 +230,7 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
       } else if (!strcmp(objectType, "declare")) {
         // set environment for loading patch
         char *objectInitString = strtok(NULL, ";"); // get the arguments to declare
-        initMessage->initWithString(2, objectInitString); // parse them
+        initMessage->initWithString(0.0, 2, objectInitString); // parse them
         if (initMessage->isSymbol(0, "-path")) {
           if (initMessage->isSymbol(1)) {
             // add symbol to declare directories

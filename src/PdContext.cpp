@@ -444,21 +444,10 @@ void PdContext::scheduleExternalMessageV(const char *receiverName, double timest
   message->initWithTimestampAndNumElements(timestamp, numElements);
   for (int i = 0; i < numElements; i++) { // format message
     switch (messageFormat[i]) {
-      case 'f': {
-        message->setFloat(i, (float) va_arg(ap, double));
-        break;
-      }
-      case 's': {
-        message->setSymbol(i, (char *) va_arg(ap, char *));
-        break;
-      }
-      case 'b': {
-        message->setBang(i);
-        break;
-      }
-      default: {
-        break;
-      }
+      case 'f': message->setFloat(i, (float) va_arg(ap, double)); break;
+      case 's': message->setSymbol(i, (char *) va_arg(ap, char *)); break;
+      case 'b': message->setBang(i); break;
+      default: break;
     }
   }
   

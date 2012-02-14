@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2011 Reality Jockey, Ltd.
+ *  Copyright 2009,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -26,14 +26,14 @@
 void PdMessage::initWithSARb(unsigned int maxElements, char *initString, PdMessage *arguments,
     char *buffer, unsigned int bufferLength) {
   resolveString(initString, arguments, 0, buffer, bufferLength); // resolve string
-  initWithString(maxElements, buffer);
+  initWithString(0.0, maxElements, buffer);
 }
 
-void PdMessage::initWithString(unsigned int maxElements, char *initString) {
-  timestamp = 0.0;
+void PdMessage::initWithString(double ts, unsigned int maxElements, char *initString) {
+  timestamp = ts;
   
-  char *token = strtok(initString, " ;");
-  if (token == NULL) {
+  char *token = strtok(initString, " ;");  
+  if (token == NULL || strlen(initString) == 0) {
     initWithTimestampAndBang(0.0); // just in case, there is always at least one element in a message
   } else {
     int i = 0;
@@ -123,6 +123,10 @@ PdMessage::~PdMessage() {
   // nothing to do. Use freeMessage().
 }
 
+unsigned int PdMessage::numBytes() {
+  return PdMessage::numBytes(numElements);
+}
+
 void PdMessage::resolveSymbolsToType() {
   for (int i = 0; i < numElements; i++) {
     if (isSymbol(i)) {
@@ -178,6 +182,7 @@ double PdMessage::getTimestamp() {
 #pragma mark initWithTimestampeAnd
 
 void PdMessage::initWithTimestampAndNumElements(double aTimestamp, unsigned int numElem) {
+  memset(this, 0, numBytes(numElem)); // clear the entire contents of the message
   timestamp = aTimestamp;
   numElements = numElem;
   setBang(0); // default value
@@ -303,15 +308,11 @@ void PdMessage::setList(unsigned int index) {
 }
 
 
-#pragma mark -
-#pragma mark copy/free
+#pragma mark - copy/free
 
 PdMessage *PdMessage::copyToHeap() {
-  int numMessageBytes = sizeof(PdMessage) + ((numElements > 0 ? numElements-1 : 0)*sizeof(MessageAtom));
-  PdMessage *pdMessage = (PdMessage *) malloc(numMessageBytes);
-  pdMessage->initWithTimestampAndNumElements(timestamp, numElements);
-  // copy all message type and float info (but symbol pointers must be replaced)
-  memcpy(pdMessage->getElement(0), getElement(0), numElements * sizeof(MessageAtom));
+  PdMessage *pdMessage = (PdMessage *) malloc(numBytes());
+  memcpy(pdMessage, this, numBytes()); // copy entire structure (but symbol pointers must be replaced)
   for (int i = 0; i < numElements; i++) {
     if (isSymbol(i)) {
       pdMessage->setSymbol(i, StaticUtils::copyString(getSymbol(i)));

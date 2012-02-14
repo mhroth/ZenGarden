@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2011 Reality Jockey, Ltd.
+ *  Copyright 2009,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -30,7 +30,7 @@
 #include <string.h>
 #include "MessageElementType.h"
 
-#define PD_MESSAGE_ON_STACK(_x) ((PdMessage *) (alloca(sizeof(PdMessage) + (((_x>0)?(_x-1):0) * sizeof(MessageAtom)))));
+#define PD_MESSAGE_ON_STACK(_x) ((PdMessage *) alloca(PdMessage::numBytes(_x)));
 
 typedef struct MessageAtom {
   MessageElementType type;
@@ -79,10 +79,11 @@ class PdMessage {
         unsigned int bufferLength);
   
     /**
-     * Adds elements to the message by tokenizing the given string. Is a token is numeric then it is
-     * automatically resolved to a float. Otherwise the string is interpreted as a symbol.
+     * Adds elements to the message by tokenizing the given string. If a token is numeric then it is
+     * automatically resolved to a float. Otherwise the string is interpreted as a symbol. Note that
+     * the <code>initString</code> is tokenized and should be provided in a buffer which may be edited. 
      */
-    void initWithString(unsigned int maxElements, char *initString);
+    void initWithString(double timestamp, unsigned int maxElements, char *initString);
   
     /** Sets the given message element to a FLOAT or SYMBOL depending on contents of string. */
     void setFloatOrSymbol(unsigned int index, char *initString);
@@ -140,6 +141,17 @@ class PdMessage {
     void setBang(unsigned int index);
     void setAnything(unsigned int index);
     void setList(unsigned int index);
+  
+    /** Returns the number of bytes in a PdMessage structure with <code>x</code> number of elements. */
+    static inline unsigned int numBytes(unsigned int x) {
+      return sizeof(PdMessage) + (((x>0)?(x-1):0) * sizeof(MessageAtom));
+    }
+  
+    /**
+     * Returns the number of bytes in the PdMessage structure
+     * (as it is variable depending on the number of elements).
+     */
+    unsigned int numBytes();
 
   private:
     PdMessage();
