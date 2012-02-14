@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010,2011 Reality Jockey, Ltd.
+ *  Copyright 2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -429,9 +429,17 @@ void zg_table_set_buffer(MessageObject *table, float *buffer, unsigned int n) {
 
 ZGMessage *zg_message_new(double timetamp, unsigned int numElements) {
   PdMessage *message = PD_MESSAGE_ON_STACK(numElements);
-  int numBytes = sizeof(PdMessage) + ((numElements<2)?0:(numElements-1))*sizeof(MessageAtom);
-  memset(message, 0, numBytes);
   message->initWithTimestampAndNumElements(timetamp, numElements);
+  return message->copyToHeap();
+}
+
+ZGMessage *zg_message_new_from_string(double timetamp, const char *initString) {
+  unsigned int maxElements = (strlen(initString)/2)+1;
+  PdMessage *message = PD_MESSAGE_ON_STACK(maxElements);
+  // make a local copy of the initString so that strtok in initWithString won't break it
+  char str[strlen(initString)+1]; strcpy(str, initString);
+  // numElements set to correct number after string is parsed
+  message->initWithString(timetamp, maxElements, str);
   return message->copyToHeap();
 }
 

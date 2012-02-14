@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010,2011 Reality Jockey, Ltd.
+ *  Copyright 2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -298,6 +298,9 @@ typedef enum ZGConnectionType {
   
   /** Returns a new message with the given timestamp and the number of elements. */
   ZGMessage *zg_message_new(double timetamp, unsigned int numElemets);
+  
+  /** Returns a new message based on the given string. */
+  ZGMessage *zg_message_new_from_string(double timetamp, const char *initMessage);
   
   /** The message is released from memory. */
   void zg_message_delete(ZGMessage *message);

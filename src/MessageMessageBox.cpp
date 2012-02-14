@@ -46,14 +46,17 @@ MessageMessageBox::MessageMessageBox(char *initString, PdGraph *graph) : Message
   
   // parse the first "message" for individual messages that should be sent from the outlet 
   vector<string> messageInitList = StaticUtils::tokenizeString((char *) messageInitListAll[0].c_str(), "\\,");
-  // NOTE(mhroth): we'll be in trouble if the message has more than 16 elements!
-  PdMessage *message = PD_MESSAGE_ON_STACK(16);
   for (int i = 0; i < messageInitList.size(); i++) {
     string initString = messageInitList[i];
+    int maxElements = (initString.size()/2)+1;
+    // NOTE(mhroth): though this is alloca is in a for loop, it is not expected that the compiler
+    // will do anything funny, like unrolling the loop, thereby causing unexpected stack overflows
+    PdMessage *message = PD_MESSAGE_ON_STACK(maxElements);
     // StaticUtils::tokenizeString does not remove the trailing ";" from the
     // original string. We should not process it because it will result in an empty message. 
     if (strcmp(initString.c_str(), ";") != 0) {
-      message->initWithString(16, (char *) initString.c_str());
+      char str[initString.size()+1]; strcpy(str, initString.c_str());
+      message->initWithString(0.0, maxElements, str);
       localMessageList.push_back(message->copyToHeap());
     }
   }
@@ -66,9 +69,12 @@ MessageMessageBox::MessageMessageBox(char *initString, PdGraph *graph) : Message
       // get named destination (first element, delimited by space)
       string name = string(initString, 0, initString.find(" "));
       string messageString = string(initString, initString.find(" ")+2);
-      message->initWithString(16, (char *) messageString.c_str());
+      int maxElements = (messageString.size()/2)+1;
+      PdMessage *message = PD_MESSAGE_ON_STACK(maxElements);
+      char str[messageString.size()+1]; strcpy(str, messageString.c_str());
+      message->initWithString(0.0, maxElements, str);
       MessageNamedDestination namedDestination = 
-          make_pair(StaticUtils::copyString((char *) name.c_str()), message->copyToHeap());
+          make_pair(StaticUtils::copyString(name.c_str()), message->copyToHeap());
       remoteMessageList.push_back(namedDestination);
     }
   }
