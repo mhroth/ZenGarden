@@ -285,6 +285,7 @@ ObjectFactoryMap::ObjectFactoryMap() {
   objectFactoryMap[string(DspTableRead4::getObjectLabel())] = &DspTableRead4::newObject;
   objectFactoryMap[string(DspThrow::getObjectLabel())] = &DspThrow::newObject;
   objectFactoryMap[string(DspVariableDelay::getObjectLabel())] = &DspVariableDelay::newObject;
+  objectFactoryMap[string(DspWrap::getObjectLabel())] = &DspWrap::newObject;
 }
 
 ObjectFactoryMap::~ObjectFactoryMap() {
