@@ -138,7 +138,7 @@ class PdContext {
      * Schedules a message described by the given string to be sent to named receivers at the
      * given timestamp.
      */
-    void PdContext::scheduleExternalMessage(const char *receiverName, double timestamp,
+    void scheduleExternalMessage(const char *receiverName, double timestamp,
         const char *initString);
   
     /**
