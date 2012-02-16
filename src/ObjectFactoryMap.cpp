@@ -173,6 +173,8 @@ ObjectFactoryMap::ObjectFactoryMap() {
   objectFactoryMap[string(MessageFloat::getObjectLabel())] = &MessageFloat::newObject;
   objectFactoryMap[string("f")] = &MessageFloat::newObject;
   objectFactoryMap[string("nbx")] = &MessageFloat::newObject; // number boxes are represented as float objects
+  objectFactoryMap[string("hsl")] = &MessageFloat::newObject; // horizontal and vertical sliders are
+  objectFactoryMap[string("vsl")] = &MessageFloat::newObject; // represened as float boxes
   objectFactoryMap[string(MessageFrequencyToMidi::getObjectLabel())] = &MessageFrequencyToMidi::newObject;
   objectFactoryMap[string(MessageGreaterThan::getObjectLabel())] = &MessageGreaterThan::newObject;
   objectFactoryMap[string(MessageGreaterThanOrEqualTo::getObjectLabel())] = &MessageGreaterThanOrEqualTo::newObject;
@@ -239,8 +241,6 @@ ObjectFactoryMap::ObjectFactoryMap() {
   objectFactoryMap[string(MessageValue::getObjectLabel())] = &MessageValue::newObject;
   objectFactoryMap[string("v")] = &MessageValue::newObject;
   objectFactoryMap[string(MessageWrap::getObjectLabel())] = &MessageWrap::newObject;
-  
-  // TODO(mhroth): vsl and hsl
   
   // dsp objects
   objectFactoryMap[string(DspAdc::getObjectLabel())] = &DspAdc::newObject;
