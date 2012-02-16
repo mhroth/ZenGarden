@@ -86,7 +86,7 @@ class PdMessage {
     void initWithString(double timestamp, unsigned int maxElements, char *initString);
   
     /** Sets the given message element to a FLOAT or SYMBOL depending on contents of string. */
-    void setFloatOrSymbol(unsigned int index, char *initString);
+    void parseAndSetMessageElement(unsigned int index, char *initString);
   
     MessageAtom *getElement(unsigned int index);
   
