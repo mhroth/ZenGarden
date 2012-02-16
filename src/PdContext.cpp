@@ -464,13 +464,15 @@ void PdContext::scheduleExternalMessage(const char *receiverName, PdMessage *mes
 }
 
 void PdContext::scheduleExternalMessage(const char *receiverName, double timestamp, const char *initString) {
-  lock();
+  // do the heavy lifting of string parsing before the lock (minimise the critical section)
+  int maxElements = (strlen(initString)/2)+1;
+  PdMessage *message = PD_MESSAGE_ON_STACK(maxElements);
+  char str[strlen(initString)+1]; strcpy(str, initString);
+  message->initWithString(timestamp, maxElements, str);
+  
+  lock(); // lock and load
   int receiverNameIndex = sendController->getNameIndex(receiverName);
   if (receiverNameIndex >= 0) { // if the receiver exists
-    int maxElements = (strlen(initString)/2)+1;
-    PdMessage *message = PD_MESSAGE_ON_STACK(maxElements);
-    char str[strlen(initString)+1]; strcpy(str, initString);
-    message->initWithString(timestamp, maxElements, str);
     scheduleMessage(sendController, receiverNameIndex, message);
   }
   unlock();
