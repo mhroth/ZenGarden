@@ -249,6 +249,7 @@ ObjectFactoryMap::ObjectFactoryMap() {
   objectFactoryMap[string(DspBang::getObjectLabel())] = &DspBang::newObject;
   objectFactoryMap[string(DspCatch::getObjectLabel())] = &DspCatch::newObject;
   objectFactoryMap[string(DspClip::getObjectLabel())] = &DspClip::newObject;
+  objectFactoryMap[string(DspCosine::getObjectLabel())] = &DspCosine::newObject;
   objectFactoryMap[string(DspDac::getObjectLabel())] = &DspDac::newObject;
   objectFactoryMap[string(DspDelayRead::getObjectLabel())] = &DspDelayRead::newObject;
   objectFactoryMap[string(DspDelayWrite::getObjectLabel())] = &DspDelayWrite::newObject;
