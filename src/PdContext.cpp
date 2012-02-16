@@ -463,6 +463,19 @@ void PdContext::scheduleExternalMessage(const char *receiverName, PdMessage *mes
   unlock();
 }
 
+void PdContext::scheduleExternalMessage(const char *receiverName, double timestamp, const char *initString) {
+  lock();
+  int receiverNameIndex = sendController->getNameIndex(receiverName);
+  if (receiverNameIndex >= 0) { // if the receiver exists
+    int maxElements = (strlen(initString)/2)+1;
+    PdMessage *message = PD_MESSAGE_ON_STACK(maxElements);
+    char str[strlen(initString)+1]; strcpy(str, initString);
+    message->initWithString(timestamp, maxElements, str);
+    scheduleMessage(sendController, receiverNameIndex, message);
+  }
+  unlock();
+}
+
 PdMessage *PdContext::scheduleMessage(MessageObject *messageObject, unsigned int outletIndex, PdMessage *message) {
   // basic argument checking. It may happen that the message is NULL in case a cancel message
   // is sent multiple times to a particular object, when no message is pending

@@ -135,6 +135,13 @@ class PdContext {
     void scheduleExternalMessage(const char *receiverName, PdMessage *message);
   
     /**
+     * Schedules a message described by the given string to be sent to named receivers at the
+     * given timestamp.
+     */
+    void PdContext::scheduleExternalMessage(const char *receiverName, double timestamp,
+        const char *initString);
+  
+    /**
      * Schedules a <code>PdMessage</code> to be sent by the <code>MessageObject</code> from the
      * <code>outletIndex</code> at the specified <code>time</code>. The message will be copied
      * to the heap and the context will thereafter take over ownership and be responsible for
