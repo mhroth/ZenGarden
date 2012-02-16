@@ -36,20 +36,22 @@ void PdMessage::initWithString(double ts, unsigned int maxElements, char *initSt
   if (token == NULL || strlen(initString) == 0) {
     initWithTimestampAndBang(0.0); // just in case, there is always at least one element in a message
   } else {
-    int i = 0;
+    unsigned int i = 0;
     do {
-      setFloatOrSymbol(i++, token);
+      parseAndSetMessageElement(i++, token);
     } while (((token = strtok(NULL, " ;")) != NULL) && (i < maxElements));
     
     numElements = i;
   }
 }
 
-void PdMessage::setFloatOrSymbol(unsigned int index, char *initString) {
-  if (StaticUtils::isNumeric(initString)) {
-    setFloat(index, atof(initString));
+void PdMessage::parseAndSetMessageElement(unsigned int index, char *token) {
+  if (StaticUtils::isNumeric(token)) {
+    setFloat(index, atof(token)); // element is a float
+  } else if (!strcmp("!", token)) {
+    setBang(index); // element is a bang
   } else {
-    setSymbol(index, initString); // element is symbolic
+    setSymbol(index, token); // element is symbolic
   }
 }
 
@@ -347,18 +349,9 @@ char *PdMessage::toString() {
   for (int i = 0; i < numElements; i++) {
     lengths[i] = 0;
     switch (getType(i)) {
-      case FLOAT: {
-        lengths[i] = snprintf(NULL, 0, "%g", getFloat(i));
-        break;
-      }
-      case BANG: {
-        lengths[i] = snprintf(NULL, 0, "%s", "bang");
-        break;
-      }
-      case SYMBOL: {
-        lengths[i] = snprintf(NULL, 0, "%s", getSymbol(i));
-        break;
-      }
+      case FLOAT: lengths[i] = snprintf(NULL, 0, "%g", getFloat(i)); break;
+      case BANG: lengths[i] = snprintf(NULL, 0, "%s", "bang"); break;
+      case SYMBOL:lengths[i] = snprintf(NULL, 0, "%s", getSymbol(i)); break;
       default: break;
     }
     // total length of our string is each atom plus a space, or \0 on the end
@@ -375,18 +368,9 @@ char *PdMessage::toString() {
     }
     // put a string representation of each atom into the final string
     switch (getType(i)) {
-      case FLOAT: {
-        snprintf(&finalString[pos], lengths[i] + 1, "%g", getFloat(i));
-        break;
-      }
-      case BANG: {
-        snprintf(&finalString[pos], lengths[i] + 1, "%s", "bang");
-        break;
-      }
-      case SYMBOL: {
-        snprintf(&finalString[pos], lengths[i] + 1, "%s", getSymbol(i));
-        break;
-      }
+      case FLOAT: snprintf(&finalString[pos], lengths[i] + 1, "%g", getFloat(i)); break;
+      case BANG: snprintf(&finalString[pos], lengths[i] + 1, "%s", "bang"); break;
+      case SYMBOL: snprintf(&finalString[pos], lengths[i] + 1, "%s", getSymbol(i)); break;
       default: break;
     }
     pos += lengths[i];

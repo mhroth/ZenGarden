@@ -179,6 +179,10 @@ typedef enum ZGConnectionType {
   /** Send a message to the named receiver. */
   void zg_context_send_message(ZGContext *context, const char *receiverName, ZGMessage *message);
   
+  /** Send a message described by the <code>initString</code> to the named receiver at the given timestamp. */
+  void zg_context_send_message_from_string(ZGContext *context, const char *receiverName,
+      double timestamp, const char *initString);
+  
   /**
    * Send a message to the named receiver with the given format at the beginning of the next audio block.
    * If no receiver exists with the given name, then this funtion does nothing.

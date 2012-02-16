@@ -332,6 +332,11 @@ void zg_context_send_message(ZGContext *context, const char *receiverName, ZGMes
   context->scheduleExternalMessage(receiverName, message);
 }
 
+void zg_context_send_message_from_string(ZGContext *context, const char *receiverName,
+    double timestamp, const char *initString) {
+  context->scheduleExternalMessage(receiverName, timestamp, initString);
+}
+
 void zg_context_send_messageV(PdContext *context, const char *receiverName, double timestamp,
     const char *messageFormat, ...) {
   va_list ap;
