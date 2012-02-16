@@ -34,6 +34,7 @@ MessageObject *DspCosine::newObject(PdMessage *initMessage, PdGraph *graph) {
 
 DspCosine::DspCosine(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0, 1, graph) {
   this->sampleRate = graph->getSampleRate();
+  #if __APPLE__ == 0 // only create the lookup table if it is really needed
   refCount++;
   if (cos_table == NULL) {
     int sampleRateInt = (int) sampleRate;
@@ -43,13 +44,16 @@ DspCosine::DspCosine(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0
     }
     cos_table[sampleRateInt] = cos_table[0];
   }
+  #endif
 }
 
 DspCosine::~DspCosine() {
+  #if __APPLE__ == 0
   if (--refCount == 0) {
     free(cos_table);
     cos_table = NULL;
   }
+  #endif
 }
 
 const char *DspCosine::getObjectLabel() {
@@ -64,12 +68,6 @@ void DspCosine::processDsp() {
   float twoPi = 2.0f*M_PI;
   vDSP_vsmul(dspBufferAtInlet[0], 1, &twoPi, dspBufferAtOutlet0, 1, blockSizeInt);
   vvcosf(dspBufferAtOutlet0, dspBufferAtOutlet0, &blockSizeInt);
-  
-//  float tempBuffer[blockSizeInt];
-//  vDSP_vabs(dspBufferAtInlet0, 1, tempBuffer, 1, blockSizeInt); // abs(x)
-//  vDSP_vfrac(tempBuffer, 1, tempBuffer, 1, blockSizeInt); // get the fractional part of x
-//  vDSP_vsmul(tempBuffer, 1, &sampleRate, tempBuffer, 1, blockSizeInt); // * sampleRate
-//  vDSP_vindex(cos_table, tempBuffer, 1, dspBufferAtOutlet0, 1, blockSizeInt); // perform a table lookup
   #else
   for (int i = 0; i < blockSizeInt; i++) {
     // works because cosine is symmetric about zero
