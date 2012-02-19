@@ -67,11 +67,13 @@ void DspMinimum::processDspWithIndex(int fromIndex, int toIndex) {
       vDSP_vmin(dspBufferAtInlet[0]+fromIndex, 1, dspBufferAtInlet[1]+fromIndex, 1,
           dspBufferAtOutlet0+fromIndex, 1, toIndex-fromIndex);
       #else
+      float *inputBuffer0 = dspBufferAtInlet[0];
+      float *inputBuffer1 = dspBufferAtInlet[1];
       for (int i = fromIndex; i < toIndex; i++) {
-        if (dspBufferAtInlet0[i] <= dspBufferAtInlet1[i]) {
-          dspBufferAtOutlet0[i] = dspBufferAtInlet0[i];
+        if (inputBuffer0[i] <= inputBuffer1[i]) {
+          dspBufferAtOutlet0[i] = inputBuffer0[i];
         } else {
-          dspBufferAtOutlet0[i] = dspBufferAtInlet1[i];
+          dspBufferAtOutlet0[i] = inputBuffer1[i];
         }
       }
       #endif
@@ -85,9 +87,10 @@ void DspMinimum::processDspWithIndex(int fromIndex, int toIndex) {
       vDSP_vmin(dspBufferAtInlet[0] + fromIndex, 1, vconst, 1, dspBufferAtOutlet0 + fromIndex, 1,
           duration);
       #else
+      float *inputBuffer = dspBufferAtInlet[0];
       for (int i = fromIndex; i < toIndex; i++) {
-        if (dspBufferAtInlet0[i] <= constant) {
-          dspBufferAtOutlet0[i] = dspBufferAtInlet0[i];
+        if (inputBuffer[i] <= constant) {
+          dspBufferAtOutlet0[i] = inputBuffer[i];
         } else {
           dspBufferAtOutlet0[i] = constant;
         }

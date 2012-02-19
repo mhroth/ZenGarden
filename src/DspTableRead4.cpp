@@ -93,9 +93,10 @@ void DspTableRead4::processDspWithIndex(int fromIndex, int toIndex) {
     vDSP_vlint(buffer, dspBufferAtOutlet0+fromIndex, 1, dspBufferAtOutlet0+fromIndex, 1,
         duration, bufferLength);
     #else
+    float *inputBuffer = dspBufferAtInlet[0];
     int maxIndex = bufferLength-1;
     for (int i = fromIndex; i < toIndex; i++) {
-      float xf = dspBufferAtInlet0[i] + offset;
+      float xf = inputBuffer[i] + offset;
       int xi = (int) xf;
       if (xi <= 0) {
         dspBufferAtOutlet0[i] = buffer[0];

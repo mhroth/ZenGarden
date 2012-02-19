@@ -60,13 +60,14 @@ void DspClip::processDspWithIndex(int fromIndex, int toIndex) {
   vDSP_vclip(dspBufferAtInlet[0]+fromIndex, 1, &lowerBound, &upperBound,
       dspBufferAtOutlet0+fromIndex, 1, toIndex-fromIndex);
   #else
+  float *buffer = dspBufferAtInlet[0];
   for (int i = fromIndex; i < toIndex; i++) {
-    if (dspBufferAtInlet0[i] <= lowerBound) {
+    if (buffer[i] <= lowerBound) {
       dspBufferAtOutlet0[i] = lowerBound;
-    } else if (dspBufferAtInlet0[i] >= upperBound) {
+    } else if (buffer[i] >= upperBound) {
       dspBufferAtOutlet0[i] = upperBound;
     } else {
-      dspBufferAtOutlet0[i] = dspBufferAtInlet0[i];
+      dspBufferAtOutlet0[i] = buffer[i];
     }
   }
   #endif

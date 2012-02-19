@@ -98,8 +98,9 @@ void DspTableRead::processDspWithIndex(int fromIndex, int toIndex) {
     // select the indicies
     vDSP_vindex(buffer, outBuff, 1, outBuff, 1, duration);
     #else
+    float *inputBuffer = dspBufferAtInlet[0];
     for (int i = fromIndex; i < toIndex; i++) {
-      int x = (int) (dspBufferAtInlet0[i] + offset);
+      int x = (int) (inputBuffer[i] + offset);
       if (x <= 0) {
         dspBufferAtOutlet0[i] = buffer[0];
       } else if (x >= bufferLength) {
