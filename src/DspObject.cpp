@@ -73,6 +73,8 @@ void DspObject::init(int numDspInlets, int numDspOutlets, int blockSize) {
   
   // initialise the local output audio buffers
   dspBufferAtOutlet0 = (numDspOutlets > 0) ? (float *) calloc(numDspOutlets * blockSize, sizeof(float)) : NULL;
+  dspBufferAtOutlet0 = (numDspOutlets > 0) ? (float *) valloc(numDspOutlets * blockSize * sizeof(float)) : NULL;
+  memset(dspBufferAtOutlet0, 0, numDspOutlets * blockSize * sizeof(float)); // clear the block
 }
 
 DspObject::~DspObject() {  

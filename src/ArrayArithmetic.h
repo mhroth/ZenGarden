@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -52,16 +52,16 @@ class ArrayArithmetic {
       output += startIndex;
       int n = endIndex - startIndex;
       int n4 = n & 0xFFFFFFFC;
-      __m128 inVec0, inVec1, res;
-      while (n4) {
-        inVec0 = _mm_loadu_ps(input0);
-        inVec1 = _mm_loadu_ps(input1);
-        res = _mm_add_ps(inVec0, inVec1);
-        _mm_store_ps(output, res);
-        n4 -= 4;
-        input0 += 4;
-        input1 += 4;
-        output += 4;
+      if (startIndex & 0x3) {
+        while (n4) {
+          _mm_storeu_ps(output, _mm_add_ps(_mm_loadu_ps(input0), _mm_loadu_ps(input1)));
+          n4 -= 4; input0 += 4; input1 += 4; output += 4;
+        }
+      } else {
+        while (n4) {
+          _mm_store_ps(output, _mm_add_ps(_mm_load_ps(input0), _mm_load_ps(input1)));
+          n4 -= 4; input0 += 4; input1 += 4; output += 4;
+        }
       }
       switch (n & 0x3) {
         case 3: *output++ = *input0++ + *input1++;
@@ -107,15 +107,17 @@ class ArrayArithmetic {
       output += startIndex;
       int n = endIndex - startIndex;
       int n4 = n & 0xFFFFFFFC;
-      __m128 inVec, res;
       __m128 constVec = _mm_set1_ps(constant);
-      while (n4) {
-        inVec = _mm_loadu_ps(input);
-        res = _mm_add_ps(inVec, constVec);
-        _mm_storeu_ps(output, res);
-        n4 -= 4;
-        input += 4;
-        output += 4;
+      if (startIndex & 0x3) {
+        while (n4) {
+          _mm_storeu_ps(output, _mm_add_ps(_mm_loadu_ps(input), constVec));
+          n4 -= 4; input += 4; output += 4;
+        }
+      } else {
+        while (n4) {
+          _mm_store_ps(output, _mm_add_ps(_mm_load_ps(input), constVec));
+          n4 -= 4; input += 4; output += 4;
+        }
       }
       switch (n & 0x3) {
         case 3: *output++ += constant;
@@ -160,16 +162,16 @@ class ArrayArithmetic {
       output += startIndex;
       int n = endIndex - startIndex;
       int n4 = n & 0xFFFFFFFC;
-      __m128 inVec0, inVec1, res;
-      while (n4) {
-        inVec0 = _mm_loadu_ps(input0);
-        inVec1 = _mm_loadu_ps(input1);
-        res = _mm_sub_ps(inVec0, inVec1);
-        _mm_store_ps(output, res);
-        n4 -= 4;
-        input0 += 4;
-        input1 += 4;
-        output += 4;
+      if (startIndex & 0x3) {
+        while (n4) {
+          _mm_storeu_ps(output, _mm_sub_ps(_mm_loadu_ps(input0), _mm_loadu_ps(input1)));
+          n4 -= 4; input0 += 4; input1 += 4; output += 4;
+        }
+      } else {
+        while (n4) {
+          _mm_store_ps(output, _mm_sub_ps(_mm_load_ps(input0), _mm_load_ps(input1)));
+          n4 -= 4; input0 += 4; input1 += 4; output += 4;
+        }
       }
       switch (n & 0x3) {
         case 3: *output++ = *input0++ - *input1++;
@@ -216,15 +218,17 @@ class ArrayArithmetic {
       output += startIndex;
       int n = endIndex - startIndex;
       int n4 = n & 0xFFFFFFFC;
-      __m128 inVec, res;
       __m128 constVec = _mm_set1_ps(constant);
-      while (n4) {
-        inVec = _mm_loadu_ps(input);
-        res = _mm_sub_ps(inVec, constVec);
-        _mm_storeu_ps(output, res);
-        n4 -= 4;
-        input += 4;
-        output += 4;
+      if (startIndex & 0x3) {
+        while (n4) {
+          _mm_storeu_ps(output, _mm_sub_ps(_mm_loadu_ps(input), constVec));
+          n4 -= 4; input += 4; output += 4;
+        }
+      } else {
+        while (n4) {
+          _mm_store_ps(output, _mm_sub_ps(_mm_load_ps(input), constVec));
+          n4 -= 4; input += 4; output += 4;
+        }
       }
       switch (n & 0x3) {
         case 3: *output++ -= constant;
@@ -268,16 +272,16 @@ class ArrayArithmetic {
       output += startIndex;
       int n = endIndex - startIndex;
       int n4 = n & 0xFFFFFFFC;
-      __m128 inVec0, inVec1, res;
-      while (n4) {
-        inVec0 = _mm_loadu_ps(input0);
-        inVec1 = _mm_loadu_ps(input1);
-        res = _mm_mul_ps(inVec0, inVec1);
-        _mm_store_ps(output, res);
-        n4 -= 4;
-        input0 += 4;
-        input1 += 4;
-        output += 4;
+      if (startIndex & 0x3) {
+        while (n4) {
+          _mm_storeu_ps(output, _mm_mul_ps(_mm_loadu_ps(input0), _mm_loadu_ps(input1)));
+          n4 -= 4; input0 += 4; input1 += 4; output += 4;
+        }
+      } else {
+        while (n4) {
+          _mm_store_ps(output, _mm_mul_ps(_mm_load_ps(input0), _mm_load_ps(input1)));
+          n4 -= 4; input0 += 4; input1 += 4; output += 4;
+        }
       }
       switch (n & 0x3) {
         case 3: *output++ = *input0++ * *input1++;
@@ -323,15 +327,17 @@ class ArrayArithmetic {
       output += startIndex;
       int n = endIndex - startIndex;
       int n4 = n & 0xFFFFFFFC;
-      __m128 inVec, res;
       __m128 constVec = _mm_set1_ps(constant);
-      while (n4) {
-        inVec = _mm_loadu_ps(input);
-        res = _mm_mul_ps(inVec, constVec);
-        _mm_storeu_ps(output, res);
-        n4 -= 4;
-        input += 4;
-        output += 4;
+      if (startIndex & 0x3) { // array must start on 16-byte boundary
+        while (n4) {
+          _mm_storeu_ps(output, _mm_mul_ps(_mm_loadu_ps(input), constVec));
+          n4 -= 4; input += 4; output += 4;
+        }
+      } else {
+        while (n4) {
+          _mm_store_ps(output, _mm_mul_ps(_mm_load_ps(input), constVec));
+          n4 -= 4; input += 4; output += 4;
+        }
       }
       switch (n & 0x3) {
         case 3: *output++ *= constant;
@@ -371,16 +377,27 @@ class ArrayArithmetic {
       #if __APPLE__
       vDSP_vdiv(input1+startIndex, 1, input0+startIndex, 1, output+startIndex, 1, endIndex-startIndex);
       #elif __SSE__
-      __m128 inVec0, inVec1, res;
-      const int numFours = (endIndex - startIndex) >> 2;
-      for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
-        inVec0 = _mm_loadu_ps(input0 + i);
-        inVec1 = _mm_loadu_ps(input1 + i);
-        res = _mm_div_ps(inVec0, inVec1);
-        _mm_store_ps(output + i, res);
+      input0 += startIndex;
+      input1 += startIndex;
+      output += startIndex;
+      int n = endIndex - startIndex;
+      int n4 = n & 0xFFFFFFFC;
+      if (startIndex & 0x3) {
+        while (n4) {
+          _mm_storeu_ps(output, _mm_div_ps(_mm_loadu_ps(input0), _mm_loadu_ps(input1)));
+          n4 -= 4; input0 += 4; input1 += 4; output += 4;
+        }
+      } else {
+        while (n4) {
+          _mm_store_ps(output, _mm_div_ps(_mm_load_ps(input0), _mm_load_ps(input1)));
+          n4 -= 4; input0 += 4; input1 += 4; output += 4;
+        }
       }
-      for (int i = startIndex + numFours<<2; i < endIndex; i++) {
-        output[i] = input0[i] / input1[i];
+      switch (n & 0x3) {
+        case 3: *output++ = *input0++ / *input1++;
+        case 2: *output++ = *input0++ / *input1++;
+        case 1: *output++ = *input0++ / *input1++;
+        default: break;
       }
       #else
       for (int i = startIndex; i < endIndex; i++) {
@@ -393,16 +410,27 @@ class ArrayArithmetic {
       #if __APPLE__
       vDSP_vsdiv(input+startIndex, 1, &constant, output+startIndex, 1, endIndex-startIndex);
       #elif __SSE__
-      __m128 inVec, res;
-      const __m128 constVec = _mm_load1_ps(&constant);
-      const int numFours = (endIndex - startIndex) >> 2;
-      for (int i = startIndex, j = 0; j < numFours; i+=4, j++) {
-        inVec = _mm_loadu_ps(input + i);
-        res = _mm_div_ps(inVec, constVec);
-        _mm_store_ps(output + i, res);
+      input += startIndex;
+      output += startIndex;
+      int n = endIndex - startIndex;
+      int n4 = n & 0xFFFFFFFC;
+      __m128 constVec = _mm_set1_ps(constant);
+      if (startIndex & 0x3) {
+        while (n4) {
+          _mm_storeu_ps(output, _mm_div_ps(_mm_loadu_ps(input), constVec));
+          n4 -= 4; input += 4; output += 4;
+        }
+      } else {
+        while (n4) {
+          _mm_store_ps(output, _mm_div_ps(_mm_load_ps(input), constVec));
+          n4 -= 4; input += 4; output += 4;
+        }
       }
-      for (int i = startIndex + numFours<<2; i < endIndex; i++) {
-        output[i] = input[i] / constant;
+      switch (n & 0x3) {
+        case 3: *output++ /= constant;
+        case 2: *output++ /= constant;
+        case 1: *output++ /= constant;
+        default: break;
       }
       #else
       for (int i = startIndex; i < endIndex; i++) {
@@ -435,10 +463,16 @@ class ArrayArithmetic {
       int n = endIndex - startIndex;
       int n4 = n & 0xFFFFFFFC; // force n to be a multiple of 4
       const __m128 constVec = _mm_set1_ps(constant);
-      while (n4) {
-        _mm_storeu_ps(input, constVec); // _mm_store_ps or _mm_storeu_ps?
-        n4 -= 4;
-        input += 4;
+      if (startIndex & 0x3) {
+        while (n4) {
+          _mm_storeu_ps(input, constVec);
+          n4 -= 4; input += 4;
+        }        
+      } else {
+        while (n4) {
+          _mm_store_ps(input, constVec);
+          n4 -= 4; input += 4;
+        }
       }
       switch (n & 0x3) {
         case 3: *input++ = constant;
