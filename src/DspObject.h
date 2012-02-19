@@ -142,7 +142,7 @@ class DspObject : public MessageObject {
     int blockSizeInt;
   
     /** The sample index of the last received message, relative to the beginning of the current block. */
-    float blockIndexOfLastMessage;
+    double blockIndexOfLastMessage;
   
     /** The local message queue. Messages that are pending for the next block. */
     queue<MessageLetPair> messageQueue;

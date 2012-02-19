@@ -128,7 +128,7 @@ class PdGraph : public DspObject {
     int getNumOutputChannels();
   
     /** A convenience function to determine when in a block a message occurs. */
-    float getBlockIndex(PdMessage *message);
+    double getBlockIndex(PdMessage *message);
   
     /** Returns the graphId of this graph. */
     int getGraphId();

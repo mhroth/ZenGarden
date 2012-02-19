@@ -434,10 +434,9 @@ void PdGraph::unregisterObject(MessageObject *messageObject) {
   }
 }
 
-float PdGraph::getBlockIndex(PdMessage *message) {
+double PdGraph::getBlockIndex(PdMessage *message) {
   // sampleRate is in samples/second, but we need samples/millisecond
-  return ((float) (message->getTimestamp() - context->getBlockStartTimestamp())) *
-      context->getSampleRate() / 1000.0f;
+  return (message->getTimestamp() - context->getBlockStartTimestamp()) * 0.001 * context->getSampleRate();
 }
 
 float PdGraph::getSampleRate() {

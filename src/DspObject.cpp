@@ -45,6 +45,7 @@ void DspObject::init(int numDspInlets, int numDspOutlets, int blockSize) {
   blockSizeInt = blockSize;
   blockIndexOfLastMessage = 0.0f;
   signalPrecedence = MESSAGE_MESSAGE; // default
+  blockIndexOfLastMessage = 0.0;
   numBytesInBlock = blockSizeInt * sizeof(float);
   
   if (zeroBufferSize < blockSize) {
