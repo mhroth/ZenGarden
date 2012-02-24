@@ -29,7 +29,7 @@ MessageObject *DspInlet::newObject(PdMessage *initMessage, PdGraph *graph) {
 }
 
 DspInlet::DspInlet(PdGraph *graph) : DspObject(0, 1, 0, 1, graph) {
-  canvasX = 0.0f;
+  // nothing to do
 }
 
 DspInlet::~DspInlet() {
@@ -42,6 +42,10 @@ const char *DspInlet::getObjectLabel() {
 
 ObjectType DspInlet::getObjectType() {
   return DSP_INLET;
+}
+
+string DspInlet::toString() {
+  return string(getObjectLabel());
 }
 
 list<MessageObject *> *DspInlet::getProcessOrder() {
@@ -71,18 +75,5 @@ void DspInlet::receiveMessage(int inletIndex, PdMessage *message) {
 }
 
 void DspInlet::processDsp() {
-  switch (incomingDspConnections[0].size()) {
-    case 0: {
-      ArrayArithmetic::fill(dspBufferAtOutlet0, 0.0f, 0, blockSizeInt);
-      break;
-    }
-    case 1: {
-      memcpy(dspBufferAtOutlet0, dspBufferAtInlet0, numBytesInBlock);
-      break;
-    }
-    default: {
-      resolveInputBuffers(0, dspBufferAtOutlet0);
-      break;
-    }
-  }
+  memcpy(dspBufferAtOutlet0, dspBufferAtInlet[0], numBytesInBlock);
 }

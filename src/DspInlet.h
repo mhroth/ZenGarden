@@ -40,6 +40,7 @@ class DspInlet : public DspObject {
     ~DspInlet();
   
     static const char *getObjectLabel();
+    string toString();
     ObjectType getObjectType();
   
     list<MessageObject *> *getProcessOrder();
