@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -44,7 +44,6 @@ class DspDelayWrite : public DspObject {
   private:
   
     char *name;
-    float *buffer;
     int bufferLength;
     int headIndex;
 };
