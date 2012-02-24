@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -26,8 +26,7 @@
 #include "DspObject.h"
 
 enum DspMultiplyCodePath {
-  DSP_MULTIPLY_DSP_DSP,
-  DSP_MULTIPLY_DSP_MESSAGE
+  DSP_MULTIPLY_DSP_DSP = DSP_OBJECT_PROCESS_OTHER
 };
 
 class DspMultiply : public DspObject {
@@ -47,8 +46,6 @@ class DspMultiply : public DspObject {
     void processDspWithIndex(int fromIndex, int toIndex);
   
     void onInletConnectionUpdate(unsigned int inletIndex);
-    
-    DspMultiplyCodePath codePath;
     
     float inputConstant;
     float constant;

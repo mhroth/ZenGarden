@@ -116,6 +116,9 @@ class DspObject : public MessageObject {
      * (optimised) codepath with this new information.
      */
     virtual void onInletConnectionUpdate(unsigned int inletIndex);
+  
+    /** Immediately deletes all messages in the message queue without executing them. */
+    void clearMessageQueue();
     
     // both float and int versions of the blocksize are stored as different internal mechanisms
     // require different number formats

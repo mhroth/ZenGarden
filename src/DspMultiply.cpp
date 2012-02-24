@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -30,7 +30,6 @@ MessageObject *DspMultiply::newObject(PdMessage *initMessage, PdGraph *graph) {
 
 DspMultiply::DspMultiply(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
   constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
-  codePath = DSP_MULTIPLY_DSP_MESSAGE;
   inputConstant = 0.0f;
 }
 
@@ -50,8 +49,12 @@ string DspMultiply::toString() {
 }
 
 void DspMultiply::onInletConnectionUpdate(unsigned int inletIndex) {
-  codePath = (incomingDspConnections[0].size() > 0 && incomingDspConnections[1].size() > 0)
-      ? DSP_MULTIPLY_DSP_DSP : DSP_MULTIPLY_DSP_MESSAGE;
+  if (incomingDspConnections[0].size() > 0 && incomingDspConnections[1].size() > 0) {
+    clearMessageQueue();
+    codepath = DSP_MULTIPLY_DSP_DSP;
+  } else {
+    codepath = DSP_OBJECT_PROCESS_NO_MESSAGE;
+  }
 }
 
 void DspMultiply::processMessage(int inletIndex, PdMessage *message) {
@@ -63,8 +66,12 @@ void DspMultiply::processMessage(int inletIndex, PdMessage *message) {
 }
 
 void DspMultiply::processDsp() {
-  switch (codePath) {
+  switch (codepath) {
     case DSP_MULTIPLY_DSP_DSP: {
+      ArrayArithmetic::multiply(dspBufferAtInlet[0], dspBufferAtInlet[1], dspBufferAtOutlet0, 0, blockSizeInt);
+      break;
+    }
+    case DSP_OBJECT_PROCESS_NO_MESSAGE: {
       ArrayArithmetic::multiply(dspBufferAtInlet[0], constant, dspBufferAtOutlet0, 0, blockSizeInt);
       break;
     }

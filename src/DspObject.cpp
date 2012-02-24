@@ -76,7 +76,11 @@ DspObject::~DspObject() {
     zeroBuffer = NULL;
     zeroBufferSize = 0;
   }
+  
+  // delete any messages still pending
+  clearMessageQueue();
 
+  // free the inlet buffer index
   free(dspBufferAtInlet);
   
   // free the local output audio buffers
@@ -185,6 +189,15 @@ void DspObject::setDspBufferRefAtInlet(float *buffer, unsigned int inletIndex) {
 
 
 #pragma mark -
+
+void DspObject::clearMessageQueue() {
+  while (!messageQueue.empty()) {
+    MessageLetPair messageLetPair = messageQueue.front();
+    PdMessage *message = messageLetPair.first;
+    message->freeMessage();
+    messageQueue.pop();
+  }
+}
 
 bool DspObject::shouldDistributeMessageToInlets() {
   return false;
