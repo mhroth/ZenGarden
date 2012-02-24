@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -43,10 +43,9 @@ DspObject::DspObject(int numMessageInlets, int numDspInlets, int numMessageOutle
 
 void DspObject::init(int numDspInlets, int numDspOutlets, int blockSize) {
   blockSizeInt = blockSize;
-  blockIndexOfLastMessage = 0.0f;
-  signalPrecedence = MESSAGE_MESSAGE; // default
   blockIndexOfLastMessage = 0.0;
   numBytesInBlock = blockSizeInt * sizeof(float);
+  codepath = DSP_OBJECT_PROCESS_NO_MESSAGE;
   
   if (zeroBufferSize < blockSize) {
     float *buffer = (float *) realloc(zeroBuffer, blockSize * sizeof(float));
@@ -60,20 +59,13 @@ void DspObject::init(int numDspInlets, int numDspOutlets, int blockSize) {
   // initialise the incoming dsp connections list
   incomingDspConnections = vector<list<ObjectLetPair> >(numDspInlets);
   
-  // with no connections, this convenience pointer should point to zero
-  dspBufferAtInlet0 = zeroBuffer;
-  
   // initialise the outgoing dsp connections list
   outgoingDspConnections = vector<list<ObjectLetPair> >(numDspOutlets);
-  
-  // with no connections, this convenience pointer should point to zero
-  dspBufferAtInlet1 = zeroBuffer;
-  
-  dspBufferAtInlet = (numDspInlets > 2) ? (float **) calloc(numDspInlets, sizeof(float *)) : NULL;
-  dspBufferRefListAtInlet = vector<vector<float *> >(numDspInlets);
+
+  dspBufferAtInlet = (float **) malloc(numDspInlets * sizeof(float *));
+  for (int i = 0; i < numDspInlets; i++) dspBufferAtInlet[i] = zeroBuffer;
   
   // initialise the local output audio buffers
-  dspBufferAtOutlet0 = (numDspOutlets > 0) ? (float *) calloc(numDspOutlets * blockSize, sizeof(float)) : NULL;
   dspBufferAtOutlet0 = (numDspOutlets > 0) ? (float *) valloc(numDspOutlets * blockSize * sizeof(float)) : NULL;
   memset(dspBufferAtOutlet0, 0, numDspOutlets * blockSize * sizeof(float)); // clear the block
 }
@@ -89,6 +81,10 @@ DspObject::~DspObject() {
   
   // free the local output audio buffers
   free(dspBufferAtOutlet0);
+}
+
+const char *DspObject::getObjectLabel() {
+  return "obj~";
 }
 
 
@@ -115,12 +111,20 @@ list<ObjectLetPair> DspObject::getIncomingConnections(unsigned int inletIndex) {
   return messageConnectionList;
 }
 
+list<ObjectLetPair> DspObject::getIncomingDspConnections(unsigned int inletIndex) {
+  return (inletIndex < incomingDspConnections.size()) ? incomingDspConnections[inletIndex] : list<ObjectLetPair>();
+}
+
 list<ObjectLetPair> DspObject::getOutgoingConnections(unsigned int outletIndex) {
   list<ObjectLetPair> messageConnectionList = MessageObject::getOutgoingConnections(outletIndex);
   list<ObjectLetPair> dspConnectionList = outgoingDspConnections.empty()
       ? list<ObjectLetPair>() : outgoingDspConnections[outletIndex];
   messageConnectionList.insert(messageConnectionList.end(), dspConnectionList.begin(), dspConnectionList.end());
   return messageConnectionList;
+}
+
+list<ObjectLetPair> DspObject::getOutgoingDspConnections(unsigned int outletIndex) {
+  return outgoingDspConnections[outletIndex];
 }
 
 
@@ -134,49 +138,23 @@ void DspObject::addConnectionFromObjectToInlet(MessageObject *messageObject, int
     ObjectLetPair objectLetPair = make_pair(messageObject, outletIndex);
     connections->push_back(objectLetPair);
     
-    // set signal precedence
-    signalPrecedence = (DspMessagePresedence) (signalPrecedence | (0x1 << inletIndex));
-    
-    DspObject *dspObject = (DspObject *) messageObject;
-    // get pointer to inletIndex-th element of dspBufferRefListAtInlet
-    vector<float *> *dspBufferRefList = &(*(dspBufferRefListAtInlet.begin() + inletIndex));
-    dspBufferRefList->push_back(dspObject->getDspBufferRefAtOutlet(outletIndex));
-    updateInletBufferRefs(inletIndex);
+    onInletConnectionUpdate(inletIndex);
   }
 }
 
 void DspObject::removeConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex) {
   if (messageObject->getConnectionType(outletIndex) == DSP) {
-    list<ObjectLetPair> *incomingConnections = &incomingDspConnections[inletIndex];
+    list<ObjectLetPair> *connections = &incomingDspConnections[inletIndex];
     ObjectLetPair objectLetPair = make_pair(messageObject, outletIndex);
-    incomingConnections->remove(objectLetPair); // does this work?
+    connections->remove(objectLetPair); // NOTE(mhroth): does this work?
     
-    updateInletBufferRefs(inletIndex);
+    onInletConnectionUpdate(inletIndex);
   } else {
     MessageObject::removeConnectionFromObjectToInlet(messageObject, outletIndex, inletIndex);
   }
 }
 
-void DspObject::updateInletBufferRefs(unsigned int inletIndex) {
-  vector<float *> *dspBufferRefList = &(*(dspBufferRefListAtInlet.begin() + inletIndex));
-  if (inletIndex == 0) {
-    if (incomingDspConnections[0].size() == 0) {
-      dspBufferAtInlet0 = zeroBuffer;
-    } else if (incomingDspConnections[0].size() == 1) {
-      dspBufferAtInlet0 = dspBufferRefList->at(0);
-    }
-  } else if (inletIndex == 1) {
-    if (incomingDspConnections.size() == 0) {
-      dspBufferAtInlet1 = zeroBuffer;
-    } else if (incomingDspConnections[1].size() == 1) {
-      dspBufferAtInlet1 = dspBufferRefList->at(0);
-    }
-  }
-  
-  onInletConnectionUpdate();
-}
-
-void DspObject::onInletConnectionUpdate() {
+void DspObject::onInletConnectionUpdate(unsigned int inletIndex) {
   // nothing to do
 }
 
@@ -201,6 +179,10 @@ void DspObject::removeConnectionToObjectFromOutlet(MessageObject *messageObject,
   }
 }
 
+void DspObject::setDspBufferRefAtInlet(float *buffer, unsigned int inletIndex) {
+  dspBufferAtInlet[inletIndex] = buffer;
+}
+
 
 #pragma mark -
 
@@ -215,63 +197,42 @@ void DspObject::receiveMessage(int inletIndex, PdMessage *message) {
     // Copy the message to the heap so that it is available to process later.
     // The message is released once it is consumed in processDsp().
     messageQueue.push(make_pair(message->copyToHeap(), inletIndex));
+    codepath = DSP_OBJECT_PROCESS_MESSAGE;
   }
 }
 
 void DspObject::processDsp() {
-  // take care of common special cases giving a good increase in speed. Most objects have only one
-  // or two inlets. And most objects usually have only one (or none!) DSP connection per inlet.
-  int numDspInlets = incomingDspConnections.size();
-  switch (numDspInlets) {
-    default: {
-      for (int i = 2; i < numDspInlets; i++) {
-        vector<float *> *dspBufferRefList = &(*(dspBufferRefListAtInlet.begin() + i));
-        if (dspBufferRefList->size() > 1) {
-          dspBufferAtInlet[i] = (float *) alloca(numBytesInBlock);
-          resolveInputBuffers(i, dspBufferAtInlet[i]);
-        }
-      }
-      // allow fallthrough
+  switch (codepath) {
+    case DSP_OBJECT_PROCESS_MESSAGE: {
+      do { // there is at least one message
+        MessageLetPair messageLetPair = messageQueue.front();
+        PdMessage *message = messageLetPair.first;
+        unsigned int inletIndex = messageLetPair.second;
+        
+        double blockIndexOfCurrentMessage = graph->getBlockIndex(message);
+        processDspWithIndex(blockIndexOfLastMessage, blockIndexOfCurrentMessage);
+        processMessage(inletIndex, message);
+        message->freeMessage(); // free the message from the head, the message has been consumed.
+        messageQueue.pop();
+        
+        blockIndexOfLastMessage = blockIndexOfCurrentMessage;
+      } while (!messageQueue.empty());
+      processDspWithIndex(blockIndexOfLastMessage, (double) blockSizeInt);
+      blockIndexOfLastMessage = 0.0; // reset the block index of the last received message
+      codepath = DSP_OBJECT_PROCESS_NO_MESSAGE;
+      break;
     }
-    case 2: {
-      // numConnectionsToInlet1
-      if (incomingDspConnections[1].size() > 1) {
-        dspBufferAtInlet1 = (float *) alloca(numBytesInBlock);
-        resolveInputBuffers(1, dspBufferAtInlet1);
-      }
-      // allow fallthrough
+    default:
+    case DSP_OBJECT_PROCESS_NO_MESSAGE: {
+      processDspWithIndex(0, blockSizeInt);
+      break;
     }
-    case 1: {
-      RESOLVE_DSPINLET0_IF_NECESSARY();
-      // allow fallthrough
-    }
-    case 0: break;
-  }
-  
-  if (!messageQueue.empty()) {
-    do { // there is at least one message
-      MessageLetPair messageLetPair = messageQueue.front();
-      PdMessage *message = messageLetPair.first;
-      unsigned int inletIndex = messageLetPair.second;
-      
-      float blockIndexOfCurrentMessage = graph->getBlockIndex(message);
-      processDspWithIndex(blockIndexOfLastMessage, blockIndexOfCurrentMessage);
-      processMessage(inletIndex, message);
-      message->freeMessage(); // free the message from the head, the message has been consumed.
-      messageQueue.pop();
-      
-      blockIndexOfLastMessage = blockIndexOfCurrentMessage;
-    } while (!messageQueue.empty());
-    processDspWithIndex(blockIndexOfLastMessage, (float) blockSizeInt);
-    blockIndexOfLastMessage = 0.0f; // reset the block index of the last received message
-  } else {
-    processDspWithIndex(0, blockSizeInt);
   }
 }
 
-void DspObject::processDspWithIndex(float fromIndex, float toIndex) {
+void DspObject::processDspWithIndex(double fromIndex, double toIndex) {
   // by default, this function just calls the integer version with adjusted block indicies
-  processDspWithIndex((int) ceilf(fromIndex), (int) ceilf(toIndex));
+  processDspWithIndex((int) ceil(fromIndex), (int) ceil(toIndex));
 }
 
 void DspObject::processDspWithIndex(int fromIndex, int toIndex) {

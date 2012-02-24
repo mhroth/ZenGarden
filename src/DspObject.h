@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -25,24 +25,15 @@
 
 #include <queue>
 #include "ArrayArithmetic.h"
-#include "DspMessagePresedence.h"
 #include "MessageObject.h"
 
-// this function is a macro and not a function such that the allocated buffer stays on the stack
-// for the remainder of the function
-#define RESOLVE_DSPINLET0_IF_NECESSARY() \
-  if (incomingDspConnections[0].size() > 1) { \
-    dspBufferAtInlet0 = (float *) alloca(numBytesInBlock); \
-    resolveInputBuffers(0, dspBufferAtInlet0); \
-  }
-
-#define RESOLVE_DSPINLET1_IF_NECESSARY() \
-  if (incomingDspConnections[1].size() > 1) { \
-    dspBufferAtInlet1 = (float *) alloca(numBytesInBlock); \
-    resolveInputBuffers(1, dspBufferAtInlet1); \
-  }
-
 typedef std::pair<PdMessage *, unsigned int> MessageLetPair;
+
+enum DspObjectProcessMessage {
+  DSP_OBJECT_PROCESS_MESSAGE,    // a message will be processing during this block
+  DSP_OBJECT_PROCESS_NO_MESSAGE, // no message will be processed this block
+  DSP_OBJECT_PROCESS_OTHER       // some other process operation will take place
+};
 
 /**
  * A <code>DspObject</code> is the abstract superclass of any object which processes audio.
@@ -78,6 +69,8 @@ class DspObject : public MessageObject {
 
     virtual float *getDspBufferRefAtOutlet(int outletIndex);
   
+    virtual void setDspBufferRefAtInlet(float *buffer, unsigned int inletIndex);
+  
     virtual void addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex);
     virtual void addConnectionToObjectFromOutlet(MessageObject *messageObject, int inletIndex, int outletIndex);
     virtual void removeConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex);
@@ -98,44 +91,31 @@ class DspObject : public MessageObject {
      */
     virtual list<ObjectLetPair> getIncomingConnections(unsigned int inletIndex);
   
+    /** Returns only incoming dsp connections to the given inlet. */
+    virtual list<ObjectLetPair> getIncomingDspConnections(unsigned int inletIndex);
+  
     /**
      * Returns <i>all</i> outgoing connections from the given outlet. This includes both message and
      * dsp connections.
      */
     virtual list<ObjectLetPair> getOutgoingConnections(unsigned int outletIndex);
-    
-  protected: 
-    /* IMPORTANT: one of these two functions MUST be overridden (or processDsp()) */
-    virtual void processDspWithIndex(float fromIndex, float toIndex);
-    virtual void processDspWithIndex(int fromIndex, int toIndex);
   
-    /**
-     * Prepares the input buffer at the given inlet index.
-     * This is a helper function for <code>processDsp()</code>.
-     * it is known here that there are at least 2 connections at the given inlet
-     */
-    inline void resolveInputBuffers(int inletIndex, float *localInputBuffer) {
-      vector<float *> *dspBufferRefList = &(*(dspBufferRefListAtInlet.begin() + inletIndex));
-      
-      // prepare the vector iterator
-      vector<float *>::iterator it = dspBufferRefList->begin();
-      vector<float *>::iterator end = dspBufferRefList->end();
-      
-      // add the first two connections together into the input buffer
-      ArrayArithmetic::add(*it++, *it++, localInputBuffer, 0, blockSizeInt);
-      
-      // add the remaining output buffers to the input buffer
-      while (it != end) {
-        ArrayArithmetic::add(localInputBuffer, *it++, localInputBuffer, 0, blockSizeInt);
-      }
-    }
+    /** Returns only outgoing dsp connections from the given outlet. */
+    virtual list<ObjectLetPair> getOutgoingDspConnections(unsigned int outletIndex);
+  
+    static const char *getObjectLabel();
+    
+  protected:
+    /* IMPORTANT: one of these two functions MUST be overridden (or processDsp()) */
+    virtual void processDspWithIndex(double fromIndex, double toIndex);
+    virtual void processDspWithIndex(int fromIndex, int toIndex);
   
     /**
      * DspObject subclasses are informed that a connection change has happened to an inlet. A
      * message or signal connection has been added or removed. They may which to reconfigure their
      * (optimised) codepath with this new information.
      */
-    virtual void onInletConnectionUpdate();
+    virtual void onInletConnectionUpdate(unsigned int inletIndex);
     
     // both float and int versions of the blocksize are stored as different internal mechanisms
     // require different number formats
@@ -147,22 +127,11 @@ class DspObject : public MessageObject {
     /** The local message queue. Messages that are pending for the next block. */
     queue<MessageLetPair> messageQueue;
   
-    /** Indicates if messages or signals should take precedence on two inlet <code>DspObject</code>s. */
-    DspMessagePresedence signalPrecedence;
-  
     /** The number of bytes in a single dsp block. == blockSize * sizeof(float) */
     int numBytesInBlock;
   
-    float *dspBufferAtInlet0;
-    float *dspBufferAtInlet1;
-  
-    /**
-     * An array of pointers to resolved dsp buffers at each inlet. Positions 0 and 1 are invalid
-     * and should instead be referenced from dspBufferAtInlet0 and dspBufferAtInlet1.
-     */
+    /* An array of pointers to resolved dsp buffers at each inlet. */
     float **dspBufferAtInlet;
-
-    vector<vector<float *> > dspBufferRefListAtInlet;
   
     /** Points to a concatinated array of all output buffers. Permanent pointer to the local output buffers. */
     float *dspBufferAtOutlet0;
@@ -173,6 +142,9 @@ class DspObject : public MessageObject {
     /** List of all dsp objects to which this object connects at each outlet. */
     vector<list<ObjectLetPair> > outgoingDspConnections;
   
+    /** The indication of what to do when <code>processDsp</code> is called. */
+    int codepath;
+  
     static float *zeroBuffer;
     static int zeroBufferCount;
     static int zeroBufferSize;
@@ -180,8 +152,6 @@ class DspObject : public MessageObject {
   private:
     /** This function encapsulates the common code between the two constructors. */
     void init(int numDspInlets, int numDspOutlets, int blockSize);
-  
-    void updateInletBufferRefs(unsigned int inletIndex);
 };
 
 #endif // _DSP_OBJECT_H_
