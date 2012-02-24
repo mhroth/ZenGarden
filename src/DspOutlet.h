@@ -43,6 +43,7 @@ class DspOutlet : public DspObject {
     ~DspOutlet();
   
     static const char *getObjectLabel();
+    string toString();
     ObjectType getObjectType();
 
     bool isLeafNode();

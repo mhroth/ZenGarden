@@ -38,6 +38,10 @@ const char *DspOutlet::getObjectLabel() {
   return "outlet~";
 }
 
+string DspOutlet::toString() {
+  return string(getObjectLabel());
+}
+
 ObjectType DspOutlet::getObjectType() {
   return DSP_OUTLET;
 }
@@ -51,10 +55,5 @@ float *DspOutlet::getDspBufferRefAtOutlet(int outletIndex) {
 }
 
 void DspOutlet::processDsp() {
-  if (incomingDspConnections[0].size() > 1) {
-    // if there are many connections, resolve directly to the ouput buffer
-    resolveInputBuffers(0, dspBufferAtOutlet0);
-  } else {
-    memcpy(dspBufferAtOutlet0, dspBufferAtInlet0, numBytesInBlock);
-  }
+  memcpy(dspBufferAtOutlet0, dspBufferAtInlet[0], numBytesInBlock);
 }
