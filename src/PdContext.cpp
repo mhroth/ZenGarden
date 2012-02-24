@@ -168,11 +168,17 @@ void PdContext::process(float *inputBuffers, float *outputBuffers) {
     object->sendMessage(outletIndex, message);
     message->freeMessage(); // free the message now that it has been sent and processed
   }
-
-  int numGraphs = graphList.size();
-  PdGraph **graph = (numGraphs > 0) ? &graphList.front() : NULL;
-  for (int i = 0; i < numGraphs; ++i) {
-    graph[i]->processDsp();
+  
+  switch (graphList.size()) {
+    case 0: break;
+    case 1: graphList.front()->processDsp(); break;
+    default: {
+      int numGraphs = graphList.size();
+      PdGraph **graph = &graphList.front();
+      for (int i = 0; i < numGraphs; ++i) {
+        graph[i]->processDsp();
+      }
+    }
   }
   
   blockStartTimestamp = nextBlockStartTimestamp;
