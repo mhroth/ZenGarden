@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -253,6 +253,8 @@ class PdGraph : public DspObject {
      * called in the <code>processDsp()</code> loop.
      */
     list<DspObject *> dspNodeList;
+  
+    list<DspObject *> implicitDspAddList;
     
     /** A list of all inlet (message or audio) nodes in this subgraph. */
     vector<MessageObject *> inletList; // in fact contains only MessageInlet and DspInlet objects

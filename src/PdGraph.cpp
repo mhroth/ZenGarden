@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -21,6 +21,7 @@
  */
 
 #include "DeclareList.h"
+#include "DspAdd.h"
 #include "DspInlet.h"
 #include "DspOutlet.h"
 #include "DspTablePlay.h"
@@ -66,10 +67,14 @@ PdGraph::~PdGraph() {
   graphArguments->freeMessage();
   delete declareList;
 
+  // delete all implicit +~ nodes
+  for (list<DspObject *>::iterator it = implicitDspAddList.begin(); it != implicitDspAddList.end(); ++it) {
+    delete *it;
+  }
+  
   // delete all constituent nodes
-  list<MessageObject *>::iterator it = nodeList.begin();
-  while (it != nodeList.end()) {
-    delete *it++;
+  for (list<MessageObject *>::iterator it = nodeList.begin(); it != nodeList.end(); ++it) {
+    delete *it;
   }
 }
 
@@ -226,11 +231,13 @@ void PdGraph::addConnection(MessageObject *fromObject, int outletIndex, MessageO
   lockContextIfAttached();
   toObject->addConnectionFromObjectToInlet(fromObject, outletIndex, inletIndex);
   fromObject->addConnectionToObjectFromOutlet(toObject, inletIndex, outletIndex);
+  
   // NOTE(mhroth): very heavy handed approach. Always recompute the process order when adding connections.
   // In theory this function should check to see if a reordering is even necessary and then only make
   // the appropriate changes. Usually a complete reevaluation shouldn't be necessary, and otherwise
   // the use of a linked list to store the node list should make the reordering fast.
   computeLocalDspProcessOrder(); 
+ 
   unlockContextIfAttached();
 }
 
@@ -509,8 +516,7 @@ void PdGraph::sendMessageToNamedReceivers(char *name, PdMessage *message) {
 }
 
 
-#pragma mark -
-#pragma mark Message/DspObject Functions
+#pragma mark - Message/DspObject Functions
 
 void PdGraph::receiveMessage(int inletIndex, PdMessage *message) {
   MessageInlet *inlet = (MessageInlet *) inletList.at(inletIndex);
@@ -526,10 +532,8 @@ void PdGraph::processDsp() {
     
     // TODO(mhroth): iterate depending on local blocksize relative to parent
     // execute all nodes which process audio
-    list<DspObject *>::iterator it = dspNodeList.begin();
-    list<DspObject *>::iterator end = dspNodeList.end();
-    while (it != end) {
-      (*it++)->processDsp();
+    for (list<DspObject *>::iterator it = dspNodeList.begin(); it != dspNodeList.end(); ++it) {
+      (*it)->processDsp();
     }
   }
 }
@@ -641,7 +645,7 @@ bool PdGraph::isLeafNode() {
 
 void PdGraph::computeLocalDspProcessOrder() {
   lockContextIfAttached();
-  
+
   /* clear/reset dspNodeList
    * Find all leaf nodes in nodeList. this includes PdGraphs as they are objects as well.
    * For each leaf node, generate an ordering for all of the nodes in the current graph.
@@ -651,10 +655,8 @@ void PdGraph::computeLocalDspProcessOrder() {
 
   // generate the leafnode list
   list<MessageObject *> leafNodeList;
-  list<MessageObject *>::iterator it = nodeList.begin();
-  list<MessageObject *>::iterator end = nodeList.end();
-  while (it != end) {
-    MessageObject *object = *it++;
+  for (list<MessageObject *>::iterator it = nodeList.begin(); it != nodeList.end(); ++it) {
+    MessageObject *object = *it;
     
     object->resetOrderedFlag(); // reset the ordered flag on all local objects
     if (object->isLeafNode()) { // isLeafNode() takes into account send/~ and throw~ objects
@@ -664,7 +666,7 @@ void PdGraph::computeLocalDspProcessOrder() {
 
   // for all leaf nodes, order the tree
   list<MessageObject *> processList;
-  for (list<MessageObject *>::iterator it = leafNodeList.begin(); it != leafNodeList.end(); it++) {
+  for (list<MessageObject *>::iterator it = leafNodeList.begin(); it != leafNodeList.end(); ++it) {
     MessageObject *object = *it;
     list<MessageObject *> *processSubList = object->getProcessOrder();
     processList.splice(processList.end(), *processSubList);
@@ -672,24 +674,74 @@ void PdGraph::computeLocalDspProcessOrder() {
   }
 
   // add only those nodes which process audio to the final list
+  // delete all objects in the implicit +~ list
+  for (list<DspObject *>::iterator it = implicitDspAddList.begin();
+      it != implicitDspAddList.end(); ++it) {
+    delete *it;
+  }
+  implicitDspAddList.clear();
+  
   dspNodeList.clear(); // reset the dsp node list
-  for (list<MessageObject *>::iterator it = processList.begin(); it != processList.end(); it++) {
-    // reverse order of process list such that the dsp elements at the top of the graph are processed first
+  
+  for (list<MessageObject *>::iterator it = processList.begin(); it != processList.end(); ++it) {
+    // dsp elements at the top of the graph (i.e. process list) are processed first
     MessageObject *object = *it;
     if (object->doesProcessAudio()) {
-      dspNodeList.push_back((DspObject *) object);
+      // Add +~ objects to perform implicit sum operation for signal connections to the same inlet
+      DspObject *dspObject = reinterpret_cast<DspObject *>(object);
+      for (int i = 0; i < dspObject->getNumInlets(); i++) {
+        list<ObjectLetPair> incomingDspConnectionsList = dspObject->getIncomingDspConnections(i);
+        switch (incomingDspConnectionsList.size()) {
+          case 0: {
+            // if no connections are made to an inlet, then it receives a zero buffer
+            dspObject->setDspBufferRefAtInlet(zeroBuffer, i);
+            break;
+          }
+          case 1: {
+            // if only one connections exists to the object, add the connection directly
+            ObjectLetPair objectLetPair = incomingDspConnectionsList.front();
+            DspObject *prevObject = (DspObject *) objectLetPair.first;
+            unsigned int outletIndex = objectLetPair.second;
+            dspObject->setDspBufferRefAtInlet(prevObject->getDspBufferRefAtOutlet(outletIndex), i);
+            break;
+          }
+          default: {
+            // if more than one connection exists to an inlet, create a series of dummy +~ objects
+            // to perform implicit summing
+            list<ObjectLetPair>::iterator jt = incomingDspConnectionsList.begin();
+            DspObject *prevObject = (DspObject *) (*jt).first;
+            unsigned int prevOutlet = (*jt++).second;
+            PdMessage *dspAddInitMessage = PD_MESSAGE_ON_STACK(1);
+            dspAddInitMessage->setFloat(0, 0.0f);
+            while (jt != incomingDspConnectionsList.end()) {
+              DspAdd *dspAdd = new DspAdd(dspAddInitMessage, this);
+              dspAdd->addConnectionFromObjectToInlet(prevObject, prevOutlet, 0);
+              dspAdd->addConnectionFromObjectToInlet((*jt).first, (*jt++).second, 1);
+              prevObject = dspAdd; prevOutlet = 0;
+              dspNodeList.push_back(dspAdd);
+              implicitDspAddList.push_back(dspAdd);
+            }
+            // set dsp ref at inlet of dspObject to prevObject
+            dspObject->setDspBufferRefAtInlet(prevObject->getDspBufferRefAtOutlet(0), i);
+            break;
+          }
+        }
+      }
+      dspNodeList.push_back(dspObject); // add the dsp object to the dsp node list
     }
   }
   
   /* print out process order of local dsp objects (for debugging) */
   /*
-  if (dspNodeList->size() > 0) {
+  if (!dspNodeList.empty()) {
     // print dsp evaluation order for debugging, but only if there are any nodes to list
-    printStd("--- ordered evaluation list ---");
-    for (int i = 0; i < dspNodeList->size(); i++) {
-      MessageObject *messageObject = (MessageObject *) dspNodeList->get(i);
-      printStd(messageObject->getObjectLabel());
+    printStd("  - ordered evaluation list ---");
+    list<DspObject *>::iterator it = dspNodeList.begin();
+    list<DspObject *>::iterator end = dspNodeList.end();
+    while (it != end) {
+      printStd((*it++)->toString().c_str());
     }
+    printStd("\n");
   }
   */
   
@@ -757,7 +809,7 @@ ConnectionType PdGraph::getConnectionType(int outletIndex) {
 bool PdGraph::doesProcessAudio() {
   // This graph processes audio if it contains any nodes which process audio.
   // This works because graph objects are only created after they have been filled with objects.
-  return (dspNodeList.size() > 0);
+  return !dspNodeList.empty();
 }
 
 void PdGraph::setBlockSize(int blockSize) {
