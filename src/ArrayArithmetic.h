@@ -328,7 +328,7 @@ class ArrayArithmetic {
       int n = endIndex - startIndex;
       int n4 = n & 0xFFFFFFFC;
       __m128 constVec = _mm_set1_ps(constant);
-      if (startIndex & 0x3) { // array must start on 16-byte boundary
+      if (startIndex & 0x3) { // array must start on 16-byte boundary otherwise unaligned load must be used
         while (n4) {
           _mm_storeu_ps(output, _mm_mul_ps(_mm_loadu_ps(input), constVec));
           n4 -= 4; input += 4; output += 4;
