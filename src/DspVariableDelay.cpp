@@ -56,11 +56,12 @@ void DspVariableDelay::processDspWithIndex(int fromIndex, int toIndex) {
   int bufferLength;
   float *buffer = delayline->getBuffer(&headIndex, &bufferLength);
   float bufferLengthFloat = (float) bufferLength;
-  float xArray[blockSizeInt];
-  float targetIndexBaseArray[blockSizeInt];
   
   float targetIndexBase = (float) (headIndex - blockSizeInt);
   #if __APPLE__
+  float xArray[blockSizeInt];
+  float targetIndexBaseArray[blockSizeInt];
+  
   // calculate delay in samples (vector version of StaticUtils::millisecondsToSamples)
   float samplesPerMillisecond = sampleRate / 1000.0f;
   vDSP_vsmul(dspBufferAtInlet[0], 1, &samplesPerMillisecond, xArray, 1, blockSizeInt);
@@ -82,8 +83,9 @@ void DspVariableDelay::processDspWithIndex(int fromIndex, int toIndex) {
   // do table lookup (in buffer) using xArray as indicies, with linear interpolation 
   vDSP_vlint(buffer, xArray, 1, dspBufferAtOutlet0, 1, blockSizeInt, bufferLength);
   #else
+  float *inputbuffer = dspBufferAtInlet[0];
   for (int i = 0; i < blockSizeInt; i++, targetIndexBase+=1.0f) {
-    float delayInSamples = StaticUtils::millisecondsToSamples(dspBufferAtInlet0[i], sampleRate);
+    float delayInSamples = StaticUtils::millisecondsToSamples(inputbuffer[i], sampleRate);
     if (delayInSamples < 0.0f) {
       delayInSamples = 0.0f;
     } else if (delayInSamples > bufferLengthFloat) {
