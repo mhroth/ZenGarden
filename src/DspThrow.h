@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -45,13 +45,11 @@ class DspThrow : public DspObject {
   
     static const char *getObjectLabel();
   
+    void processDsp();
     void processMessage(int inletIndex, PdMessage *message);
     
   private:
-    void processDspWithIndex(int fromIndex, int toIndex);
-  
     char *name;
-    float *buffer;
 };
 
 #endif // _DSP_THROW_H_

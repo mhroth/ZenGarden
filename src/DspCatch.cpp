@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010,2011 Reality Jockey, Ltd.
+ *  Copyright 2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -83,10 +83,9 @@ void DspCatch::processDsp() {
     }
     default: { // throwList.size() > 1
       list<DspThrow *>::iterator it = throwList.begin();
-      list<DspThrow *>::iterator end = throwList.end();
-      ArrayArithmetic::add((*it++)->getBuffer(), (*it++)->getBuffer(), dspBufferAtOutlet0, 0, blockSizeInt);
-      while (it != end) {
-        ArrayArithmetic::add(dspBufferAtOutlet0, (*it++)->getBuffer(), dspBufferAtOutlet0,
+      ArrayArithmetic::add((*it)->getBuffer(), (*(++it))->getBuffer(), dspBufferAtOutlet0, 0, blockSizeInt);
+      while (++it != throwList.end()) {
+        ArrayArithmetic::add(dspBufferAtOutlet0, (*it)->getBuffer(), dspBufferAtOutlet0,
             0, blockSizeInt);
       }
       break;

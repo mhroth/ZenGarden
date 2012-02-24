@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -30,19 +30,17 @@ MessageObject *DspThrow::newObject(PdMessage *initMessage, PdGraph *graph) {
 DspThrow::DspThrow(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0, 0, graph) {
   if (initMessage->isSymbol(0)) {
     name = StaticUtils::copyString(initMessage->getSymbol(0));
-    buffer = (float *) calloc(blockSizeInt, sizeof(float));
-    // dspBufferAtOutlet0 is otherwise not used as throw~ has no outlets. It is used to hold a
-    // reference to the local buffer
-    dspBufferAtOutlet0 = buffer;
+    dspBufferAtOutlet0 = (float *) valloc(blockSizeInt * sizeof(float));
   } else {
     name = NULL;
-    graph->printErr("throw~ may not be initialised without a name. \"set\" message not supported.\n");
+    graph->printErr("throw~ may not be initialised without a name. \"set\" message not supported.");
   }
 }
 
 DspThrow::~DspThrow() {
   free(name);
   free(dspBufferAtOutlet0);
+  dspBufferAtOutlet0 = NULL;
 }
 
 const char *DspThrow::getObjectLabel() {
@@ -53,23 +51,16 @@ char *DspThrow::getName() {
   return name;
 }
 
-void DspThrow::processMessage(int inletIndex, PdMessage *message) {
-  if (inletIndex == 0 && message->isSymbol(0) && message->isSymbol(1)) {
-    graph->printErr("throw~ does not support the \"set\" message.\n");
-  }
-}
-
 float *DspThrow::getBuffer() {
-  return buffer;
+  return dspBufferAtOutlet0;
 }
 
-void DspThrow::processDspWithIndex(int fromIndex, int toIndex) {
-  if (incomingDspConnections[0].size() > 1) {
-    // inlet has been resolved, and thus the input exists in a temporary array
-    buffer = dspBufferAtOutlet0;
-    memcpy(buffer, dspBufferAtInlet0, numBytesInBlock);
-  } else {
-    // inlet does not need to be resolved, and is thus a pointer to a permanent array
-    buffer = dspBufferAtInlet0;
+void DspThrow::processMessage(int inletIndex, PdMessage *message) {
+  if (inletIndex == 0 && message->isSymbol(0, "set") && message->isSymbol(1)) {
+    graph->printErr("throw~ does not support the \"set\" message.");
   }
+}
+
+void DspThrow::processDsp() {
+  memcpy(dspBufferAtOutlet0, dspBufferAtInlet[0], numBytesInBlock);
 }

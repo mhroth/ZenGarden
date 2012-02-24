@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -33,7 +33,7 @@ DspSend::DspSend(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0, 0,
     
     // as this object has no official outlet buffer, reuse the class variable in order to reference
     // the local scratch buffer.
-    dspBufferAtOutlet0 = (float *) calloc(blockSizeInt, sizeof(float));
+    dspBufferAtOutlet0 = (float *) valloc(blockSizeInt * sizeof(float));
   } else {
     name = NULL;
     graph->printErr("send~ not initialised with a name.");
@@ -51,7 +51,7 @@ const char *DspSend::getObjectLabel() {
 }
 
 string DspSend::toString() {
-  char str[snprintf(NULL, 0, "%s %s", getObjectLabel(), name)];
+  char str[snprintf(NULL, 0, "%s %s", getObjectLabel(), name)+1];
   snprintf(str, sizeof(str), "%s %s", getObjectLabel(), name);
   return string(str);
 }
