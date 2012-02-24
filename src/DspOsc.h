@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -26,8 +26,7 @@
 #include "DspObject.h"
 
 enum DspOscCodePath {
-  DSP_OSC_DSP,
-  DSP_OSC_MESSAGE
+  DSP_OSC_DSP = DSP_OBJECT_PROCESS_OTHER
 };
 
 /** [osc~], [osc~ float] */
@@ -40,6 +39,8 @@ class DspOsc : public DspObject {
   
     static const char *getObjectLabel();
     string toString();
+  
+    void processDsp();
   
   protected:
     void processMessage(int inletIndex, PdMessage *message);
@@ -54,7 +55,6 @@ class DspOsc : public DspObject {
     float index; // indexes the current place in the cosine lookup table
     static float *cos_table; // the cosine lookup table
     static int refCount; // a reference counter for cos_table. Now we know when to free it.
-    DspOscCodePath codePath;
 };
 
 #endif // _DSP_OSC_H_

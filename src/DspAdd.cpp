@@ -41,7 +41,7 @@ void DspAdd::onInletConnectionUpdate(unsigned int inletIndex) {
     clearMessageQueue();
     codepath = DSP_ADD_DSP_DSP;
   } else {
-    codepath = DSP_OBJECT_PROCESS_NO_MESSAGE;
+    codepath = messageQueue.empty() ? DSP_OBJECT_PROCESS_NO_MESSAGE : DSP_OBJECT_PROCESS_MESSAGE;
   }
 }
 

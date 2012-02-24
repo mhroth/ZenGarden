@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -33,7 +33,6 @@ MessageObject *DspOsc::newObject(PdMessage *initMessage, PdGraph *graph) {
 
 DspOsc::DspOsc(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
   frequency = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
-  codePath = DSP_OSC_MESSAGE;
   
   this->sampleRate = graph->getSampleRate();
   phase = 0.0f;
@@ -61,7 +60,12 @@ const char *DspOsc::getObjectLabel() {
 }
 
 void DspOsc::onInletConnectionUpdate(unsigned int inletIndex) {
-  codePath = (incomingDspConnections[0].size() > 0) ? DSP_OSC_DSP : DSP_OSC_MESSAGE;
+  if (incomingDspConnections[0].size() > 0) {
+    clearMessageQueue();
+    codepath = DSP_OSC_DSP;
+  } else {
+    codepath = messageQueue.empty() ? DSP_OBJECT_PROCESS_NO_MESSAGE : DSP_OBJECT_PROCESS_MESSAGE;
+  }
 }
 
 string DspOsc::toString() {
@@ -86,11 +90,11 @@ void DspOsc::processMessage(int inletIndex, PdMessage *message) {
   }
 }
 
-void DspOsc::processDspWithIndex(int fromIndex, int toIndex) {
-  switch (codePath) {
+void DspOsc::processDsp() {
+  switch (codepath) {
     case DSP_OSC_DSP: {
       float *buffer = dspBufferAtInlet[0];
-      for (int i = fromIndex; i < toIndex; index += buffer[i++]) {
+      for (int i = 0; i < blockSizeInt; index += buffer[i++]) {
         if (index < 0.0f) {
           index += sampleRate;
         } else if (index >= sampleRate) {
@@ -100,19 +104,24 @@ void DspOsc::processDspWithIndex(int fromIndex, int toIndex) {
       }
       break;
     }
-    case DSP_OSC_MESSAGE: {
-      for (int i = fromIndex; i < toIndex; i++, index += frequency) {
-        if (index < 0.0f) {
-          // allow negative frequencies (read the wavetable backwards)
-          index += sampleRate;
-        } else if (index >= sampleRate) {
-          // TODO(mhroth): if the frequency is higher than the sample rate, the index will point
-          // outside of the cos_table
-          index -= sampleRate;
-        }
-        dspBufferAtOutlet0[i] = cos_table[(int) index];
-      }
+    case DSP_OBJECT_PROCESS_NO_MESSAGE: {
+      processDspWithIndex(0, blockSizeInt);
       break;
     }
+    default: DspObject::processDsp();
+  }
+}
+
+void DspOsc::processDspWithIndex(int fromIndex, int toIndex) {
+  for (int i = fromIndex; i < toIndex; i++, index += frequency) {
+    if (index < 0.0f) {
+      // allow negative frequencies (read the wavetable backwards)
+      index += sampleRate;
+    } else if (index >= sampleRate) {
+      // TODO(mhroth): if the frequency is higher than the sample rate, the index will point
+      // outside of the cos_table
+      index -= sampleRate;
+    }
+    dspBufferAtOutlet0[i] = cos_table[(int) index];
   }
 }
