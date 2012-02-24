@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -30,7 +30,6 @@ MessageObject *DspAdd::newObject(PdMessage *initMessage, PdGraph *graph) {
 
 DspAdd::DspAdd(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
   constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
-  codePath = DSP_ADD_DSP_MESSAGE;
 }
 
 DspAdd::~DspAdd() {
@@ -38,8 +37,12 @@ DspAdd::~DspAdd() {
 }
 
 void DspAdd::onInletConnectionUpdate(unsigned int inletIndex) {
-  codePath = (incomingDspConnections[0].size() > 0 && incomingDspConnections[1].size() > 0)
-      ? DSP_ADD_DSP_DSP : DSP_ADD_DSP_MESSAGE;
+  if (incomingDspConnections[0].size() > 0 && incomingDspConnections[1].size() > 0) {
+    clearMessageQueue();
+    codepath = DSP_ADD_DSP_DSP;
+  } else {
+    codepath = DSP_OBJECT_PROCESS_NO_MESSAGE;
+  }
 }
 
 const char *DspAdd::getObjectLabel() {
@@ -62,9 +65,13 @@ void DspAdd::processMessage(int inletIndex, PdMessage *message) {
 }
 
 void DspAdd::processDsp() {
-  switch (codePath) {
+  switch (codepath) {
     case DSP_ADD_DSP_DSP: {
       ArrayArithmetic::add(dspBufferAtInlet[0], dspBufferAtInlet[1], dspBufferAtOutlet0, 0, blockSizeInt);
+      break;
+    }
+    case DSP_OBJECT_PROCESS_NO_MESSAGE: {
+      ArrayArithmetic::add(dspBufferAtInlet[0], constant, dspBufferAtOutlet0, 0, blockSizeInt);
       break;
     }
     default: {

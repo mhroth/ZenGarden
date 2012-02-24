@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2011 Reality Jockey, Ltd.
+ *  Copyright 2009,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -26,8 +26,7 @@
 #include "DspObject.h"
 
 enum DspAddCodePath {
-  DSP_ADD_DSP_MESSAGE,
-  DSP_ADD_DSP_DSP
+  DSP_ADD_DSP_DSP = DSP_OBJECT_PROCESS_OTHER
 };
 
 /** [+~], [+~ float] */
@@ -49,8 +48,6 @@ class DspAdd : public DspObject {
     void processMessage(int inletIndex, PdMessage *message);
     void processDspWithIndex(int fromIndex, int toIndex);
   
-    DspAddCodePath codePath;
-    
     float constant;
 };
 
