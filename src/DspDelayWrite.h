@@ -37,7 +37,11 @@ class DspDelayWrite : public DspObject {
   
     char *getName();
   
-    float *getBuffer(int *headIndex, int *bufferLength);
+    inline float *getBuffer(int *index, int *length) {
+      *index = headIndex;
+      *length = bufferLength;
+      return dspBufferAtOutlet0;
+    }
   
     void processDsp();
   
