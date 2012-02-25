@@ -169,7 +169,6 @@
 		90337D0111D0D847009FCC01 /* DspLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337B6C11D0D847009FCC01 /* DspLog.h */; };
 		90337D0211D0D847009FCC01 /* DspLowpassFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B6D11D0D847009FCC01 /* DspLowpassFilter.cpp */; };
 		90337D0311D0D847009FCC01 /* DspLowpassFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337B6E11D0D847009FCC01 /* DspLowpassFilter.h */; };
-		90337D0411D0D847009FCC01 /* DspMessagePresedence.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337B6F11D0D847009FCC01 /* DspMessagePresedence.h */; };
 		90337D0511D0D847009FCC01 /* DspMultiply.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B7011D0D847009FCC01 /* DspMultiply.cpp */; };
 		90337D0611D0D847009FCC01 /* DspMultiply.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337B7111D0D847009FCC01 /* DspMultiply.h */; };
 		90337D0711D0D847009FCC01 /* DspNoise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B7211D0D847009FCC01 /* DspNoise.cpp */; };
@@ -390,7 +389,6 @@
 		90337E0511D0D847009FCC01 /* DspLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337B6C11D0D847009FCC01 /* DspLog.h */; };
 		90337E0611D0D847009FCC01 /* DspLowpassFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B6D11D0D847009FCC01 /* DspLowpassFilter.cpp */; };
 		90337E0711D0D847009FCC01 /* DspLowpassFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337B6E11D0D847009FCC01 /* DspLowpassFilter.h */; };
-		90337E0811D0D847009FCC01 /* DspMessagePresedence.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337B6F11D0D847009FCC01 /* DspMessagePresedence.h */; };
 		90337E0911D0D847009FCC01 /* DspMultiply.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B7011D0D847009FCC01 /* DspMultiply.cpp */; };
 		90337E0A11D0D847009FCC01 /* DspMultiply.h in Headers */ = {isa = PBXBuildFile; fileRef = 90337B7111D0D847009FCC01 /* DspMultiply.h */; };
 		90337E0B11D0D847009FCC01 /* DspNoise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90337B7211D0D847009FCC01 /* DspNoise.cpp */; };
@@ -614,12 +612,17 @@
 		909608E0120B8A1C00135B03 /* MessageStripNote.h in Headers */ = {isa = PBXBuildFile; fileRef = 909608DC120B8A1C00135B03 /* MessageStripNote.h */; };
 		909608E1120B8A1C00135B03 /* MessageStripNote.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 909608DD120B8A1C00135B03 /* MessageStripNote.cpp */; };
 		909608E2120B8A1C00135B03 /* MessageStripNote.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 909608DD120B8A1C00135B03 /* MessageStripNote.cpp */; };
+		90988E7A143E69120028E2B7 /* DspFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 90988E79143E69120028E2B7 /* DspFilter.h */; };
+		90988E7B143E69120028E2B7 /* DspFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 90988E79143E69120028E2B7 /* DspFilter.h */; };
 		9099A82C13D0437E0091E9FF /* MessageCputime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90DC264E13A003EF000954D7 /* MessageCputime.cpp */; };
 		9099A82D13D0437E0091E9FF /* MessageCputime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90DC264E13A003EF000954D7 /* MessageCputime.cpp */; };
 		9099A82E13D0437F0091E9FF /* MessageCputime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90DC264E13A003EF000954D7 /* MessageCputime.cpp */; };
 		9099A82F13D043D60091E9FF /* DspVCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 901F57FB1398E808009781F0 /* DspVCF.cpp */; };
 		9099A83013D043D70091E9FF /* DspVCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 901F57FB1398E808009781F0 /* DspVCF.cpp */; };
 		9099A83113D043D80091E9FF /* DspVCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 901F57FB1398E808009781F0 /* DspVCF.cpp */; };
+		90A42CC0143E68BB00DBF988 /* DspFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90A42CBF143E68BB00DBF988 /* DspFilter.cpp */; };
+		90A42CC1143E68BB00DBF988 /* DspFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90A42CBF143E68BB00DBF988 /* DspFilter.cpp */; };
+		90A42CC2143E68BB00DBF988 /* DspFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90A42CBF143E68BB00DBF988 /* DspFilter.cpp */; };
 		90AD81761298675C0029E2B1 /* DspRfft.h in Headers */ = {isa = PBXBuildFile; fileRef = 90AD81741298675C0029E2B1 /* DspRfft.h */; };
 		90AD81771298675C0029E2B1 /* DspRfft.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90AD81751298675C0029E2B1 /* DspRfft.cpp */; };
 		90AD81781298675C0029E2B1 /* DspRfft.h in Headers */ = {isa = PBXBuildFile; fileRef = 90AD81741298675C0029E2B1 /* DspRfft.h */; };
@@ -764,7 +767,6 @@
 		90337B6C11D0D847009FCC01 /* DspLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspLog.h; path = ../src/DspLog.h; sourceTree = SOURCE_ROOT; };
 		90337B6D11D0D847009FCC01 /* DspLowpassFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspLowpassFilter.cpp; path = ../src/DspLowpassFilter.cpp; sourceTree = SOURCE_ROOT; };
 		90337B6E11D0D847009FCC01 /* DspLowpassFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspLowpassFilter.h; path = ../src/DspLowpassFilter.h; sourceTree = SOURCE_ROOT; };
-		90337B6F11D0D847009FCC01 /* DspMessagePresedence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspMessagePresedence.h; path = ../src/DspMessagePresedence.h; sourceTree = SOURCE_ROOT; };
 		90337B7011D0D847009FCC01 /* DspMultiply.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspMultiply.cpp; path = ../src/DspMultiply.cpp; sourceTree = SOURCE_ROOT; };
 		90337B7111D0D847009FCC01 /* DspMultiply.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspMultiply.h; path = ../src/DspMultiply.h; sourceTree = SOURCE_ROOT; };
 		90337B7211D0D847009FCC01 /* DspNoise.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspNoise.cpp; path = ../src/DspNoise.cpp; sourceTree = SOURCE_ROOT; };
@@ -964,6 +966,8 @@
 		9086906B129AC67B00D3BD5D /* DspSqrt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspSqrt.cpp; path = ../src/DspSqrt.cpp; sourceTree = SOURCE_ROOT; };
 		909608DC120B8A1C00135B03 /* MessageStripNote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageStripNote.h; path = ../src/MessageStripNote.h; sourceTree = SOURCE_ROOT; };
 		909608DD120B8A1C00135B03 /* MessageStripNote.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageStripNote.cpp; path = ../src/MessageStripNote.cpp; sourceTree = SOURCE_ROOT; };
+		90988E79143E69120028E2B7 /* DspFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspFilter.h; path = ../src/DspFilter.h; sourceTree = "<group>"; };
+		90A42CBF143E68BB00DBF988 /* DspFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspFilter.cpp; path = ../src/DspFilter.cpp; sourceTree = "<group>"; };
 		90AD81741298675C0029E2B1 /* DspRfft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspRfft.h; path = ../src/DspRfft.h; sourceTree = SOURCE_ROOT; };
 		90AD81751298675C0029E2B1 /* DspRfft.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspRfft.cpp; path = ../src/DspRfft.cpp; sourceTree = SOURCE_ROOT; };
 		90AD81B612986DE10029E2B1 /* DspPrint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspPrint.h; path = ../src/DspPrint.h; sourceTree = SOURCE_ROOT; };
@@ -1075,6 +1079,8 @@
 				90337B6111D0D847009FCC01 /* DspDivide.h */,
 				90337B6211D0D847009FCC01 /* DspEnvelope.cpp */,
 				90337B6311D0D847009FCC01 /* DspEnvelope.h */,
+				90A42CBF143E68BB00DBF988 /* DspFilter.cpp */,
+				90988E79143E69120028E2B7 /* DspFilter.h */,
 				90337B6411D0D847009FCC01 /* DspHighpassFilter.cpp */,
 				90337B6511D0D847009FCC01 /* DspHighpassFilter.h */,
 				90337B6611D0D847009FCC01 /* DspInlet.cpp */,
@@ -1086,7 +1092,6 @@
 				90337B6C11D0D847009FCC01 /* DspLog.h */,
 				90337B6D11D0D847009FCC01 /* DspLowpassFilter.cpp */,
 				90337B6E11D0D847009FCC01 /* DspLowpassFilter.h */,
-				90337B6F11D0D847009FCC01 /* DspMessagePresedence.h */,
 				90B1873311FDB167009B45AB /* DspMinimum.cpp */,
 				90B1873211FDB167009B45AB /* DspMinimum.h */,
 				90337B7011D0D847009FCC01 /* DspMultiply.cpp */,
@@ -1382,7 +1387,6 @@
 				90337CFF11D0D847009FCC01 /* DspLine.h in Headers */,
 				90337D0111D0D847009FCC01 /* DspLog.h in Headers */,
 				90337D0311D0D847009FCC01 /* DspLowpassFilter.h in Headers */,
-				90337D0411D0D847009FCC01 /* DspMessagePresedence.h in Headers */,
 				90337D0611D0D847009FCC01 /* DspMultiply.h in Headers */,
 				90337D0811D0D847009FCC01 /* DspNoise.h in Headers */,
 				90337D0A11D0D847009FCC01 /* DspObject.h in Headers */,
@@ -1505,6 +1509,7 @@
 				90CCEBE31299CD7D009D36DF /* DspReciprocalSqrt.h in Headers */,
 				9086906C129AC67B00D3BD5D /* DspSqrt.h in Headers */,
 				90F3D68C13F82F700058E68D /* ObjectFactoryMap.h in Headers */,
+				90988E7A143E69120028E2B7 /* DspFilter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1532,7 +1537,6 @@
 				90337E0311D0D847009FCC01 /* DspLine.h in Headers */,
 				90337E0511D0D847009FCC01 /* DspLog.h in Headers */,
 				90337E0711D0D847009FCC01 /* DspLowpassFilter.h in Headers */,
-				90337E0811D0D847009FCC01 /* DspMessagePresedence.h in Headers */,
 				90337E0A11D0D847009FCC01 /* DspMultiply.h in Headers */,
 				90337E0C11D0D847009FCC01 /* DspNoise.h in Headers */,
 				90337E0E11D0D847009FCC01 /* DspObject.h in Headers */,
@@ -1655,6 +1659,7 @@
 				90CCEBE61299CD7D009D36DF /* DspReciprocalSqrt.h in Headers */,
 				9086906E129AC67B00D3BD5D /* DspSqrt.h in Headers */,
 				90F3D68D13F82F700058E68D /* ObjectFactoryMap.h in Headers */,
+				90988E7B143E69120028E2B7 /* DspFilter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1719,7 +1724,7 @@
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0410;
+				LastUpgradeCheck = 0420;
 			};
 			buildConfigurationList = 1DEB923508733DC60010E9CD /* Build configuration list for PBXProject "ZenGarden" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -1882,6 +1887,7 @@
 				9099A82C13D0437E0091E9FF /* MessageCputime.cpp in Sources */,
 				9099A82F13D043D60091E9FF /* DspVCF.cpp in Sources */,
 				90F3D68813F82F5F0058E68D /* ObjectFactoryMap.cpp in Sources */,
+				90A42CC0143E68BB00DBF988 /* DspFilter.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2023,6 +2029,7 @@
 				9099A82D13D0437E0091E9FF /* MessageCputime.cpp in Sources */,
 				9099A83013D043D70091E9FF /* DspVCF.cpp in Sources */,
 				90F3D68913F82F5F0058E68D /* ObjectFactoryMap.cpp in Sources */,
+				90A42CC1143E68BB00DBF988 /* DspFilter.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2164,6 +2171,7 @@
 				9099A82E13D0437F0091E9FF /* MessageCputime.cpp in Sources */,
 				9099A83113D043D80091E9FF /* DspVCF.cpp in Sources */,
 				90F3D68A13F82F5F0058E68D /* ObjectFactoryMap.cpp in Sources */,
+				90A42CC2143E68BB00DBF988 /* DspFilter.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2174,18 +2182,19 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_MODEL_TUNING = G5;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				INSTALL_PATH = /usr/local/bin;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					/usr/local/lib,
 					"\"$(SRCROOT)/../libs/Darwin\"",
 				);
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = "-lprofiler";
 				PRODUCT_NAME = ZenGarden;
 				VALID_ARCHS = "i386 x86_64";
 			};
@@ -2195,21 +2204,22 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G5;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = YES;
+				DEAD_CODE_STRIPPING = YES;
 				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				INSTALL_PATH = /usr/local/bin;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					/usr/local/lib,
 					"\"$(SRCROOT)/../libs/Darwin\"",
 				);
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = "-lprofiler";
 				PRODUCT_NAME = ZenGarden;
+				SEPARATE_STRIP = YES;
+				STRIP_INSTALLED_PRODUCT = YES;
 				VALID_ARCHS = "i386 x86_64";
 			};
 			name = Release;
