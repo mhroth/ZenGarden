@@ -251,9 +251,8 @@ bool PdMessage::isBang(unsigned int index) {
 
 bool PdMessage::hasFormat(const char *format) {
   if (format == NULL) return false;
-  int n = strlen(format);
-  if (n != numElements) return false;
-  for (int i = 0; i < n; i++) {
+  if (strlen(format) != numElements) return false;
+  for (int i = 0; i < numElements; i++) {
     switch (format[i]) {
       case 'f': if (!isFloat(i)) return false; break;
       case 's': if (!isSymbol(i)) return false; break;
