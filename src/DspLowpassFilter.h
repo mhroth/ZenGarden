@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,20 +23,13 @@
 #ifndef _DSP_LOW_PASS_FILTER_H_
 #define _DSP_LOW_PASS_FILTER_H_
 
-#include "DspObject.h"
-
-enum DspLopCodePath {
-  DSP_LOP_DSPX_MESSAGE0,
-  DSP_LOP_DSP1_MESSAGE0,
-  DSP_LOP_MESSAGE_MESSAGE,
-  DSP_LOP_DEFAULT
-};
+#include "DspFilter.h"
 
 /**
  * [lop~]
  * Specficially implement a one-tap IIR filter: y = alpha * x_0 + (1-alpha) * y_-1
  */
-class DspLowpassFilter : public DspObject {
+class DspLowpassFilter : public DspFilter {
   
   public:
     static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
@@ -45,38 +38,10 @@ class DspLowpassFilter : public DspObject {
   
     static const char *getObjectLabel();
   
-    float *getDspBufferRefAtOutlet(int outletIndex);
-  
-    void processDsp();
-    
-  private:
     void processMessage(int inletIndex, PdMessage *message);
-    void processDspWithIndex(int fromIndex, int toIndex);
-    void calculateFilterCoefficients(float cutoffFrequency);
-
-    inline void processLop(float *buffer, int fromIndex, int toIndex) {
-      #if __APPLE__
-      // vDSP_deq22 =
-      // out[i] = coeff[0]*in[i] + coeff[1]*in[i-1] + coeff[2]*in[i-2] - coeff[3]*out[i-1] - coeff[4]*out[i-2]
-      vDSP_deq22(buffer+fromIndex, 1, coefficients, dspBufferAtOutlet0+fromIndex, 1, toIndex - fromIndex);
-      #else
-      int _toIndex = toIndex + 2;
-      for (int i = fromIndex+2; i < _toIndex; i++) {
-        dspBufferAtOutlet0[i] = coefficients[0]*buffer[i] - coefficients[3]*dspBufferAtOutlet0[i-1];
-      }
-      #endif
-      
-      // retain last output
-      dspBufferAtOutlet0[0] = dspBufferAtOutlet0[toIndex];
-      dspBufferAtOutlet0[1] = dspBufferAtOutlet0[toIndex+1];
-    }
-
-    void onInletConnectionUpdate();
   
-    DspLopCodePath codePath;
-  
-    float coefficients[5];
-    float signalConstant;
+  private:
+    void calcFiltCoeff(float cutoffFrequency);
 };
 
 #endif // _DSP_LOW_PASS_FILTER_H_

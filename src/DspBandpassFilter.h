@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -23,13 +23,13 @@
 #ifndef _DSP_BAND_PASS_FILTER_H_
 #define _DSP_BAND_PASS_FILTER_H_
 
-#include "DspObject.h"
+#include "DspFilter.h"
 
 /**
  * [bp float float]
  * Implements the bp~ (2-pole) dsp object.
  */
-class DspBandpassFilter : public DspObject {
+class DspBandpassFilter : public DspFilter {
   
   public:
     static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
@@ -40,19 +40,10 @@ class DspBandpassFilter : public DspObject {
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
-    void processDspWithIndex(int fromIndex, int toIndex);
-  
-    void calculateFilterCoefficients(float f, float q);
-    inline float sigbp_qcos(float f); // not entirely sure what this is doing. From Pd.
-  
-    float sampleRate;
-    float centerFrequency;
+    void calcFiltCoeff(float fc, float q);
+
+    float fc; // the center frequency
     float q;
-    float coef1;
-    float coef2;
-    float gain;
-    float tap_0;
-    float tap_1;
 };
 
 #endif // _DSP_BAND_PASS_FILTER_H_

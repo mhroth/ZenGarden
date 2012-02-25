@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -27,14 +27,10 @@ MessageObject *DspBandpassFilter::newObject(PdMessage *initMessage, PdGraph *gra
   return new DspBandpassFilter(initMessage, graph);
 }
 
-DspBandpassFilter::DspBandpassFilter(PdMessage *initMessage, PdGraph *graph) : DspObject(3, 1, 0, 1, graph) {
-  sampleRate = graph->getSampleRate();
-  tap_0 = 0.0f;
-  tap_1 = 0.0f;
-  
-  centerFrequency = initMessage->isFloat(0) ? initMessage->getFloat(0) : sampleRate/2.0f;
+DspBandpassFilter::DspBandpassFilter(PdMessage *initMessage, PdGraph *graph) : DspFilter(3, graph) {
+  fc = initMessage->isFloat(0) ? initMessage->getFloat(0) : graph->getSampleRate()/2.0f;
   q = initMessage->isFloat(1) ? initMessage->getFloat(1) : 1.0f;
-  calculateFilterCoefficients(centerFrequency, q);
+  calcFiltCoeff(fc, q);
 }
 
 DspBandpassFilter::~DspBandpassFilter() {
@@ -45,63 +41,38 @@ const char *DspBandpassFilter::getObjectLabel() {
   return "bp~";
 }
 
-void DspBandpassFilter::calculateFilterCoefficients(float f, float q) {
-  float r, oneminusr, omega;
-  if (f < 0.001f) f = 10.0f;
+// http://www.musicdsp.org/files/Audio-EQ-Cookbook.txt
+void DspBandpassFilter::calcFiltCoeff(float fc, float q) {
+  if (fc > 0.5f * graph->getSampleRate()) fc = 0.5f * graph->getSampleRate();
+  else if (fc < 0.0f) fc = 0.0f;
   if (q < 0.0f) q = 0.0f;
-  this->centerFrequency = f;
-  this->q = q;
-  omega = f * (2.0f * M_PI) / sampleRate;
-  if (q < 0.001) oneminusr = 1.0f;
-  else oneminusr = omega/q;
-  if (oneminusr > 1.0f) oneminusr = 1.0f;
-  r = 1.0f - oneminusr;
-  coef1 = 2.0f * sigbp_qcos(omega) * r;
-  coef2 = - r * r;
-  gain = 2.0f * oneminusr * (oneminusr + r * omega);
-}
-
-float DspBandpassFilter::sigbp_qcos(float f) {
-  if (f >= -(0.5f * M_PI) && f <= (0.5f * M_PI)) {
-    float g = f*f;
-    return (((g*g*g * (-1.0f/720.0f) + g*g*(1.0f/24.0f)) - g*0.5) + 1);
-  } else {
-    return 0.0f;
-  }
+  
+  float wc = 2.0f*M_PI*fc/graph->getSampleRate();
+  float alpha = sinf(wc)/(2.0f*q);
+  
+  b[0] = alpha/(1.0f+alpha);
+  b[1] = 0.0f;
+  b[2] = -alpha/(1.0f+alpha);
+  b[3] = -2.0f*cosf(wc)/(1.0f+alpha);
+  b[4] = (1.0f-alpha)/(1.0f+alpha);
 }
 
 void DspBandpassFilter::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
       if (message->isSymbol(0, "clear")) {
-        tap_0 = 0.0f; // TODO(mhroth): how to handle filter resets?
-        tap_1 = 0.0f;
+        x1 = x2 = dspBufferAtOutlet0[0] = dspBufferAtOutlet0[1] = 0.0f;
       }
       break;
     }
     case 1: {
-      if (message->isFloat(0)) {
-        calculateFilterCoefficients(message->getFloat(0), q);
-      }
+      if (message->isFloat(0)) calcFiltCoeff(message->getFloat(0), q);
       break;
     }
     case 2: {
-      if (message->isFloat(0)) {
-        calculateFilterCoefficients(centerFrequency, message->getFloat(0));
-      }
+      if (message->isFloat(0)) calcFiltCoeff(fc, message->getFloat(0));
       break;
     }
-    default: {
-      break;
-    }
-  }
-}
-
-void DspBandpassFilter::processDspWithIndex(int fromIndex, int toIndex) {
-  for (int i = fromIndex; i < toIndex; i++) {
-    dspBufferAtOutlet0[i] = dspBufferAtInlet0[i] + (coef1 * tap_0) + (coef2 * tap_1);
-    tap_1 = tap_0;
-    tap_0 = dspBufferAtOutlet0[i];
-    dspBufferAtOutlet0[i] *= gain;
+    default: break;
   }
 }

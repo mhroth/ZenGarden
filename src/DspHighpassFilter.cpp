@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -20,8 +20,6 @@
  *
  */
 
-#include <float.h>
-#include "ArrayArithmetic.h"
 #include "DspHighpassFilter.h"
 #include "PdGraph.h"
 
@@ -29,12 +27,9 @@ MessageObject *DspHighpassFilter::newObject(PdMessage *initMessage, PdGraph *gra
   return new DspHighpassFilter(initMessage, graph);
 }
 
-DspHighpassFilter::DspHighpassFilter(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 1, 0, 1, graph) {
-  sampleRate = graph->getSampleRate();
-  tapIn = 0.0f;
-  tapOut = 0.0f;
+DspHighpassFilter::DspHighpassFilter(PdMessage *initMessage, PdGraph *graph) : DspFilter(2, graph) {
   // by default, the filter is initialised completely open
-  calculateFilterCoefficients(initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f);
+  calcFiltCoeff(initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f);
 }
 
 DspHighpassFilter::~DspHighpassFilter() {
@@ -45,60 +40,44 @@ const char *DspHighpassFilter::getObjectLabel() {
   return "hip~";
 }
 
-void DspHighpassFilter::calculateFilterCoefficients(float cutoffFrequency) {
-  if (cutoffFrequency <= 0.0f) {
-    cutoffFrequency = FLT_MIN;
-  } else if (cutoffFrequency > sampleRate/2.0f) {
-    cutoffFrequency = sampleRate/2.0f;
-  }
-  float rc = 1.0f / (2.0f * M_PI * cutoffFrequency);
-  alpha = rc / (rc + (1.0f/sampleRate));
-  coefficients[0] = alpha;
-  coefficients[1] = -1.0f * alpha;
-  coefficients[3] = -1.0f * alpha;
+// http://en.wikipedia.org/wiki/High-pass_filter
+void DspHighpassFilter::calcFiltCoeff(float fc) {
+  if (fc > 0.5f*graph->getSampleRate()) fc = 0.5f * graph->getSampleRate();
+  else if (fc < 0.0f) fc = 10.0f;
+  
+  float alpha = graph->getSampleRate() / ((2.0f*M_PI*fc) + graph->getSampleRate());
+  b[0] = alpha;
+  b[1] = -alpha;
+  b[2] = 0.0f;
+  b[3] = -alpha;
+  b[4] = 0.0f;
 }
 
 void DspHighpassFilter::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
-      if (message->isSymbol(0, "clear")) {
-        tapIn = 0.0f;
-        tapOut = 0.0f;
+      switch (message->getType(0)) {
+        case FLOAT: {
+//          signalConstant = message->getFloat(0);
+          break;
+        }
+        case SYMBOL: {
+          if (message->isSymbol(0, "clear")) {
+            x1 = x2 = 0.0f;
+            dspBufferAtOutlet0[0] = dspBufferAtOutlet0[1] = 0.0f;
+          }
+          break;
+        }
+        default: break;
       }
       break;
     }
     case 1: {
       if (message->isFloat(0)) {
-        calculateFilterCoefficients(message->getFloat(0));
+        calcFiltCoeff(message->getFloat(0));
       }
       break;
     }
-    default: {
-      break;
-    }
+    default: break;
   }
-}
-
-// http://en.wikipedia.org/wiki/High-pass_filter
-void DspHighpassFilter::processDspWithIndex(int fromIndex, int toIndex) {
-  #if __APPLE__
-  const int duration = toIndex - fromIndex;
-  const int durationBytes = duration * sizeof(float);
-  float filterInputBuffer[duration+2];
-  memcpy(filterInputBuffer+2, dspBufferAtInlet0+fromIndex, durationBytes);
-  filterInputBuffer[0] = 0.0f; filterInputBuffer[1] = tapIn;
-  float filterOutputBuffer[duration+2];
-  filterOutputBuffer[0] = 0.0f; filterOutputBuffer[1] = tapOut;
-  vDSP_deq22(filterInputBuffer, 1, coefficients, filterOutputBuffer, 1, duration);
-  memcpy(dspBufferAtOutlet0+fromIndex, filterOutputBuffer+2, durationBytes);
-  tapIn = dspBufferAtInlet0[toIndex-1];
-  tapOut = dspBufferAtOutlet0[toIndex-1];
-  #else
-  dspBufferAtOutlet0[fromIndex] = alpha * (tapOut + dspBufferAtInlet0[fromIndex] - tapIn);
-  for (int i = fromIndex+1; i < toIndex; i++) {
-    dspBufferAtOutlet0[i] = alpha * (dspBufferAtOutlet0[i-1] + dspBufferAtInlet0[i] - dspBufferAtInlet0[i-1]);
-  }
-  tapIn = dspBufferAtInlet0[toIndex-1];
-  tapOut = dspBufferAtOutlet0[toIndex-1];
-  #endif
 }
