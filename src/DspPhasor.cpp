@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -22,6 +22,10 @@
 
 #include "DspPhasor.h"
 #include "PdGraph.h"
+
+enum DspPhasorCodePath {
+  DSP_PHASOR_DSP = DSP_OBJECT_PROCESS_OTHER
+};
 
 #define UNITBIT32 1572864.  /* 3*2^19; bit 32 has place value 1 */
 
@@ -76,6 +80,15 @@ string DspPhasor::toString() {
   return string(str);
 }
 
+void DspPhasor::onInletConnectionUpdate(unsigned int inletIndex) {
+  if (incomingDspConnections[0].size() > 0) {
+    clearMessageQueue();
+    codepath = DSP_PHASOR_DSP;
+  } else {
+    codepath = messageQueue.empty() ? DSP_OBJECT_PROCESS_NO_MESSAGE : DSP_OBJECT_PROCESS_MESSAGE;
+  }
+}
+
 void DspPhasor::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: { // update the frequency
@@ -94,14 +107,11 @@ void DspPhasor::processMessage(int inletIndex, PdMessage *message) {
   }
 }
 
-void DspPhasor::processDspWithIndex(int fromIndex, int toIndex) {
-  switch (signalPrecedence) {
-    case DSP_DSP: {
-      // TODO(mhroth)
-      break;
-    }
-    case DSP_MESSAGE: {
-      for (int i = fromIndex; i < toIndex; index += dspBufferAtInlet0[i++]) {
+void DspPhasor::processDsp() {
+  switch (codepath) {
+    case DSP_PHASOR_DSP: {
+      float *buffer = dspBufferAtInlet[0];
+      for (int i = 0; i < blockSizeInt; index += buffer[++i]) {
         if (index < 0.0f) {
           index += sampleRate; // account for negative frequencies
         } else if (index >= sampleRate) {
@@ -109,41 +119,42 @@ void DspPhasor::processDspWithIndex(int fromIndex, int toIndex) {
         }
         dspBufferAtOutlet0[i] = phasor_table[(int) index];
       }
-
+      
       /*
-      double dphase = xphase + (double) UNITBIT32;
-      
-      union tabfudge tf;
-      tf.tf_d = UNITBIT32;
-      int normhipart = tf.tf_i[1]; // HIOFFSET == 1
-      tf.tf_d = dphase;
-      
-      for (int i = getStartSampleIndex(); i < endSampleIndex; i++) {
-        tf.tf_i[1] = normhipart;
-        dphase += inputBuffer[i] * step;
-        outputBuffer[i] = tf.tf_d - UNITBIT32;
-        tf.tf_d = dphase;
-      }
-      
-      tf.tf_i[1] = normhipart;
-      xphase = tf.tf_d - UNITBIT32;
-      */
+       double dphase = xphase + (double) UNITBIT32;
+       
+       union tabfudge tf;
+       tf.tf_d = UNITBIT32;
+       int normhipart = tf.tf_i[1]; // HIOFFSET == 1
+       tf.tf_d = dphase;
+       
+       for (int i = getStartSampleIndex(); i < endSampleIndex; i++) {
+       tf.tf_i[1] = normhipart;
+       dphase += inputBuffer[i] * step;
+       outputBuffer[i] = tf.tf_d - UNITBIT32;
+       tf.tf_d = dphase;
+       }
+       
+       tf.tf_i[1] = normhipart;
+       xphase = tf.tf_d - UNITBIT32;
+       */
       break;
     }
-    case MESSAGE_DSP: {
-      // TODO(mhroth)
+    case DSP_OBJECT_PROCESS_NO_MESSAGE: {
+      processDspWithIndex(0, blockSizeInt);
       break;
     }
-    case MESSAGE_MESSAGE: {
-      for (int i = fromIndex; i < toIndex; i++, index += frequency) {
-        if (index < 0.0f) {
-          index += sampleRate; // account for negative frequencies
-        } else if (index >= sampleRate) {
-          index -= sampleRate;
-        }
-        dspBufferAtOutlet0[i] = phasor_table[(int) index];
-      }
-      break;
+    default: DspObject::processDsp(); break;
+  }
+}
+
+void DspPhasor::processDspWithIndex(int fromIndex, int toIndex) {
+  for (int i = fromIndex; i < toIndex; i++, index += frequency) {
+    if (index < 0.0f) {
+      index += sampleRate; // account for negative frequencies
+    } else if (index >= sampleRate) {
+      index -= sampleRate;
     }
+    dspBufferAtOutlet0[i] = phasor_table[(int) index];
   }
 }

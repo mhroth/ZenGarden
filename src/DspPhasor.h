@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -35,6 +35,10 @@ class DspPhasor : public DspObject {
 
     static const char *getObjectLabel();
     string toString();
+  
+    void onInletConnectionUpdate(unsigned int inletIndex);
+  
+    void processDsp();
 
   protected:
     void processMessage(int inletIndex, PdMessage *message);
