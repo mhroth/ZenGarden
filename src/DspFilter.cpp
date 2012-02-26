@@ -44,7 +44,7 @@ void DspFilter::onInletConnectionUpdate(unsigned int inletIndex) {
   // TODO(mhroth)
 }
 
-float *DspFilter::getDspBufferRefAtOutlet(int outletIndex) {
+float *DspFilter::getDspBufferAtOutlet(int outletIndex) {
   return dspBufferAtOutlet0+2;
 }
 

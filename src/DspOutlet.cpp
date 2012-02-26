@@ -27,7 +27,8 @@ MessageObject *DspOutlet::newObject(PdMessage *initMessage, PdGraph *graph) {
 }
 
 DspOutlet::DspOutlet(PdGraph *graph) : DspObject(0, 1, 0, 1, graph) {
-  canvasX = 0.0f;
+  free(dspBufferAtOutlet0);
+  dspBufferAtOutlet0 = NULL;
 }
 
 DspOutlet::~DspOutlet() {
@@ -50,10 +51,20 @@ bool DspOutlet::isLeafNode() {
   return true;
 }
 
-float *DspOutlet::getDspBufferRefAtOutlet(int outletIndex) {
-  return dspBufferAtOutlet0;
+void DspOutlet::onDspBufferAtInletUpdate(float *buffer, unsigned int inletIndex) {
+  // when the dsp buffer updates at a given inlet, inform all receiving objects
+  list<ObjectLetPair> dspConnections = outgoingDspConnections[0];
+  for (list<ObjectLetPair>::iterator it = dspConnections.begin(); it != dspConnections.end(); ++it) {
+    ObjectLetPair letPair = *it;
+    DspObject *dspObject = reinterpret_cast<DspObject *>(letPair.first);
+    dspObject->setDspBufferAtInlet(dspBufferAtInlet[inletIndex], letPair.second);
+  }
+}
+
+float *DspOutlet::getDspBufferAtOutlet(int outletIndex) {
+  return dspBufferAtInlet[outletIndex];
 }
 
 void DspOutlet::processDsp() {
-  memcpy(dspBufferAtOutlet0, dspBufferAtInlet[0], numBytesInBlock);
+  // nothing to do
 }

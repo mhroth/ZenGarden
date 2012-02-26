@@ -29,7 +29,8 @@ MessageObject *DspInlet::newObject(PdMessage *initMessage, PdGraph *graph) {
 }
 
 DspInlet::DspInlet(PdGraph *graph) : DspObject(0, 1, 0, 1, graph) {
-  // nothing to do
+  free(dspBufferAtOutlet0); // this buffer is not needed
+  dspBufferAtOutlet0 = NULL; // the inlet buffer is passed directly to subsequent dsp objects
 }
 
 DspInlet::~DspInlet() {
@@ -70,10 +71,20 @@ list<MessageObject *> *DspInlet::getProcessOrderFromInlet() {
   return processList;
 }
 
-void DspInlet::receiveMessage(int inletIndex, PdMessage *message) {
-  graph->printErr("DspInlet has received a message in error: %s", message->toString());
+void DspInlet::onDspBufferAtInletUpdate(float *buffer, unsigned int inletIndex) {
+  // when the dsp buffer updates at a given inlet, inform all receiving objects
+  list<ObjectLetPair> dspConnections = outgoingDspConnections[0];
+  for (list<ObjectLetPair>::iterator it = dspConnections.begin(); it != dspConnections.end(); ++it) {
+    ObjectLetPair letPair = *it;
+    DspObject *dspObject = reinterpret_cast<DspObject *>(letPair.first);
+    dspObject->setDspBufferAtInlet(dspBufferAtInlet[inletIndex], letPair.second);
+  }
+}
+
+float *DspInlet::getDspBufferAtOutlet(int outletIndex) {
+  return dspBufferAtInlet[outletIndex];
 }
 
 void DspInlet::processDsp() {
-  memcpy(dspBufferAtOutlet0, dspBufferAtInlet[0], numBytesInBlock);
+  // nothing to do
 }

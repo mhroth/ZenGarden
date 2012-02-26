@@ -189,7 +189,7 @@ class PdGraph : public DspObject {
     void setValueForName(char *name, float constant);
     float getValueForName(char *name);
   
-    float *getDspBufferRefAtOutlet(int outletIndex);
+    float *getDspBufferAtOutlet(int outletIndex);
   
     void processDsp();
   

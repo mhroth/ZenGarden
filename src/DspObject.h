@@ -67,9 +67,9 @@ class DspObject : public MessageObject {
     /** Returns the connection type of the given outlet. */
     virtual ConnectionType getConnectionType(int outletIndex);
 
-    virtual float *getDspBufferRefAtOutlet(int outletIndex);
+    virtual float *getDspBufferAtOutlet(int outletIndex);
   
-    virtual void setDspBufferRefAtInlet(float *buffer, unsigned int inletIndex);
+    virtual void setDspBufferAtInlet(float *buffer, unsigned int inletIndex);
   
     virtual void addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex);
     virtual void addConnectionToObjectFromOutlet(MessageObject *messageObject, int inletIndex, int outletIndex);
@@ -116,6 +116,8 @@ class DspObject : public MessageObject {
      * (optimised) codepath with this new information.
      */
     virtual void onInletConnectionUpdate(unsigned int inletIndex);
+  
+    virtual void onDspBufferAtInletUpdate(float *buffer, unsigned int inletIndex);
   
     /** Immediately deletes all messages in the message queue without executing them. */
     void clearMessageQueue();

@@ -32,7 +32,7 @@ class DspFilter : public DspObject {
     DspFilter(int numMessageInlets, PdGraph *graph);
     ~DspFilter();
   
-    float *getDspBufferRefAtOutlet(int outletIndex);
+    float *getDspBufferAtOutlet(int outletIndex);
   
     void onInletConnectionUpdate(unsigned int inletIndex);
   

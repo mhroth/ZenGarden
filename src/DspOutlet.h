@@ -48,9 +48,12 @@ class DspOutlet : public DspObject {
 
     bool isLeafNode();
   
-    float *getDspBufferRefAtOutlet(int outletIndex);
+    float *getDspBufferAtOutlet(int outletIndex);
   
     void processDsp();
+  
+  protected:
+    void onDspBufferAtInletUpdate(float *buffer, unsigned int inletIndex);
 };
 
 #endif // _DSP_OUTLET_H_

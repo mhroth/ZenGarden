@@ -219,9 +219,9 @@ void PdGraph::addLetObjectToLetList(MessageObject *inletObject, float newPositio
 
 #pragma mark -
 
-float *PdGraph::getDspBufferRefAtOutlet(int outletIndex) {
+float *PdGraph::getDspBufferAtOutlet(int outletIndex) {
   DspObject *dspOutlet = (DspObject *) outletList.at(outletIndex);
-  return dspOutlet->getDspBufferRefAtOutlet(0);
+  return dspOutlet->getDspBufferAtOutlet(0);
 }
 
 
@@ -694,7 +694,7 @@ void PdGraph::computeLocalDspProcessOrder() {
         switch (incomingDspConnectionsList.size()) {
           case 0: {
             // if no connections are made to an inlet, then it receives a zero buffer
-            dspObject->setDspBufferRefAtInlet(zeroBuffer, i);
+            dspObject->setDspBufferAtInlet(zeroBuffer, i);
             break;
           }
           case 1: {
@@ -702,7 +702,7 @@ void PdGraph::computeLocalDspProcessOrder() {
             ObjectLetPair objectLetPair = incomingDspConnectionsList.front();
             DspObject *prevObject = (DspObject *) objectLetPair.first;
             unsigned int outletIndex = objectLetPair.second;
-            dspObject->setDspBufferRefAtInlet(prevObject->getDspBufferRefAtOutlet(outletIndex), i);
+            dspObject->setDspBufferAtInlet(prevObject->getDspBufferAtOutlet(outletIndex), i);
             break;
           }
           default: {
@@ -722,7 +722,7 @@ void PdGraph::computeLocalDspProcessOrder() {
               implicitDspAddList.push_back(dspAdd);
             }
             // set dsp ref at inlet of dspObject to prevObject
-            dspObject->setDspBufferRefAtInlet(prevObject->getDspBufferRefAtOutlet(0), i);
+            dspObject->setDspBufferAtInlet(prevObject->getDspBufferAtOutlet(0), i);
             break;
           }
         }

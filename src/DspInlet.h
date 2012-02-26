@@ -46,8 +46,12 @@ class DspInlet : public DspObject {
     list<MessageObject *> *getProcessOrder();
     list<MessageObject *> *getProcessOrderFromInlet();
   
-    void receiveMessage(int inletIndex, PdMessage *message);
+    float *getDspBufferAtOutlet(int outletIndex);
+  
     void processDsp();
+  
+  protected:
+    void onDspBufferAtInletUpdate(float *buffer, unsigned int inletIndex);
 };
 
 #endif // _DSP_INLET_H_

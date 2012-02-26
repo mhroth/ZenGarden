@@ -98,7 +98,7 @@ ConnectionType DspObject::getConnectionType(int outletIndex) {
   return DSP;
 }
 
-float *DspObject::getDspBufferRefAtOutlet(int outletIndex) {
+float *DspObject::getDspBufferAtOutlet(int outletIndex) {
   // sanity check on outletIndex
   return (outletIndex < outgoingDspConnections.size()) ? dspBufferAtOutlet0 + (outletIndex * blockSizeInt) : NULL;
 }
@@ -141,9 +141,9 @@ void DspObject::addConnectionFromObjectToInlet(MessageObject *messageObject, int
     list<ObjectLetPair> *connections = &incomingDspConnections[inletIndex];
     ObjectLetPair objectLetPair = make_pair(messageObject, outletIndex);
     connections->push_back(objectLetPair);
-    
-    onInletConnectionUpdate(inletIndex);
   }
+  
+  onInletConnectionUpdate(inletIndex);
 }
 
 void DspObject::removeConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex) {
@@ -151,11 +151,11 @@ void DspObject::removeConnectionFromObjectToInlet(MessageObject *messageObject, 
     list<ObjectLetPair> *connections = &incomingDspConnections[inletIndex];
     ObjectLetPair objectLetPair = make_pair(messageObject, outletIndex);
     connections->remove(objectLetPair); // NOTE(mhroth): does this work?
-    
-    onInletConnectionUpdate(inletIndex);
   } else {
     MessageObject::removeConnectionFromObjectToInlet(messageObject, outletIndex, inletIndex);
   }
+  
+  onInletConnectionUpdate(inletIndex);
 }
 
 void DspObject::onInletConnectionUpdate(unsigned int inletIndex) {
@@ -183,8 +183,14 @@ void DspObject::removeConnectionToObjectFromOutlet(MessageObject *messageObject,
   }
 }
 
-void DspObject::setDspBufferRefAtInlet(float *buffer, unsigned int inletIndex) {
+void DspObject::setDspBufferAtInlet(float *buffer, unsigned int inletIndex) {
   dspBufferAtInlet[inletIndex] = buffer;
+  
+  onDspBufferAtInletUpdate(buffer, inletIndex);
+}
+
+void DspObject::onDspBufferAtInletUpdate(float *buffer, unsigned int inletIndex) {
+  // nothign to do
 }
 
 
