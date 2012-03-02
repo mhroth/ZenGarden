@@ -28,6 +28,7 @@
 
 class DeclareList;
 class DelayReceiver;
+class DspImplicitAdd;
 class DspCatch;
 class DspDelayWrite;
 class DspReceive;
@@ -254,7 +255,7 @@ class PdGraph : public DspObject {
      */
     list<DspObject *> dspNodeList;
   
-    list<DspObject *> implicitDspAddList;
+    list<DspImplicitAdd *> implicitDspAddList;
     
     /** A list of all inlet (message or audio) nodes in this subgraph. */
     vector<MessageObject *> inletList; // in fact contains only MessageInlet and DspInlet objects

@@ -8,6 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		8DD76F6A0486A84900D96B5E /* ZenGardenNp.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6859E8B029090EE04C91782 /* ZenGardenNp.1 */; };
+		90119EF61500DB0700A9AB46 /* DspImplicitAdd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90119EF51500DB0700A9AB46 /* DspImplicitAdd.cpp */; };
+		90119EF71500DB0700A9AB46 /* DspImplicitAdd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90119EF51500DB0700A9AB46 /* DspImplicitAdd.cpp */; };
+		90119EF81500DB0700A9AB46 /* DspImplicitAdd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90119EF51500DB0700A9AB46 /* DspImplicitAdd.cpp */; };
+		90119EFA1500DBC200A9AB46 /* DspImplicitAdd.h in Headers */ = {isa = PBXBuildFile; fileRef = 90119EF91500DBC200A9AB46 /* DspImplicitAdd.h */; };
+		90119EFB1500DBC200A9AB46 /* DspImplicitAdd.h in Headers */ = {isa = PBXBuildFile; fileRef = 90119EF91500DBC200A9AB46 /* DspImplicitAdd.h */; };
 		9017567611DFDD4B00A22517 /* DspTablePlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9017567311DFDD4B00A22517 /* DspTablePlay.cpp */; };
 		9017567711DFDD4B00A22517 /* DspTablePlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 9017567411DFDD4B00A22517 /* DspTablePlay.h */; };
 		9017567811DFDD4B00A22517 /* DspTablePlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9017567311DFDD4B00A22517 /* DspTablePlay.cpp */; };
@@ -720,6 +725,8 @@
 
 /* Begin PBXFileReference section */
 		8DD76F6C0486A84900D96B5E /* ZenGarden */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ZenGarden; sourceTree = BUILT_PRODUCTS_DIR; };
+		90119EF51500DB0700A9AB46 /* DspImplicitAdd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspImplicitAdd.cpp; path = ../src/DspImplicitAdd.cpp; sourceTree = "<group>"; };
+		90119EF91500DBC200A9AB46 /* DspImplicitAdd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspImplicitAdd.h; path = ../src/DspImplicitAdd.h; sourceTree = "<group>"; };
 		9017567311DFDD4B00A22517 /* DspTablePlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspTablePlay.cpp; path = ../src/DspTablePlay.cpp; sourceTree = SOURCE_ROOT; };
 		9017567411DFDD4B00A22517 /* DspTablePlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspTablePlay.h; path = ../src/DspTablePlay.h; sourceTree = SOURCE_ROOT; };
 		9017BE661205E2CA0044C9B4 /* MessageListPrepend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageListPrepend.h; path = ../src/MessageListPrepend.h; sourceTree = SOURCE_ROOT; };
@@ -1059,6 +1066,8 @@
 				90337B4F11D0D847009FCC01 /* DspAdc.h */,
 				90337B5011D0D847009FCC01 /* DspAdd.cpp */,
 				90337B5111D0D847009FCC01 /* DspAdd.h */,
+				90119EF51500DB0700A9AB46 /* DspImplicitAdd.cpp */,
+				90119EF91500DBC200A9AB46 /* DspImplicitAdd.h */,
 				90337B5211D0D847009FCC01 /* DspBandpassFilter.cpp */,
 				90337B5311D0D847009FCC01 /* DspBandpassFilter.h */,
 				907B1F51129965D900B263E2 /* DspBang.cpp */,
@@ -1510,6 +1519,7 @@
 				9086906C129AC67B00D3BD5D /* DspSqrt.h in Headers */,
 				90F3D68C13F82F700058E68D /* ObjectFactoryMap.h in Headers */,
 				90988E7A143E69120028E2B7 /* DspFilter.h in Headers */,
+				90119EFA1500DBC200A9AB46 /* DspImplicitAdd.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1660,6 +1670,7 @@
 				9086906E129AC67B00D3BD5D /* DspSqrt.h in Headers */,
 				90F3D68D13F82F700058E68D /* ObjectFactoryMap.h in Headers */,
 				90988E7B143E69120028E2B7 /* DspFilter.h in Headers */,
+				90119EFB1500DBC200A9AB46 /* DspImplicitAdd.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1888,6 +1899,7 @@
 				9099A82F13D043D60091E9FF /* DspVCF.cpp in Sources */,
 				90F3D68813F82F5F0058E68D /* ObjectFactoryMap.cpp in Sources */,
 				90A42CC0143E68BB00DBF988 /* DspFilter.cpp in Sources */,
+				90119EF61500DB0700A9AB46 /* DspImplicitAdd.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2030,6 +2042,7 @@
 				9099A83013D043D70091E9FF /* DspVCF.cpp in Sources */,
 				90F3D68913F82F5F0058E68D /* ObjectFactoryMap.cpp in Sources */,
 				90A42CC1143E68BB00DBF988 /* DspFilter.cpp in Sources */,
+				90119EF71500DB0700A9AB46 /* DspImplicitAdd.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2172,6 +2185,7 @@
 				9099A83113D043D80091E9FF /* DspVCF.cpp in Sources */,
 				90F3D68A13F82F5F0058E68D /* ObjectFactoryMap.cpp in Sources */,
 				90A42CC2143E68BB00DBF988 /* DspFilter.cpp in Sources */,
+				90119EF81500DB0700A9AB46 /* DspImplicitAdd.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

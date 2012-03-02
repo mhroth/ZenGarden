@@ -21,7 +21,7 @@
  */
 
 #include "DeclareList.h"
-#include "DspAdd.h"
+#include "DspImplicitAdd.h"
 #include "DspInlet.h"
 #include "DspOutlet.h"
 #include "DspTablePlay.h"
@@ -68,7 +68,7 @@ PdGraph::~PdGraph() {
   delete declareList;
 
   // delete all implicit +~ nodes
-  for (list<DspObject *>::iterator it = implicitDspAddList.begin(); it != implicitDspAddList.end(); ++it) {
+  for (list<DspImplicitAdd *>::iterator it = implicitDspAddList.begin(); it != implicitDspAddList.end(); ++it) {
     delete *it;
   }
   
@@ -675,7 +675,7 @@ void PdGraph::computeLocalDspProcessOrder() {
 
   // add only those nodes which process audio to the final list
   // delete all objects in the implicit +~ list
-  for (list<DspObject *>::iterator it = implicitDspAddList.begin();
+  for (list<DspImplicitAdd *>::iterator it = implicitDspAddList.begin();
       it != implicitDspAddList.end(); ++it) {
     delete *it;
   }
@@ -714,7 +714,7 @@ void PdGraph::computeLocalDspProcessOrder() {
             PdMessage *dspAddInitMessage = PD_MESSAGE_ON_STACK(1);
             dspAddInitMessage->setFloat(0, 0.0f);
             while (jt != incomingDspConnectionsList.end()) {
-              DspAdd *dspAdd = new DspAdd(dspAddInitMessage, this);
+              DspImplicitAdd *dspAdd = new DspImplicitAdd(dspAddInitMessage, this);
               dspAdd->addConnectionFromObjectToInlet(prevObject, prevOutlet, 0);
               dspAdd->addConnectionFromObjectToInlet((*jt).first, (*jt++).second, 1);
               prevObject = dspAdd; prevOutlet = 0;
