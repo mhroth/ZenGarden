@@ -69,7 +69,7 @@ char *DspDelayWrite::getName() {
 
 void DspDelayWrite::processDsp() {
   // copy inlet buffer to delay buffer
-  memcpy(dspBufferAtOutlet0 + headIndex, dspBufferAtInlet[0], numBytesInBlock);
+  memcpy(dspBufferAtOutlet0 + headIndex, dspBufferAtInlet[0], blockSizeInt*sizeof(float));
   if (headIndex == 0) dspBufferAtOutlet0[bufferLength] = dspBufferAtOutlet0[0];
   headIndex += blockSizeInt;
   if (headIndex >= bufferLength) headIndex = 0;

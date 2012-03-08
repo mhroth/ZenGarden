@@ -73,12 +73,12 @@ void DspCatch::removeThrow(DspThrow *dspThrow) {
 void DspCatch::processDsp() {
   switch (throwList.size()) {
     case 0: {
-      memset(dspBufferAtOutlet0, 0, numBytesInBlock);
+      memset(dspBufferAtOutlet0, 0, blockSizeInt*sizeof(float));
       break;
     }
     case 1: {
       DspThrow *dspThrow = throwList.front();
-      memcpy(dspBufferAtOutlet0, dspThrow->getBuffer(), numBytesInBlock);
+      memcpy(dspBufferAtOutlet0, dspThrow->getBuffer(), blockSizeInt*sizeof(float));
       break;
     }
     default: { // throwList.size() > 1

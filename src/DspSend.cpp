@@ -69,5 +69,5 @@ float **DspSend::getBuffer() {
 }
 
 void DspSend::processDsp() {
-  memcpy(dspBufferAtOutlet0, dspBufferAtInlet[0], numBytesInBlock);
+  memcpy(dspBufferAtOutlet0, dspBufferAtInlet[0], blockSizeInt*sizeof(float));
 }

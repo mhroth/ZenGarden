@@ -134,7 +134,7 @@ void DspTablePlay::processDspWithIndex(int fromIndex, int toIndex) {
       if (duration == blockSizeInt) {
         // if the entire output must be filled and there are more than one buffer's worth of
         // samples still available from the table, just set the output buffer pointer
-        memcpy(dspBufferAtOutlet0, tableBuffer + currentTableIndex, numBytesInBlock);
+        memcpy(dspBufferAtOutlet0, tableBuffer + currentTableIndex, blockSizeInt*sizeof(float));
         currentTableIndex += blockSizeInt;
       } else {
         // if the number of remaining samples in the table is more than the number of samples

@@ -75,7 +75,7 @@ void DspDelayRead::processDspWithIndex(int fromIndex, int toIndex) {
       memcpy(dspBufferAtOutlet0, buffer + delayIndex, samplesInBuffer * sizeof(float));
       memcpy(dspBufferAtOutlet0 + samplesInBuffer, buffer, (blockSizeInt - samplesInBuffer) * sizeof(float));
     } else {
-      memcpy(dspBufferAtOutlet0, buffer + delayIndex, numBytesInBlock);
+      memcpy(dspBufferAtOutlet0, buffer + delayIndex, blockSizeInt*sizeof(float));
     }
   } else {
     /*

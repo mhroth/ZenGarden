@@ -60,7 +60,7 @@ void DspFilter::processDspWithIndex(int fromIndex, int toIndex) {
 //    default: { // some number of audio ins, and messages
       float buffer[blockSizeInt+2];
       buffer[0] = x2; buffer[1] = x1;
-      memcpy(buffer+2, dspBufferAtInlet[0], numBytesInBlock);
+      memcpy(buffer+2, dspBufferAtInlet[0], blockSizeInt*sizeof(float));
       processFilter(buffer, fromIndex, toIndex);
 //      break;
 //    }

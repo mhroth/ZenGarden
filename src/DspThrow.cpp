@@ -62,5 +62,5 @@ void DspThrow::processMessage(int inletIndex, PdMessage *message) {
 }
 
 void DspThrow::processDsp() {
-  memcpy(dspBufferAtOutlet0, dspBufferAtInlet[0], numBytesInBlock);
+  memcpy(dspBufferAtOutlet0, dspBufferAtInlet[0], blockSizeInt*sizeof(float));
 }

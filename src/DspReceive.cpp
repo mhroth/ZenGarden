@@ -70,6 +70,6 @@ void DspReceive::processDsp() {
   if (sendBuffer == NULL) {
     ArrayArithmetic::fill(dspBufferAtOutlet0, 0.0f, 0, blockSizeInt);
   } else {
-    memcpy(dspBufferAtOutlet0, *sendBuffer, numBytesInBlock);
+    memcpy(dspBufferAtOutlet0, *sendBuffer, blockSizeInt*sizeof(float));
   }
 }
