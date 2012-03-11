@@ -322,7 +322,7 @@ void PdContext::unregisterDspSend(DspSend *dspSend) {
   }
 }
 
-DspSend *PdContext::getDspSend(char *name) {
+DspSend *PdContext::getDspSend(const char *name) {
   for (list<DspSend *>::iterator it = dspSendList.begin(); it != dspSendList.end(); it++) {
     if (!strcmp((*it)->getName(), name)) return (*it);
   }

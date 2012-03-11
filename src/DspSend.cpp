@@ -60,14 +60,10 @@ ObjectType DspSend::getObjectType() {
   return DSP_SEND;
 }
 
-char *DspSend::getName() {
+const char *DspSend::getName() {
   return name;
 }
 
-float **DspSend::getBuffer() {
-  return &dspBufferAtOutlet0;
-}
-
-void DspSend::processDsp() {
-  memcpy(dspBufferAtOutlet0, dspBufferAtInlet[0], blockSizeInt*sizeof(float));
+float *DspSend::getBuffer() {
+  return dspBufferAtInlet[0];
 }

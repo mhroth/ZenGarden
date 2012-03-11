@@ -33,13 +33,14 @@ class DspReceive : public DspObject {
     DspReceive(PdMessage *initMessage, PdGraph *graph);
     ~DspReceive();
     
-    /** Set a double-pointer at the send~'s input buffer. */
-    void setBuffer(float **buffer);
-    char *getName();
+    /** Set a pointer to send~'s input buffer. */
+    void setBuffer(float *buffer);
+    const char *getName();
     static const char *getObjectLabel();
     ObjectType getObjectType();
   
-    void processDsp();
+    bool doesProcessDsp() { return false; }
+  
     void processMessage(int inletIndex, PdMessage *message);
   
   private:

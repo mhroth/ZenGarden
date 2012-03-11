@@ -31,6 +31,8 @@ MessageObject *DspReceive::newObject(PdMessage *initMessage, PdGraph *graph) {
 DspReceive::DspReceive(PdMessage *initMessage, PdGraph *graph) : DspObject(1, 0, 0, 1, graph) {
   if (initMessage->isSymbol(0)) {
     name = StaticUtils::copyString(initMessage->getSymbol(0));
+    free(dspBufferAtOutlet0);
+    dspBufferAtOutlet0 = NULL;
   } else {
     name = NULL;
     graph->printErr("receive~ not initialised with a name.");
@@ -50,26 +52,17 @@ ObjectType DspReceive::getObjectType() {
   return DSP_RECEIVE;
 }
 
-char *DspReceive::getName() {
+const char *DspReceive::getName() {
   return name;
 }
 
-void DspReceive::setBuffer(float **buffer) {
+void DspReceive::setBuffer(float *buffer) {
   // maintain a double-pointer to the buffer of the associated send~
-  sendBuffer = buffer;
+  dspBufferAtOutlet0 = buffer;
 }
 
 void DspReceive::processMessage(int inletIndex, PdMessage *message) {
   if (message->isSymbol(0, "set")) {
     graph->printErr("[receive~]: message \"set\" is not yet supported.");
-  }
-}
-
-void DspReceive::processDsp() {
-  // sendBuffer may be null if there is no related send~
-  if (sendBuffer == NULL) {
-    ArrayArithmetic::fill(dspBufferAtOutlet0, 0.0f, 0, blockSizeInt);
-  } else {
-    memcpy(dspBufferAtOutlet0, *sendBuffer, blockSizeInt*sizeof(float));
   }
 }

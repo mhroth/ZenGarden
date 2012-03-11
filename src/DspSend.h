@@ -33,18 +33,13 @@ class DspSend : public DspObject {
     DspSend(PdMessage *initMessage, PdGraph *graph);
     ~DspSend();
     
-    /**
-     * Returns a double pointer to the local input buffer of this object.
-     * A double-pointer is returned because the local input buffer may change depending on
-     * how many connecting object that this object has at the given moment.
-     */
-    float **getBuffer();
-    char *getName();
+    float *getBuffer();
+    const char *getName();
     static const char *getObjectLabel();
     string toString();
     ObjectType getObjectType();
   
-    void processDsp();
+    bool doesProcessDsp() { return false; }
     
   private:
     char *name;

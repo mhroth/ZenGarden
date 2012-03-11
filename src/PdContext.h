@@ -84,7 +84,7 @@ class PdContext {
     void unregisterDspSend(DspSend *dspSend);
   
     /** Returns the named global <code>DspSend</code> object. */
-    DspSend *getDspSend(char *name);
+    DspSend *getDspSend(const char *name);
     
     /**
      * Globally register a [delwrite~] object. Registration is necessary such that they can
