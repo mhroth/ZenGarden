@@ -48,7 +48,8 @@ class DspInlet : public DspObject {
   
     float *getDspBufferAtOutlet(int outletIndex);
   
-    void processDsp();
+    // [inlet~] does nothing with audio
+    bool doesProcessAudio() { return false; }
   
   protected:
     void onDspBufferAtInletUpdate(float *buffer, unsigned int inletIndex);

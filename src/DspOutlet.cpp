@@ -64,7 +64,3 @@ void DspOutlet::onDspBufferAtInletUpdate(float *buffer, unsigned int inletIndex)
 float *DspOutlet::getDspBufferAtOutlet(int outletIndex) {
   return dspBufferAtInlet[outletIndex];
 }
-
-void DspOutlet::processDsp() {
-  // nothing to do
-}
