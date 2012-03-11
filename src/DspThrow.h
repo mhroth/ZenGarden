@@ -45,7 +45,8 @@ class DspThrow : public DspObject {
   
     static const char *getObjectLabel();
   
-    void processDsp();
+    bool doesProcessAudio() { return false; }
+  
     void processMessage(int inletIndex, PdMessage *message);
     
   private:

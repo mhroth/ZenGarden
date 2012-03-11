@@ -30,7 +30,6 @@ MessageObject *DspThrow::newObject(PdMessage *initMessage, PdGraph *graph) {
 DspThrow::DspThrow(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0, 0, graph) {
   if (initMessage->isSymbol(0)) {
     name = StaticUtils::copyString(initMessage->getSymbol(0));
-    dspBufferAtOutlet0 = (float *) valloc(blockSizeInt * sizeof(float));
   } else {
     name = NULL;
     graph->printErr("throw~ may not be initialised without a name. \"set\" message not supported.");
@@ -39,8 +38,6 @@ DspThrow::DspThrow(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0, 
 
 DspThrow::~DspThrow() {
   free(name);
-  free(dspBufferAtOutlet0);
-  dspBufferAtOutlet0 = NULL;
 }
 
 const char *DspThrow::getObjectLabel() {
@@ -52,15 +49,11 @@ char *DspThrow::getName() {
 }
 
 float *DspThrow::getBuffer() {
-  return dspBufferAtOutlet0;
+  return dspBufferAtInlet[0];
 }
 
 void DspThrow::processMessage(int inletIndex, PdMessage *message) {
   if (inletIndex == 0 && message->isSymbol(0, "set") && message->isSymbol(1)) {
     graph->printErr("throw~ does not support the \"set\" message.");
   }
-}
-
-void DspThrow::processDsp() {
-  memcpy(dspBufferAtOutlet0, dspBufferAtInlet[0], blockSizeInt*sizeof(float));
 }
