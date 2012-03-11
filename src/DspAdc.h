@@ -34,7 +34,9 @@ class DspAdc : public DspObject {
   
     static const char *getObjectLabel();
   
-    bool doesProcessAudio();
+  // This object doesn't do anything with audio, it only provides buffers. It should not be included
+  // in the dsp list
+  bool doesProcessAudio() { return false; }
 };
 
 #endif // _DSP_ADC_H_

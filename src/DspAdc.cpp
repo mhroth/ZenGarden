@@ -50,9 +50,3 @@ DspAdc::~DspAdc() {
 const char *DspAdc::getObjectLabel() {
   return "adc~";
 }
-
-bool DspAdc::doesProcessAudio() {
-  // This object doesn't do anything with audio, it only provides buffers. It should not be included
-  // in the dsp list
-  return false;
-}
