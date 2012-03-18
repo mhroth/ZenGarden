@@ -43,16 +43,16 @@ void DspWrap::processDsp() {
   #if __APPLE__
   float one = 1.0f;
   // get fractional part of all input
-  vDSP_vfrac(dspBufferAtInlet[0], 1, dspBufferAtOutlet0, 1, blockSizeInt);
+  vDSP_vfrac(dspBufferAtInlet[0], 1, dspBufferAtOutlet[0], 1, blockSizeInt);
   // add one to all fractions (making negative fractions positive)
-  vDSP_vsadd(dspBufferAtOutlet0, 1, &one, dspBufferAtOutlet0, 1, blockSizeInt);
+  vDSP_vsadd(dspBufferAtOutlet[0], 1, &one, dspBufferAtOutlet[0], 1, blockSizeInt);
   // take fractional part again, removing positive results greater than one
-  vDSP_vfrac(dspBufferAtOutlet0, 1, dspBufferAtOutlet0, 1, blockSizeInt);
+  vDSP_vfrac(dspBufferAtOutlet[0], 1, dspBufferAtOutlet[0], 1, blockSizeInt);
   #else
   float *buffer = dspBufferAtInlet[0];
   for (int i = 0; i < blockSizeInt; i++) {
     float f = buffer[i];
-    dspBufferAtOutlet0[i] = f - floorf(f);
+    dspBufferAtOutlet[0][i] = f - floorf(f);
   }
   #endif
 }

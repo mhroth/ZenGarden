@@ -39,7 +39,7 @@ DspDelayWrite::DspDelayWrite(PdMessage *initMessage, PdGraph *graph) : DspObject
     }
     headIndex = 0;
     // buffer[bufferLength] == buffer[0], which makes calculation in vd~ easier
-    dspBufferAtOutlet0 = (float *) valloc((bufferLength+1)*sizeof(float));
+    dspBufferAtOutlet[0] = (float *) valloc((bufferLength+1)*sizeof(float));
     name = StaticUtils::copyString(initMessage->getSymbol(0));
   } else {
     graph->printErr("ERROR: delwrite~ must be initialised as [delwrite~ name delay].");
@@ -51,8 +51,8 @@ DspDelayWrite::DspDelayWrite(PdMessage *initMessage, PdGraph *graph) : DspObject
 
 DspDelayWrite::~DspDelayWrite() {
   free(name);
-  free(dspBufferAtOutlet0);
-  dspBufferAtOutlet0 = NULL;
+  free(dspBufferAtOutlet[0]);
+  dspBufferAtOutlet[0] = NULL;
 }
 
 const char *DspDelayWrite::getObjectLabel() {
@@ -69,8 +69,8 @@ char *DspDelayWrite::getName() {
 
 void DspDelayWrite::processDsp() {
   // copy inlet buffer to delay buffer
-  memcpy(dspBufferAtOutlet0 + headIndex, dspBufferAtInlet[0], blockSizeInt*sizeof(float));
-  if (headIndex == 0) dspBufferAtOutlet0[bufferLength] = dspBufferAtOutlet0[0];
+  memcpy(dspBufferAtOutlet[0] + headIndex, dspBufferAtInlet[0], blockSizeInt*sizeof(float));
+  if (headIndex == 0) dspBufferAtOutlet[0][bufferLength] = dspBufferAtOutlet[0][0];
   headIndex += blockSizeInt;
   if (headIndex >= bufferLength) headIndex = 0;
 }

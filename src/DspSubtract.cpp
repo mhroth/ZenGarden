@@ -56,7 +56,7 @@ void DspSubtract::onInletConnectionUpdate(unsigned int inletIndex) {
 void DspSubtract::processDsp() {
   switch (codePath) {
     case DSP_SUBTRACT_DSP_DSP: {
-      ArrayArithmetic::subtract(dspBufferAtInlet[0], dspBufferAtInlet[1], dspBufferAtOutlet0, 0, blockSizeInt);
+      ArrayArithmetic::subtract(dspBufferAtInlet[0], dspBufferAtInlet[1], dspBufferAtOutlet[0], 0, blockSizeInt);
       break;
     }
     default: DspObject::processDsp(); break;
@@ -72,5 +72,5 @@ void DspSubtract::processMessage(int inletIndex, PdMessage *message) {
 }
 
 void DspSubtract::processDspWithIndex(int fromIndex, int toIndex) {
-  ArrayArithmetic::subtract(dspBufferAtInlet[0], constant, dspBufferAtOutlet0, fromIndex, toIndex);
+  ArrayArithmetic::subtract(dspBufferAtInlet[0], constant, dspBufferAtOutlet[0], fromIndex, toIndex);
 }

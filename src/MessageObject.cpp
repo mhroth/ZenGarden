@@ -98,13 +98,6 @@ void MessageObject::processMessage(int inletIndex, PdMessage *message) {
 }
 
 
-#pragma mark -
-
-bool MessageObject::doesProcessAudio() {
-  return false;
-}
-
-
 #pragma mark - Manage Connections
 
 void MessageObject::addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex) {

@@ -28,12 +28,12 @@ DspFilter::DspFilter(int numMessageInlets, PdGraph *graph) : DspObject(numMessag
   x1 = x2 = 0.0f;
   
   // resize the output buffer to be 2 samples larger
-  float *buffer = (float *) realloc(dspBufferAtOutlet0, (blockSizeInt+2)*sizeof(float));
-  if (buffer != dspBufferAtOutlet0) {
-    free(dspBufferAtOutlet0);
-    dspBufferAtOutlet0 = (float *) valloc((blockSizeInt+2)*sizeof(float));
+  float *buffer = (float *) realloc(dspBufferAtOutlet[0], (blockSizeInt+2)*sizeof(float));
+  if (buffer != dspBufferAtOutlet[0]) {
+    free(dspBufferAtOutlet[0]);
+    dspBufferAtOutlet[0] = (float *) valloc((blockSizeInt+2)*sizeof(float));
   }
-  memset(dspBufferAtOutlet0, 0, (blockSizeInt+2)*sizeof(float)); // clear the buffer
+  memset(dspBufferAtOutlet[0], 0, (blockSizeInt+2)*sizeof(float)); // clear the buffer
 }
 
 DspFilter::~DspFilter() {
@@ -45,7 +45,7 @@ void DspFilter::onInletConnectionUpdate(unsigned int inletIndex) {
 }
 
 float *DspFilter::getDspBufferAtOutlet(int outletIndex) {
-  return dspBufferAtOutlet0+2;
+  return dspBufferAtOutlet[0]+2;
 }
 
 void DspFilter::processDspWithIndex(int fromIndex, int toIndex) {

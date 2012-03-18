@@ -73,19 +73,19 @@ void DspCatch::removeThrow(DspThrow *dspThrow) {
 void DspCatch::processDsp() {
   switch (throwList.size()) {
     case 0: {
-      memset(dspBufferAtOutlet0, 0, blockSizeInt*sizeof(float));
+      memset(dspBufferAtOutlet[0], 0, blockSizeInt*sizeof(float));
       break;
     }
     case 1: {
       DspThrow *dspThrow = throwList.front();
-      memcpy(dspBufferAtOutlet0, dspThrow->getBuffer(), blockSizeInt*sizeof(float));
+      memcpy(dspBufferAtOutlet[0], dspThrow->getBuffer(), blockSizeInt*sizeof(float));
       break;
     }
     default: { // throwList.size() > 1
       list<DspThrow *>::iterator it = throwList.begin();
-      ArrayArithmetic::add((*it)->getBuffer(), (*(++it))->getBuffer(), dspBufferAtOutlet0, 0, blockSizeInt);
+      ArrayArithmetic::add((*it)->getBuffer(), (*(++it))->getBuffer(), dspBufferAtOutlet[0], 0, blockSizeInt);
       while (++it != throwList.end()) {
-        ArrayArithmetic::add(dspBufferAtOutlet0, (*it)->getBuffer(), dspBufferAtOutlet0,
+        ArrayArithmetic::add(dspBufferAtOutlet[0], (*it)->getBuffer(), dspBufferAtOutlet[0],
             0, blockSizeInt);
       }
       break;

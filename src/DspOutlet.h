@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010,2011 Reality Jockey, Ltd.
+ *  Copyright 2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -47,8 +47,6 @@ class DspOutlet : public DspObject {
     ObjectType getObjectType();
 
     bool isLeafNode();
-  
-    float *getDspBufferAtOutlet(int outletIndex);
   
     // [outlet~] does nothing with audio
     bool doesProcessAudio() { return false; }

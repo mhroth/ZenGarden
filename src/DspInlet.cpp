@@ -29,8 +29,7 @@ MessageObject *DspInlet::newObject(PdMessage *initMessage, PdGraph *graph) {
 }
 
 DspInlet::DspInlet(PdGraph *graph) : DspObject(0, 1, 0, 1, graph) {
-  free(dspBufferAtOutlet0); // this buffer is not needed
-  dspBufferAtOutlet0 = NULL; // the inlet buffer is passed directly to subsequent dsp objects
+  // nothing to do
 }
 
 DspInlet::~DspInlet() {
@@ -77,10 +76,7 @@ void DspInlet::onDspBufferAtInletUpdate(float *buffer, unsigned int inletIndex) 
   for (list<ObjectLetPair>::iterator it = dspConnections.begin(); it != dspConnections.end(); ++it) {
     ObjectLetPair letPair = *it;
     DspObject *dspObject = reinterpret_cast<DspObject *>(letPair.first);
-    dspObject->setDspBufferAtInlet(dspBufferAtInlet[inletIndex], letPair.second);
+    dspObject->setDspBufferAtInletWithReuse(dspBufferAtInlet[inletIndex], letPair.second,
+        it == dspConnections.begin());
   }
-}
-
-float *DspInlet::getDspBufferAtOutlet(int outletIndex) {
-  return dspBufferAtInlet[outletIndex];
 }

@@ -83,7 +83,7 @@ void DspTableRead::processDspWithIndex(int fromIndex, int toIndex) {
     float *buffer = table->getBuffer(&bufferLength);
     #if __APPLE__
     int duration = toIndex - fromIndex;
-    float *outBuff = dspBufferAtOutlet0+fromIndex;
+    float *outBuff = dspBufferAtOutlet[0]+fromIndex;
     
     // add the offset
     vDSP_vsadd(dspBufferAtInlet[0]+fromIndex, 1, &offset, outBuff, 1, duration);
@@ -102,11 +102,11 @@ void DspTableRead::processDspWithIndex(int fromIndex, int toIndex) {
     for (int i = fromIndex; i < toIndex; i++) {
       int x = (int) (inputBuffer[i] + offset);
       if (x <= 0) {
-        dspBufferAtOutlet0[i] = buffer[0];
+        dspBufferAtOutlet[0][i] = buffer[0];
       } else if (x >= bufferLength) {
-        dspBufferAtOutlet0[i] = buffer[bufferLength-1];
+        dspBufferAtOutlet[0][i] = buffer[bufferLength-1];
       } else {
-        dspBufferAtOutlet0[i] = buffer[x];
+        dspBufferAtOutlet[0][i] = buffer[x];
       }
     }
     #endif

@@ -117,7 +117,7 @@ void DspPhasor::processDsp() {
         } else if (index >= sampleRate) {
           index -= sampleRate;
         }
-        dspBufferAtOutlet0[i] = phasor_table[(int) index];
+        dspBufferAtOutlet[0][i] = phasor_table[(int) index];
       }
       
       /*
@@ -155,6 +155,6 @@ void DspPhasor::processDspWithIndex(int fromIndex, int toIndex) {
     } else if (index >= sampleRate) {
       index -= sampleRate;
     }
-    dspBufferAtOutlet0[i] = phasor_table[(int) index];
+    dspBufferAtOutlet[0][i] = phasor_table[(int) index];
   }
 }

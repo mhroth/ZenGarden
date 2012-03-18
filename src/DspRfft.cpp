@@ -53,7 +53,7 @@ void DspRfft::processDsp() {
   inputVector.realp = dspBufferAtInlet[0];
   inputVector.imagp = DspObject::zeroBuffer;
   DSPSplitComplex outputVector;
-  outputVector.realp = dspBufferAtOutlet0;
+  outputVector.realp = dspBufferAtOutlet[0];
   outputVector.imagp = getDspBufferAtOutlet(1);
   vDSP_fft_zop(fftSetup, &inputVector, 1, &outputVector, 1, log2n, kFFTDirection_Forward);
   

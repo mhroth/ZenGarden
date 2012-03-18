@@ -53,5 +53,5 @@ void DspSignal::processMessage(int inletIndex, PdMessage *message) {
 }
 
 void DspSignal::processDspWithIndex(int fromIndex, int toIndex) {
-  ArrayArithmetic::fill(dspBufferAtOutlet0, constant, fromIndex, toIndex);
+  ArrayArithmetic::fill(dspBufferAtOutlet[0], constant, fromIndex, toIndex);
 }

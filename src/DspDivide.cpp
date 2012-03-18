@@ -63,12 +63,12 @@ void DspDivide::processMessage(int inletIndex, PdMessage *message) {
 void DspDivide::processDspWithIndex(int fromIndex, int toIndex) {
   switch (codePath) {
     case DSP_DIVIDE_DSP_DSP: {
-      ArrayArithmetic::divide(dspBufferAtInlet[1], dspBufferAtInlet[1], dspBufferAtOutlet0,
+      ArrayArithmetic::divide(dspBufferAtInlet[1], dspBufferAtInlet[1], dspBufferAtOutlet[0],
           fromIndex, toIndex);
       break;
     }
     case DSP_DIVIDE_DSP_MESSAGE: {
-      ArrayArithmetic::divide(dspBufferAtInlet[0], constant, dspBufferAtOutlet0, fromIndex, toIndex);
+      ArrayArithmetic::divide(dspBufferAtInlet[0], constant, dspBufferAtOutlet[0], fromIndex, toIndex);
       break;
     }
   }

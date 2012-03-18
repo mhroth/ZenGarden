@@ -61,7 +61,7 @@ void DspBandpassFilter::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
       if (message->isSymbol(0, "clear")) {
-        x1 = x2 = dspBufferAtOutlet0[0] = dspBufferAtOutlet0[1] = 0.0f;
+        x1 = x2 = dspBufferAtOutlet[0][0] = dspBufferAtOutlet[0][1] = 0.0f;
       }
       break;
     }

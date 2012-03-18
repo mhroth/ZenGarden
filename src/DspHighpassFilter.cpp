@@ -64,7 +64,7 @@ void DspHighpassFilter::processMessage(int inletIndex, PdMessage *message) {
         case SYMBOL: {
           if (message->isSymbol(0, "clear")) {
             x1 = x2 = 0.0f;
-            dspBufferAtOutlet0[0] = dspBufferAtOutlet0[1] = 0.0f;
+            dspBufferAtOutlet[0][0] = dspBufferAtOutlet[0][1] = 0.0f;
           }
           break;
         }

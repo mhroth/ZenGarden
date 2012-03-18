@@ -58,16 +58,16 @@ void DspClip::processMessage(int inletIndex, PdMessage *message) {
 void DspClip::processDspWithIndex(int fromIndex, int toIndex) {
   #if __APPLE__
   vDSP_vclip(dspBufferAtInlet[0]+fromIndex, 1, &lowerBound, &upperBound,
-      dspBufferAtOutlet0+fromIndex, 1, toIndex-fromIndex);
+      dspBufferAtOutlet[0]+fromIndex, 1, toIndex-fromIndex);
   #else
   float *buffer = dspBufferAtInlet[0];
   for (int i = fromIndex; i < toIndex; i++) {
     if (buffer[i] <= lowerBound) {
-      dspBufferAtOutlet0[i] = lowerBound;
+      dspBufferAtOutlet[0][i] = lowerBound;
     } else if (buffer[i] >= upperBound) {
-      dspBufferAtOutlet0[i] = upperBound;
+      dspBufferAtOutlet[0][i] = upperBound;
     } else {
-      dspBufferAtOutlet0[i] = buffer[i];
+      dspBufferAtOutlet[0][i] = buffer[i];
     }
   }
   #endif

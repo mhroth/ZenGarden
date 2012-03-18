@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2011 Reality Jockey, Ltd.
+ *  Copyright 2009,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -32,11 +32,14 @@ class DspAdc : public DspObject {
     DspAdc(PdGraph *graph);
     ~DspAdc();
   
-    static const char *getObjectLabel();
+    static const char *getObjectLabel() { return "adc~"; }
+    string toString() { return string(DspAdc::getObjectLabel()); }
   
-  // This object doesn't do anything with audio, it only provides buffers. It should not be included
-  // in the dsp list
-  bool doesProcessAudio() { return false; }
+    // This object doesn't do anything with audio, it only provides buffers. It should not be included
+    // in the dsp list
+    bool doesProcessAudio() { return false; }
+  
+    float *getDspBufferAtOutlet(int outletIndex);
 };
 
 #endif // _DSP_ADC_H_

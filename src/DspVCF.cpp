@@ -88,5 +88,5 @@ void DspVCF::processDspWithIndex(int fromIndex, int toIndex) {
   ArrayArithmetic::multiply(dspBufferAtOutlet0, gain, dspBufferAtOutlet0, fromIndex, toIndex);
   */
   // NOTE(mhroth): This object is definitely not working properly. It outputs only zero.
-  ArrayArithmetic::fill(dspBufferAtOutlet0, 0, fromIndex, toIndex);
+  ArrayArithmetic::fill(dspBufferAtOutlet[0], 0, fromIndex, toIndex);
 }

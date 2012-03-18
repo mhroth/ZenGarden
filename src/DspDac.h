@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -32,7 +32,8 @@ class DspDac : public DspObject {
     DspDac(PdGraph *graph);
     ~DspDac();
   
-    static const char *getObjectLabel();
+    static const char *getObjectLabel() { return "dac~"; }
+    string toString() { return string(DspDac::getObjectLabel()); }
   
     void processDsp();
 };

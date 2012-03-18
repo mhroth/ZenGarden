@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010,2011 Reality Jockey, Ltd.
+ *  Copyright 2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -27,8 +27,7 @@ MessageObject *DspOutlet::newObject(PdMessage *initMessage, PdGraph *graph) {
 }
 
 DspOutlet::DspOutlet(PdGraph *graph) : DspObject(0, 1, 0, 1, graph) {
-  free(dspBufferAtOutlet0);
-  dspBufferAtOutlet0 = NULL;
+  // nothing to do
 }
 
 DspOutlet::~DspOutlet() {
@@ -57,10 +56,7 @@ void DspOutlet::onDspBufferAtInletUpdate(float *buffer, unsigned int inletIndex)
   for (list<ObjectLetPair>::iterator it = dspConnections.begin(); it != dspConnections.end(); ++it) {
     ObjectLetPair letPair = *it;
     DspObject *dspObject = reinterpret_cast<DspObject *>(letPair.first);
-    dspObject->setDspBufferAtInlet(dspBufferAtInlet[inletIndex], letPair.second);
+    dspObject->setDspBufferAtInletWithReuse(dspBufferAtInlet[inletIndex], letPair.second,
+        it == dspConnections.begin());
   }
-}
-
-float *DspOutlet::getDspBufferAtOutlet(int outletIndex) {
-  return dspBufferAtInlet[outletIndex];
 }

@@ -56,18 +56,14 @@ DspCosine::~DspCosine() {
   #endif
 }
 
-const char *DspCosine::getObjectLabel() {
-  return "cos~";
-}
-
 void DspCosine::processDsp() {
   // as no messages are received and there is only one inlet, processDsp does not need much of the
   // infrastructure provided by DspObject
   
   #if __APPLE__
   float twoPi = 2.0f*M_PI;
-  vDSP_vsmul(dspBufferAtInlet[0], 1, &twoPi, dspBufferAtOutlet0, 1, blockSizeInt);
-  vvcosf(dspBufferAtOutlet0, dspBufferAtOutlet0, &blockSizeInt);
+  vDSP_vsmul(dspBufferAtInlet[0], 1, &twoPi, dspBufferAtOutlet[0], 1, blockSizeInt);
+  vvcosf(dspBufferAtOutlet[0], dspBufferAtOutlet[0], &blockSizeInt);
   #else
   for (int i = 0; i < blockSizeInt; i++) {
     // works because cosine is symmetric about zero

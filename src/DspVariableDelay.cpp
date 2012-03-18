@@ -81,7 +81,7 @@ void DspVariableDelay::processDspWithIndex(int fromIndex, int toIndex) {
   }
   
   // do table lookup (in buffer) using xArray as indicies, with linear interpolation 
-  vDSP_vlint(buffer, xArray, 1, dspBufferAtOutlet0, 1, blockSizeInt, bufferLength);
+  vDSP_vlint(buffer, xArray, 1, dspBufferAtOutlet[0], 1, blockSizeInt, bufferLength);
   #else
   float *inputbuffer = dspBufferAtInlet[0];
   for (int i = 0; i < blockSizeInt; i++, targetIndexBase+=1.0f) {
@@ -103,7 +103,7 @@ void DspVariableDelay::processDspWithIndex(int fromIndex, int toIndex) {
     float y0 = buffer[x0];
     float y1 = buffer[x0+1];
     float slope = (y1 - y0); // /(x1 - x0) == 1.0f!
-    dspBufferAtOutlet0[i] = (slope * dx) + y0;
+    dspBufferAtOutlet[0][i] = (slope * dx) + y0;
   }
   #endif
 }

@@ -236,7 +236,7 @@ void PdGraph::addConnection(MessageObject *fromObject, int outletIndex, MessageO
   // In theory this function should check to see if a reordering is even necessary and then only make
   // the appropriate changes. Usually a complete reevaluation shouldn't be necessary, and otherwise
   // the use of a linked list to store the node list should make the reordering fast.
-  computeLocalDspProcessOrder(); 
+//  computeLocalDspProcessOrder(); 
  
   unlockContextIfAttached();
 }
@@ -674,6 +674,8 @@ void PdGraph::computeLocalDspProcessOrder() {
   }
 
   // add only those nodes which process audio to the final list
+  
+  
   // delete all objects in the implicit +~ list
   for (list<DspImplicitAdd *>::iterator it = implicitDspAddList.begin();
       it != implicitDspAddList.end(); ++it) {
@@ -687,42 +689,57 @@ void PdGraph::computeLocalDspProcessOrder() {
     // dsp elements at the top of the graph (i.e. process list) are processed first
     MessageObject *object = *it;
     if (object->doesProcessAudio()) {
-      // Add +~ objects to perform implicit sum operation for signal connections to the same inlet
       DspObject *dspObject = reinterpret_cast<DspObject *>(object);
-      for (int i = 0; i < dspObject->getNumInlets(); i++) {
+      printStd("%s", dspObject->toString().c_str());
+      
+      // Add +~ objects to perform implicit sum operation for signal connections to the same inlet
+      for (int i = 0; i < dspObject->getNumDspInlets(); i++) {
         list<ObjectLetPair> incomingDspConnectionsList = dspObject->getIncomingDspConnections(i);
         switch (incomingDspConnectionsList.size()) {
           case 0: {
             // if no connections are made to an inlet, then it receives a zero buffer
-            dspObject->setDspBufferAtInlet(zeroBuffer, i);
+            // the zero buffer may never be reused, but there is an additional check for it anyway
+            dspObject->setDspBufferAtInletWithReuse(zeroBuffer, i, false);
             break;
           }
           case 1: {
-            // if only one connections exists to the object, add the connection directly
+            // if only one connection exists to this object, add the connection directly
             ObjectLetPair objectLetPair = incomingDspConnectionsList.front();
             DspObject *prevObject = (DspObject *) objectLetPair.first;
             unsigned int outletIndex = objectLetPair.second;
-            dspObject->setDspBufferAtInlet(prevObject->getDspBufferAtOutlet(outletIndex), i);
+            dspObject->setDspBufferAtInletWithReuse(prevObject->getDspBufferAtOutlet(outletIndex), i,
+                prevObject->mayReuseBuffer(dspObject, outletIndex));
             break;
           }
           default: {
             // if more than one connection exists to an inlet, create a series of dummy +~ objects
             // to perform implicit summing
             list<ObjectLetPair>::iterator jt = incomingDspConnectionsList.begin();
-            DspObject *prevObject = (DspObject *) (*jt).first;
+            DspObject *prevObject = reinterpret_cast<DspObject *>((*jt).first);
             unsigned int prevOutlet = (*jt++).second;
-            PdMessage *dspAddInitMessage = PD_MESSAGE_ON_STACK(1);
-            dspAddInitMessage->setFloat(0, 0.0f);
+            PdMessage *dspAddInitMessage = PD_MESSAGE_ON_STACK(1); dspAddInitMessage->setFloat(0, 0.0f);
+            bool mayReuseBufferFromLeftConnection = prevObject->mayReuseBuffer(dspObject, prevOutlet);
             while (jt != incomingDspConnectionsList.end()) {
               DspImplicitAdd *dspAdd = new DspImplicitAdd(dspAddInitMessage, this);
-              dspAdd->addConnectionFromObjectToInlet(prevObject, prevOutlet, 0);
-              dspAdd->addConnectionFromObjectToInlet((*jt).first, (*jt++).second, 1);
+              dspAdd->setDspBufferAtInletWithReuse(prevObject->getDspBufferAtOutlet(prevOutlet), 0,
+                  mayReuseBufferFromLeftConnection);
+              
+              // after the first left connection, we only connect with +~~ objects and thus are
+              // definitely allowed to reuse the buffer
+              mayReuseBufferFromLeftConnection = true;
+              
+              // the second connection is always a non-+~~ object
+              DspObject *prevObject1 = reinterpret_cast<DspObject *>((*jt).first);
+              unsigned int prevOutlet1 = (*jt++).second;
+              dspAdd->setDspBufferAtInletWithReuse(prevObject1->getDspBufferAtOutlet(prevOutlet1), 1,
+                  prevObject1->mayReuseBuffer(dspObject, prevOutlet1));
+              
               prevObject = dspAdd; prevOutlet = 0;
               dspNodeList.push_back(dspAdd);
               implicitDspAddList.push_back(dspAdd);
             }
             // set dsp ref at inlet of dspObject to prevObject
-            dspObject->setDspBufferAtInlet(prevObject->getDspBufferAtOutlet(0), i);
+            dspObject->setDspBufferAtInletWithReuse(prevObject->getDspBufferAtOutlet(0), i, true);
             break;
           }
         }

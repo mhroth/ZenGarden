@@ -129,26 +129,26 @@ void DspTablePlay::processDspWithIndex(int fromIndex, int toIndex) {
     int remainingTableSamples = endTableIndex - currentTableIndex;
     if (remainingTableSamples <= 0) {
       // if the entire buffer has already been read, fill the output with silence
-      dspBufferAtOutlet0 = DspObject::zeroBuffer;
+      memset(dspBufferAtOutlet[0], 0, blockSizeInt * sizeof(float));
     } else if (duration <= remainingTableSamples) {
       if (duration == blockSizeInt) {
         // if the entire output must be filled and there are more than one buffer's worth of
         // samples still available from the table, just set the output buffer pointer
-        memcpy(dspBufferAtOutlet0, tableBuffer + currentTableIndex, blockSizeInt*sizeof(float));
+        memcpy(dspBufferAtOutlet[0], tableBuffer + currentTableIndex, blockSizeInt*sizeof(float));
         currentTableIndex += blockSizeInt;
       } else {
         // if the number of remaining samples in the table is more than the number of samples
         // which need to be read to the output buffer, but not the whole output buffer must be written
-        memcpy(dspBufferAtOutlet0 + fromIndex, tableBuffer + currentTableIndex, duration * sizeof(float));
+        memcpy(dspBufferAtOutlet[0] + fromIndex, tableBuffer + currentTableIndex, duration * sizeof(float));
         currentTableIndex += duration;
       }
     } else {
       // if the number of output buffer samples to fill is larger than the number of remaining table
       // samples, fill the output with the maximum available table samples, and fill in the remainder
       // with zero
-      memcpy(dspBufferAtOutlet0 + fromIndex, tableBuffer + currentTableIndex,
+      memcpy(dspBufferAtOutlet[0] + fromIndex, tableBuffer + currentTableIndex,
           remainingTableSamples * sizeof(float));
-      memset(dspBufferAtOutlet0 + fromIndex + remainingTableSamples, 0,
+      memset(dspBufferAtOutlet[0] + fromIndex + remainingTableSamples, 0,
           (duration-remainingTableSamples) * sizeof(float));
       currentTableIndex += duration;
     }

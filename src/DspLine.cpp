@@ -78,7 +78,7 @@ void DspLine::processDspWithIndex(int fromIndex, int toIndex) {
   if (numSamplesToTarget <= 0.0f) { // if we have already reached the target
     int n = toIndex - fromIndex;
     if (n > 0) { // n may be zero
-      ArrayArithmetic::fill(dspBufferAtOutlet0, target, fromIndex, toIndex);
+      ArrayArithmetic::fill(dspBufferAtOutlet[0], target, fromIndex, toIndex);
       lastOutputSample = target;
     }
   } else {
@@ -89,17 +89,17 @@ void DspLine::processDspWithIndex(int fromIndex, int toIndex) {
       if (numSamplesToTarget < n) {
         int targetIndexInt = fromIndex + numSamplesToTarget;
         #if __APPLE__
-        vDSP_vramp(&lastOutputSample, &slope, dspBufferAtOutlet0+fromIndex, 1, targetIndexInt-fromIndex);
-        vDSP_vfill(&target, dspBufferAtOutlet0+targetIndexInt, 1, toIndex-targetIndexInt);
+        vDSP_vramp(&lastOutputSample, &slope, dspBufferAtOutlet[0]+fromIndex, 1, targetIndexInt-fromIndex);
+        vDSP_vfill(&target, dspBufferAtOutlet[0]+targetIndexInt, 1, toIndex-targetIndexInt);
         #else
         // if we will process more samples than we have remaining to the target
         // i.e., if we will arrive at the target while processing
-        dspBufferAtOutlet0[fromIndex] = lastOutputSample + slope;
+        dspBufferAtOutlet[0][fromIndex] = lastOutputSample + slope;
         for (int i = fromIndex+1; i < targetIndexInt; i++) {
-          dspBufferAtOutlet0[i] = dspBufferAtOutlet0[i-1] + slope;
+          dspBufferAtOutlet[0][i] = dspBufferAtOutlet0[i-1] + slope;
         }
         for (int i = targetIndexInt; i < toIndex; i++) {
-          dspBufferAtOutlet0[i] = target;
+          dspBufferAtOutlet[0][i] = target;
         }
         #endif
         lastOutputSample = target;
@@ -107,14 +107,14 @@ void DspLine::processDspWithIndex(int fromIndex, int toIndex) {
       } else {
         // if the target is far off
         #if __APPLE__
-        vDSP_vramp(&lastOutputSample, &slope, dspBufferAtOutlet0+fromIndex, 1, n);
+        vDSP_vramp(&lastOutputSample, &slope, dspBufferAtOutlet[0]+fromIndex, 1, n);
         #else
-        dspBufferAtOutlet0[fromIndex] = lastOutputSample + slope;
+        dspBufferAtOutlet[0][fromIndex] = lastOutputSample + slope;
         for (int i = fromIndex+1; i < toIndex; i++) {
-          dspBufferAtOutlet0[i] = dspBufferAtOutlet0[i-1] + slope;
+          dspBufferAtOutlet[0][i] = dspBufferAtOutlet0[i-1] + slope;
         }
         #endif
-        lastOutputSample = dspBufferAtOutlet0[toIndex-1];  
+        lastOutputSample = dspBufferAtOutlet[0][toIndex-1];  
         numSamplesToTarget -= n;
       }
     }

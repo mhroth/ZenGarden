@@ -64,7 +64,7 @@ void DspLog::processDspWithIndex(int fromIndex, int toIndex) {
       float a[blockSizeInt];
       #if __APPLE__
       int length = toIndex - fromIndex;
-      vvlog2f(dspBufferAtOutlet0+fromIndex, dspBufferAtInlet[0]+fromIndex, &length);
+      vvlog2f(dspBufferAtOutlet[0]+fromIndex, dspBufferAtInlet[0]+fromIndex, &length);
       vvlog2f(a, dspBufferAtInlet[1]+fromIndex, &length);
       #else
       float *buffer0 = dspBufferAtInlet[0];
@@ -74,19 +74,19 @@ void DspLog::processDspWithIndex(int fromIndex, int toIndex) {
         a[i] = (buffer1[i] <= 0.0f) ? -1000.0f : log2Approx(buffer1[i]);
       }
       #endif
-      ArrayArithmetic::divide(dspBufferAtOutlet0, a, dspBufferAtOutlet0, fromIndex, toIndex);
+      ArrayArithmetic::divide(dspBufferAtOutlet[0], a, dspBufferAtOutlet[0], fromIndex, toIndex);
       break;
     }
     case DSP_LOG_DSP_MESSAGE: {
       #if __APPLE__
-      vvlog2f(dspBufferAtOutlet0, dspBufferAtInlet[0], &blockSizeInt);
+      vvlog2f(dspBufferAtOutlet[0], dspBufferAtInlet[0], &blockSizeInt);
       #else
       float *buffer = dspBufferAtInlet[0];
       for (int i = fromIndex; i < toIndex; i++) {
         dspBufferAtOutlet0[i] = (buffer[i] <= 0.0f) ? -1000.0f : log2Approx(buffer[i]);
       }
       #endif
-      ArrayArithmetic::multiply(dspBufferAtOutlet0, invLog2Base, dspBufferAtOutlet0, fromIndex, toIndex);
+      ArrayArithmetic::multiply(dspBufferAtOutlet[0], invLog2Base, dspBufferAtOutlet[0], fromIndex, toIndex);
       break;
     }
   }

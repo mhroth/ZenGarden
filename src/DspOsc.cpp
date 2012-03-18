@@ -100,7 +100,7 @@ void DspOsc::processDsp() {
         } else if (index >= sampleRate) {
           index -= sampleRate;
         }
-        dspBufferAtOutlet0[i] = cos_table[(int) index];
+        dspBufferAtOutlet[0][i] = cos_table[(int) index];
       }
       break;
     }
@@ -122,6 +122,6 @@ void DspOsc::processDspWithIndex(int fromIndex, int toIndex) {
       // outside of the cos_table
       index -= sampleRate;
     }
-    dspBufferAtOutlet0[i] = cos_table[(int) index];
+    dspBufferAtOutlet[0][i] = cos_table[(int) index];
   }
 }

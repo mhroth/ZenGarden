@@ -43,6 +43,25 @@ string DspImplicitAdd::toString() {
   return string(getObjectLabel());
 }
 
+void DspImplicitAdd::setDspBufferAtInletWithReuse(float *buffer, unsigned int inletIndex, bool mayReuse) {
+  // allConnectionsAreToSameObject is not used because +~~ does not maintain a list of connections
+  // and cannot know if all of its connections are to the same object (but of course they are)
+
+  // if it is possible to reuse the input buffer, do so
+  if (inletIndex == 0 &&
+      mayReuse && canReuseInputBuffer() &&
+      buffer != DspObject::zeroBuffer) { // don't overwrite the zero buffer
+    dspBufferAtInlet[0] = buffer; // set the incoming buffer
+    dspBufferAtOutlet[0] = buffer;
+  } else {
+    if (inletIndex == 0 && 
+        dspBufferAtInlet[0] == dspBufferAtOutlet[0]) {
+      dspBufferAtOutlet[0] = (float *) valloc(blockSizeInt * sizeof(float));
+    }
+    dspBufferAtInlet[inletIndex] = buffer; // set the incoming buffer
+  }
+}
+
 void DspImplicitAdd::processDsp() {
-  ArrayArithmetic::add(dspBufferAtInlet[0], dspBufferAtInlet[1], dspBufferAtOutlet0, 0, blockSizeInt);
+  ArrayArithmetic::add(dspBufferAtInlet[0], dspBufferAtInlet[1], dspBufferAtOutlet[0], 0, blockSizeInt);
 }

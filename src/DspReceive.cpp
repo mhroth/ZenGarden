@@ -31,8 +31,6 @@ MessageObject *DspReceive::newObject(PdMessage *initMessage, PdGraph *graph) {
 DspReceive::DspReceive(PdMessage *initMessage, PdGraph *graph) : DspObject(1, 0, 0, 1, graph) {
   if (initMessage->isSymbol(0)) {
     name = StaticUtils::copyString(initMessage->getSymbol(0));
-    free(dspBufferAtOutlet0);
-    dspBufferAtOutlet0 = NULL;
   } else {
     name = NULL;
     graph->printErr("receive~ not initialised with a name.");
@@ -58,7 +56,9 @@ const char *DspReceive::getName() {
 
 void DspReceive::setBuffer(float *buffer) {
   // maintain a double-pointer to the buffer of the associated send~
-  dspBufferAtOutlet0 = buffer;
+  dspBufferAtOutlet[0] = buffer;
+  
+  // TODO(mhroth): update input buffers of objects following this receive~
 }
 
 void DspReceive::processMessage(int inletIndex, PdMessage *message) {

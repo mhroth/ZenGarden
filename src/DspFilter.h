@@ -36,12 +36,15 @@ class DspFilter : public DspObject {
   
     void onInletConnectionUpdate(unsigned int inletIndex);
   
+    // do NOT reuse the input buffer as the output buffer
+    bool canReuseInputBuffer() { return false; }
+  
   protected:
     void processDspWithIndex(int fromIndex, int toIndex);
     
     inline void processFilter(float *buffer, int fromIndex, int toIndex) {
       #if __APPLE__
-      vDSP_deq22(buffer+fromIndex, 1, b, dspBufferAtOutlet0+fromIndex, 1, toIndex - fromIndex);
+      vDSP_deq22(buffer+fromIndex, 1, b, dspBufferAtOutlet[0]+fromIndex, 1, toIndex - fromIndex);
       #else
       int _toIndex = toIndex + 2;
       for (int i = fromIndex+2; i < _toIndex; ++i) {
@@ -55,8 +58,8 @@ class DspFilter : public DspObject {
       x2 = buffer[toIndex];
       
       // retain last output
-      dspBufferAtOutlet0[0] = dspBufferAtOutlet0[toIndex];
-      dspBufferAtOutlet0[1] = dspBufferAtOutlet0[toIndex+1];
+      dspBufferAtOutlet[0][0] = dspBufferAtOutlet[0][toIndex];
+      dspBufferAtOutlet[0][1] = dspBufferAtOutlet[0][toIndex+1];
     }
 
     float x1, x2;

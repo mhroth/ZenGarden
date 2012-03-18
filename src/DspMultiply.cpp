@@ -68,11 +68,11 @@ void DspMultiply::processMessage(int inletIndex, PdMessage *message) {
 void DspMultiply::processDsp() {
   switch (codepath) {
     case DSP_MULTIPLY_DSP_DSP: {
-      ArrayArithmetic::multiply(dspBufferAtInlet[0], dspBufferAtInlet[1], dspBufferAtOutlet0, 0, blockSizeInt);
+      ArrayArithmetic::multiply(dspBufferAtInlet[0], dspBufferAtInlet[1], dspBufferAtOutlet[0], 0, blockSizeInt);
       break;
     }
     case DSP_OBJECT_PROCESS_NO_MESSAGE: {
-      ArrayArithmetic::multiply(dspBufferAtInlet[0], constant, dspBufferAtOutlet0, 0, blockSizeInt);
+      ArrayArithmetic::multiply(dspBufferAtInlet[0], constant, dspBufferAtOutlet[0], 0, blockSizeInt);
       break;
     }
     default: DspObject::processDsp(); break;
@@ -80,5 +80,5 @@ void DspMultiply::processDsp() {
 }
 
 void DspMultiply::processDspWithIndex(int fromIndex, int toIndex) {
-  ArrayArithmetic::multiply(dspBufferAtInlet[0], constant, dspBufferAtOutlet0, fromIndex, toIndex);
+  ArrayArithmetic::multiply(dspBufferAtInlet[0], constant, dspBufferAtOutlet[0], fromIndex, toIndex);
 }

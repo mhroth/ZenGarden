@@ -40,7 +40,7 @@ class DspDelayWrite : public DspObject {
     inline float *getBuffer(int *index, int *length) {
       *index = headIndex;
       *length = bufferLength;
-      return dspBufferAtOutlet0;
+      return dspBufferAtOutlet[0];
     }
   
     void processDsp();

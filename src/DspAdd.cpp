@@ -67,11 +67,11 @@ void DspAdd::processMessage(int inletIndex, PdMessage *message) {
 void DspAdd::processDsp() {
   switch (codepath) {
     case DSP_ADD_DSP_DSP: {
-      ArrayArithmetic::add(dspBufferAtInlet[0], dspBufferAtInlet[1], dspBufferAtOutlet0, 0, blockSizeInt);
+      ArrayArithmetic::add(dspBufferAtInlet[0], dspBufferAtInlet[1], dspBufferAtOutlet[0], 0, blockSizeInt);
       break;
     }
     case DSP_OBJECT_PROCESS_NO_MESSAGE: {
-      ArrayArithmetic::add(dspBufferAtInlet[0], constant, dspBufferAtOutlet0, 0, blockSizeInt);
+      ArrayArithmetic::add(dspBufferAtInlet[0], constant, dspBufferAtOutlet[0], 0, blockSizeInt);
       break;
     }
     default: {
@@ -82,5 +82,5 @@ void DspAdd::processDsp() {
 }
 
 void DspAdd::processDspWithIndex(int fromIndex, int toIndex) {
-  ArrayArithmetic::add(dspBufferAtInlet[0], constant, dspBufferAtOutlet0, fromIndex, toIndex);
+  ArrayArithmetic::add(dspBufferAtInlet[0], constant, dspBufferAtOutlet[0], fromIndex, toIndex);
 }

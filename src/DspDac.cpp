@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -34,10 +34,6 @@ DspDac::DspDac(PdGraph *graph) : DspObject(0, graph->getNumOutputChannels(), 0, 
 
 DspDac::~DspDac() {
   // nothing to do
-}
-
-const char *DspDac::getObjectLabel() {
-  return "dac~";
 }
 
 void DspDac::processDsp() {

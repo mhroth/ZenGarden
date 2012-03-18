@@ -108,7 +108,7 @@ class MessageObject {
     virtual string toString();
   
     /** Returns <code>true</code> if this object processes audio, <code>false</code> otherwise. */
-    virtual bool doesProcessAudio();
+    virtual bool doesProcessAudio() { return false; }
   
     /**
      * Returns <code>true</code> if this object should distribute the elements of the incoming

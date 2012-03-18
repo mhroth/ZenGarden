@@ -33,7 +33,8 @@ class DspCosine : public DspObject {
     DspCosine(PdMessage *initMessage, PdGraph *graph);
     ~DspCosine();
 
-    static const char *getObjectLabel();
+    static const char *getObjectLabel() { return "cos~"; }
+    string toString() { return string(getObjectLabel()); }
 
     void processDsp();
 

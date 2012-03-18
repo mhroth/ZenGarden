@@ -39,6 +39,8 @@ public:
   static const char *getObjectLabel();
   string toString();
   
+  void setDspBufferAtInletWithReuse(float *buffer, unsigned int inletIndex, bool mayReuse);
+  
   void processDsp();
 };
 

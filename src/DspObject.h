@@ -59,7 +59,10 @@ class DspObject : public MessageObject {
     virtual void receiveMessage(int inletIndex, PdMessage *message);
   
     /* Override MessageObject::shouldDistributeMessageToInlets() */
-    virtual bool shouldDistributeMessageToInlets();
+    virtual bool shouldDistributeMessageToInlets() { return false; }
+  
+    /** true if this object can reuse its input buffer as an output buffer. false otherwise. */
+    virtual bool canReuseInputBuffer() { return true; }
     
     /** Process audio buffers in this block. */
     virtual void processDsp();
@@ -69,21 +72,38 @@ class DspObject : public MessageObject {
 
     virtual float *getDspBufferAtOutlet(int outletIndex);
   
-    virtual void setDspBufferAtInlet(float *buffer, unsigned int inletIndex);
+    /**
+     * Returns true if dspObject connected to from the outletIndex may reuse the output buffer at
+     * that index.
+     */
+    virtual bool mayReuseBuffer(DspObject *dspObject, unsigned int outletIndex);
+  
+    /**
+     * Set the incoming buffer at the given inlet index. A boolean indicates if the given buffer
+     * may be reused as an output buffer by the object. This object may also set its output buffer
+     * with the given buffer, if all necessary conditions are satisfied.
+     */
+    virtual void setDspBufferAtInletWithReuse(float *buffer, unsigned int inletIndex, bool mayReuse);
   
     virtual void addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex);
     virtual void addConnectionToObjectFromOutlet(MessageObject *messageObject, int inletIndex, int outletIndex);
     virtual void removeConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex);
     virtual void removeConnectionToObjectFromOutlet(MessageObject *messageObject, int inletIndex, int outletIndex);
   
-    virtual bool doesProcessAudio();
+    virtual bool doesProcessAudio() { return true; }
   
     virtual bool isLeafNode();
 
     virtual list<MessageObject *> *getProcessOrder();
   
-    virtual unsigned int getNumInlets();
-    virtual unsigned int getNumOutlets();
+    virtual unsigned int getNumInlets() {
+      return max(incomingMessageConnections.size(), incomingDspConnections.size());
+    }
+    virtual unsigned int getNumOutlets() {
+      return max(outgoingMessageConnections.size(), outgoingDspConnections.size());
+    }
+    virtual unsigned int getNumDspInlets() { return incomingDspConnections.size(); }
+    virtual unsigned int getNumDspOutlets() { return outgoingDspConnections.size(); }
   
     /**
      * Returns <i>all</i> incoming connections to the given inlet. This includes both message and
@@ -117,7 +137,7 @@ class DspObject : public MessageObject {
      */
     virtual void onInletConnectionUpdate(unsigned int inletIndex);
   
-    virtual void onDspBufferAtInletUpdate(float *buffer, unsigned int inletIndex);
+    virtual void onDspBufferAtInletUpdate(float *buffer, unsigned int inletIndex) { }
   
     /** Immediately deletes all messages in the message queue without executing them. */
     void clearMessageQueue();
@@ -126,20 +146,14 @@ class DspObject : public MessageObject {
     // require different number formats
     int blockSizeInt;
   
-    /** The sample index of the last received message, relative to the beginning of the current block. */
-    double blockIndexOfLastMessage;
-  
     /** The local message queue. Messages that are pending for the next block. */
     queue<MessageLetPair> messageQueue;
-  
-    /** The number of bytes in a single dsp block. == blockSize * sizeof(float) */
-    int numBytesInBlock;
   
     /* An array of pointers to resolved dsp buffers at each inlet. */
     float **dspBufferAtInlet;
   
-    /** Points to a concatinated array of all output buffers. Permanent pointer to the local output buffers. */
-    float *dspBufferAtOutlet0;
+    /** TODO(mhroth) */
+    float **dspBufferAtOutlet;
   
     /** List of all dsp objects connecting to this object at each inlet. */
     vector<list<ObjectLetPair> > incomingDspConnections;

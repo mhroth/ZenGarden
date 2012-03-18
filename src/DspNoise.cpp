@@ -41,6 +41,6 @@ const char *DspNoise::getObjectLabel() {
 
 void DspNoise::processDsp() {
   for (int i = 0; i < blockSizeInt; i++) {
-    dspBufferAtOutlet0[i] = ((float) twister->rand(2.0)) - 1.0f;
+    dspBufferAtOutlet[0][i] = ((float) twister->rand(2.0)) - 1.0f;
   }
 }

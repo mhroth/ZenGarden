@@ -65,7 +65,7 @@ void DspMinimum::processDspWithIndex(int fromIndex, int toIndex) {
     case DSP_MINIMUM_DSP_DSP: {
       #if __APPLE__
       vDSP_vmin(dspBufferAtInlet[0]+fromIndex, 1, dspBufferAtInlet[1]+fromIndex, 1,
-          dspBufferAtOutlet0+fromIndex, 1, toIndex-fromIndex);
+          dspBufferAtOutlet[0]+fromIndex, 1, toIndex-fromIndex);
       #else
       float *inputBuffer0 = dspBufferAtInlet[0];
       float *inputBuffer1 = dspBufferAtInlet[1];
@@ -84,7 +84,7 @@ void DspMinimum::processDspWithIndex(int fromIndex, int toIndex) {
       int duration = toIndex - fromIndex;
       float vconst[duration];
       vDSP_vfill(&constant, vconst, 1, duration);
-      vDSP_vmin(dspBufferAtInlet[0] + fromIndex, 1, vconst, 1, dspBufferAtOutlet0 + fromIndex, 1,
+      vDSP_vmin(dspBufferAtInlet[0] + fromIndex, 1, vconst, 1, dspBufferAtOutlet[0] + fromIndex, 1,
           duration);
       #else
       float *inputBuffer = dspBufferAtInlet[0];

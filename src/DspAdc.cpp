@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2011 Reality Jockey, Ltd.
+ *  Copyright 2009,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -28,25 +28,13 @@ MessageObject *DspAdc::newObject(PdMessage *initMessage, PdGraph *graph) {
 }
 
 DspAdc::DspAdc(PdGraph *graph) : DspObject(0, 0, 0, graph->getNumInputChannels(), graph) {
-  /* In order to avoid lots of <code>memcpy</code>ing to separate input buffers, all ADCs refer to
-   * the same input buffers.
-   * This is accomplished by freeing the normally allocated output buffers, and replacing the
-   * pointers to them with pointers to the global input buffers. In this way,
-   * <code>DspObject</code>s can continue to refer to <code>localDspBufferAtOutlet</code>
-   * and still get access to the global audio input buffers.
-   */
-  free(dspBufferAtOutlet0);
-  dspBufferAtOutlet0 = NULL;
-  
-  // both dspBufferAtOutlet0 and input buffers are concatinated buffers, so this works :)
-  dspBufferAtOutlet0 = graph->getGlobalDspBufferAtInlet(0);
+  // nothing to do
 }
 
 DspAdc::~DspAdc() {
-  // reset dspBufferAtOutlet0 to NULL so that the global input buffer is not freed (possibly multiple times)
-  dspBufferAtOutlet0 = NULL;
+  // nothing to do
 }
 
-const char *DspAdc::getObjectLabel() {
-  return "adc~";
+float *DspAdc::getDspBufferAtOutlet(int outletIndex) {
+  return graph->getGlobalDspBufferAtInlet(outletIndex);
 }

@@ -44,7 +44,7 @@ void DspSqrt::processDsp() {
     
   #if __ARM_NEON__
   float *inBuff = dspBufferAtInlet[0];
-  float *outBuff = dspBufferAtOutlet0;
+  float *outBuff = dspBufferAtOutlet[0];
   float32x4_t inVec, outVec;
   float32x4_t zeroVec = vdupq_n_f32(0.0f);
   int n4 = blockSizeInt & 0xFFFFFFFC;
@@ -67,7 +67,7 @@ void DspSqrt::processDsp() {
   }
   #elif __SSE__
   float *inBuff = dspBufferAtInlet[0];
-  float *outBuff = dspBufferAtOutlet0;
+  float *outBuff = dspBufferAtOutlet[0];
   __m128 inVec, outVec;
   __m128 zeroVec = _mm_set1_ps(0.0f);
   int n4 = blockSizeInt & 0xFFFFFFFC;
@@ -88,7 +88,7 @@ void DspSqrt::processDsp() {
   }
   #else
   for (int i = 0; i < blockSizeInt; i++) {
-    dspBufferAtOutlet0[i] = sqrtf(dspBufferAtInlet[i]);
+    dspBufferAtOutlet[0][i] = sqrtf(dspBufferAtInlet[i]);
   }
   #endif
 }

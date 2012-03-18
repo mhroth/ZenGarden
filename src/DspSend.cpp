@@ -30,10 +30,6 @@ MessageObject *DspSend::newObject(PdMessage *initMessage, PdGraph *graph) {
 DspSend::DspSend(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0, 0, graph) {
   if (initMessage->isSymbol(0)) {
     name = StaticUtils::copyString(initMessage->getSymbol(0));
-    
-    // as this object has no official outlet buffer, reuse the class variable in order to reference
-    // the local scratch buffer.
-    dspBufferAtOutlet0 = (float *) valloc(blockSizeInt * sizeof(float));
   } else {
     name = NULL;
     graph->printErr("send~ not initialised with a name.");
@@ -42,8 +38,6 @@ DspSend::DspSend(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0, 0,
 
 DspSend::~DspSend() {
   free(name);
-  free(dspBufferAtOutlet0);
-  dspBufferAtOutlet0 = NULL;
 }
 
 const char *DspSend::getObjectLabel() {
