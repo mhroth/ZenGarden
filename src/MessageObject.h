@@ -33,6 +33,7 @@
 #include "StaticUtils.h"
 using namespace std;
 
+class DspObject;
 class PdGraph;
 class MessageObject;
 
@@ -129,7 +130,7 @@ class MessageObject {
     virtual bool isLeafNode();
   
     /** Returns an ordered list of all parent objects of this object. */
-    virtual list<MessageObject *> *getProcessOrder();
+    virtual list<DspObject *> getProcessOrder();
   
     /**
      * Reset the <code>isOrdered</code> flag to <code>false</code>. This is necessary in order to

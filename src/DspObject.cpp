@@ -21,6 +21,7 @@
  */
 
 #include "ArrayArithmetic.h"
+#include "DspImplicitAdd.h"
 #include "DspObject.h"
 #include "PdGraph.h"
 
@@ -63,11 +64,7 @@ void DspObject::init(int numDspInlets, int numDspOutlets, int blockSize) {
   dspBufferAtInlet = (numDspInlets > 0) ? (float **) calloc(numDspInlets, sizeof(float *)) : NULL;
   
   // initialise the local output audio buffers
-  dspBufferAtOutlet = (numDspOutlets > 0) ? (float **) calloc(numDspOutlets, sizeof(float)) : NULL;
-  for (int i = 0; i < numDspOutlets; ++i) {
-    dspBufferAtOutlet[i] = (float *) valloc(blockSizeInt * sizeof(float));
-    memset(dspBufferAtOutlet[i], 0, blockSize * sizeof(float));
-  }
+  dspBufferAtOutlet = (numDspOutlets > 0) ? (float **) calloc(numDspOutlets, sizeof(float *)) : NULL;
 }
 
 DspObject::~DspObject() {  
@@ -80,13 +77,7 @@ DspObject::~DspObject() {
   // delete any messages still pending
   clearMessageQueue();
   
-  // delete outlet buffers
-  for (int i = 0; i < outgoingDspConnections.size(); i++) {
-    if (i > 0 || (i == 0 && (incomingDspConnections.size() == 0 ||
-        (incomingDspConnections.size() > 0 && dspBufferAtInlet[0] != dspBufferAtOutlet[0])))) {
-      free(dspBufferAtOutlet[i]);
-    }
-  }
+  // inlet and outlet buffers are managed by the BufferPool
   
   // free the inlet buffer index
   free(dspBufferAtInlet);
@@ -192,42 +183,17 @@ void DspObject::removeConnectionToObjectFromOutlet(MessageObject *messageObject,
   }
 }
 
-void DspObject::setDspBufferAtInletWithReuse(float *buffer, unsigned int inletIndex, bool mayReuse) {
-  // check to see if all outgoing connections are to the same object
-  // if not, then the input buffer cannot be reused as an output buffer
-  bool allConnectionsAreToSameObject = outgoingDspConnections.size() == 1 && outgoingDspConnections[0].size() > 0;
-  if (allConnectionsAreToSameObject) {
-    list<ObjectLetPair> connections = outgoingDspConnections[0];
-    MessageObject *object = connections.front().first;
-    for (list<ObjectLetPair>::iterator it = ++(connections.begin()); it != connections.end(); ++it) {
-      if ((*it).first != object) {
-        allConnectionsAreToSameObject = false;
-        break;
-      }
-    }
-  }
-  
-  // if it is possible to reuse the input buffer, do so
-  if (inletIndex == 0 &&
-      mayReuse && canReuseInputBuffer() &&
-      allConnectionsAreToSameObject &&
-      buffer != DspObject::zeroBuffer) { // don't overwrite the zero buffer
-    // if the input and output buffers are not already the same, then free the output buffer
-    if (dspBufferAtInlet[0] != dspBufferAtOutlet[0]) free(dspBufferAtOutlet[0]);
-    
-    dspBufferAtInlet[0] = buffer; // set the incoming buffer
-    dspBufferAtOutlet[0] = buffer;
-  } else {
-    if (inletIndex == 0 && 
-        outgoingDspConnections.size() > 0 &&
-        dspBufferAtInlet[0] == dspBufferAtOutlet[0]) {
-      dspBufferAtOutlet[0] = (float *) valloc(blockSizeInt * sizeof(float));
-    }
-    dspBufferAtInlet[inletIndex] = buffer; // set the incoming buffer
-  }
+void DspObject::setDspBufferAtInlet(float *buffer, unsigned int inletIndex) {
+  dspBufferAtInlet[inletIndex] = buffer;
   
   // if the object must take any special steps when updating the input buffer, do so now
   onDspBufferAtInletUpdate(buffer, inletIndex);
+}
+
+void DspObject::setDspBufferAtOutlet(float *buffer, unsigned int outletIndex) {
+  dspBufferAtOutlet[outletIndex] = buffer;
+  
+  onDspBufferAtOutletUpdate(buffer, outletIndex);
 }
 
 
@@ -293,46 +259,99 @@ void DspObject::processDspWithIndex(int fromIndex, int toIndex) {
 }
 
 bool DspObject::isLeafNode() {
-  if (!MessageObject::isLeafNode()) {
-    return false;
-  } else {
+  if (!MessageObject::isLeafNode()) return false;
+  else {
     for (int i = 0; i < outgoingDspConnections.size(); i++) {
-      if (outgoingDspConnections[i].size() > 0) {
-        return false;
-      }
+      if (outgoingDspConnections[i].size() > 0) return false;
     }
     return true;
   }
 }
 
-list<MessageObject *> *DspObject::getProcessOrder() {
+list<DspObject *> DspObject::getProcessOrder() {
   if (isOrdered) {
     // if this object has already been ordered, then move on
-    return new list<MessageObject *>();
+    return list<DspObject *>();
   } else {
     isOrdered = true;
-    list<MessageObject *> *processList = new list<MessageObject *>();
+    list<DspObject *> processList;
     for (int i = 0; i < incomingMessageConnections.size(); i++) {
-      list<ObjectLetPair>::iterator it = incomingMessageConnections[i].begin();
-      list<ObjectLetPair>::iterator end = incomingMessageConnections[i].end();
-      while (it != end) {
+      for (list<ObjectLetPair>::iterator it = incomingMessageConnections[i].begin();
+          it != incomingMessageConnections[i].end(); it++) {
         ObjectLetPair objectLetPair = *it++;
-        list<MessageObject *> *parentProcessList = objectLetPair.first->getProcessOrder();
-        processList->splice(processList->end(), *parentProcessList);
-        delete parentProcessList;
+        list<DspObject *> parentProcessList = objectLetPair.first->getProcessOrder();
+        // DspObjects "connected" through message connections must be processed, but buffers
+        // not otherwise calculated
+        processList.splice(processList.end(), parentProcessList);
       }
     }
+    
+    BufferPool *bufferPool = graph->getBufferPool();
+    PdMessage *dspAddInitMessage = PD_MESSAGE_ON_STACK(1);
+    dspAddInitMessage->initWithTimestampAndFloat(0, 0.0f);
     for (int i = 0; i < incomingDspConnections.size(); i++) {
-      list<ObjectLetPair>::iterator it = incomingDspConnections[i].begin();
-      list<ObjectLetPair>::iterator end = incomingDspConnections[i].end();
-      while (it != end) {
-        ObjectLetPair objectLetPair = *it++;
-        list<MessageObject *> *parentProcessList = objectLetPair.first->getProcessOrder();
-        processList->splice(processList->end(), *parentProcessList);
-        delete parentProcessList;
+      switch (incomingDspConnections[i].size()) {
+        case 0: {
+          setDspBufferAtInlet(zeroBuffer, i);
+          break;
+        }
+        case 1: {
+          ObjectLetPair objectLetPair = incomingDspConnections[i].front();
+          list<DspObject *> parentProcessList = objectLetPair.first->getProcessOrder();
+          
+          // configure the input buffers
+          DspObject *dspObject = reinterpret_cast<DspObject *>(objectLetPair.first);
+          float *buffer = dspObject->getDspBufferAtOutlet(objectLetPair.second);
+          setDspBufferAtInlet(buffer, i);
+          bufferPool->releaseBuffer(buffer);
+          
+          // conbine the process lists
+          processList.splice(processList.end(), parentProcessList);
+          break;
+        }
+        default: { // > 1
+          list<ObjectLetPair>::iterator it = incomingDspConnections[i].begin();
+          ObjectLetPair leftOlPair = *it++;
+          list<DspObject *> parentProcessList = leftOlPair.first->getProcessOrder();
+          processList.splice(processList.end(), parentProcessList);
+          
+          while (it != incomingDspConnections[i].end()) {
+            ObjectLetPair objectLetPair = *it++;
+            list<DspObject *> parentProcessList = objectLetPair.first->getProcessOrder();
+            processList.splice(processList.end(), parentProcessList);
+            
+            DspImplicitAdd *dspAdd = new DspImplicitAdd(dspAddInitMessage, getGraph());
+            float *buffer = reinterpret_cast<DspObject *>(leftOlPair.first)->getDspBufferAtOutlet(leftOlPair.second);
+            dspAdd->setDspBufferAtInlet(buffer, 0);
+            bufferPool->releaseBuffer(buffer);
+            
+            buffer = reinterpret_cast<DspObject *>(objectLetPair.first)->getDspBufferAtOutlet(objectLetPair.second);
+            dspAdd->setDspBufferAtInlet(buffer, 1);
+            bufferPool->releaseBuffer(buffer);
+            
+            // assign the output buffer of the +~~
+            dspAdd->setDspBufferAtOutlet(bufferPool->getBuffer(1), 0);
+            
+            processList.push_back(dspAdd);
+            leftOlPair = objectLetPair;
+          }
+          
+          float *buffer = reinterpret_cast<DspObject *>(leftOlPair.first)->getDspBufferAtOutlet(leftOlPair.second);
+          setDspBufferAtInlet(buffer, i);
+          bufferPool->releaseBuffer(buffer);
+          break;
+        }
       }
     }
-    processList->push_back(this);
+    
+    for (int i = 0; i < getNumDspOutlets(); i++) {
+      float *buffer = bufferPool->getBuffer(outgoingDspConnections[i].size());
+      setDspBufferAtOutlet(buffer, i);
+    }
+    
+    // NOTE(mhroth): even if an object does not process audio, its buffer still need to be connected.
+    // They may be passed on to other objects, such as s~/r~ pairs
+    if (doesProcessAudio()) processList.push_back(this);
     return processList;
   }
 }

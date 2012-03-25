@@ -184,24 +184,23 @@ bool MessageObject::isLeafNode() {
   return true;
 }
 
-list<MessageObject *> *MessageObject::getProcessOrder() {
+list<DspObject *> MessageObject::getProcessOrder() {
   if (isOrdered) {
     // if this object has already been ordered, then move on
-    return new list<MessageObject *>();
+    return list<DspObject *>();
   } else {
     isOrdered = true;
-    list<MessageObject *> *processList = new list<MessageObject *>();
+    list<DspObject *> processList;
     for (int i = 0; i < incomingMessageConnections.size(); i++) {
       list<ObjectLetPair>::iterator it = incomingMessageConnections[i].begin();
       list<ObjectLetPair>::iterator end = incomingMessageConnections[i].end();
       while (it != end) {
         ObjectLetPair objectLetPair = *it++;
-        list<MessageObject *> *parentProcessList = objectLetPair.first->getProcessOrder();
-        processList->splice(processList->end(), *parentProcessList); // append parentProcessList to processList
-        delete parentProcessList;
+        list<DspObject *> parentProcessList = objectLetPair.first->getProcessOrder();
+        processList.splice(processList.end(), parentProcessList); // append parentProcessList to processList
       }
     }
-    processList->push_back(this);
+    // this object is not added to the process list as MessageObjects do not process audio
     return processList;
   }
 }

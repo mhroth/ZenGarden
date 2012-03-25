@@ -25,6 +25,12 @@
 
 #include "DspObject.h"
 
+class DspDac;
+class DspDacData : public DspData {
+  public:
+    DspDac *dspObject;
+};
+
 class DspDac : public DspObject {
   
   public:
@@ -35,7 +41,11 @@ class DspDac : public DspObject {
     static const char *getObjectLabel() { return "dac~"; }
     string toString() { return string(DspDac::getObjectLabel()); }
   
+    DspData *getProcessData();
+    static void processDsp(DspData *data);
+  
     void processDsp();
+    static void processDsp(DspDacData *data);
 };
 
 #endif // _DSP_DAC_H_

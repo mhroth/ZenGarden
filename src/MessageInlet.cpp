@@ -30,15 +30,11 @@ MessageObject *MessageInlet::newObject(PdMessage *initMessage, PdGraph *graph) {
 // MessageInlet is initialised with an inlet because it manages connections from outside of the
 // containing graph.
 MessageInlet::MessageInlet(PdGraph *graph) : MessageObject(1, 1, graph) {
-  canvasX = 0.0f;
+  // nothing to do
 }
 
 MessageInlet::~MessageInlet() {
   // nothing to do
-}
-
-const char *MessageInlet::getObjectLabel() {
-  return "inlet";
 }
 
 ObjectType MessageInlet::getObjectType() {
@@ -49,26 +45,18 @@ void MessageInlet::receiveMessage(int inletIndex, PdMessage *message) {
   sendMessage(0, message);
 }
 
-list<MessageObject *> *MessageInlet::getProcessOrder() {
-  if (isOrdered) {
-    return new list<MessageObject *>();
-  } else {
-    isOrdered = true;
-    list<MessageObject *> *processList = new list<MessageObject *>();
-    processList->push_back(this);
-    return processList;
-  }
+list<DspObject *> MessageInlet::getProcessOrder() {
+  // a MessageInlet always returns an empty list as it does not process any audio
+  return list<DspObject *>();
 }
 
-list<MessageObject *> *MessageInlet::getProcessOrderFromInlet() {
-  list<MessageObject *> *processList = new list<MessageObject *>();
-  list<ObjectLetPair>::iterator it = incomingMessageConnections[0].begin();
-  list<ObjectLetPair>::iterator end = incomingMessageConnections[0].end();
-  while (it != end) {
-    ObjectLetPair objectLetPair = *it++;
-    list<MessageObject *> *parentProcessList = objectLetPair.first->getProcessOrder();
-    processList->splice(processList->end(), *parentProcessList);
-    delete parentProcessList;
+list<DspObject *> MessageInlet::getProcessOrderFromInlet() {
+  list<DspObject *> processList;
+  for (list<ObjectLetPair>::iterator it = incomingMessageConnections[0].begin();
+      it != incomingMessageConnections[0].end(); ++it) {
+    ObjectLetPair objectLetPair = *it;
+    list<DspObject *> parentProcessList = objectLetPair.first->getProcessOrder();
+    processList.splice(processList.end(), parentProcessList);
   }
   return processList;
 }

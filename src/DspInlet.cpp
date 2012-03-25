@@ -36,36 +36,22 @@ DspInlet::~DspInlet() {
   // nothing to do
 }
 
-const char *DspInlet::getObjectLabel() {
-  return "inlet~";
-}
-
 ObjectType DspInlet::getObjectType() {
   return DSP_INLET;
 }
 
-string DspInlet::toString() {
-  return string(getObjectLabel());
+list<DspObject *> DspInlet::getProcessOrder() {
+  // inlet~ does not process audio, so it always returns an empty list
+  return list<DspObject *>();
 }
 
-list<MessageObject *> *DspInlet::getProcessOrder() {
-  list<MessageObject *> *processOrder = new list<MessageObject *>();
-  if (!isOrdered) {
-    isOrdered = true;
-    processOrder->push_back(this);
-  }
-  return processOrder;
-}
-
-list<MessageObject *> *DspInlet::getProcessOrderFromInlet() {
-  list<MessageObject *> *processList = new list<MessageObject *>();
-  list<ObjectLetPair>::iterator it = incomingDspConnections[0].begin();
-  list<ObjectLetPair>::iterator end = incomingDspConnections[0].end();
-  while (it != end) {
-    ObjectLetPair objectLetPair = *it++;
-    list<MessageObject *> *parentProcessList = objectLetPair.first->getProcessOrder();
-    processList->splice(processList->end(), *parentProcessList);
-    delete parentProcessList;
+list<DspObject *> DspInlet::getProcessOrderFromInlet() {
+  list<DspObject *> processList;
+  for (list<ObjectLetPair>::iterator it = incomingDspConnections[0].begin();
+      it != incomingDspConnections[0].end(); ++it) {
+    ObjectLetPair objectLetPair = *it;
+    list<DspObject *> parentProcessList = objectLetPair.first->getProcessOrder();
+    processList.splice(processList.end(), parentProcessList);
   }
   return processList;
 }
@@ -76,7 +62,6 @@ void DspInlet::onDspBufferAtInletUpdate(float *buffer, unsigned int inletIndex) 
   for (list<ObjectLetPair>::iterator it = dspConnections.begin(); it != dspConnections.end(); ++it) {
     ObjectLetPair letPair = *it;
     DspObject *dspObject = reinterpret_cast<DspObject *>(letPair.first);
-    dspObject->setDspBufferAtInletWithReuse(dspBufferAtInlet[inletIndex], letPair.second,
-        it == dspConnections.begin());
+    dspObject->setDspBufferAtInlet(dspBufferAtInlet[inletIndex], letPair.second);
   }
 }

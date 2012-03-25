@@ -39,12 +39,12 @@ class DspInlet : public DspObject {
     DspInlet(PdGraph *graph);
     ~DspInlet();
   
-    static const char *getObjectLabel();
-    string toString();
+    static const char *getObjectLabel() { return "inlet~"; }
+    string toString() { return string(getObjectLabel()); }
     ObjectType getObjectType();
   
-    list<MessageObject *> *getProcessOrder();
-    list<MessageObject *> *getProcessOrderFromInlet();
+    list<DspObject *> getProcessOrder();
+    list<DspObject *> getProcessOrderFromInlet();
   
     // [inlet~] does nothing with audio
     bool doesProcessAudio() { return false; }

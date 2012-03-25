@@ -46,10 +46,24 @@ string DspSignal::toString() {
   return string(str);
 }
 
+DspData *DspSignal::getProcessData() {
+  DspSignalData *data = new DspSignalData();
+  data->processDsp = DspSignal::processSignal;
+  data->dspOutletBuffer0 = dspBufferAtOutlet[0];
+  data->blockSize = blockSizeInt;
+  data->constant = constant;
+  return data;
+}
+
 void DspSignal::processMessage(int inletIndex, PdMessage *message) {
   if (message->isFloat(0)) {
     constant = message->getFloat(0);
   }
+}
+
+void DspSignal::processSignal(DspData *data) {
+  DspSignalData *d = reinterpret_cast<DspSignalData *>(data);
+  ArrayArithmetic::fill(d->dspOutletBuffer0, d->constant, 0, d->blockSize);
 }
 
 void DspSignal::processDspWithIndex(int fromIndex, int toIndex) {

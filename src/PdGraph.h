@@ -23,6 +23,7 @@
 #ifndef _PD_GRAPH_H_
 #define _PD_GRAPH_H_
 
+#include "BufferPool.h"
 #include "DspObject.h"
 #include "OrderedMessageQueue.h"
 
@@ -137,7 +138,7 @@ class PdGraph : public DspObject {
     /** (Re-)Computes the local tree and node processing ordering for dsp nodes. */
     void computeLocalDspProcessOrder();
   
-    list<MessageObject *> *getProcessOrder();
+    list<DspObject *> getProcessOrder();
     bool isLeafNode();
   
     /**
@@ -212,6 +213,8 @@ class PdGraph : public DspObject {
     /** Unlocks the context if this graph is attached. */
     void unlockContextIfAttached();
   
+    BufferPool *getBufferPool() { return bufferPool; }
+  
   private:
     /** Create a new object based on its initialisation string. */
     MessageObject *newObject(char *objectType, char *objectLabel, PdMessage *initMessage, PdGraph *graph);
@@ -255,6 +258,8 @@ class PdGraph : public DspObject {
      */
     list<DspObject *> dspNodeList;
   
+    list<DspData *> dspDataList;
+  
     list<DspImplicitAdd *> implicitDspAddList;
     
     /** A list of all inlet (message or audio) nodes in this subgraph. */
@@ -265,6 +270,8 @@ class PdGraph : public DspObject {
   
     /** A global list of all declared directories (-path and -stdpath) */
     DeclareList *declareList;
+  
+    BufferPool *bufferPool;
 };
 
 #endif // _PD_GRAPH_H_

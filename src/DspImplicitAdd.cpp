@@ -35,12 +35,19 @@ DspImplicitAdd::~DspImplicitAdd() {
   // nothing to do
 }
 
-const char *DspImplicitAdd::getObjectLabel() {
-  return "+~~";
+DspData *DspImplicitAdd::getProcessData() {
+  DspImplicitAddData *data = new DspImplicitAddData();
+  data->processDsp = &DspImplicitAdd::processSignal;
+  data->dspInletBuffer0 = dspBufferAtInlet[0];
+  data->dspInletBuffer1 = dspBufferAtInlet[1];
+  data->dspOutletBuffer0 = dspBufferAtOutlet[0];
+  data->blockSize = blockSizeInt;
+  return data;
 }
 
-string DspImplicitAdd::toString() {
-  return string(getObjectLabel());
+void DspImplicitAdd::processSignal(DspData *data) {
+  DspImplicitAddData *d = reinterpret_cast<DspImplicitAddData *>(data);
+  ArrayArithmetic::add(d->dspInletBuffer0, d->dspInletBuffer1, d->dspOutletBuffer0, 0, d->blockSize);
 }
 
 void DspImplicitAdd::setDspBufferAtInletWithReuse(float *buffer, unsigned int inletIndex, bool mayReuse) {

@@ -52,6 +52,7 @@ PdGraph::PdGraph(PdMessage *initMessage, PdGraph *parentGraph, PdContext *contex
   // all graphs start out unattached to any context, though they exist in a context
   isAttachedToContext = false;
   switched = true; // graphs are switched on by default
+  bufferPool = new BufferPool(blockSizeInt);
       
   // initialise the graph arguments
   this->graphId = graphId;
@@ -66,6 +67,7 @@ PdGraph::PdGraph(PdMessage *initMessage, PdGraph *parentGraph, PdContext *contex
 PdGraph::~PdGraph() {
   graphArguments->freeMessage();
   delete declareList;
+  delete bufferPool;
 
   // delete all implicit +~ nodes
   for (list<DspImplicitAdd *>::iterator it = implicitDspAddList.begin(); it != implicitDspAddList.end(); ++it) {
@@ -532,8 +534,13 @@ void PdGraph::processDsp() {
     
     // TODO(mhroth): iterate depending on local blocksize relative to parent
     // execute all nodes which process audio
-    for (list<DspObject *>::iterator it = dspNodeList.begin(); it != dspNodeList.end(); ++it) {
-      (*it)->processDsp();
+//    for (list<DspObject *>::iterator it = dspNodeList.begin(); it != dspNodeList.end(); ++it) {
+//      (*it)->processDsp();
+//    }
+    
+    for (list<DspData *>::iterator it = dspDataList.begin(); it != dspDataList.end(); ++it) {
+      DspData *data = *it;
+      data->processDsp(data);
     }
   }
 }
@@ -597,37 +604,31 @@ void PdGraph::removeConnectionToObjectFromOutlet(MessageObject *messageObject, i
   outletObject->removeConnectionToObjectFromOutlet(messageObject, inletIndex, 0);
 }
 
-list<MessageObject *> *PdGraph::getProcessOrder() {
+list<DspObject *> PdGraph::getProcessOrder() {
   if (isOrdered) {
-    return new list<MessageObject *>();
+    return list<DspObject *>();
   } else {
     isOrdered = true;
-    list<MessageObject *> *processOrder = new list<MessageObject *>();
-    vector<MessageObject *>::iterator it = inletList.begin();
-    vector<MessageObject *>::iterator end = inletList.end();
-    while (it != end) {
+    list<DspObject *> processOrder;
+    for (vector<MessageObject *>::iterator it = inletList.begin(); it != inletList.end(); ++it) {
       MessageObject *messageObject = *it++;
       switch (messageObject->getObjectType()) {
         case MESSAGE_INLET: {
-          MessageInlet *messgeInlet = (MessageInlet *) messageObject;
-          list<MessageObject *> *inletProcessOrder = messgeInlet->getProcessOrderFromInlet();
-          processOrder->splice(processOrder->end(), *inletProcessOrder);
-          delete inletProcessOrder;
+          MessageInlet *messgeInlet = reinterpret_cast<MessageInlet *>(messageObject);
+          list<DspObject *> inletProcessOrder = messgeInlet->getProcessOrderFromInlet();
+          processOrder.splice(processOrder.end(), inletProcessOrder);
           break;
         }
         case DSP_INLET: {
-          DspInlet *dspInlet = (DspInlet *) messageObject;
-          list<MessageObject *> *inletProcessOrder = dspInlet->getProcessOrderFromInlet();
-          processOrder->splice(processOrder->end(), *inletProcessOrder);
-          delete inletProcessOrder;
+          DspInlet *dspInlet = reinterpret_cast<DspInlet *>(messageObject);
+          list<DspObject *> inletProcessOrder = dspInlet->getProcessOrderFromInlet();
+          processOrder.splice(processOrder.end(), inletProcessOrder);
           break;
         }
-        default: {
-          break;
-        }
+        default: break;
       }
     }
-    processOrder->push_back(this);
+    if (doesProcessAudio()) processOrder.push_back(this);
     return processOrder;
   }
 }
@@ -663,89 +664,21 @@ void PdGraph::computeLocalDspProcessOrder() {
       leafNodeList.push_back(object);
     }
   }
+  
+  // NOTE(mhroth): massive memory leak here as reference to all +~~ objects are lost
+  dspNodeList.clear();
 
   // for all leaf nodes, order the tree
-  list<MessageObject *> processList;
+  list<DspObject *> dspNodeList;
   for (list<MessageObject *>::iterator it = leafNodeList.begin(); it != leafNodeList.end(); ++it) {
     MessageObject *object = *it;
-    list<MessageObject *> *processSubList = object->getProcessOrder();
-    processList.splice(processList.end(), *processSubList);
-    delete processSubList;
+    list<DspObject *> processSubList = object->getProcessOrder();
+    dspNodeList.splice(dspNodeList.end(), processSubList);
   }
-
-  // add only those nodes which process audio to the final list
   
-  
-  // delete all objects in the implicit +~ list
-  for (list<DspImplicitAdd *>::iterator it = implicitDspAddList.begin();
-      it != implicitDspAddList.end(); ++it) {
-    delete *it;
-  }
-  implicitDspAddList.clear();
-  
-  dspNodeList.clear(); // reset the dsp node list
-  
-  for (list<MessageObject *>::iterator it = processList.begin(); it != processList.end(); ++it) {
-    // dsp elements at the top of the graph (i.e. process list) are processed first
-    MessageObject *object = *it;
-    if (object->doesProcessAudio()) {
-      DspObject *dspObject = reinterpret_cast<DspObject *>(object);
-      printStd("%s", dspObject->toString().c_str());
-      
-      // Add +~ objects to perform implicit sum operation for signal connections to the same inlet
-      for (int i = 0; i < dspObject->getNumDspInlets(); i++) {
-        list<ObjectLetPair> incomingDspConnectionsList = dspObject->getIncomingDspConnections(i);
-        switch (incomingDspConnectionsList.size()) {
-          case 0: {
-            // if no connections are made to an inlet, then it receives a zero buffer
-            // the zero buffer may never be reused, but there is an additional check for it anyway
-            dspObject->setDspBufferAtInletWithReuse(zeroBuffer, i, false);
-            break;
-          }
-          case 1: {
-            // if only one connection exists to this object, add the connection directly
-            ObjectLetPair objectLetPair = incomingDspConnectionsList.front();
-            DspObject *prevObject = (DspObject *) objectLetPair.first;
-            unsigned int outletIndex = objectLetPair.second;
-            dspObject->setDspBufferAtInletWithReuse(prevObject->getDspBufferAtOutlet(outletIndex), i,
-                prevObject->mayReuseBuffer(dspObject, outletIndex));
-            break;
-          }
-          default: {
-            // if more than one connection exists to an inlet, create a series of dummy +~ objects
-            // to perform implicit summing
-            list<ObjectLetPair>::iterator jt = incomingDspConnectionsList.begin();
-            DspObject *prevObject = reinterpret_cast<DspObject *>((*jt).first);
-            unsigned int prevOutlet = (*jt++).second;
-            PdMessage *dspAddInitMessage = PD_MESSAGE_ON_STACK(1); dspAddInitMessage->setFloat(0, 0.0f);
-            bool mayReuseBufferFromLeftConnection = prevObject->mayReuseBuffer(dspObject, prevOutlet);
-            while (jt != incomingDspConnectionsList.end()) {
-              DspImplicitAdd *dspAdd = new DspImplicitAdd(dspAddInitMessage, this);
-              dspAdd->setDspBufferAtInletWithReuse(prevObject->getDspBufferAtOutlet(prevOutlet), 0,
-                  mayReuseBufferFromLeftConnection);
-              
-              // after the first left connection, we only connect with +~~ objects and thus are
-              // definitely allowed to reuse the buffer
-              mayReuseBufferFromLeftConnection = true;
-              
-              // the second connection is always a non-+~~ object
-              DspObject *prevObject1 = reinterpret_cast<DspObject *>((*jt).first);
-              unsigned int prevOutlet1 = (*jt++).second;
-              dspAdd->setDspBufferAtInletWithReuse(prevObject1->getDspBufferAtOutlet(prevOutlet1), 1,
-                  prevObject1->mayReuseBuffer(dspObject, prevOutlet1));
-              
-              prevObject = dspAdd; prevOutlet = 0;
-              dspNodeList.push_back(dspAdd);
-              implicitDspAddList.push_back(dspAdd);
-            }
-            // set dsp ref at inlet of dspObject to prevObject
-            dspObject->setDspBufferAtInletWithReuse(prevObject->getDspBufferAtOutlet(0), i, true);
-            break;
-          }
-        }
-      }
-      dspNodeList.push_back(dspObject); // add the dsp object to the dsp node list
-    }
+  dspDataList.clear();
+  for (list<DspObject *>::iterator it = dspNodeList.begin(); it != dspNodeList.end(); it++) {
+    dspDataList.push_back((*it)->getProcessData());
   }
   
   /* print out process order of local dsp objects (for debugging) */

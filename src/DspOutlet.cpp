@@ -56,7 +56,6 @@ void DspOutlet::onDspBufferAtInletUpdate(float *buffer, unsigned int inletIndex)
   for (list<ObjectLetPair>::iterator it = dspConnections.begin(); it != dspConnections.end(); ++it) {
     ObjectLetPair letPair = *it;
     DspObject *dspObject = reinterpret_cast<DspObject *>(letPair.first);
-    dspObject->setDspBufferAtInletWithReuse(dspBufferAtInlet[inletIndex], letPair.second,
-        it == dspConnections.begin());
+    dspObject->setDspBufferAtInlet(dspBufferAtInlet[inletIndex], letPair.second);
   }
 }

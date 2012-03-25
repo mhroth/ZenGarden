@@ -29,6 +29,16 @@ enum DspMultiplyCodePath {
   DSP_MULTIPLY_DSP_DSP = DSP_OBJECT_PROCESS_OTHER
 };
 
+class DspMultiplyData : public DspData {
+  public:
+    float *dspInletBuffer0;
+    float *dspInletBuffer1;
+    float *dspOutletBuffer0;
+    short fromIndex;
+    short toIndex;
+    float constant;
+};
+
 class DspMultiply : public DspObject {
   
   public:
@@ -39,7 +49,9 @@ class DspMultiply : public DspObject {
     static const char *getObjectLabel();
     string toString();
   
-    void processDsp();
+    DspData *getProcessData();
+    static void processSignal(DspData *data);
+    static void processScalar(DspData *data);
     
   private:
     void processMessage(int inletIndex, PdMessage *message);

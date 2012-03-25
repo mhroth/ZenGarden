@@ -25,6 +25,14 @@
 
 #include "DspObject.h"
 
+class DspImplicitAddData : public DspData {
+  public:
+    float *dspInletBuffer0;
+    float *dspInletBuffer1;
+    float *dspOutletBuffer0;
+    unsigned short blockSize;
+};
+
 /**
  * This object is a stripped down version of DspAdd used soley for the purposes of summing two
  * DSP vectors together as a a part of the implicit add step.
@@ -36,8 +44,11 @@ public:
   DspImplicitAdd(PdMessage *initMessage, PdGraph *graph);
   ~DspImplicitAdd();
   
-  static const char *getObjectLabel();
-  string toString();
+  static const char *getObjectLabel() { return "+~~"; }
+  string toString() { return string(getObjectLabel()); }
+  
+  DspData *getProcessData();
+  static void processSignal(DspData *data);
   
   void setDspBufferAtInletWithReuse(float *buffer, unsigned int inletIndex, bool mayReuse);
   

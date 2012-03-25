@@ -36,6 +36,18 @@ DspDac::~DspDac() {
   // nothing to do
 }
 
+DspData *DspDac::getProcessData() {
+  DspDacData *data = new DspDacData();
+  data->processDsp = &DspDac::processDsp;
+  data->dspObject = this;
+  return data;
+}
+
+void DspDac::processDsp(DspData *data) {
+  DspDacData *d = reinterpret_cast<DspDacData *>(data);
+  d->dspObject->processDsp();
+}
+
 void DspDac::processDsp() {
   switch (incomingDspConnections.size()) {
     default: {

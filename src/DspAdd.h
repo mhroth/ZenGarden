@@ -29,6 +29,16 @@ enum DspAddCodePath {
   DSP_ADD_DSP_DSP = DSP_OBJECT_PROCESS_OTHER
 };
 
+class DspAddData : public DspData {
+  public:
+    float *dspInletBuffer0;
+    float *dspInletBuffer1;
+    float *dspOutletBuffer0;
+    short fromIndex;
+    short toIndex;
+    float constant;
+};
+
 /** [+~], [+~ float] */
 class DspAdd : public DspObject {
   
@@ -42,7 +52,9 @@ class DspAdd : public DspObject {
   
     void onInletConnectionUpdate(unsigned int inletIndex);
   
-    void processDsp();
+    DspData *getProcessData();
+    static void processSignal(DspData *data);
+    static void processScalar(DspData *data);
   
   private:  
     void processMessage(int inletIndex, PdMessage *message);

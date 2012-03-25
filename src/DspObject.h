@@ -35,6 +35,15 @@ enum DspObjectProcessMessage {
   DSP_OBJECT_PROCESS_OTHER       // some other process operation will take place
 };
 
+class DspData {
+  public:
+    void (*processDsp)(DspData *);
+  
+    DspData() {
+      processDsp = NULL;
+    }
+};
+
 /**
  * A <code>DspObject</code> is the abstract superclass of any object which processes audio.
  * <code>DspObject</code> is a subclass of <code>MessageObject</code>, such that all of the former
@@ -78,12 +87,8 @@ class DspObject : public MessageObject {
      */
     virtual bool mayReuseBuffer(DspObject *dspObject, unsigned int outletIndex);
   
-    /**
-     * Set the incoming buffer at the given inlet index. A boolean indicates if the given buffer
-     * may be reused as an output buffer by the object. This object may also set its output buffer
-     * with the given buffer, if all necessary conditions are satisfied.
-     */
-    virtual void setDspBufferAtInletWithReuse(float *buffer, unsigned int inletIndex, bool mayReuse);
+    virtual void setDspBufferAtInlet(float *buffer, unsigned int inletIndex);
+    virtual void setDspBufferAtOutlet(float *buffer, unsigned int outletIndex);
   
     virtual void addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex);
     virtual void addConnectionToObjectFromOutlet(MessageObject *messageObject, int inletIndex, int outletIndex);
@@ -94,7 +99,7 @@ class DspObject : public MessageObject {
   
     virtual bool isLeafNode();
 
-    virtual list<MessageObject *> *getProcessOrder();
+    virtual list<DspObject *> getProcessOrder();
   
     virtual unsigned int getNumInlets() {
       return max(incomingMessageConnections.size(), incomingDspConnections.size());
@@ -124,6 +129,8 @@ class DspObject : public MessageObject {
     virtual list<ObjectLetPair> getOutgoingDspConnections(unsigned int outletIndex);
   
     static const char *getObjectLabel();
+  
+    virtual DspData *getProcessData() { return new DspData(); }
     
   protected:
     /* IMPORTANT: one of these two functions MUST be overridden (or processDsp()) */
@@ -138,6 +145,7 @@ class DspObject : public MessageObject {
     virtual void onInletConnectionUpdate(unsigned int inletIndex);
   
     virtual void onDspBufferAtInletUpdate(float *buffer, unsigned int inletIndex) { }
+    virtual void onDspBufferAtOutletUpdate(float *buffer, unsigned int inletIndex) { }
   
     /** Immediately deletes all messages in the message queue without executing them. */
     void clearMessageQueue();
