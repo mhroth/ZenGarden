@@ -68,8 +68,8 @@ class PdContext {
     
     void process(float *inputBuffers, float *outputBuffers);
   
-    void lock();
-    void unlock();
+    void lock() { pthread_mutex_lock(&contextLock); }
+    void unlock() { pthread_mutex_unlock(&contextLock); }
   
     /** Globally register a remote message receiver (e.g. [send] or [notein]). */
     void registerRemoteMessageReceiver(RemoteMessageReceiver *receiver);

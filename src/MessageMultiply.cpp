@@ -34,10 +34,6 @@ MessageMultiply::~MessageMultiply() {
   // nothing to do
 }
 
-const char *MessageMultiply::getObjectLabel() {
-  return "*";
-}
-
 void MessageMultiply::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {

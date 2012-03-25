@@ -218,17 +218,6 @@ MessageObject *PdContext::newObject(const char *objectLabel, PdMessage *initMess
 }
 
 
-#pragma mark - Lock/Unlock Context
-
-void PdContext::lock() {
-  pthread_mutex_lock(&contextLock);
-}
-
-void PdContext::unlock() {
-  pthread_mutex_unlock(&contextLock);
-}
-
-
 #pragma mark - PrintStd/PrintErr
 
 void PdContext::printErr(char *msg) {
