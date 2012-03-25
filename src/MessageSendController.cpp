@@ -114,14 +114,10 @@ void MessageSendController::removeReceiver(RemoteMessageReceiver *receiver) {
 }
 
 void MessageSendController::registerExternalReceiver(const char *receiverName) {
-  string str = string(receiverName);
-  // check to make sure that the same receiver name is not entered more than once
-  if (externalReceiverSet.find(str) == externalReceiverSet.end()) {
-    externalReceiverSet.insert(str);
-  }
+  // sets only contain unique items
+  externalReceiverSet.insert(string(receiverName));
 }
 
 void MessageSendController::unregisterExternalReceiver(const char *receiverName) {
-  string str = string(receiverName);
-  externalReceiverSet.erase(str);
+  externalReceiverSet.erase(string(receiverName));
 }
