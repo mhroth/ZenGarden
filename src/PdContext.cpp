@@ -423,11 +423,15 @@ float PdContext::getValueForName(char *name) {
 }
 
 void PdContext::registerExternalReceiver(const char *receiverName) {
+  lock(); // don't update the external receiver registry while processing it, of course!
   sendController->registerExternalReceiver(receiverName);
+  unlock();
 }
 
 void PdContext::unregisterExternalReceiver(const char *receiverName) {
+  lock();
   sendController->unregisterExternalReceiver(receiverName);
+  unlock();
 }
 
 
