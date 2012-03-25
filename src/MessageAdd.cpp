@@ -34,8 +34,10 @@ MessageAdd::~MessageAdd() {
   // nothing to do
 }
 
-const char *MessageAdd::getObjectLabel() {
-  return "+";
+string MessageAdd::toString() {
+  char str[snprintf(NULL, 0, "+ %g", constant)+1];
+  snprintf(str, sizeof(str), "+ %g", constant);
+  return string(str);
 }
 
 void MessageAdd::processMessage(int inletIndex, PdMessage *message) {

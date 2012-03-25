@@ -33,7 +33,8 @@ class MessageSubtract : public MessageObject {
     MessageSubtract(PdMessage *initMessage, PdGraph *graph);
     ~MessageSubtract();
 
-    static const char *getObjectLabel();
+    static const char *getObjectLabel() { return "-"; }
+    string toString();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);

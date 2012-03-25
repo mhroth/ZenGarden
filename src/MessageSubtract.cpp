@@ -34,8 +34,10 @@ MessageSubtract::~MessageSubtract() {
   // nothing to do
 }
 
-const char *MessageSubtract::getObjectLabel() {
-  return "-";
+string MessageSubtract::toString() {
+  char str[snprintf(NULL, 0, "- %g", constant)+1];
+  snprintf(str, sizeof(str), "- %g", constant);
+  return string(str);
 }
 
 void MessageSubtract::processMessage(int inletIndex, PdMessage *message) {
