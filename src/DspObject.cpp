@@ -138,8 +138,9 @@ void DspObject::addConnectionFromObjectToInlet(MessageObject *messageObject, int
     // get pointer to inletIndex-th element of dspBufferRefListAtInlet
     vector<float *> *dspBufferRefList = &(*(dspBufferRefListAtInlet.begin() + inletIndex));
     dspBufferRefList->push_back(dspObject->getDspBufferRefAtOutlet(outletIndex));
-    updateInletBufferRefs(inletIndex);
   }
+  
+  updateInletBufferRefs(inletIndex);
 }
 
 void DspObject::removeConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex) {
@@ -147,11 +148,11 @@ void DspObject::removeConnectionFromObjectToInlet(MessageObject *messageObject, 
     list<ObjectLetPair> *incomingConnections = &incomingDspConnections[inletIndex];
     ObjectLetPair objectLetPair = make_pair(messageObject, outletIndex);
     incomingConnections->remove(objectLetPair); // does this work?
-    
-    updateInletBufferRefs(inletIndex);
   } else {
     MessageObject::removeConnectionFromObjectToInlet(messageObject, outletIndex, inletIndex);
   }
+  
+  updateInletBufferRefs(inletIndex);
 }
 
 void DspObject::updateInletBufferRefs(unsigned int inletIndex) {
