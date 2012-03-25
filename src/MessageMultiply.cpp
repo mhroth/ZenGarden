@@ -34,6 +34,12 @@ MessageMultiply::~MessageMultiply() {
   // nothing to do
 }
 
+string MessageMultiply::toString() {
+  char str[snprintf(NULL, 0, "* %g", constant)+1];
+  snprintf(str, sizeof(str), "* %g", constant);
+  return string(str);
+}
+
 void MessageMultiply::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {

@@ -34,7 +34,7 @@ class MessageMultiply : public MessageObject {
     ~MessageMultiply();
 
     static const char *getObjectLabel() { return "*"; }
-    string toString() { return string(getObjectLabel()); }
+    string toString();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
