@@ -34,7 +34,7 @@ void PdMessage::initWithString(double ts, unsigned int maxElements, char *initSt
   
   char *token = strtok(initString, " ;");  
   if (token == NULL || strlen(initString) == 0) {
-    initWithTimestampAndBang(0.0); // just in case, there is always at least one element in a message
+    initWithTimestampAndBang(ts); // just in case, there is always at least one element in a message
   } else {
     unsigned int i = 0;
     do {
