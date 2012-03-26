@@ -69,8 +69,6 @@ void DspDac::processDsp() {
       ArrayArithmetic::add(globalOutputBuffer, dspBufferAtInlet[0], globalOutputBuffer, 0, blockSizeInt);
       // allow fallthrough
     }
-    case 0: {
-      break;
-    }
+    case 0: break;
   }
 }

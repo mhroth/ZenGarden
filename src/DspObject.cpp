@@ -25,10 +25,6 @@
 #include "DspObject.h"
 #include "PdGraph.h"
 
-float *DspObject::zeroBuffer = NULL;
-int DspObject::zeroBufferCount = 0;
-int DspObject::zeroBufferSize = 0;
-
 
 #pragma mark - Constructor/Destructor
 
@@ -46,15 +42,6 @@ void DspObject::init(int numDspInlets, int numDspOutlets, int blockSize) {
   blockSizeInt = blockSize;
   codepath = DSP_OBJECT_PROCESS_NO_MESSAGE;
   
-  if (zeroBufferSize < blockSize) {
-    float *buffer = (float *) realloc(zeroBuffer, blockSize * sizeof(float));
-    if (buffer == NULL) buffer = (float *) malloc(blockSize * sizeof(float));
-    zeroBuffer = buffer;
-    memset(zeroBuffer, 0, blockSize * sizeof(float));
-    zeroBufferSize = blockSize;
-  }
-  zeroBufferCount++;
-  
   // initialise the incoming dsp connections list
   incomingDspConnections = vector<list<ObjectLetPair> >(numDspInlets);
   
@@ -68,11 +55,6 @@ void DspObject::init(int numDspInlets, int numDspOutlets, int blockSize) {
 }
 
 DspObject::~DspObject() {  
-  if (--zeroBufferCount == 0) {
-    free(zeroBuffer);
-    zeroBuffer = NULL;
-    zeroBufferSize = 0;
-  }
   
   // delete any messages still pending
   clearMessageQueue();
@@ -292,7 +274,7 @@ list<DspObject *> DspObject::getProcessOrder() {
     for (int i = 0; i < incomingDspConnections.size(); i++) {
       switch (incomingDspConnections[i].size()) {
         case 0: {
-          setDspBufferAtInlet(zeroBuffer, i);
+          setDspBufferAtInlet(bufferPool->getZeroBuffer(), i);
           break;
         }
         case 1: {

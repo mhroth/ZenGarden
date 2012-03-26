@@ -43,15 +43,11 @@ DspRfft::~DspRfft() {
   #endif // __APPLE__
 }
 
-const char *DspRfft::getObjectLabel() {
-  return "rfft~";
-}
-
 void DspRfft::processDsp() {
   #if __APPLE__
   DSPSplitComplex inputVector;
   inputVector.realp = dspBufferAtInlet[0];
-  inputVector.imagp = DspObject::zeroBuffer;
+  inputVector.imagp = graph->getBufferPool()->getZeroBuffer();
   DSPSplitComplex outputVector;
   outputVector.realp = dspBufferAtOutlet[0];
   outputVector.imagp = getDspBufferAtOutlet(1);

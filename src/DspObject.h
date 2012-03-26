@@ -39,9 +39,8 @@ class DspData {
   public:
     void (*processDsp)(DspData *);
   
-    DspData() {
-      processDsp = NULL;
-    }
+    DspData() { processDsp = NULL; }
+    virtual ~DspData() { }
 };
 
 /**
@@ -61,7 +60,8 @@ class DspObject : public MessageObject {
      * is a subclass of <code>DspObject</code> and thus the fields of the latter are not yet initialised
      * when the fomer fields are filled in.
      */
-    DspObject(int numMessageInlets, int numDspInlets, int numMessageOutlets, int numDspOutlets, int blockSize, PdGraph *graph);
+    DspObject(int numMessageInlets, int numDspInlets, int numMessageOutlets, int numDspOutlets,
+        int blockSize, PdGraph *graph);
     
     virtual ~DspObject();
     
@@ -171,10 +171,6 @@ class DspObject : public MessageObject {
   
     /** The indication of what to do when <code>processDsp</code> is called. */
     int codepath;
-  
-    static float *zeroBuffer;
-    static int zeroBufferCount;
-    static int zeroBufferSize;
   
   private:
     /** This function encapsulates the common code between the two constructors. */

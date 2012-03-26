@@ -34,7 +34,7 @@ class DspRfft : public DspObject {
     DspRfft(PdMessage *initMessage, PdGraph *graph);
     ~DspRfft();
     
-    static const char *getObjectLabel();
+    static const char *getObjectLabel() { return "rfft~"; }
   
     void processDsp();
     

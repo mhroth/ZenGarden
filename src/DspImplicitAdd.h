@@ -50,8 +50,6 @@ public:
   DspData *getProcessData();
   static void processSignal(DspData *data);
   
-  void setDspBufferAtInletWithReuse(float *buffer, unsigned int inletIndex, bool mayReuse);
-  
   void processDsp();
 };
 

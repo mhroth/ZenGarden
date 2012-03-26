@@ -24,6 +24,7 @@
 
 BufferPool::BufferPool(unsigned short size) {
   bufferSize = size;
+  zeroBuffer = (float *) valloc(bufferSize * sizeof(float));
 }
 
 BufferPool::~BufferPool() {
@@ -35,6 +36,7 @@ BufferPool::~BufferPool() {
     free(pool.top());
     pool.pop();
   }
+  free(zeroBuffer);
 }
 
 float *BufferPool::getBuffer(unsigned int numDependencies) {
