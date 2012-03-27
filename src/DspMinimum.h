@@ -42,12 +42,9 @@ class DspMinimum : public DspObject {
     string toString();
     
   private:
+    static void processSignal(DspObject *dspObject);
     void processMessage(int inletIndex, PdMessage *message);
     void processDspWithIndex(int fromIndex, int toIndex);
-  
-    void onInletConnectionUpdate(unsigned int inletIndex);
-  
-    DspMinimumCodePath codePath;
     
     float constant;
 };

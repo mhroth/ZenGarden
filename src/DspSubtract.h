@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -25,11 +25,6 @@
 
 #include "DspObject.h"
 
-enum DspSubtractCodePath {
-  DSP_SUBTRACT_DSP_DSP,
-  DSP_SUBTRACT_DSP_MESSAGE
-};
-
 class DspSubtract : public DspObject {
 
   public:
@@ -37,19 +32,16 @@ class DspSubtract : public DspObject {
     DspSubtract(PdMessage *initMessage, PdGraph *graph);
     ~DspSubtract();
 
-    static const char *getObjectLabel();
+    static const char *getObjectLabel() { return "-~"; }
     string toString();
   
-    void processDsp();
+    void onInletConnectionUpdate(unsigned int inletIndex);
 
   private:
+    static void processSignal(DspObject *dspObject);
     void processMessage(int inletIndex, PdMessage *message);
     void processDspWithIndex(int fromIndex, int toIndex);
   
-    void onInletConnectionUpdate(unsigned int inletIndex);
-  
-    DspSubtractCodePath codePath;
-
     float constant;
 };
 

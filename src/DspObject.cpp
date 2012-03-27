@@ -41,6 +41,7 @@ DspObject::DspObject(int numMessageInlets, int numDspInlets, int numMessageOutle
 void DspObject::init(int numDspInlets, int numDspOutlets, int blockSize) {
   blockSizeInt = blockSize;
   codepath = DSP_OBJECT_PROCESS_NO_MESSAGE;
+  processFunction = &processFunctionNoMessage;
   
   // initialise the incoming dsp connections list
   incomingDspConnections = vector<list<ObjectLetPair> >(numDspInlets);
@@ -198,8 +199,15 @@ void DspObject::receiveMessage(int inletIndex, PdMessage *message) {
     // The message is released once it is consumed in processDsp().
     messageQueue.push(make_pair(message->copyToHeap(), inletIndex));
     codepath = DSP_OBJECT_PROCESS_MESSAGE;
+    
+    // only process the message if the process function is set to the default no-message function.
+    // If it is set to anything else, then it is assumed that messages should not be processed.
+    if (processFunction == &processFunctionNoMessage) processFunction = &processFunctionMessage;
   }
 }
+
+
+#pragma mark - processDsp
 
 void DspObject::processDsp() {
   switch (codepath) {
@@ -230,6 +238,34 @@ void DspObject::processDsp() {
   }
 }
 
+void DspObject::processFunctionNoMessage(DspObject *dspObject) {
+  dspObject->processDspWithIndex(0, dspObject->blockSizeInt);
+}
+
+void DspObject::processFunctionMessage(DspObject *dspObject) {
+  double blockIndexOfLastMessage = 0.0; // reset the block index of the last received message
+  do { // there is at least one message
+    MessageLetPair messageLetPair = dspObject->messageQueue.front();
+    PdMessage *message = messageLetPair.first;
+    unsigned int inletIndex = messageLetPair.second;
+    
+    double blockIndexOfCurrentMessage = dspObject->graph->getBlockIndex(message);
+    dspObject->processDspWithIndex(blockIndexOfLastMessage, blockIndexOfCurrentMessage);
+    dspObject->processMessage(inletIndex, message);
+    message->freeMessage(); // free the message from the head, the message has been consumed.
+    dspObject->messageQueue.pop();
+    
+    blockIndexOfLastMessage = blockIndexOfCurrentMessage;
+  } while (!dspObject->messageQueue.empty());
+  dspObject->processDspWithIndex(blockIndexOfLastMessage, (double) dspObject->blockSizeInt);
+  
+  // because messages are received much less often than on a per-block basis, one messages are
+  // processed in this block, return to the default process function which assumes that no messages
+  // are present. This improved performance because the messageQueue must not be checked for
+  // any pending messages. It is assumed that there aren't any.
+  dspObject->processFunction = &processFunctionNoMessage;
+}
+
 void DspObject::processDspWithIndex(double fromIndex, double toIndex) {
   // by default, this function just calls the integer version with adjusted block indicies
   processDspWithIndex((int) ceil(fromIndex), (int) ceil(toIndex));
@@ -240,11 +276,14 @@ void DspObject::processDspWithIndex(int fromIndex, int toIndex) {
   processDspWithIndex((float) fromIndex, (float) toIndex);
 }
 
+
+#pragma mark -
+
 bool DspObject::isLeafNode() {
   if (!MessageObject::isLeafNode()) return false;
   else {
     for (int i = 0; i < outgoingDspConnections.size(); i++) {
-      if (outgoingDspConnections[i].size() > 0) return false;
+      if (!outgoingDspConnections[i].empty()) return false;
     }
     return true;
   }

@@ -25,20 +25,6 @@
 
 #include "DspObject.h"
 
-enum DspAddCodePath {
-  DSP_ADD_DSP_DSP = DSP_OBJECT_PROCESS_OTHER
-};
-
-class DspAddData : public DspData {
-  public:
-    float *dspInletBuffer0;
-    float *dspInletBuffer1;
-    float *dspOutletBuffer0;
-    short fromIndex;
-    short toIndex;
-    float constant;
-};
-
 /** [+~], [+~ float] */
 class DspAdd : public DspObject {
   
@@ -47,16 +33,13 @@ class DspAdd : public DspObject {
     DspAdd(PdMessage *initMessage, PdGraph *graph);
     ~DspAdd();
   
-    static const char *getObjectLabel();
+    static const char *getObjectLabel() { return "+~"; }
     string toString();
   
     void onInletConnectionUpdate(unsigned int inletIndex);
-  
-    DspData *getProcessData();
-    static void processSignal(DspData *data);
-    static void processScalar(DspData *data);
-  
-  private:  
+    
+  private:
+    static void processSignal(DspObject *dspObject);
     void processMessage(int inletIndex, PdMessage *message);
     void processDspWithIndex(int fromIndex, int toIndex);
   

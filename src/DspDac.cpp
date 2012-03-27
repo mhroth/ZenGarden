@@ -36,19 +36,7 @@ DspDac::~DspDac() {
   // nothing to do
 }
 
-DspData *DspDac::getProcessData() {
-  DspDacData *data = new DspDacData();
-  data->processDsp = &DspDac::processDsp;
-  data->dspObject = this;
-  return data;
-}
-
-void DspDac::processDsp(DspData *data) {
-  DspDacData *d = reinterpret_cast<DspDacData *>(data);
-  d->dspObject->processDsp();
-}
-
-void DspDac::processDsp() {
+void DspDac::processDspWithIndex(int fromIndex, int toIndex) {
   switch (incomingDspConnections.size()) {
     default: {
       /* TODO(mhroth): fit this into the new buffer reference architecture

@@ -53,6 +53,10 @@ float *BufferPool::getBuffer(unsigned int numDependencies) {
 }
 
 void BufferPool::releaseBuffer(float *buffer) {
+  // an object may try to release the zero buffer if it is being used at an outlet. This should
+  // not be possible.
+  if (buffer == zeroBuffer) return;
+  
   for (list<std::pair<float *, unsigned int> >::iterator it = reserved.begin(); it != reserved.end(); ++it) {
     if ((*it).first == buffer) {
       --((*it).second);

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -34,6 +34,7 @@ MessageObject *DspCosine::newObject(PdMessage *initMessage, PdGraph *graph) {
 
 DspCosine::DspCosine(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0, 1, graph) {
   this->sampleRate = graph->getSampleRate();
+  processFunction = &procesSignal;
   #if __APPLE__ == 0 // only create the lookup table if it is really needed
   refCount++;
   if (cos_table == NULL) {
@@ -56,14 +57,15 @@ DspCosine::~DspCosine() {
   #endif
 }
 
-void DspCosine::processDsp() {
+void DspCosine::procesSignal(DspObject *dspObject) {
+  DspCosine *d = reinterpret_cast<DspCosine *>(dspObject);
   // as no messages are received and there is only one inlet, processDsp does not need much of the
   // infrastructure provided by DspObject
   
   #if __APPLE__
   float twoPi = 2.0f*M_PI;
-  vDSP_vsmul(dspBufferAtInlet[0], 1, &twoPi, dspBufferAtOutlet[0], 1, blockSizeInt);
-  vvcosf(dspBufferAtOutlet[0], dspBufferAtOutlet[0], &blockSizeInt);
+  vDSP_vsmul(d->dspBufferAtInlet[0], 1, &twoPi, d->dspBufferAtOutlet[0], 1, d->blockSizeInt);
+  vvcosf(d->dspBufferAtOutlet[0], d->dspBufferAtOutlet[0], &(d->blockSizeInt));
   #else
   for (int i = 0; i < blockSizeInt; i++) {
     // works because cosine is symmetric about zero

@@ -25,13 +25,6 @@
 
 #include "DspObject.h"
 
-class DspSignalData : public DspData {
-  public:
-    float *dspOutletBuffer0;
-    unsigned short blockSize;
-    float constant;
-};
-
 /** [sig~] */
 class DspSignal : public DspObject {
   
@@ -40,11 +33,8 @@ class DspSignal : public DspObject {
     DspSignal(PdMessage *initMessage, PdGraph *graph);
     ~DspSignal();
   
-    static const char *getObjectLabel();
+    static const char *getObjectLabel() { return "sig~"; }
     string toString();
-  
-    DspData *getProcessData();
-    static void processSignal(DspData *data);
   
   private:
     void processMessage(int inletIndex, PdMessage *message);

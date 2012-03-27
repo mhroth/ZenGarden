@@ -30,7 +30,6 @@ MessageObject *DspMinimum::newObject(PdMessage *initMessage, PdGraph *graph) {
 
 DspMinimum::DspMinimum(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
   constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
-  codePath = DSP_MINIMUM_DSP_MESSAGE;
 }
 
 DspMinimum::~DspMinimum() {
@@ -47,56 +46,45 @@ string DspMinimum::toString() {
   return  string(str);
 }
 
-void DspMinimum::onInletConnectionUpdate(unsigned int inletIndex) {
-  codePath = (incomingDspConnections[0].size() > 0 && incomingDspConnections[1].size() > 0)
-      ? DSP_MINIMUM_DSP_DSP : DSP_MINIMUM_DSP_MESSAGE;
-}
-
 void DspMinimum::processMessage(int inletIndex, PdMessage *message) {
   if (inletIndex == 1) {
-    if (message->isFloat(0)) {
-      constant = message->getFloat(0);
+    if (message->isFloat(0)) constant = message->getFloat(0);
+  }
+}
+
+void DspMinimum::processSignal(DspObject *dspObject) {
+  DspMinimum *d = reinterpret_cast<DspMinimum *>(dspObject);
+  #if __APPLE__
+  vDSP_vmin(d->dspBufferAtInlet[0], 1, d->dspBufferAtInlet[1], 1,
+      d->dspBufferAtOutlet[0], 1, d->blockSizeInt);
+  #else
+  float *inputBuffer0 = dspBufferAtInlet[0];
+  float *inputBuffer1 = dspBufferAtInlet[1];
+  for (int i = fromIndex; i < toIndex; i++) {
+    if (inputBuffer0[i] <= inputBuffer1[i]) {
+      dspBufferAtOutlet0[i] = inputBuffer0[i];
+    } else {
+      dspBufferAtOutlet0[i] = inputBuffer1[i];
     }
   }
+  #endif
 }
 
 void DspMinimum::processDspWithIndex(int fromIndex, int toIndex) {
-  switch (codePath) {
-    case DSP_MINIMUM_DSP_DSP: {
-      #if __APPLE__
-      vDSP_vmin(dspBufferAtInlet[0]+fromIndex, 1, dspBufferAtInlet[1]+fromIndex, 1,
-          dspBufferAtOutlet[0]+fromIndex, 1, toIndex-fromIndex);
-      #else
-      float *inputBuffer0 = dspBufferAtInlet[0];
-      float *inputBuffer1 = dspBufferAtInlet[1];
-      for (int i = fromIndex; i < toIndex; i++) {
-        if (inputBuffer0[i] <= inputBuffer1[i]) {
-          dspBufferAtOutlet0[i] = inputBuffer0[i];
-        } else {
-          dspBufferAtOutlet0[i] = inputBuffer1[i];
-        }
-      }
-      #endif
-      break;
-    }
-    case DSP_MINIMUM_DSP_MESSAGE: {
-      #if __APPLE__
-      int duration = toIndex - fromIndex;
-      float vconst[duration];
-      vDSP_vfill(&constant, vconst, 1, duration);
-      vDSP_vmin(dspBufferAtInlet[0] + fromIndex, 1, vconst, 1, dspBufferAtOutlet[0] + fromIndex, 1,
-          duration);
-      #else
-      float *inputBuffer = dspBufferAtInlet[0];
-      for (int i = fromIndex; i < toIndex; i++) {
-        if (inputBuffer[i] <= constant) {
-          dspBufferAtOutlet0[i] = inputBuffer[i];
-        } else {
-          dspBufferAtOutlet0[i] = constant;
-        }
-      }
-      #endif
-      break;
+  #if __APPLE__
+  int duration = toIndex - fromIndex;
+  float vconst[duration];
+  vDSP_vfill(&constant, vconst, 1, duration);
+  vDSP_vmin(dspBufferAtInlet[0] + fromIndex, 1, vconst, 1, dspBufferAtOutlet[0] + fromIndex, 1,
+      duration);
+  #else
+  float *inputBuffer = dspBufferAtInlet[0];
+  for (int i = fromIndex; i < toIndex; i++) {
+    if (inputBuffer[i] <= constant) {
+      dspBufferAtOutlet0[i] = inputBuffer[i];
+    } else {
+      dspBufferAtOutlet0[i] = constant;
     }
   }
+  #endif
 }

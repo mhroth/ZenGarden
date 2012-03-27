@@ -28,26 +28,26 @@ MessageObject *DspWrap::newObject(PdMessage *initMessage, PdGraph *graph) {
 }
 
 DspWrap::DspWrap(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0, 1, graph) {
-  // nothing to do
+  processFunction = &processSignal;
 }
 
 DspWrap::~DspWrap() {
   // nothing to do
 }
 
-const char *DspWrap::getObjectLabel() {
-  return "wrap~";
-}
-
-void DspWrap::processDsp() {
+void DspWrap::processSignal(DspObject *dspObject) {
+  DspWrap *d = reinterpret_cast<DspWrap *>(dspObject);
+  // as no messages are received and there is only one inlet, processDsp does not need much of the
+  // infrastructure provided by DspObject
+  
   #if __APPLE__
   float one = 1.0f;
   // get fractional part of all input
-  vDSP_vfrac(dspBufferAtInlet[0], 1, dspBufferAtOutlet[0], 1, blockSizeInt);
+  vDSP_vfrac(d->dspBufferAtInlet[0], 1, d->dspBufferAtOutlet[0], 1, d->blockSizeInt);
   // add one to all fractions (making negative fractions positive)
-  vDSP_vsadd(dspBufferAtOutlet[0], 1, &one, dspBufferAtOutlet[0], 1, blockSizeInt);
+  vDSP_vsadd(d->dspBufferAtOutlet[0], 1, &one, d->dspBufferAtOutlet[0], 1, d->blockSizeInt);
   // take fractional part again, removing positive results greater than one
-  vDSP_vfrac(dspBufferAtOutlet[0], 1, dspBufferAtOutlet[0], 1, blockSizeInt);
+  vDSP_vfrac(d->dspBufferAtOutlet[0], 1, d->dspBufferAtOutlet[0], 1, d->blockSizeInt);
   #else
   float *buffer = dspBufferAtInlet[0];
   for (int i = 0; i < blockSizeInt; i++) {

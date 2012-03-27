@@ -38,15 +38,10 @@ DspAdd::~DspAdd() {
 
 void DspAdd::onInletConnectionUpdate(unsigned int inletIndex) {
   if (incomingDspConnections[0].size() > 0 && incomingDspConnections[1].size() > 0) {
-    clearMessageQueue();
-    codepath = DSP_ADD_DSP_DSP;
+    processFunction = &processSignal;
   } else {
-    codepath = messageQueue.empty() ? DSP_OBJECT_PROCESS_NO_MESSAGE : DSP_OBJECT_PROCESS_MESSAGE;
+    processFunction = &processFunctionNoMessage;
   }
-}
-
-const char *DspAdd::getObjectLabel() {
-  return "+~";
 }
 
 string DspAdd::toString() {
@@ -58,47 +53,15 @@ string DspAdd::toString() {
 
 void DspAdd::processMessage(int inletIndex, PdMessage *message) {
   if (inletIndex == 1) {
-    if (message->isFloat(0)) {
-      constant = message->getFloat(0);
-    }
+    if (message->isFloat(0)) constant = message->getFloat(0);
   }
 }
 
-DspData *DspAdd::getProcessData() {
-  DspAddData *data = new DspAddData();
-  if (codepath == DSP_ADD_DSP_DSP) {
-    data->processDsp = &DspAdd::processSignal;
-    data->dspInletBuffer0 = dspBufferAtInlet[0];
-    data->dspInletBuffer1 = dspBufferAtInlet[1];
-    data->dspOutletBuffer0 = dspBufferAtOutlet[0];
-    data->fromIndex = 0;
-    data->toIndex = blockSizeInt;
-  } else {
-    data->processDsp = &DspAdd::processScalar;
-    data->dspInletBuffer0 = dspBufferAtInlet[0];
-    data->dspInletBuffer1 = NULL;
-    data->dspOutletBuffer0 = dspBufferAtOutlet[0];
-    data->fromIndex = 0;
-    data->toIndex = blockSizeInt;
-    data->constant = constant;
-  }
-  return data;
+void DspAdd::processSignal(DspObject *dspObject) {
+  DspAdd *d = reinterpret_cast<DspAdd *>(dspObject);
+  ArrayArithmetic::add(d->dspBufferAtInlet[0] , d->dspBufferAtInlet[1],
+      d->dspBufferAtOutlet[0], 0, d->blockSizeInt);
 }
-
-void DspAdd::processSignal(DspData *data) {
-  DspAddData *d = reinterpret_cast<DspAddData *>(data);
-  ArrayArithmetic::add(d->dspInletBuffer0, d->dspInletBuffer1, d->dspOutletBuffer0, d->fromIndex, d->toIndex);
-}
-
-void DspAdd::processScalar(DspData *data) {
-  DspAddData *d = reinterpret_cast<DspAddData *>(data);
-  ArrayArithmetic::add(d->dspInletBuffer0, d->constant, d->dspOutletBuffer0, d->fromIndex, d->toIndex);
-}
-
-//void DspAdd::processMessage(DspData *data) {
-//  DspAddData *d = reinterpret_cast<DspAddData *>(data);
-//  d->dspObject->processDsp();
-//}
 
 void DspAdd::processDspWithIndex(int fromIndex, int toIndex) {
   ArrayArithmetic::add(dspBufferAtInlet[0], constant, dspBufferAtOutlet[0], fromIndex, toIndex);

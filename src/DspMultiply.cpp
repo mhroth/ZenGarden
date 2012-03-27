@@ -37,10 +37,6 @@ DspMultiply::~DspMultiply() {
   // nothing to do
 }
 
-const char *DspMultiply::getObjectLabel() {
-  return "*~";
-}
-
 string DspMultiply::toString() {
   const char *fmt = (constant == 0.0f) ? "%s" : "%s %g";
   char str[snprintf(NULL, 0, fmt, getObjectLabel(), constant)+1];
@@ -51,9 +47,11 @@ string DspMultiply::toString() {
 void DspMultiply::onInletConnectionUpdate(unsigned int inletIndex) {
   if (incomingDspConnections[0].size() > 0 && incomingDspConnections[1].size() > 0) {
     clearMessageQueue();
-    codepath = DSP_MULTIPLY_DSP_DSP;
+    processFunction = &processSignal;
   } else {
-    codepath = messageQueue.empty() ? DSP_OBJECT_PROCESS_NO_MESSAGE : DSP_OBJECT_PROCESS_MESSAGE;
+    // because onInletConnectionUpdate can only be called at block boundaries, it is guaranteed
+    // that no messages will be in the message queue.
+    processFunction = &processFunctionNoMessage;
   }
 }
 
@@ -65,35 +63,10 @@ void DspMultiply::processMessage(int inletIndex, PdMessage *message) {
   }
 }
 
-DspData *DspMultiply::getProcessData() {
-  DspMultiplyData *data = new DspMultiplyData();
-  if (codepath == DSP_MULTIPLY_DSP_DSP) {
-    data->processDsp = &DspMultiply::processSignal;
-    data->dspInletBuffer0 = dspBufferAtInlet[0];
-    data->dspInletBuffer1 = dspBufferAtInlet[1];
-    data->dspOutletBuffer0 = dspBufferAtOutlet[0];
-    data->fromIndex = 0;
-    data->toIndex = blockSizeInt;
-  } else {
-    data->processDsp = &DspMultiply::processScalar;
-    data->dspInletBuffer0 = dspBufferAtInlet[0];
-    data->dspInletBuffer1 = NULL;
-    data->dspOutletBuffer0 = dspBufferAtOutlet[0];
-    data->fromIndex = 0;
-    data->toIndex = blockSizeInt;
-    data->constant = constant;
-  }
-  return data;
-}
-
-void DspMultiply::processSignal(DspData *data) {
-  DspMultiplyData *d = reinterpret_cast<DspMultiplyData *>(data);
-  ArrayArithmetic::multiply(d->dspInletBuffer0, d->dspInletBuffer1, d->dspOutletBuffer0, 0, d->toIndex);
-}
-
-void DspMultiply::processScalar(DspData *data) {
-  DspMultiplyData *d = reinterpret_cast<DspMultiplyData *>(data);
-  ArrayArithmetic::multiply(d->dspInletBuffer0, d->constant, d->dspOutletBuffer0, d->fromIndex, d->toIndex);
+void DspMultiply::processSignal(DspObject *dspObject) {
+  DspMultiply *d = reinterpret_cast<DspMultiply *>(dspObject);
+  ArrayArithmetic::multiply(d->dspBufferAtInlet[0] , d->dspBufferAtInlet[1],
+      d->dspBufferAtOutlet[0], 0, d->blockSizeInt);
 }
 
 void DspMultiply::processDspWithIndex(int fromIndex, int toIndex) {

@@ -25,20 +25,6 @@
 
 #include "DspObject.h"
 
-enum DspMultiplyCodePath {
-  DSP_MULTIPLY_DSP_DSP = DSP_OBJECT_PROCESS_OTHER
-};
-
-class DspMultiplyData : public DspData {
-  public:
-    float *dspInletBuffer0;
-    float *dspInletBuffer1;
-    float *dspOutletBuffer0;
-    short fromIndex;
-    short toIndex;
-    float constant;
-};
-
 class DspMultiply : public DspObject {
   
   public:
@@ -46,14 +32,12 @@ class DspMultiply : public DspObject {
     DspMultiply(PdMessage *initMessage, PdGraph *graph);
     ~DspMultiply();
   
-    static const char *getObjectLabel();
+    static const char *getObjectLabel() { return "*~"; }
     string toString();
   
-    DspData *getProcessData();
-    static void processSignal(DspData *data);
-    static void processScalar(DspData *data);
-    
+
   private:
+    static void processSignal(DspObject *dspObject);
     void processMessage(int inletIndex, PdMessage *message);
     void processDspWithIndex(int fromIndex, int toIndex);
   

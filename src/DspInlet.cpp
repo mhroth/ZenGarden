@@ -65,3 +65,7 @@ void DspInlet::onDspBufferAtInletUpdate(float *buffer, unsigned int inletIndex) 
     dspObject->setDspBufferAtInlet(dspBufferAtInlet[inletIndex], letPair.second);
   }
 }
+
+float *DspInlet::getDspBufferAtOutlet(int outletIndex) {
+  return (dspBufferAtInlet[0] == NULL) ? graph->getBufferPool()->getZeroBuffer() : dspBufferAtInlet[0];
+}

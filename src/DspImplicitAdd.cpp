@@ -28,28 +28,14 @@ MessageObject *DspImplicitAdd::newObject(PdMessage *initMessage, PdGraph *graph)
 }
 
 DspImplicitAdd::DspImplicitAdd(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 2, 0, 1, graph) {
-  // nothing to do
+  processFunction = &processSignal;
 }
 
 DspImplicitAdd::~DspImplicitAdd() {
   // nothing to do
 }
 
-DspData *DspImplicitAdd::getProcessData() {
-  DspImplicitAddData *data = new DspImplicitAddData();
-  data->processDsp = &DspImplicitAdd::processSignal;
-  data->dspInletBuffer0 = dspBufferAtInlet[0];
-  data->dspInletBuffer1 = dspBufferAtInlet[1];
-  data->dspOutletBuffer0 = dspBufferAtOutlet[0];
-  data->blockSize = blockSizeInt;
-  return data;
-}
-
-void DspImplicitAdd::processSignal(DspData *data) {
-  DspImplicitAddData *d = reinterpret_cast<DspImplicitAddData *>(data);
-  ArrayArithmetic::add(d->dspInletBuffer0, d->dspInletBuffer1, d->dspOutletBuffer0, 0, d->blockSize);
-}
-
-void DspImplicitAdd::processDsp() {
-  ArrayArithmetic::add(dspBufferAtInlet[0], dspBufferAtInlet[1], dspBufferAtOutlet[0], 0, blockSizeInt);
+void DspImplicitAdd::processSignal(DspObject *dspObject) {
+  DspImplicitAdd *d = reinterpret_cast<DspImplicitAdd *>(dspObject);
+  ArrayArithmetic::add(d->dspBufferAtInlet[0], d->dspBufferAtInlet[1], d->dspBufferAtOutlet[0], 0, d->blockSizeInt);
 }

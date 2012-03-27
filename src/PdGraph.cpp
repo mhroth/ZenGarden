@@ -534,14 +534,16 @@ void PdGraph::processDsp() {
     
     // TODO(mhroth): iterate depending on local blocksize relative to parent
     // execute all nodes which process audio
-//    for (list<DspObject *>::iterator it = dspNodeList.begin(); it != dspNodeList.end(); ++it) {
+    for (list<DspObject *>::iterator it = dspNodeList.begin(); it != dspNodeList.end(); ++it) {
 //      (*it)->processDsp();
-//    }
-    
-    for (list<DspData *>::iterator it = dspDataList.begin(); it != dspDataList.end(); ++it) {
-      DspData *data = *it;
-      data->processDsp(data);
+      DspObject *dspObject = *it;
+      dspObject->processFunction(dspObject);
     }
+    
+//    for (list<DspData *>::iterator it = dspDataList.begin(); it != dspDataList.end(); ++it) {
+//      DspData *data = *it;
+//      data->processDsp(data);
+//    }
   }
 }
 
@@ -669,17 +671,16 @@ void PdGraph::computeLocalDspProcessOrder() {
   dspNodeList.clear();
 
   // for all leaf nodes, order the tree
-  list<DspObject *> dspNodeList;
   for (list<MessageObject *>::iterator it = leafNodeList.begin(); it != leafNodeList.end(); ++it) {
     MessageObject *object = *it;
     list<DspObject *> processSubList = object->getProcessOrder();
     dspNodeList.splice(dspNodeList.end(), processSubList);
   }
   
-  dspDataList.clear();
-  for (list<DspObject *>::iterator it = dspNodeList.begin(); it != dspNodeList.end(); it++) {
-    dspDataList.push_back((*it)->getProcessData());
-  }
+//  dspDataList.clear();
+//  for (list<DspObject *>::iterator it = dspNodeList.begin(); it != dspNodeList.end(); it++) {
+//    dspDataList.push_back((*it)->getProcessData());
+//  }
   
   /* print out process order of local dsp objects (for debugging) */
   /*

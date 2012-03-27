@@ -46,10 +46,12 @@ class DspInlet : public DspObject {
     list<DspObject *> getProcessOrder();
     list<DspObject *> getProcessOrderFromInlet();
   
+    float *getDspBufferAtOutlet(int outletIndex);
+  
     // [inlet~] does nothing with audio
     bool doesProcessAudio() { return false; }
   
-  protected:
+  private:
     void onDspBufferAtInletUpdate(float *buffer, unsigned int inletIndex);
 };
 

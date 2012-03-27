@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -35,10 +35,6 @@ DspClip::DspClip(PdMessage *initMessage, PdGraph *graph) : DspObject(3, 1, 0, 1,
 
 DspClip::~DspClip() {
   // nothing to do
-}
-
-const char *DspClip::getObjectLabel() {
-  return "clip~";
 }
 
 string DspClip::toString() {

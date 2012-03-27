@@ -75,6 +75,7 @@ class DspObject : public MessageObject {
     
     /** Process audio buffers in this block. */
     virtual void processDsp();
+    void (*processFunction)(DspObject *);
   
     /** Returns the connection type of the given outlet. */
     virtual ConnectionType getConnectionType(int outletIndex);
@@ -133,6 +134,9 @@ class DspObject : public MessageObject {
     virtual DspData *getProcessData() { return new DspData(); }
     
   protected:
+    static void processFunctionNoMessage(DspObject *dspObject);
+    static void processFunctionMessage(DspObject *dspObject);
+  
     /* IMPORTANT: one of these two functions MUST be overridden (or processDsp()) */
     virtual void processDspWithIndex(double fromIndex, double toIndex);
     virtual void processDspWithIndex(int fromIndex, int toIndex);

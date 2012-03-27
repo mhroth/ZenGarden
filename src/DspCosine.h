@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -36,9 +36,9 @@ class DspCosine : public DspObject {
     static const char *getObjectLabel() { return "cos~"; }
     string toString() { return string(getObjectLabel()); }
 
-    void processDsp();
-
   private:
+    static void procesSignal(DspObject *dspObject);
+  
     float sampleRate;
     static float *cos_table; // the Cosine lookup table
     static int refCount; // a reference counter for Cosine table. Now we know when to free it.

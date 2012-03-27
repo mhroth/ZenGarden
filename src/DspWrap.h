@@ -33,9 +33,11 @@ class DspWrap : public DspObject {
     DspWrap(PdMessage *initMessage, PdGraph *graph);
     ~DspWrap();
 
-    static const char *getObjectLabel();
+    static const char *getObjectLabel() { return "wrap~"; }
+    string toString() { return string(getObjectLabel()); }
   
-    void processDsp();
+  private:
+    static void processSignal(DspObject *dspObject);
 };
 
 #endif // _DSP_WRAP_H_

@@ -36,34 +36,16 @@ DspSignal::~DspSignal() {
   // nothing to do
 }
 
-const char *DspSignal::getObjectLabel() {
-  return "sig~";
-}
-
 string DspSignal::toString() {
   char str[snprintf(NULL, 0, "%s %g", getObjectLabel(), constant)+1];
   snprintf(str, sizeof(str), "%s %g", getObjectLabel(), constant);
   return string(str);
 }
 
-DspData *DspSignal::getProcessData() {
-  DspSignalData *data = new DspSignalData();
-  data->processDsp = DspSignal::processSignal;
-  data->dspOutletBuffer0 = dspBufferAtOutlet[0];
-  data->blockSize = blockSizeInt;
-  data->constant = constant;
-  return data;
-}
-
 void DspSignal::processMessage(int inletIndex, PdMessage *message) {
   if (message->isFloat(0)) {
     constant = message->getFloat(0);
   }
-}
-
-void DspSignal::processSignal(DspData *data) {
-  DspSignalData *d = reinterpret_cast<DspSignalData *>(data);
-  ArrayArithmetic::fill(d->dspOutletBuffer0, d->constant, 0, d->blockSize);
 }
 
 void DspSignal::processDspWithIndex(int fromIndex, int toIndex) {

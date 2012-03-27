@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -30,15 +30,10 @@ MessageObject *DspSubtract::newObject(PdMessage *initMessage, PdGraph *graph) {
 
 DspSubtract::DspSubtract(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
   constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
-  codePath = DSP_SUBTRACT_DSP_MESSAGE;
 }
 
 DspSubtract::~DspSubtract() {
   // nothing to do
-}
-
-const char *DspSubtract::getObjectLabel() {
-  return "-~";
 }
 
 string DspSubtract::toString() {
@@ -49,26 +44,20 @@ string DspSubtract::toString() {
 }
 
 void DspSubtract::onInletConnectionUpdate(unsigned int inletIndex) {
-  codePath = (incomingDspConnections[0].size() > 0 && incomingDspConnections[1].size() > 0)
-      ? DSP_SUBTRACT_DSP_DSP : DSP_SUBTRACT_DSP_MESSAGE;
-}
-
-void DspSubtract::processDsp() {
-  switch (codePath) {
-    case DSP_SUBTRACT_DSP_DSP: {
-      ArrayArithmetic::subtract(dspBufferAtInlet[0], dspBufferAtInlet[1], dspBufferAtOutlet[0], 0, blockSizeInt);
-      break;
-    }
-    default: DspObject::processDsp(); break;
-  }
+  processFunction = (incomingDspConnections[0].size() > 0 && incomingDspConnections[1].size() > 0)
+      ? &processSignal : processFunctionNoMessage;
 }
 
 void DspSubtract::processMessage(int inletIndex, PdMessage *message) {
   if (inletIndex == 1) {
-    if (message->isFloat(0)) {
-      constant = message->getFloat(0);
-    }
+    if (message->isFloat(0)) constant = message->getFloat(0);
   }
+}
+
+void DspSubtract::processSignal(DspObject *dspObject) {
+  DspSubtract *d = reinterpret_cast<DspSubtract *>(dspObject);
+  ArrayArithmetic::subtract(d->dspBufferAtInlet[0], d->dspBufferAtInlet[1],
+      d->dspBufferAtOutlet[0], 0, d->blockSizeInt);
 }
 
 void DspSubtract::processDspWithIndex(int fromIndex, int toIndex) {
