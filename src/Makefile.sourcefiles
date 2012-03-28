@@ -1,4 +1,5 @@
 LOCAL_SRC_FILES := \
+./BufferPool.cpp \
 ./DeclareList.cpp \
 ./DelayReceiver.cpp \
 ./DspAdd.cpp \
@@ -15,6 +16,7 @@ LOCAL_SRC_FILES := \
 ./DspEnvelope.cpp \
 ./DspFilter.cpp \
 ./DspHighpassFilter.cpp \
+./DspImplicitAdd.cpp \
 ./DspInlet.cpp \
 ./DspLine.cpp \
 ./DspLog.cpp \
