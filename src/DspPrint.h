@@ -33,7 +33,7 @@ class DspPrint : public DspObject {
     DspPrint(PdMessage *initMessage, PdGraph *graph);
     ~DspPrint();
 
-    static const char *getObjectLabel();
+    static const char *getObjectLabel() { return "print~"; }
     
   private:
     void processMessage(int inletIndex, PdMessage *message);

@@ -35,10 +35,6 @@ DspPrint::~DspPrint() {
   free(name);
 }
 
-const char *DspPrint::getObjectLabel() {
-  return "print~";
-}
-
 void DspPrint::processMessage(int inletIndex, PdMessage *message) {
   if (message->isBang(0)) {
     int bufferMaxIndex = blockSizeInt - 1;
