@@ -155,10 +155,6 @@ ObjectType MessageObject::getObjectType() {
   return OBJECT_UNKNOWN;
 }
 
-string MessageObject::toString() {
-  return string(getObjectLabel());
-}
-
 PdGraph *MessageObject::getGraph() {
   return graph;
 }
