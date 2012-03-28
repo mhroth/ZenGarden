@@ -35,7 +35,7 @@ DspImplicitAdd::~DspImplicitAdd() {
   // nothing to do
 }
 
-void DspImplicitAdd::processSignal(DspObject *dspObject) {
+void DspImplicitAdd::processSignal(DspObject *dspObject, int fromIndex, int toIndex) {
   DspImplicitAdd *d = reinterpret_cast<DspImplicitAdd *>(dspObject);
-  ArrayArithmetic::add(d->dspBufferAtInlet[0], d->dspBufferAtInlet[1], d->dspBufferAtOutlet[0], 0, d->blockSizeInt);
+  ArrayArithmetic::add(d->dspBufferAtInlet[0], d->dspBufferAtInlet[1], d->dspBufferAtOutlet[0], fromIndex, toIndex);
 }

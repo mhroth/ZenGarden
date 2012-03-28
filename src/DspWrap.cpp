@@ -35,7 +35,7 @@ DspWrap::~DspWrap() {
   // nothing to do
 }
 
-void DspWrap::processSignal(DspObject *dspObject) {
+void DspWrap::processSignal(DspObject *dspObject, int fromIndex, int toIndex) {
   DspWrap *d = reinterpret_cast<DspWrap *>(dspObject);
   // as no messages are received and there is only one inlet, processDsp does not need much of the
   // infrastructure provided by DspObject
@@ -43,14 +43,14 @@ void DspWrap::processSignal(DspObject *dspObject) {
   #if __APPLE__
   float one = 1.0f;
   // get fractional part of all input
-  vDSP_vfrac(d->dspBufferAtInlet[0], 1, d->dspBufferAtOutlet[0], 1, d->blockSizeInt);
+  vDSP_vfrac(d->dspBufferAtInlet[0], 1, d->dspBufferAtOutlet[0], 1, toIndex);
   // add one to all fractions (making negative fractions positive)
-  vDSP_vsadd(d->dspBufferAtOutlet[0], 1, &one, d->dspBufferAtOutlet[0], 1, d->blockSizeInt);
+  vDSP_vsadd(d->dspBufferAtOutlet[0], 1, &one, d->dspBufferAtOutlet[0], 1, toIndex);
   // take fractional part again, removing positive results greater than one
-  vDSP_vfrac(d->dspBufferAtOutlet[0], 1, d->dspBufferAtOutlet[0], 1, d->blockSizeInt);
+  vDSP_vfrac(d->dspBufferAtOutlet[0], 1, d->dspBufferAtOutlet[0], 1, toIndex);
   #else
   float *buffer = dspBufferAtInlet[0];
-  for (int i = 0; i < blockSizeInt; i++) {
+  for (int i = fromIndex; i < toIndex; i++) {
     float f = buffer[i];
     dspBufferAtOutlet[0][i] = f - floorf(f);
   }

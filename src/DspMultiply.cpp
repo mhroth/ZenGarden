@@ -31,6 +31,7 @@ MessageObject *DspMultiply::newObject(PdMessage *initMessage, PdGraph *graph) {
 DspMultiply::DspMultiply(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
   constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
   inputConstant = 0.0f;
+  processFunctionNoMessage = &processScalar;
 }
 
 DspMultiply::~DspMultiply() {
@@ -46,12 +47,11 @@ string DspMultiply::toString() {
 
 void DspMultiply::onInletConnectionUpdate(unsigned int inletIndex) {
   if (incomingDspConnections[0].size() > 0 && incomingDspConnections[1].size() > 0) {
-    clearMessageQueue();
     processFunction = &processSignal;
   } else {
     // because onInletConnectionUpdate can only be called at block boundaries, it is guaranteed
     // that no messages will be in the message queue.
-    processFunction = &processFunctionNoMessage;
+    processFunction = &processScalar;
   }
 }
 
@@ -63,12 +63,14 @@ void DspMultiply::processMessage(int inletIndex, PdMessage *message) {
   }
 }
 
-void DspMultiply::processSignal(DspObject *dspObject) {
+void DspMultiply::processSignal(DspObject *dspObject, int fromIndex, int toIndex) {
   DspMultiply *d = reinterpret_cast<DspMultiply *>(dspObject);
   ArrayArithmetic::multiply(d->dspBufferAtInlet[0] , d->dspBufferAtInlet[1],
-      d->dspBufferAtOutlet[0], 0, d->blockSizeInt);
+      d->dspBufferAtOutlet[0], fromIndex, toIndex);
 }
 
-void DspMultiply::processDspWithIndex(int fromIndex, int toIndex) {
-  ArrayArithmetic::multiply(dspBufferAtInlet[0], constant, dspBufferAtOutlet[0], fromIndex, toIndex);
+void DspMultiply::processScalar(DspObject *dspObject, int fromIndex, int toIndex) {
+  DspMultiply *d = reinterpret_cast<DspMultiply *>(dspObject);
+  ArrayArithmetic::multiply(d->dspBufferAtInlet[0] , d->constant,
+      d->dspBufferAtOutlet[0], fromIndex, toIndex);
 }

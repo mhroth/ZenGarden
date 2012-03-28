@@ -36,9 +36,6 @@ class DspFilter : public DspObject {
   
     void onInletConnectionUpdate(unsigned int inletIndex);
   
-    // do NOT reuse the input buffer as the output buffer
-    bool canReuseInputBuffer() { return false; }
-  
   protected:
     void processDspWithIndex(int fromIndex, int toIndex);
     

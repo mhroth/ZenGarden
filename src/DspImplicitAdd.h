@@ -40,7 +40,7 @@ public:
   string toString() { return string(getObjectLabel()); }
   
   private:
-    static void processSignal(DspObject *dspObject);;
+    static void processSignal(DspObject *dspObject, int fromIndex, int toIndex);
 };
 
 #endif // _DSP_IMPLICIT_ADD_H_

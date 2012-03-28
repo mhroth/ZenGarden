@@ -30,6 +30,7 @@ MessageObject *DspAdd::newObject(PdMessage *initMessage, PdGraph *graph) {
 
 DspAdd::DspAdd(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
   constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
+  processFunctionNoMessage = &processScalar;
 }
 
 DspAdd::~DspAdd() {
@@ -40,7 +41,7 @@ void DspAdd::onInletConnectionUpdate(unsigned int inletIndex) {
   if (incomingDspConnections[0].size() > 0 && incomingDspConnections[1].size() > 0) {
     processFunction = &processSignal;
   } else {
-    processFunction = &processFunctionNoMessage;
+    processFunction = &processScalar;
   }
 }
 
@@ -57,12 +58,14 @@ void DspAdd::processMessage(int inletIndex, PdMessage *message) {
   }
 }
 
-void DspAdd::processSignal(DspObject *dspObject) {
+void DspAdd::processSignal(DspObject *dspObject, int fromIndex, int toIndex) {
   DspAdd *d = reinterpret_cast<DspAdd *>(dspObject);
   ArrayArithmetic::add(d->dspBufferAtInlet[0] , d->dspBufferAtInlet[1],
-      d->dspBufferAtOutlet[0], 0, d->blockSizeInt);
+      d->dspBufferAtOutlet[0], fromIndex, toIndex);
 }
 
-void DspAdd::processDspWithIndex(int fromIndex, int toIndex) {
-  ArrayArithmetic::add(dspBufferAtInlet[0], constant, dspBufferAtOutlet[0], fromIndex, toIndex);
+void DspAdd::processScalar(DspObject *dspObject, int fromIndex, int toIndex) {
+  DspAdd *d = reinterpret_cast<DspAdd *>(dspObject);
+  ArrayArithmetic::add(d->dspBufferAtInlet[0] , d->constant,
+      d->dspBufferAtOutlet[0], fromIndex, fromIndex);
 }

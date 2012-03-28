@@ -37,7 +37,7 @@ class DspWrap : public DspObject {
     string toString() { return string(getObjectLabel()); }
   
   private:
-    static void processSignal(DspObject *dspObject);
+    static void processSignal(DspObject *dspObject, int fromIndex, int toIndex);
 };
 
 #endif // _DSP_WRAP_H_

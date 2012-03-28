@@ -258,8 +258,6 @@ class PdGraph : public DspObject {
      */
     list<DspObject *> dspNodeList;
   
-    list<DspData *> dspDataList;
-  
     list<DspImplicitAdd *> implicitDspAddList;
     
     /** A list of all inlet (message or audio) nodes in this subgraph. */

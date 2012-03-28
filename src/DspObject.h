@@ -35,14 +35,6 @@ enum DspObjectProcessMessage {
   DSP_OBJECT_PROCESS_OTHER       // some other process operation will take place
 };
 
-class DspData {
-  public:
-    void (*processDsp)(DspData *);
-  
-    DspData() { processDsp = NULL; }
-    virtual ~DspData() { }
-};
-
 /**
  * A <code>DspObject</code> is the abstract superclass of any object which processes audio.
  * <code>DspObject</code> is a subclass of <code>MessageObject</code>, such that all of the former
@@ -69,27 +61,18 @@ class DspObject : public MessageObject {
   
     /* Override MessageObject::shouldDistributeMessageToInlets() */
     virtual bool shouldDistributeMessageToInlets() { return false; }
-  
-    /** true if this object can reuse its input buffer as an output buffer. false otherwise. */
-    virtual bool canReuseInputBuffer() { return true; }
     
     /** Process audio buffers in this block. */
     virtual void processDsp();
-    void (*processFunction)(DspObject *);
+    void (*processFunction)(DspObject *dspObject, int fromIndex, int toIndex);
   
     /** Returns the connection type of the given outlet. */
     virtual ConnectionType getConnectionType(int outletIndex);
 
-    virtual float *getDspBufferAtOutlet(int outletIndex);
-  
-    /**
-     * Returns true if dspObject connected to from the outletIndex may reuse the output buffer at
-     * that index.
-     */
-    virtual bool mayReuseBuffer(DspObject *dspObject, unsigned int outletIndex);
-  
+    /** Get and set buffers at inlets and outlets. */
     virtual void setDspBufferAtInlet(float *buffer, unsigned int inletIndex);
     virtual void setDspBufferAtOutlet(float *buffer, unsigned int outletIndex);
+    virtual float *getDspBufferAtOutlet(int outletIndex);
   
     virtual void addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex);
     virtual void addConnectionToObjectFromOutlet(MessageObject *messageObject, int inletIndex, int outletIndex);
@@ -129,13 +112,11 @@ class DspObject : public MessageObject {
     /** Returns only outgoing dsp connections from the given outlet. */
     virtual list<ObjectLetPair> getOutgoingDspConnections(unsigned int outletIndex);
   
-    static const char *getObjectLabel();
-  
-    virtual DspData *getProcessData() { return new DspData(); }
+    static const char *getObjectLabel() { return "obj~"; }
     
   protected:
-    static void processFunctionNoMessage(DspObject *dspObject);
-    static void processFunctionMessage(DspObject *dspObject);
+    static void processFunctionDefaultNoMessage(DspObject *dspObject, int fromIndex, int toIndex);
+    static void processFunctionMessage(DspObject *dspObject, int fromIndex, int toIndex);
   
     /* IMPORTANT: one of these two functions MUST be overridden (or processDsp()) */
     virtual void processDspWithIndex(double fromIndex, double toIndex);
@@ -162,10 +143,10 @@ class DspObject : public MessageObject {
     queue<MessageLetPair> messageQueue;
   
     /* An array of pointers to resolved dsp buffers at each inlet. */
-    float **dspBufferAtInlet;
+    float *dspBufferAtInlet[3];
   
-    /** TODO(mhroth) */
-    float **dspBufferAtOutlet;
+    /* An array of pointers to resolved dsp buffers at each outlet. */
+    float *dspBufferAtOutlet[3];
   
     /** List of all dsp objects connecting to this object at each inlet. */
     vector<list<ObjectLetPair> > incomingDspConnections;
@@ -175,6 +156,9 @@ class DspObject : public MessageObject {
   
     /** The indication of what to do when <code>processDsp</code> is called. */
     int codepath;
+  
+    /** The process function to use when acting on a message. */
+    void (*processFunctionNoMessage)(DspObject *dspObject, int fromIndex, int toIndex);
   
   private:
     /** This function encapsulates the common code between the two constructors. */

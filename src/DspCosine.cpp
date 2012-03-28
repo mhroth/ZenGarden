@@ -57,17 +57,17 @@ DspCosine::~DspCosine() {
   #endif
 }
 
-void DspCosine::procesSignal(DspObject *dspObject) {
+void DspCosine::procesSignal(DspObject *dspObject, int fromIndex, int toIndex) {
   DspCosine *d = reinterpret_cast<DspCosine *>(dspObject);
   // as no messages are received and there is only one inlet, processDsp does not need much of the
   // infrastructure provided by DspObject
   
   #if __APPLE__
   float twoPi = 2.0f*M_PI;
-  vDSP_vsmul(d->dspBufferAtInlet[0], 1, &twoPi, d->dspBufferAtOutlet[0], 1, d->blockSizeInt);
-  vvcosf(d->dspBufferAtOutlet[0], d->dspBufferAtOutlet[0], &(d->blockSizeInt));
+  vDSP_vsmul(d->dspBufferAtInlet[0], 1, &twoPi, d->dspBufferAtOutlet[0], 1, toIndex);
+  vvcosf(d->dspBufferAtOutlet[0], d->dspBufferAtOutlet[0], &toIndex);
   #else
-  for (int i = 0; i < blockSizeInt; i++) {
+  for (int i = fromIndex; i < toIndex; i++) {
     // works because cosine is symmetric about zero
     float f = fabsf(dspBufferAtInlet[0][i]);
     f -= floorf(f);

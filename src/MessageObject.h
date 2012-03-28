@@ -102,11 +102,10 @@ class MessageObject {
         int inletIndex, int newOutletIndex);
   
     /** Returns the label for this object. */
-    static const char *getObjectLabel();
+    static const char *getObjectLabel() { return "obj"; }
+    virtual string toString() { return string(getObjectLabel()); }
   
     virtual ObjectType getObjectType();
-  
-    virtual string toString();
   
     /** Returns <code>true</code> if this object processes audio, <code>false</code> otherwise. */
     virtual bool doesProcessAudio() { return false; }

@@ -155,10 +155,6 @@ ObjectType MessageObject::getObjectType() {
   return OBJECT_UNKNOWN;
 }
 
-const char *MessageObject::getObjectLabel() {
-  return "obj"; // default response
-}
-
 string MessageObject::toString() {
   return string(getObjectLabel());
 }

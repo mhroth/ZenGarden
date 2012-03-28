@@ -37,7 +37,7 @@ class DspCosine : public DspObject {
     string toString() { return string(getObjectLabel()); }
 
   private:
-    static void procesSignal(DspObject *dspObject);
+    static void procesSignal(DspObject *dspObject, int fromIndex, int toIndex);
   
     float sampleRate;
     static float *cos_table; // the Cosine lookup table

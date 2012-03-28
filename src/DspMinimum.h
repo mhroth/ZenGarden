@@ -25,11 +25,6 @@
 
 #include "DspObject.h"
 
-enum DspMinimumCodePath {
-  DSP_MINIMUM_DSP_DSP,
-  DSP_MINIMUM_DSP_MESSAGE,
-};
-
 /** [min~ float] */
 class DspMinimum : public DspObject {
   
@@ -40,11 +35,13 @@ class DspMinimum : public DspObject {
     
     static const char *getObjectLabel();
     string toString();
+  
+    void onInletConnectionUpdate(unsigned int inletIndex);
     
   private:
-    static void processSignal(DspObject *dspObject);
+    static void processSignal(DspObject *dspObject, int fromIndex, int toIndex);
+    static void processScalar(DspObject *dspObject, int fromIndex, int toIndex);
     void processMessage(int inletIndex, PdMessage *message);
-    void processDspWithIndex(int fromIndex, int toIndex);
     
     float constant;
 };

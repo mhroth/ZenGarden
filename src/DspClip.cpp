@@ -31,6 +31,8 @@ MessageObject *DspClip::newObject(PdMessage *initMessage, PdGraph *graph) {
 DspClip::DspClip(PdMessage *initMessage, PdGraph *graph) : DspObject(3, 1, 0, 1, graph) {
   lowerBound = initMessage->isFloat(0) ? initMessage->getFloat(0) : -1.0f;
   upperBound = initMessage->isFloat(1) ? initMessage->getFloat(1) : 1.0f;
+  processFunction = &processScalar;
+  processFunctionNoMessage = &processScalar;
 }
 
 DspClip::~DspClip() {
@@ -51,10 +53,11 @@ void DspClip::processMessage(int inletIndex, PdMessage *message) {
   }
 }
 
-void DspClip::processDspWithIndex(int fromIndex, int toIndex) {
+void DspClip::processScalar(DspObject *dspObject, int fromIndex, int toIndex) {
+  DspClip *d = reinterpret_cast<DspClip *>(dspObject);
   #if __APPLE__
-  vDSP_vclip(dspBufferAtInlet[0]+fromIndex, 1, &lowerBound, &upperBound,
-      dspBufferAtOutlet[0]+fromIndex, 1, toIndex-fromIndex);
+  vDSP_vclip(d->dspBufferAtInlet[0]+fromIndex, 1, &(d->lowerBound), &(d->upperBound),
+      d->dspBufferAtOutlet[0]+fromIndex, 1, toIndex-fromIndex);
   #else
   float *buffer = dspBufferAtInlet[0];
   for (int i = fromIndex; i < toIndex; i++) {

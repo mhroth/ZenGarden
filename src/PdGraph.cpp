@@ -535,15 +535,9 @@ void PdGraph::processDsp() {
     // TODO(mhroth): iterate depending on local blocksize relative to parent
     // execute all nodes which process audio
     for (list<DspObject *>::iterator it = dspNodeList.begin(); it != dspNodeList.end(); ++it) {
-//      (*it)->processDsp();
       DspObject *dspObject = *it;
-      dspObject->processFunction(dspObject);
+      dspObject->processFunction(dspObject, 0, blockSizeInt);
     }
-    
-//    for (list<DspData *>::iterator it = dspDataList.begin(); it != dspDataList.end(); ++it) {
-//      DspData *data = *it;
-//      data->processDsp(data);
-//    }
   }
 }
 
@@ -676,11 +670,6 @@ void PdGraph::computeLocalDspProcessOrder() {
     list<DspObject *> processSubList = object->getProcessOrder();
     dspNodeList.splice(dspNodeList.end(), processSubList);
   }
-  
-//  dspDataList.clear();
-//  for (list<DspObject *>::iterator it = dspNodeList.begin(); it != dspNodeList.end(); it++) {
-//    dspDataList.push_back((*it)->getProcessData());
-//  }
   
   /* print out process order of local dsp objects (for debugging) */
   /*

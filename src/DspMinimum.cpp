@@ -30,6 +30,8 @@ MessageObject *DspMinimum::newObject(PdMessage *initMessage, PdGraph *graph) {
 
 DspMinimum::DspMinimum(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
   constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
+  processFunction = &processScalar;
+  processFunctionNoMessage = &processScalar;
 }
 
 DspMinimum::~DspMinimum() {
@@ -52,30 +54,36 @@ void DspMinimum::processMessage(int inletIndex, PdMessage *message) {
   }
 }
 
-void DspMinimum::processSignal(DspObject *dspObject) {
+void DspMinimum::onInletConnectionUpdate(unsigned int inletIndex) {
+  processFunction = (incomingDspConnections[0].size() > 0 && incomingDspConnections[1].size() > 0)
+      ? &processSignal : &processScalar;
+}
+
+void DspMinimum::processSignal(DspObject *dspObject, int fromIndex, int toIndex) {
   DspMinimum *d = reinterpret_cast<DspMinimum *>(dspObject);
   #if __APPLE__
   vDSP_vmin(d->dspBufferAtInlet[0], 1, d->dspBufferAtInlet[1], 1,
-      d->dspBufferAtOutlet[0], 1, d->blockSizeInt);
+      d->dspBufferAtOutlet[0], 1, toIndex);
   #else
-  float *inputBuffer0 = dspBufferAtInlet[0];
-  float *inputBuffer1 = dspBufferAtInlet[1];
+  float *inputBuffer0 = d->dspBufferAtInlet[0];
+  float *inputBuffer1 = d->dspBufferAtInlet[1];
   for (int i = fromIndex; i < toIndex; i++) {
     if (inputBuffer0[i] <= inputBuffer1[i]) {
-      dspBufferAtOutlet0[i] = inputBuffer0[i];
+      d->dspBufferAtOutlet0[i] = inputBuffer0[i];
     } else {
-      dspBufferAtOutlet0[i] = inputBuffer1[i];
+      d->dspBufferAtOutlet0[i] = inputBuffer1[i];
     }
   }
   #endif
 }
 
-void DspMinimum::processDspWithIndex(int fromIndex, int toIndex) {
+void DspMinimum::processScalar(DspObject *dspObject, int fromIndex, int toIndex) {
+  DspMinimum *d = reinterpret_cast<DspMinimum *>(dspObject);
   #if __APPLE__
   int duration = toIndex - fromIndex;
   float vconst[duration];
-  vDSP_vfill(&constant, vconst, 1, duration);
-  vDSP_vmin(dspBufferAtInlet[0] + fromIndex, 1, vconst, 1, dspBufferAtOutlet[0] + fromIndex, 1,
+  vDSP_vfill(&(d->constant), vconst, 1, duration);
+  vDSP_vmin(d->dspBufferAtInlet[0] + fromIndex, 1, vconst, 1, d->dspBufferAtOutlet[0] + fromIndex, 1,
       duration);
   #else
   float *inputBuffer = dspBufferAtInlet[0];

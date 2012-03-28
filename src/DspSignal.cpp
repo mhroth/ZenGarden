@@ -30,6 +30,8 @@ MessageObject *DspSignal::newObject(PdMessage *initMessage, PdGraph *graph) {
 
 DspSignal::DspSignal(PdMessage *initMessage, PdGraph *graph) : DspObject(1, 0, 0, 1, graph) {
   constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
+  processFunction = &processScalar;
+  processFunctionNoMessage = &processScalar;
 }
 
 DspSignal::~DspSignal() {
@@ -48,6 +50,7 @@ void DspSignal::processMessage(int inletIndex, PdMessage *message) {
   }
 }
 
-void DspSignal::processDspWithIndex(int fromIndex, int toIndex) {
-  ArrayArithmetic::fill(dspBufferAtOutlet[0], constant, fromIndex, toIndex);
+void DspSignal::processScalar(DspObject *dspObject, int fromIndex, int toIndex) {
+  DspSignal *d = reinterpret_cast<DspSignal *>(dspObject);
+  ArrayArithmetic::fill(d->dspBufferAtOutlet[0], d->constant, fromIndex, toIndex);
 }

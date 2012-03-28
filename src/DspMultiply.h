@@ -37,9 +37,9 @@ class DspMultiply : public DspObject {
   
 
   private:
-    static void processSignal(DspObject *dspObject);
+    static void processSignal(DspObject *dspObject, int fromIndex, int toIndex);
+    static void processScalar(DspObject *dspObject, int fromIndex, int toIndex);
     void processMessage(int inletIndex, PdMessage *message);
-    void processDspWithIndex(int fromIndex, int toIndex);
   
     void onInletConnectionUpdate(unsigned int inletIndex);
     
