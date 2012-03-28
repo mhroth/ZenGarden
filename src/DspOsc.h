@@ -36,20 +36,16 @@ class DspOsc : public DspObject {
     static const char *getObjectLabel() { return "osc~"; }
     string toString();
   
-    void processDsp();
-  
-  protected:
-    static void processScalar(DspObject *dspObject, int fromIndex, int toIndex);
-    void processMessage(int inletIndex, PdMessage *message);
-    void processDspWithIndex(int fromIndex, int toIndex);
-    
     void onInletConnectionUpdate(unsigned int inletIndex);
   
   private:
+    static void processScalar(DspObject *dspObject, int fromIndex, int toIndex);
+    void processMessage(int inletIndex, PdMessage *message);
   
     float frequency; // frequency and phase are stored as integers because they are used
     float sampleStep;
     int phase;     // in for-loops to traverse the lookup table
+  
     static float *cos_table; // the cosine lookup table
     static int refCount; // a reference counter for cos_table. Now we know when to free it.
   

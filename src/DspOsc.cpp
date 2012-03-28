@@ -56,8 +56,7 @@ DspOsc::~DspOsc() {
 }
 
 void DspOsc::onInletConnectionUpdate(unsigned int inletIndex) {
-  processFunction = &processScalar;
-  processFunctionNoMessage = &processScalar;
+  // TODO(mhroth): suppoer this with processSignal
 }
 
 string DspOsc::toString() {
@@ -91,11 +90,12 @@ void DspOsc::processScalar(DspObject *dspObject, int fromIndex, int toIndex) {
    * of length 2^16. These indicies are incremented by a step size based on the desired frequency.
    * As the indicies overflow during addition, they loop back around to zero.
    */
-  unsigned short step = (unsigned short) d->sampleStep;
+  unsigned short step = (unsigned short) roundf(d->sampleStep);
   unsigned short currentIndex = d->currentIndex;
   int n = toIndex - fromIndex;
   int n4 = n & 0xFFFFFFF8; // we can process 8 indicies at a time
-  unsigned short estep = 8 * step; 
+  unsigned short estep = 8 * step; // 8 step
+  // TODO(mhroth): inc and indicies can be precomputed and don't need to be rebuilt every time
   __m128i inc = _mm_set_epi16(estep, estep, estep, estep, estep, estep, estep, estep);
   __m128i indicies = _mm_set_epi16(currentIndex+7*step, currentIndex+6*step, currentIndex+5*step,
       currentIndex+4*step, currentIndex+3*step, currentIndex+2*step, currentIndex+step, currentIndex);
@@ -107,7 +107,7 @@ void DspOsc::processScalar(DspObject *dspObject, int fromIndex, int toIndex) {
     output += 4;
     values = _mm_set_ps(DspOsc::cos_table[_mm_extract_epi16(indicies, 7)], DspOsc::cos_table[_mm_extract_epi16(indicies, 6)],
         DspOsc::cos_table[_mm_extract_epi16(indicies, 5)], DspOsc::cos_table[_mm_extract_epi16(indicies, 4)]);
-    _mm_store1_ps(output, values);
+    _mm_store_ps(output, values);
     indicies = _mm_add_epi16(indicies, inc); // increment all indicies
     output += 4;
     n4 -= 8;
@@ -123,55 +123,16 @@ void DspOsc::processScalar(DspObject *dspObject, int fromIndex, int toIndex) {
     case 2: {*output++ = DspOsc::cos_table[currentIndex]; currentIndex += step; }
     case 1: {*output++ = DspOsc::cos_table[currentIndex]; currentIndex += step; }
     default: {
-//      float newIndex = d->currentIndex + d->sampleStep * n;
-//      unsigned short newIndexShort = (unsigned short) fmodf(newIndex, 65536.0f);
       // set the current index to the correct location, given that the step size is actually
       // a real number, not an integer
-      d->currentIndex = (unsigned short) fmodf(d->currentIndex + d->sampleStep * n, 65536.0f);
+      // NOTE(mhroth): but doing this will cause clicks :-/ Osc will thus go out of phase over time
+      // Will anyone complain?
+//      d->currentIndex = currentIndex + ((short) ((d->sampleStep - floorf(d->sampleStep)) * n));
+      d->currentIndex = currentIndex;
       break;
     }
   }
   #else
   
   #endif
-}
-
-void DspOsc::processDsp() {
-  /*
-  switch (codepath) {
-    case DSP_OSC_DSP: {
-      float *buffer = dspBufferAtInlet[0];
-      for (int i = 0; i < blockSizeInt; index += buffer[i++]) {
-        if (index < 0.0f) {
-          index += sampleRate;
-        } else if (index >= sampleRate) {
-          index -= sampleRate;
-        }
-        dspBufferAtOutlet[0][i] = cos_table[(int) index];
-      }
-      break;
-    }
-    case DSP_OBJECT_PROCESS_NO_MESSAGE: {
-      processDspWithIndex(0, blockSizeInt);
-      break;
-    }
-    default: DspObject::processDsp();
-  }
-   */
-}
-
-void DspOsc::processDspWithIndex(int fromIndex, int toIndex) {
-  /*
-  for (int i = fromIndex; i < toIndex; i++, index += frequency) {
-    if (index < 0.0f) {
-      // allow negative frequencies (read the wavetable backwards)
-      index += sampleRate;
-    } else if (index >= sampleRate) {
-      // TODO(mhroth): if the frequency is higher than the sample rate, the index will point
-      // outside of the cos_table
-      index -= sampleRate;
-    }
-    dspBufferAtOutlet[0][i] = cos_table[(int) index];
-  }
-  */
 }
