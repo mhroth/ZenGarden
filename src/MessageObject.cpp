@@ -184,10 +184,9 @@ list<DspObject *> MessageObject::getProcessOrder() {
     isOrdered = true;
     list<DspObject *> processList;
     for (int i = 0; i < incomingMessageConnections.size(); i++) {
-      list<ObjectLetPair>::iterator it = incomingMessageConnections[i].begin();
-      list<ObjectLetPair>::iterator end = incomingMessageConnections[i].end();
-      while (it != end) {
-        ObjectLetPair objectLetPair = *it++;
+      for (list<ObjectLetPair>::iterator it = incomingMessageConnections[i].begin();
+         it != incomingMessageConnections[i].end(); ++it) {
+        ObjectLetPair objectLetPair = *it;
         list<DspObject *> parentProcessList = objectLetPair.first->getProcessOrder();
         processList.splice(processList.end(), parentProcessList); // append parentProcessList to processList
       }

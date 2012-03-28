@@ -289,8 +289,8 @@ list<DspObject *> DspObject::getProcessOrder() {
     list<DspObject *> processList;
     for (int i = 0; i < incomingMessageConnections.size(); i++) {
       for (list<ObjectLetPair>::iterator it = incomingMessageConnections[i].begin();
-          it != incomingMessageConnections[i].end(); it++) {
-        ObjectLetPair objectLetPair = *it++;
+          it != incomingMessageConnections[i].end(); ++it) {
+        ObjectLetPair objectLetPair = *it;
         list<DspObject *> parentProcessList = objectLetPair.first->getProcessOrder();
         // DspObjects "connected" through message connections must be processed, but buffers
         // not otherwise calculated
