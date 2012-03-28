@@ -33,19 +33,19 @@ MessageObject *DspOsc::newObject(PdMessage *initMessage, PdGraph *graph) {
 
 DspOsc::DspOsc(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
   frequency = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
+  sampleStep = frequency * 65536.0f / graph->getSampleRate();
   
-  this->sampleRate = graph->getSampleRate();
   phase = 0.0f;
-  index = 0.0f;
   refCount++;
   if (cos_table == NULL) {
-    int sampleRateInt = (int) sampleRate;
-    cos_table = (float *) malloc((sampleRateInt + 1) * sizeof(float));
-    for (int i = 0; i < sampleRateInt; i++) {
-      cos_table[i] = cosf(2.0f * M_PI * ((float) i) / sampleRate);
+    cos_table = (float *) valloc(65536 * sizeof(float));
+    for (int i = 0; i < 65536; i++) {
+      cos_table[i] = cosf(2.0f * M_PI * ((float) i) / 65536.0f);
     }
-    cos_table[sampleRateInt] = cos_table[0];
   }
+  
+  processFunction = &processScalar;
+  processFunctionNoMessage = &processScalar;
 }
 
 DspOsc::~DspOsc() {
@@ -55,17 +55,9 @@ DspOsc::~DspOsc() {
   }
 }
 
-const char *DspOsc::getObjectLabel() {
-  return "osc~";
-}
-
 void DspOsc::onInletConnectionUpdate(unsigned int inletIndex) {
-  if (incomingDspConnections[0].size() > 0) {
-    clearMessageQueue();
-    codepath = DSP_OSC_DSP;
-  } else {
-    codepath = messageQueue.empty() ? DSP_OBJECT_PROCESS_NO_MESSAGE : DSP_OBJECT_PROCESS_MESSAGE;
-  }
+  processFunction = &processScalar;
+  processFunctionNoMessage = &processScalar;
 }
 
 string DspOsc::toString() {
@@ -79,6 +71,7 @@ void DspOsc::processMessage(int inletIndex, PdMessage *message) {
     case 0: { // update the frequency
       if (message->isFloat(0)) {
         frequency = fabsf(message->getFloat(0));
+        sampleStep = frequency * 65536.0f / graph->getSampleRate();
       }
       break;
     }
@@ -90,7 +83,61 @@ void DspOsc::processMessage(int inletIndex, PdMessage *message) {
   }
 }
 
+void DspOsc::processScalar(DspObject *dspObject, int fromIndex, int toIndex) {
+  DspOsc *d = reinterpret_cast<DspOsc *>(dspObject);
+  #if __SSE2__
+  /*
+   * Creates an array of unsigned short indicies (since the length of the cosine lookup table is
+   * of length 2^16. These indicies are incremented by a step size based on the desired frequency.
+   * As the indicies overflow during addition, they loop back around to zero.
+   */
+  unsigned short step = (unsigned short) d->sampleStep;
+  unsigned short currentIndex = d->currentIndex;
+  int n = toIndex - fromIndex;
+  int n4 = n & 0xFFFFFFF8; // we can process 8 indicies at a time
+  unsigned short estep = 8 * step; 
+  __m128i inc = _mm_set_epi16(estep, estep, estep, estep, estep, estep, estep, estep);
+  __m128i indicies = _mm_set_epi16(currentIndex+7*step, currentIndex+6*step, currentIndex+5*step,
+      currentIndex+4*step, currentIndex+3*step, currentIndex+2*step, currentIndex+step, currentIndex);
+  float *output = d->dspBufferAtOutlet[0]+fromIndex;
+  while (n4) {
+    __m128 values = _mm_set_ps(DspOsc::cos_table[_mm_extract_epi16(indicies, 3)], DspOsc::cos_table[_mm_extract_epi16(indicies, 2)],
+        DspOsc::cos_table[_mm_extract_epi16(indicies, 1)], DspOsc::cos_table[_mm_extract_epi16(indicies, 0)]);
+    _mm_store_ps(output, values);
+    output += 4;
+    values = _mm_set_ps(DspOsc::cos_table[_mm_extract_epi16(indicies, 7)], DspOsc::cos_table[_mm_extract_epi16(indicies, 6)],
+        DspOsc::cos_table[_mm_extract_epi16(indicies, 5)], DspOsc::cos_table[_mm_extract_epi16(indicies, 4)]);
+    _mm_store1_ps(output, values);
+    indicies = _mm_add_epi16(indicies, inc); // increment all indicies
+    output += 4;
+    n4 -= 8;
+  }
+  currentIndex = _mm_extract_epi16(indicies, 0);
+  
+  switch (n & 0x7) {
+    case 7: {*output++ = DspOsc::cos_table[currentIndex]; currentIndex += step; }
+    case 6: {*output++ = DspOsc::cos_table[currentIndex]; currentIndex += step; }
+    case 5: {*output++ = DspOsc::cos_table[currentIndex]; currentIndex += step; }
+    case 4: {*output++ = DspOsc::cos_table[currentIndex]; currentIndex += step; }
+    case 3: {*output++ = DspOsc::cos_table[currentIndex]; currentIndex += step; }
+    case 2: {*output++ = DspOsc::cos_table[currentIndex]; currentIndex += step; }
+    case 1: {*output++ = DspOsc::cos_table[currentIndex]; currentIndex += step; }
+    default: {
+//      float newIndex = d->currentIndex + d->sampleStep * n;
+//      unsigned short newIndexShort = (unsigned short) fmodf(newIndex, 65536.0f);
+      // set the current index to the correct location, given that the step size is actually
+      // a real number, not an integer
+      d->currentIndex = (unsigned short) fmodf(d->currentIndex + d->sampleStep * n, 65536.0f);
+      break;
+    }
+  }
+  #else
+  
+  #endif
+}
+
 void DspOsc::processDsp() {
+  /*
   switch (codepath) {
     case DSP_OSC_DSP: {
       float *buffer = dspBufferAtInlet[0];
@@ -110,9 +157,11 @@ void DspOsc::processDsp() {
     }
     default: DspObject::processDsp();
   }
+   */
 }
 
 void DspOsc::processDspWithIndex(int fromIndex, int toIndex) {
+  /*
   for (int i = fromIndex; i < toIndex; i++, index += frequency) {
     if (index < 0.0f) {
       // allow negative frequencies (read the wavetable backwards)
@@ -124,4 +173,5 @@ void DspOsc::processDspWithIndex(int fromIndex, int toIndex) {
     }
     dspBufferAtOutlet[0][i] = cos_table[(int) index];
   }
+  */
 }

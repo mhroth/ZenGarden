@@ -25,10 +25,6 @@
 
 #include "DspObject.h"
 
-enum DspOscCodePath {
-  DSP_OSC_DSP = DSP_OBJECT_PROCESS_OTHER
-};
-
 /** [osc~], [osc~ float] */
 class DspOsc : public DspObject {
   
@@ -37,24 +33,27 @@ class DspOsc : public DspObject {
     DspOsc(PdMessage *initMessage, PdGraph *graph); // and oscillator of default zero frequency
     ~DspOsc();
   
-    static const char *getObjectLabel();
+    static const char *getObjectLabel() { return "osc~"; }
     string toString();
   
     void processDsp();
   
   protected:
+    static void processScalar(DspObject *dspObject, int fromIndex, int toIndex);
     void processMessage(int inletIndex, PdMessage *message);
     void processDspWithIndex(int fromIndex, int toIndex);
     
-  private:
     void onInletConnectionUpdate(unsigned int inletIndex);
   
-    int sampleRate;
+  private:
+  
     float frequency; // frequency and phase are stored as integers because they are used
+    float sampleStep;
     int phase;     // in for-loops to traverse the lookup table
-    float index; // indexes the current place in the cosine lookup table
     static float *cos_table; // the cosine lookup table
     static int refCount; // a reference counter for cos_table. Now we know when to free it.
+  
+    unsigned short currentIndex;
 };
 
 #endif // _DSP_OSC_H_
