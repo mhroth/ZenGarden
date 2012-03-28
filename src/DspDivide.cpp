@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -30,19 +30,17 @@ MessageObject *DspDivide::newObject(PdMessage *initMessage, PdGraph *graph) {
 
 DspDivide::DspDivide(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
   constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
+  processFunction = &processScalar;
+  processFunctionNoMessage = &processScalar;
 }
 
 DspDivide::~DspDivide() {
   // nothing to do
 }
 
-const char *DspDivide::getObjectLabel() {
-  return "/~";
-}
-
 void DspDivide::onInletConnectionUpdate(unsigned int inletIndex) {
-  codePath = (incomingDspConnections[0].size() > 0 && incomingDspConnections[1].size() > 0)
-      ? DSP_DIVIDE_DSP_DSP : DSP_DIVIDE_DSP_MESSAGE;
+  processFunction = (incomingDspConnections[0].size() > 0 && incomingDspConnections[1].size() > 0)
+      ? &processSignal : &processScalar;
 }
 
 string DspDivide::toString() {
@@ -55,21 +53,23 @@ string DspDivide::toString() {
 void DspDivide::processMessage(int inletIndex, PdMessage *message) {
   if (inletIndex == 1) {
     if (message->isFloat(0)) {
-      constant = message->getFloat(0);
+      if (message->getFloat(0) == 0.0f) {
+        constant = 1.0f;
+        graph->printErr("%s received message which set divisor to zero. Divisor set to 1.0f.", getObjectLabel());
+      } else {
+        constant = message->getFloat(0);
+      }
     }
   }
 }
 
-void DspDivide::processDspWithIndex(int fromIndex, int toIndex) {
-  switch (codePath) {
-    case DSP_DIVIDE_DSP_DSP: {
-      ArrayArithmetic::divide(dspBufferAtInlet[1], dspBufferAtInlet[1], dspBufferAtOutlet[0],
-          fromIndex, toIndex);
-      break;
-    }
-    case DSP_DIVIDE_DSP_MESSAGE: {
-      ArrayArithmetic::divide(dspBufferAtInlet[0], constant, dspBufferAtOutlet[0], fromIndex, toIndex);
-      break;
-    }
-  }
+void DspDivide::processSignal(DspObject *dspObject, int fromIndex, int toIndex) {
+  DspDivide *d = reinterpret_cast<DspDivide *>(dspObject);
+  ArrayArithmetic::divide(d->dspBufferAtInlet[0], d->dspBufferAtInlet[1], d->dspBufferAtOutlet[0],
+      fromIndex, toIndex);
+}
+
+void DspDivide::processScalar(DspObject *dspObject, int fromIndex, int toIndex) {
+  DspDivide *d = reinterpret_cast<DspDivide *>(dspObject);
+  ArrayArithmetic::divide(d->dspBufferAtInlet[0], d->constant, d->dspBufferAtOutlet[0], fromIndex, toIndex);
 }

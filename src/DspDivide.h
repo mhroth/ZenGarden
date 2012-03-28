@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -25,11 +25,6 @@
 
 #include "DspObject.h"
 
-enum DspDivideCodePath {
-  DSP_DIVIDE_DSP_DSP,
-  DSP_DIVIDE_DSP_MESSAGE
-};
-
 class DspDivide : public DspObject {
 
   public:
@@ -37,17 +32,16 @@ class DspDivide : public DspObject {
     DspDivide(PdMessage *initMessage, PdGraph *graph);
     ~DspDivide();
 
-    static const char *getObjectLabel();
+    static const char *getObjectLabel() { return "/~"; }
     string toString();
 
   private:
+    static void processSignal(DspObject *dspObject, int fromIndex, int toIndex);
+    static void processScalar(DspObject *dspObject, int fromIndex, int toIndex);
     void processMessage(int inletIndex, PdMessage *message);
-    void processDspWithIndex(int fromIndex, int toIndex);
   
     void onInletConnectionUpdate(unsigned int inletIndex);
   
-    DspDivideCodePath codePath;
-
     float constant;
 };
 
