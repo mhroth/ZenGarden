@@ -24,7 +24,9 @@
 
 BufferPool::BufferPool(unsigned short size) {
   bufferSize = size;
+ 
   zeroBuffer = (float *) valloc(bufferSize * sizeof(float));
+  memset(zeroBuffer, 0, bufferSize * sizeof(float)); // zero the zer buffer!
 }
 
 BufferPool::~BufferPool() {
@@ -53,8 +55,7 @@ float *BufferPool::getBuffer(unsigned int numDependencies) {
 }
 
 void BufferPool::releaseBuffer(float *buffer) {
-  // an object may try to release the zero buffer if it is being used at an outlet. This should
-  // not be possible.
+  // an object may try to release the zero buffer. This should not be possible.
   if (buffer == zeroBuffer) return;
   
   for (list<std::pair<float *, unsigned int> >::iterator it = reserved.begin(); it != reserved.end(); ++it) {
