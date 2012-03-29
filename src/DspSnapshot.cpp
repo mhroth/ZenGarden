@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -28,15 +28,12 @@ MessageObject *DspSnapshot::newObject(PdMessage *initMessage, PdGraph *graph) {
 }
 
 DspSnapshot::DspSnapshot(PdMessage *initMessage, PdGraph *graph) : DspObject(1, 1, 1, 0, graph) {
-  // nothing to do
+  processFunction = &processNull;
+  processFunctionNoMessage = &processNull;
 }
 
 DspSnapshot::~DspSnapshot() {
   // nothing to do
-}
-
-const char *DspSnapshot::getObjectLabel() {
-  return "snapshot~";
 }
 
 ConnectionType DspSnapshot::getConnectionType(int outletIndex) {
@@ -51,13 +48,15 @@ void DspSnapshot::processMessage(int inletIndex, PdMessage *message) {
     }
     case BANG: {
       PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
-      float blockIndex = graph->getBlockIndex(message);
+      double blockIndex = graph->getBlockIndex(message);
       outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), dspBufferAtInlet[0][(int) blockIndex]);
       sendMessage(0, outgoingMessage);
       break;
     }
-    default: {
-      break;
-    }
+    default: break;
   }
+}
+
+void DspSnapshot::processNull(DspObject *dspObject, int fromIndex, int toIndex) {
+  // nothing to do. snapshot~ simply waits to process a message
 }

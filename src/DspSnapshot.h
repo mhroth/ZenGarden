@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -33,11 +33,13 @@ class DspSnapshot : public DspObject {
     DspSnapshot(PdMessage *initMessage, PdGraph *graph);
     ~DspSnapshot();
     
-    static const char *getObjectLabel();
+    static const char *getObjectLabel() { return "snapshot~"; }
+    string toString() { return string(getObjectLabel()); }
     
     ConnectionType getConnectionType(int outletIndex);
     
   private:
+    static void processNull(DspObject *dspObject, int fromIndex, int toIndex);
     void processMessage(int inletIndex, PdMessage *message);
 };
 
