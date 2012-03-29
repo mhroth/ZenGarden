@@ -30,7 +30,8 @@ MessageObject *DspLog::newObject(PdMessage *initMessage, PdGraph *graph) {
 DspLog::DspLog(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
   // by default assume ln
   invLog2Base = initMessage->isFloat(0) ? 1.0f/log2f(initMessage->getFloat(0)) : 1.0f/M_LOG2E;
-  codePath = DSP_LOG_DSP_MESSAGE;
+  processFunction = &processScalar;
+  processFunctionNoMessage = &processScalar;
 }
 
 DspLog::~DspLog() {
@@ -42,8 +43,8 @@ const char *DspLog::getObjectLabel() {
 }
 
 void DspLog::onInletConnectionUpdate(unsigned int inletIndex) {
-  codePath = (incomingDspConnections[0].size() > 0 && incomingDspConnections[1].size() > 0)
-      ? DSP_LOG_DSP_DSP : DSP_LOG_DSP_MESSAGE;
+  processFunction = (incomingDspConnections[0].size() > 0 && incomingDspConnections[1].size() > 0)
+      ? &processSignal : &processScalar;
 }
 
 void DspLog::processMessage(int inletIndex, PdMessage *message) {
@@ -58,36 +59,35 @@ void DspLog::processMessage(int inletIndex, PdMessage *message) {
   }
 }
 
-void DspLog::processDspWithIndex(int fromIndex, int toIndex) {
-  switch (codePath) {
-    case DSP_LOG_DSP_DSP: {
-      float a[blockSizeInt];
-      #if __APPLE__
-      int length = toIndex - fromIndex;
-      vvlog2f(dspBufferAtOutlet[0]+fromIndex, dspBufferAtInlet[0]+fromIndex, &length);
-      vvlog2f(a, dspBufferAtInlet[1]+fromIndex, &length);
-      #else
-      float *buffer0 = dspBufferAtInlet[0];
-      float *buffer1 = dspBufferAtInlet[1];
-      for (int i = fromIndex; i < toIndex; i++) {
-        dspBufferAtOutlet0[i] = (buffer0[i] <= 0.0f) ? -1000.0f : log2Approx(buffer0[i]);
-        a[i] = (buffer1[i] <= 0.0f) ? -1000.0f : log2Approx(buffer1[i]);
-      }
-      #endif
-      ArrayArithmetic::divide(dspBufferAtOutlet[0], a, dspBufferAtOutlet[0], fromIndex, toIndex);
-      break;
-    }
-    case DSP_LOG_DSP_MESSAGE: {
-      #if __APPLE__
-      vvlog2f(dspBufferAtOutlet[0], dspBufferAtInlet[0], &blockSizeInt);
-      #else
-      float *buffer = dspBufferAtInlet[0];
-      for (int i = fromIndex; i < toIndex; i++) {
-        dspBufferAtOutlet0[i] = (buffer[i] <= 0.0f) ? -1000.0f : log2Approx(buffer[i]);
-      }
-      #endif
-      ArrayArithmetic::multiply(dspBufferAtOutlet[0], invLog2Base, dspBufferAtOutlet[0], fromIndex, toIndex);
-      break;
-    }
+void DspLog::processSignal(DspObject *dspObject, int fromIndex, int toIndex) {
+  /*
+  float a[blockSizeInt];
+  #if __APPLE__
+  int length = toIndex - fromIndex;
+  vvlog2f(dspBufferAtOutlet[0]+fromIndex, dspBufferAtInlet[0]+fromIndex, &length);
+  vvlog2f(a, dspBufferAtInlet[1]+fromIndex, &length);
+  #else
+  float *buffer0 = dspBufferAtInlet[0];
+  float *buffer1 = dspBufferAtInlet[1];
+  for (int i = fromIndex; i < toIndex; i++) {
+    dspBufferAtOutlet0[i] = (buffer0[i] <= 0.0f) ? -1000.0f : log2Approx(buffer0[i]);
+    a[i] = (buffer1[i] <= 0.0f) ? -1000.0f : log2Approx(buffer1[i]);
   }
+  #endif
+  ArrayArithmetic::divide(dspBufferAtOutlet[0], a, dspBufferAtOutlet[0], fromIndex, toIndex);
+  */
+}
+
+void DspLog::processScalar(DspObject *dspObject, int fromIndex, int toIndex) {
+  DspLog *d = reinterpret_cast<DspLog *>(dspObject);
+  #if __APPLE__
+  int length = toIndex - fromIndex;
+  vvlog2f((d->dspBufferAtOutlet[0])+fromIndex, (d->dspBufferAtInlet[0])+fromIndex, &length);
+  #else
+  float *buffer = dspBufferAtInlet[0];
+  for (int i = fromIndex; i < toIndex; i++) {
+    d->dspBufferAtOutlet0[i] = (buffer[i] <= 0.0f) ? -1000.0f : log2Approx(buffer[i]);
+  }
+  #endif
+  ArrayArithmetic::multiply(d->dspBufferAtOutlet[0], d->invLog2Base, d->dspBufferAtOutlet[0], fromIndex, toIndex);
 }

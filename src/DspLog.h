@@ -25,11 +25,6 @@
 
 #include "DspObject.h"
 
-enum DspLogCodePath {
-  DSP_LOG_DSP_DSP,
-  DSP_LOG_DSP_MESSAGE
-};
-
 /** [log~], [log~ float] */
 class DspLog : public DspObject {
     
@@ -40,13 +35,12 @@ class DspLog : public DspObject {
   
     static const char *getObjectLabel();
   
-  private:
-    void processMessage(int inletIndex, PdMessage *message);
-    void processDspWithIndex(int fromIndex, int toIndex);
-  
     void onInletConnectionUpdate(unsigned int inletIndex);
   
-    DspLogCodePath codePath;
+  private:
+    static void processSignal(DspObject *dspObject, int fromIndex, int toIndex);
+    static void processScalar(DspObject *dspObject, int fromIndex, int toIndex);
+    void processMessage(int inletIndex, PdMessage *message);
   
     // this implementation is reproduced from http://www.musicdsp.org/showone.php?id=91
     inline float log2Approx(float x) {
