@@ -34,6 +34,11 @@ MessageObject *DspOsc::newObject(PdMessage *initMessage, PdGraph *graph) {
 DspOsc::DspOsc(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
   frequency = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
   sampleStep = frequency * 65536.0f / graph->getSampleRate();
+  #if __SSE3__
+  short step = (short) roundf(sampleStep);
+  inc = _mm_set_epi16(8*step, 8*step, 8*step, 8*step, 8*step, 8*step, 8*step, 8*step);
+  indicies = _mm_set_epi16(7*step, 6*step, 5*step, 4*step, 3*step, 2*step, step, 0);
+  #endif
   
   phase = 0.0f;
   refCount++;
@@ -71,6 +76,14 @@ void DspOsc::processMessage(int inletIndex, PdMessage *message) {
       if (message->isFloat(0)) {
         frequency = fabsf(message->getFloat(0));
         sampleStep = frequency * 65536.0f / graph->getSampleRate();
+        
+        #if __SSE3__
+        short step = (short) roundf(sampleStep);
+        inc = _mm_set_epi16(8*step, 8*step, 8*step, 8*step, 8*step, 8*step, 8*step, 8*step);
+        unsigned short currentIndex = _mm_extract_epi16(indicies,0);
+        indicies = _mm_set_epi16(7*step+currentIndex, 6*step+currentIndex, 5*step+currentIndex,
+            4*step+currentIndex, 3*step+currentIndex, 2*step+currentIndex, step+currentIndex, currentIndex);
+        #endif
       }
       break;
     }
@@ -84,35 +97,31 @@ void DspOsc::processMessage(int inletIndex, PdMessage *message) {
 
 void DspOsc::processScalar(DspObject *dspObject, int fromIndex, int toIndex) {
   DspOsc *d = reinterpret_cast<DspOsc *>(dspObject);
-  #if __SSE2__
+  #if __SSE3__
   /*
    * Creates an array of unsigned short indicies (since the length of the cosine lookup table is
    * of length 2^16. These indicies are incremented by a step size based on the desired frequency.
    * As the indicies overflow during addition, they loop back around to zero.
    */
-  unsigned short step = (unsigned short) roundf(d->sampleStep);
-  unsigned short currentIndex = d->currentIndex;
   int n = toIndex - fromIndex;
   int n4 = n & 0xFFFFFFF8; // we can process 8 indicies at a time
-  unsigned short estep = 8 * step; // 8 step
-  // TODO(mhroth): inc and indicies can be precomputed and don't need to be rebuilt every time
-  __m128i inc = _mm_set_epi16(estep, estep, estep, estep, estep, estep, estep, estep);
-  __m128i indicies = _mm_set_epi16(currentIndex+7*step, currentIndex+6*step, currentIndex+5*step,
-      currentIndex+4*step, currentIndex+3*step, currentIndex+2*step, currentIndex+step, currentIndex);
   float *output = d->dspBufferAtOutlet[0]+fromIndex;
+  __m128i inc = d->inc;
+  __m128i indicies = d->indicies;
   while (n4) {
-    __m128 values = _mm_set_ps(DspOsc::cos_table[_mm_extract_epi16(indicies, 3)], DspOsc::cos_table[_mm_extract_epi16(indicies, 2)],
-        DspOsc::cos_table[_mm_extract_epi16(indicies, 1)], DspOsc::cos_table[_mm_extract_epi16(indicies, 0)]);
+    __m128 values = _mm_set_ps(DspOsc::cos_table[_mm_extract_epi16(indicies,3)], DspOsc::cos_table[_mm_extract_epi16(indicies,2)],
+        DspOsc::cos_table[_mm_extract_epi16(indicies,1)], DspOsc::cos_table[_mm_extract_epi16(indicies,0)]);
     _mm_store_ps(output, values);
     output += 4;
-    values = _mm_set_ps(DspOsc::cos_table[_mm_extract_epi16(indicies, 7)], DspOsc::cos_table[_mm_extract_epi16(indicies, 6)],
-        DspOsc::cos_table[_mm_extract_epi16(indicies, 5)], DspOsc::cos_table[_mm_extract_epi16(indicies, 4)]);
+    values = _mm_set_ps(DspOsc::cos_table[_mm_extract_epi16(indicies,7)], DspOsc::cos_table[_mm_extract_epi16(indicies,6)],
+        DspOsc::cos_table[_mm_extract_epi16(indicies,5)], DspOsc::cos_table[_mm_extract_epi16(indicies,4)]);
     _mm_store_ps(output, values);
     indicies = _mm_add_epi16(indicies, inc); // increment all indicies
     output += 4;
     n4 -= 8;
   }
-  currentIndex = _mm_extract_epi16(indicies, 0);
+  unsigned short currentIndex = _mm_extract_epi16(indicies,0);
+  short step = _mm_extract_epi16(inc,0)/8;
   
   switch (n & 0x7) {
     case 7: {*output++ = DspOsc::cos_table[currentIndex]; currentIndex += step; }
@@ -128,11 +137,11 @@ void DspOsc::processScalar(DspObject *dspObject, int fromIndex, int toIndex) {
       // NOTE(mhroth): but doing this will cause clicks :-/ Osc will thus go out of phase over time
       // Will anyone complain?
 //      d->currentIndex = currentIndex + ((short) ((d->sampleStep - floorf(d->sampleStep)) * n));
-      d->currentIndex = currentIndex;
+      d->indicies = indicies;
       break;
     }
   }
   #else
-  
+  // TODO(mhroth):!!!
   #endif
 }

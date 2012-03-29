@@ -49,7 +49,10 @@ class DspOsc : public DspObject {
     static float *cos_table; // the cosine lookup table
     static int refCount; // a reference counter for cos_table. Now we know when to free it.
   
-    unsigned short currentIndex;
+    #if __SSE3__
+    __m128i inc; // the amount by which to increment indicies every step
+    __m128i indicies; // the table lookup indicies
+    #endif
 };
 
 #endif // _DSP_OSC_H_
