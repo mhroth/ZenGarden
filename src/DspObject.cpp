@@ -74,6 +74,11 @@ ConnectionType DspObject::getConnectionType(int outletIndex) {
   return DSP;
 }
 
+float *DspObject::getDspBufferAtInlet(int inletIndex) {
+  if (inletIndex < 2) return dspBufferAtInlet[inletIndex];
+  else return ((float **) dspBufferAtInlet[2])[inletIndex-2];
+}
+
 float *DspObject::getDspBufferAtOutlet(int outletIndex) {
   if (outletIndex < 2) return dspBufferAtOutlet[outletIndex];
   else return ((float **) dspBufferAtOutlet[2])[outletIndex-2];
@@ -315,7 +320,9 @@ list<DspObject *> DspObject::getProcessOrder() {
           DspObject *dspObject = reinterpret_cast<DspObject *>(objectLetPair.first);
           float *buffer = dspObject->getDspBufferAtOutlet(objectLetPair.second);
           setDspBufferAtInlet(buffer, i);
-          bufferPool->releaseBuffer(buffer);
+          // NOTE(mhroth): inlet buffer is released once all inlet buffers have been resolved
+          // This is so that a buffer at an earlier inlet is not used when resolving buffers
+          // while in the getProcessOrder() function of a following inlet.
           
           // conbine the process lists
           processList.splice(processList.end(), parentProcessList);
@@ -350,12 +357,19 @@ list<DspObject *> DspObject::getProcessOrder() {
           
           float *buffer = reinterpret_cast<DspObject *>(leftOlPair.first)->getDspBufferAtOutlet(leftOlPair.second);
           setDspBufferAtInlet(buffer, i);
-          bufferPool->releaseBuffer(buffer);
+          // inlet buffer is released once all inlet buffers have been resolved
           break;
         }
       }
     }
     
+    // release the inlet buffers only after everything has been set up
+    for (int i = 0; i < getNumDspInlets(); i++) {
+      float *buffer = getDspBufferAtInlet(i);
+      bufferPool->releaseBuffer(buffer);
+    }
+    
+    // set the outlet buffers
     for (int i = 0; i < getNumDspOutlets(); i++) {
       float *buffer = bufferPool->getBuffer(outgoingDspConnections[i].size());
       setDspBufferAtOutlet(buffer, i);

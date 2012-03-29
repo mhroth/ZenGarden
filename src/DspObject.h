@@ -72,6 +72,7 @@ class DspObject : public MessageObject {
     /** Get and set buffers at inlets and outlets. */
     virtual void setDspBufferAtInlet(float *buffer, unsigned int inletIndex);
     virtual void setDspBufferAtOutlet(float *buffer, unsigned int outletIndex);
+    virtual float *getDspBufferAtInlet(int inletIndex);
     virtual float *getDspBufferAtOutlet(int outletIndex);
   
     virtual void addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex);
