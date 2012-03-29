@@ -66,7 +66,7 @@ void DspMultiply::processMessage(int inletIndex, PdMessage *message) {
 void DspMultiply::processSignal(DspObject *dspObject, int fromIndex, int toIndex) {
   DspMultiply *d = reinterpret_cast<DspMultiply *>(dspObject);
   ArrayArithmetic::multiply(d->dspBufferAtInlet[0] , d->dspBufferAtInlet[1],
-      d->dspBufferAtOutlet[0], fromIndex, toIndex);
+      d->dspBufferAtOutlet[0], 0, toIndex);
 }
 
 void DspMultiply::processScalar(DspObject *dspObject, int fromIndex, int toIndex) {

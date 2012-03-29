@@ -58,7 +58,7 @@ void DspSubtract::processMessage(int inletIndex, PdMessage *message) {
 void DspSubtract::processSignal(DspObject *dspObject, int fromIndex, int toIndex) {
   DspSubtract *d = reinterpret_cast<DspSubtract *>(dspObject);
   ArrayArithmetic::subtract(d->dspBufferAtInlet[0], d->dspBufferAtInlet[1],
-      d->dspBufferAtOutlet[0], fromIndex, toIndex);
+      d->dspBufferAtOutlet[0], 0, toIndex);
 }
 
 void DspSubtract::processScalar(DspObject *dspObject, int fromIndex, int toIndex) {

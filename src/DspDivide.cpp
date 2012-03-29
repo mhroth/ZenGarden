@@ -65,8 +65,8 @@ void DspDivide::processMessage(int inletIndex, PdMessage *message) {
 
 void DspDivide::processSignal(DspObject *dspObject, int fromIndex, int toIndex) {
   DspDivide *d = reinterpret_cast<DspDivide *>(dspObject);
-  ArrayArithmetic::divide(d->dspBufferAtInlet[0], d->dspBufferAtInlet[1], d->dspBufferAtOutlet[0],
-      fromIndex, toIndex);
+  ArrayArithmetic::divide(d->dspBufferAtInlet[0], d->dspBufferAtInlet[1],
+      d->dspBufferAtOutlet[0], 0, toIndex);
 }
 
 void DspDivide::processScalar(DspObject *dspObject, int fromIndex, int toIndex) {
