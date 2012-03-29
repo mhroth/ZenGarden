@@ -242,7 +242,7 @@ class MessageAdd : public MessageObject {
 
     // This function is not required, but it may be helpful for debugging. It returns the name by which this
     // object is known, in this case "+".
-    static const char *getObjectLabel();
+    static const char *getObjectLabel() { return "+"; }
 
   private:
     // This function must be overridden in order to implement the object functionality
@@ -269,10 +269,6 @@ MessageAdd::MessageAdd(PdMessage *initMessage, PdGraph *graph) : MessageObject(2
 
 MessageAdd::~MessageAdd() {
   // nothing to do
-}
-
-const char *MessageAdd::getObjectLabel() {
-  return "+";
 }
 
 void MessageAdd::processMessage(int inletIndex, PdMessage *message) {
@@ -312,7 +308,7 @@ void MessageAdd::processMessage(int inletIndex, PdMessage *message) {
 
 #### A DspObject External
 
-Here, a basic `[+~]` object is described. The `DspObject` class is extended in [DspAdd.h](https://github.com/mhroth/ZenGarden/blob/master/src/DspAdd.h), and the `processDspWithIndex` function is overridden in addition to `processMessage` seen in the previous example. Receiving messages and evaluating which parts of the audio buffer must be evalutated when is taken care of by the `DspObject` superclass. The implementation is responsible for actually filling in the buffer.
+Here, a basic `[+~]` object is described. The `DspObject` class is extended in [DspAdd.h](https://github.com/mhroth/ZenGarden/blob/master/src/DspAdd.h), and the `processDspWithIndex` function is overridden in addition to `processMessage` seen in the previous example. Receiving messages and evaluating which parts of the audio buffer must be evalutated when is taken care of by the `DspObject` superclass. The implementation is responsible for actually filling in the buffer. Note that the discription here differs from the implementation used in ZenGarden. The one shown here does work and is the simplest way to create an external which processes audio. The internal implementation is optimised for speed and also contains additional functionality.
 
 ```C++
 #include "DspObject.h"
@@ -324,10 +320,12 @@ class DspAdd : public DspObject {
     DspAdd(PdMessage *initMessage, PdGraph *graph);
     ~DspAdd();
   
-    static const char *getObjectLabel();
+    static const char *getObjectLabel() { return "+~"; }
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
+    
+    // This function is responsible for filling the output buffers between the bounds given by the array indicies.
     void processDspWithIndex(int fromIndex, int toIndex);
     
     float constant;
@@ -336,13 +334,12 @@ class DspAdd : public DspObject {
 
 [DspAdd.cpp](https://github.com/mhroth/ZenGarden/blob/master/src/DspAdd.cpp)
 
-*TODO BELOW CODE NOT CORRECT*
-
 ```C++
 #include "DspAdd.h"
 #include "PdGraph.h"
 
 DspAdd::DspAdd(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
+  // initialise the constant which is added to the inlet buffer. If none is given, use zero.
   constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
 }
 
@@ -350,21 +347,20 @@ DspAdd::~DspAdd() {
   // nothing to do
 }
 
-const char *DspAdd::getObjectLabel() {
-  return "+~";
-}
-
 void DspAdd::processMessage(int inletIndex, PdMessage *message) {
   if (inletIndex == 1) {
     if (message->isFloat(0)) {
+      // If a message is received on the right inlet and it contains a float in the first position,
+      // set the constant paramter.
       constant = message->getFloat(0);
     }
   }
 }
 
 void DspAdd::processDspWithIndex(int fromIndex, int toIndex) {
+  // fill the outlet buffer by adding the constant to the inlet buffer
   for (int i = fromIndex; i < toIndex; i++) {
-    dspBufferAtOutlet0[i] = dspBufferAtInlet0[i] + constant;
+    dspBufferAtOutlet[0][i] = dspBufferAtInlet[0][i] + constant;
   }
 }
 ```
