@@ -108,17 +108,32 @@ void DspOsc::processScalar(DspObject *dspObject, int fromIndex, int toIndex) {
   float *output = d->dspBufferAtOutlet[0]+fromIndex;
   __m128i inc = d->inc;
   __m128i indicies = d->indicies;
-  while (n4) {
-    __m128 values = _mm_set_ps(DspOsc::cos_table[_mm_extract_epi16(indicies,3)], DspOsc::cos_table[_mm_extract_epi16(indicies,2)],
-        DspOsc::cos_table[_mm_extract_epi16(indicies,1)], DspOsc::cos_table[_mm_extract_epi16(indicies,0)]);
-    _mm_store_ps(output, values);
-    output += 4;
-    values = _mm_set_ps(DspOsc::cos_table[_mm_extract_epi16(indicies,7)], DspOsc::cos_table[_mm_extract_epi16(indicies,6)],
-        DspOsc::cos_table[_mm_extract_epi16(indicies,5)], DspOsc::cos_table[_mm_extract_epi16(indicies,4)]);
-    _mm_store_ps(output, values);
-    indicies = _mm_add_epi16(indicies, inc); // increment all indicies
-    output += 4;
-    n4 -= 8;
+  if (fromIndex & 0x3) {
+    while (n4) {
+      __m128 values = _mm_set_ps(DspOsc::cos_table[_mm_extract_epi16(indicies,3)], DspOsc::cos_table[_mm_extract_epi16(indicies,2)],
+          DspOsc::cos_table[_mm_extract_epi16(indicies,1)], DspOsc::cos_table[_mm_extract_epi16(indicies,0)]);
+      _mm_storeu_ps(output, values);
+      output += 4;
+      values = _mm_set_ps(DspOsc::cos_table[_mm_extract_epi16(indicies,7)], DspOsc::cos_table[_mm_extract_epi16(indicies,6)],
+          DspOsc::cos_table[_mm_extract_epi16(indicies,5)], DspOsc::cos_table[_mm_extract_epi16(indicies,4)]);
+      _mm_storeu_ps(output, values);
+      indicies = _mm_add_epi16(indicies, inc); // increment all indicies
+      output += 4;
+      n4 -= 8;
+    }
+  } else {
+    while (n4) {
+      __m128 values = _mm_set_ps(DspOsc::cos_table[_mm_extract_epi16(indicies,3)], DspOsc::cos_table[_mm_extract_epi16(indicies,2)],
+          DspOsc::cos_table[_mm_extract_epi16(indicies,1)], DspOsc::cos_table[_mm_extract_epi16(indicies,0)]);
+      _mm_store_ps(output, values);
+      output += 4;
+      values = _mm_set_ps(DspOsc::cos_table[_mm_extract_epi16(indicies,7)], DspOsc::cos_table[_mm_extract_epi16(indicies,6)],
+          DspOsc::cos_table[_mm_extract_epi16(indicies,5)], DspOsc::cos_table[_mm_extract_epi16(indicies,4)]);
+      _mm_store_ps(output, values);
+      indicies = _mm_add_epi16(indicies, inc);
+      output += 4;
+      n4 -= 8;
+    }
   }
   unsigned short currentIndex = _mm_extract_epi16(indicies,0);
   short step = _mm_extract_epi16(inc,0)/8;
@@ -137,7 +152,11 @@ void DspOsc::processScalar(DspObject *dspObject, int fromIndex, int toIndex) {
       // NOTE(mhroth): but doing this will cause clicks :-/ Osc will thus go out of phase over time
       // Will anyone complain?
 //      d->currentIndex = currentIndex + ((short) ((d->sampleStep - floorf(d->sampleStep)) * n));
-      d->indicies = indicies;
+      if ((n & 0x7) == 0) d->indicies = indicies;
+      else {
+        d->indicies = _mm_set_epi16(7*step+currentIndex, 6*step+currentIndex, 5*step+currentIndex,
+            4*step+currentIndex, 3*step+currentIndex, 2*step+currentIndex, step+currentIndex, currentIndex);        
+      }
       break;
     }
   }
