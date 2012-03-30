@@ -64,6 +64,8 @@ DspEnvelope::DspEnvelope(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 
     windowInterval = graph->getBlockSize();
   }
   
+  processFunction = &processSignal;
+  
   initBuffers();
 }
 
@@ -72,18 +74,10 @@ DspEnvelope::~DspEnvelope() {
   free(hanningCoefficients);
 }
 
-const char *DspEnvelope::getObjectLabel() {
-  return "env~";
-}
-
 string DspEnvelope::toString() {
   char str[snprintf(NULL, 0, "%s %i %i", getObjectLabel(), windowSize, windowInterval)+1];
   snprintf(str, sizeof(str), "%s %i %i", getObjectLabel(), windowSize, windowInterval);
   return string(str);
-}
-
-ConnectionType DspEnvelope::getConnectionType(int outletIndex) {
-  return MESSAGE;
 }
 
 void DspEnvelope::setWindowInterval(int newInterval) {
@@ -122,23 +116,25 @@ void DspEnvelope::initBuffers() {
 }
 
 // windowSize and windowInterval are constrained to be multiples of the block size
-void DspEnvelope::processDsp() {
+void DspEnvelope::processSignal(DspObject *dspObject, int fromIndex, int toIndex) {
+  DspEnvelope *d = reinterpret_cast<DspEnvelope *>(dspObject);
+  
   // copy the input into the signal buffer
-  memcpy(signalBuffer + numSamplesReceived, dspBufferAtInlet[0], blockSizeInt*sizeof(float));
-  numSamplesReceived += blockSizeInt;
-  numSamplesReceivedSinceLastInterval += blockSizeInt;
-  if (numSamplesReceived >= windowSize) {
-    numSamplesReceived = 0;
+  memcpy(d->signalBuffer + d->numSamplesReceived, d->dspBufferAtInlet[0], toIndex*sizeof(float));
+  d->numSamplesReceived += toIndex;
+  d->numSamplesReceivedSinceLastInterval += toIndex;
+  if (d->numSamplesReceived >= d->windowSize) {
+    d->numSamplesReceived = 0;
   }
-  if (numSamplesReceivedSinceLastInterval == windowInterval) {
-    numSamplesReceivedSinceLastInterval -= windowInterval;
+  if (d->numSamplesReceivedSinceLastInterval == d->windowInterval) {
+    d->numSamplesReceivedSinceLastInterval -= d->windowInterval;
     // apply hanning window to signal and calculate Root Mean Square
     float rms = 0.0f;
     #if __APPLE__
-    float rmsBuffer[windowSize];
-    vDSP_vsq(signalBuffer, 1, rmsBuffer, 1, windowSize); // signalBuffer^2 
-    vDSP_vmul(rmsBuffer, 1, hanningCoefficients, 1, rmsBuffer, 1, windowSize); // * hanning window
-    vDSP_sve(rmsBuffer, 1, &rms, windowSize); // sum the result
+    float rmsBuffer[d->windowSize];
+    vDSP_vsq(d->signalBuffer, 1, rmsBuffer, 1, d->windowSize); // signalBuffer^2 
+    vDSP_vmul(rmsBuffer, 1, d->hanningCoefficients, 1, rmsBuffer, 1, d->windowSize); // * hanning window
+    vDSP_sve(rmsBuffer, 1, &rms, d->windowSize); // sum the result
     #else
     for (int i = 0; i < windowSize; i++) {
       rms += signalBuffer[i] * signalBuffer[i] * hanningCoefficients[i];
@@ -152,6 +148,6 @@ void DspEnvelope::processDsp() {
     // graph will schedule this at the beginning of the next block because the timestamp will be
     // behind the block start timestamp
     outgoingMessage->initWithTimestampAndFloat(0.0, (rms < 0.0f) ? 0.0f : rms);
-    graph->scheduleMessage(this, 0, outgoingMessage);
+    d->graph->scheduleMessage(d, 0, outgoingMessage);
   }
 }

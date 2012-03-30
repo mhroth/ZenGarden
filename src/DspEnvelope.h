@@ -40,14 +40,13 @@ class DspEnvelope : public DspObject {
     DspEnvelope(PdMessage *initMessage, PdGraph *graph);
     ~DspEnvelope();
   
-    static const char *getObjectLabel();
+    static const char *getObjectLabel() { return "env~"; }
     string toString();
 
-    ConnectionType getConnectionType(int outletIndex);
+    ConnectionType getConnectionType(int outletIndex) { return MESSAGE; }
   
-    void processDsp();
-    
   private:
+    static void processSignal(DspObject *dspObject, int fromIndex, int toIndex);
   
     /** Initialise the analysis buffers. */
     void initBuffers();
