@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -33,12 +33,13 @@ class DspBang : public DspObject {
     DspBang(PdMessage *initMessage, PdGraph *graph);
     ~DspBang();
     
-    static const char *getObjectLabel();
+    static const char *getObjectLabel() { return "bang~"; }
+    string toString() { return string(getObjectLabel()); }
   
     ConnectionType getConnectionType(int outletIndex);
     
   private:
-    void processDsp();
+    static void processDsp(DspObject *dspObject, int fromIndex, int toIndex);
 };
 
 #endif // _DSP_BANG_H_

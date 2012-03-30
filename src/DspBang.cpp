@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Reality Jockey, Ltd.
+ *  Copyright 2010,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -28,24 +28,22 @@ MessageObject *DspBang::newObject(PdMessage *initMessage, PdGraph *graph) {
 }
 
 DspBang::DspBang(PdMessage *initMessage, PdGraph *graph) : DspObject(1, 0, 1, 0, graph) {
-  // nothing to do
+  processFunction = &processDsp;
+  processFunctionNoMessage = &processDsp;
 }
 
 DspBang::~DspBang() {
   // nothing to do
 }
 
-const char *DspBang::getObjectLabel() {
-  return "bang~";
-}
-
 ConnectionType DspBang::getConnectionType(int outletIndex) {
   return MESSAGE;
 }
 
-void DspBang::processDsp() {
+void DspBang::processDsp(DspObject *dspObject, int fromIndex, int toIndex) {
+  DspBang *d = reinterpret_cast<DspBang *>(dspObject);
   // message will be automatically rescheduled for beginning of next block
   PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
   outgoingMessage->initWithTimestampAndBang(0.0);
-  graph->scheduleMessage(this, 0, outgoingMessage);
+  d->graph->scheduleMessage(d, 0, outgoingMessage);
 }
