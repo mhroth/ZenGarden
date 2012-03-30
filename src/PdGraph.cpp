@@ -69,9 +69,12 @@ PdGraph::~PdGraph() {
   delete declareList;
   delete bufferPool;
 
-  // delete all implicit +~ nodes
-  for (list<DspImplicitAdd *>::iterator it = implicitDspAddList.begin(); it != implicitDspAddList.end(); ++it) {
-    delete *it;
+  // remove all implicit +~~ objects
+  for (list<DspObject *>::iterator it = dspNodeList.begin(); it != dspNodeList.end(); ++it) {
+    DspObject *dspObject = *it;
+    if (!strcmp(dspObject->toString().c_str(), DspImplicitAdd::getObjectLabel())) {
+      delete dspObject;
+    }
   }
   
   // delete all constituent nodes
@@ -661,7 +664,14 @@ void PdGraph::computeLocalDspProcessOrder() {
     }
   }
   
-  // NOTE(mhroth): massive memory leak here as reference to all +~~ objects are lost
+  // remove all +~~ objects
+  for (list<DspObject *>::iterator it = dspNodeList.begin(); it != dspNodeList.end(); ++it) {
+    DspObject *dspObject = *it;
+    if (!strcmp(dspObject->toString().c_str(), DspImplicitAdd::getObjectLabel())) {
+      delete dspObject;
+    }
+  }
+  
   dspNodeList.clear();
 
   // for all leaf nodes, order the tree
