@@ -60,12 +60,12 @@ public class PdObjectTest implements ZenGardenListener {
   public void tearDown() throws Exception {
     // nothing to do
   }
-  
+
   @Test
   public void testDspPrint() {
     genericMessageTest("DspPrint.pd");
   }
-  
+
   @Test
   public void testMessageAdd() {
     genericMessageTest("MessageAdd.pd");
@@ -155,22 +155,22 @@ public class PdObjectTest implements ZenGardenListener {
   public void testMessageGreaterThanOrEqualTo() {
     genericMessageTest("MessageGreaterThanOrEqualTo.pd");
   }
-  
+  /*
   @Test
   public void testMessageInletOutlet() {
     genericMessageTest("MessageInletOutlet.pd");
   }
-
+  */
   @Test
   public void testMessageInteger() {
     genericMessageTest("MessageInteger.pd");
   }
-  /*
+
   @Test
   public void testMessageMessageBox() {
     genericMessageTest("MessageMessageBox.pd");
   }
-  */
+
   @Test
   public void testMessageLessThan() {
     genericMessageTest("MessageLessThan.pd");
@@ -240,12 +240,12 @@ public class PdObjectTest implements ZenGardenListener {
   public void testMessageMultiply() { 
     genericMessageTest("MessageMultiply.pd");
   }
-  /*
+
   @Test
   public void testMessageLine() { 
     genericMessageTest("MessageLine.pd", 3000.0f);
   }
-  */
+
   @Test
   public void testMessageNotEquals() {
     genericMessageTest("MessageNotEquals.pd");
@@ -376,7 +376,6 @@ public class PdObjectTest implements ZenGardenListener {
     genericMessageTest("MessageWrap.pd");
   }
   
-  
   /**
    * Executes the generic message test for at least the given minimum runtime (in milliseconds).
    */
@@ -393,7 +392,7 @@ public class PdObjectTest implements ZenGardenListener {
     }
     
     String goldenOutput = readTextFile(new File(TEST_PATHNAME,
-        testFilename.split("\\.")[0] + ".golden"));
+        testFilename.split("\\.")[0] + ".golden.txt"));
     
     // ensure that message standard output is same as golden file
     assertEquals(goldenOutput, printBuffer.toString());
