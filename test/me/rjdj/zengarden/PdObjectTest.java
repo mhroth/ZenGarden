@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010,2011 Reality Jockey, Ltd.
+ *  Copyright 2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -35,7 +35,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 /**
- * This class is a test suite for all implemented objects.
+ * This class is a test suite for all message objects.
  * 
  * @author Martin Roth (mhroth@rjdj.me)
  */
