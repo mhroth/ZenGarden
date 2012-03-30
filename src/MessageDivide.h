@@ -33,7 +33,8 @@ class MessageDivide : public MessageObject {
     MessageDivide(PdMessage *initMessage, PdGraph *graph);
     ~MessageDivide();
 
-    static const char *getObjectLabel();
+    static const char *getObjectLabel() { return "/"; }
+    string toString();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);

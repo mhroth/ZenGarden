@@ -224,17 +224,6 @@ MessageObject *PdContext::newObject(const char *objectLabel, PdMessage *initMess
 }
 
 
-#pragma mark - Lock/Unlock Context
-
-void PdContext::lock() {
-  pthread_mutex_lock(&contextLock);
-}
-
-void PdContext::unlock() {
-  pthread_mutex_unlock(&contextLock);
-}
-
-
 #pragma mark - PrintStd/PrintErr
 
 void PdContext::printErr(char *msg) {
@@ -429,11 +418,15 @@ float PdContext::getValueForName(char *name) {
 }
 
 void PdContext::registerExternalReceiver(const char *receiverName) {
+  lock(); // don't update the external receiver registry while processing it, of course!
   sendController->registerExternalReceiver(receiverName);
+  unlock();
 }
 
 void PdContext::unregisterExternalReceiver(const char *receiverName) {
+  lock();
   sendController->unregisterExternalReceiver(receiverName);
+  unlock();
 }
 
 
