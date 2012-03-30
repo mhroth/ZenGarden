@@ -41,14 +41,16 @@ class DspCatch : public DspObject {
     void addThrow(DspThrow *dspThrow);
     void removeThrow(DspThrow *dspThrow);
   
-    char *getName();
-    static const char *getObjectLabel();
-    ObjectType getObjectType();
+    const char *getName() { return name; }
+    static const char *getObjectLabel() { return "catch~"; }
+    ObjectType getObjectType() { return DSP_CATCH; }
     string toString();
   
-    void processDsp();
-    
   private:
+    static void processNone(DspObject *dspObject, int fromIndex, int toIndex);
+    static void processOne(DspObject *dspObject, int fromIndex, int toIndex);
+    static void processMany(DspObject *dspObject, int fromIndex, int toIndex);
+    
     char *name;
     list<DspThrow *> throwList; // list of associated throw~ objects
 };

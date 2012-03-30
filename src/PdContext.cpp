@@ -369,7 +369,7 @@ void PdContext::registerDspCatch(DspCatch *dspCatch) {
   }
 }
 
-DspCatch *PdContext::getDspCatch(char *name) {
+DspCatch *PdContext::getDspCatch(const char *name) {
   for (list<DspCatch *>::iterator it = catchList.begin(); it != catchList.end(); it++) {
     if (!strcmp((*it)->getName(), name)) return (*it);
   }
@@ -389,7 +389,7 @@ void PdContext::registerTable(MessageTable *table) {
   }
 }
 
-MessageTable *PdContext::getTable(char *name) {
+MessageTable *PdContext::getTable(const char *name) {
   for (list<MessageTable *>::iterator it = tableList.begin(); it != tableList.end(); it++) {
     if (!strcmp((*it)->getName(), name)) return (*it);
   }

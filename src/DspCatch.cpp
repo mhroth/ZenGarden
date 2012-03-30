@@ -36,18 +36,11 @@ DspCatch::DspCatch(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 0, 0, 
     name = NULL;
     graph->printErr("catch~ must be initialised with a name.");
   }
+  processFunction = &processNone;
 }
 
 DspCatch::~DspCatch() {
   free(name);
-}
-
-const char *DspCatch::getObjectLabel() {
-  return "catch~";
-}
-
-ObjectType DspCatch::getObjectType() {
-  return DSP_CATCH;
 }
 
 string DspCatch::toString() {
@@ -56,13 +49,16 @@ string DspCatch::toString() {
   return string(str);
 }
 
-char *DspCatch::getName() {
-  return name;
-}
-
 void DspCatch::addThrow(DspThrow *dspThrow) {
-  if (!strcmp(dspThrow->getName(), name)) {
+  if (!strcmp(dspThrow->getName(), name)) { // make sure that the throw~ really does match this catch~
     throwList.push_back(dspThrow); // NOTE(mhroth): no dupicate detection
+    
+    // update the process function
+    switch (throwList.size()) {
+      case 0: processFunction = &processNone; break;
+      case 1: processFunction = &processOne; break;
+      default: processFunction = &processMany; break;
+    }
   }
 }
 
@@ -70,25 +66,24 @@ void DspCatch::removeThrow(DspThrow *dspThrow) {
   throwList.remove(dspThrow);
 }
 
-void DspCatch::processDsp() {
-  switch (throwList.size()) {
-    case 0: {
-      memset(dspBufferAtOutlet[0], 0, blockSizeInt*sizeof(float));
-      break;
-    }
-    case 1: {
-      DspThrow *dspThrow = throwList.front();
-      memcpy(dspBufferAtOutlet[0], dspThrow->getBuffer(), blockSizeInt*sizeof(float));
-      break;
-    }
-    default: { // throwList.size() > 1
-      list<DspThrow *>::iterator it = throwList.begin();
-      ArrayArithmetic::add((*it)->getBuffer(), (*(++it))->getBuffer(), dspBufferAtOutlet[0], 0, blockSizeInt);
-      while (++it != throwList.end()) {
-        ArrayArithmetic::add(dspBufferAtOutlet[0], (*it)->getBuffer(), dspBufferAtOutlet[0],
-            0, blockSizeInt);
-      }
-      break;
-    }
-  }
+void DspCatch::processNone(DspObject *dspObject, int fromIndex, int toIndex) {
+  DspCatch *d = reinterpret_cast<DspCatch *>(dspObject);
+  memset(d->dspBufferAtOutlet[0], 0, toIndex*sizeof(float));
+}
+
+void DspCatch::processOne(DspObject *dspObject, int fromIndex, int toIndex) {
+  DspCatch *d = reinterpret_cast<DspCatch *>(dspObject);
+  DspThrow *dspThrow = d->throwList.front();
+  memcpy(d->dspBufferAtOutlet[0], dspThrow->getBuffer(), toIndex*sizeof(float));
+}
+
+// process at least two throw~s
+void DspCatch::processMany(DspObject *dspObject, int fromIndex, int toIndex) {
+  DspCatch *d = reinterpret_cast<DspCatch *>(dspObject);
+  list<DspThrow *>::iterator it = d->throwList.begin();
+  ArrayArithmetic::add((*it++)->getBuffer(), (*it++)->getBuffer(), d->dspBufferAtOutlet[0], 0, toIndex);
+  while (it++ != d->throwList.end()) {
+    ArrayArithmetic::add(d->dspBufferAtOutlet[0], (*it)->getBuffer(), d->dspBufferAtOutlet[0],
+        0, toIndex);
+  };
 }

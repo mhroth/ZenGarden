@@ -110,10 +110,10 @@ class PdContext {
     void registerTableReceiver(TableReceiverInterface *tableReceiver);
     void unregisterTableReceiver(TableReceiverInterface *tableReceiver);
     
-    MessageTable *getTable(char *name);
+    MessageTable *getTable(const char *name);
     
     /** Returns the named global <code>DspCatch</code> object. */
-    DspCatch *getDspCatch(char *name);
+    DspCatch *getDspCatch(const char *name);
     
     /**
      * Sends the given message to all [receive] objects with the given <code>name</code>.
