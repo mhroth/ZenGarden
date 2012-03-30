@@ -34,9 +34,11 @@ class DspSqrt : public DspObject {
     DspSqrt(PdMessage *initMessage, PdGraph *graph);
     ~DspSqrt();
     
-    static const char *getObjectLabel();
+    static const char *getObjectLabel() { return "sqrt~"; }
+    string toString() { return string(getObjectLabel()); }
   
-    void processDsp();
+  private:
+    static void processSignal(DspObject *dspObject, int fromIndex, int toIndex);
 };
 
 #endif // _DSP_SQRT_H_

@@ -28,26 +28,23 @@ MessageObject *DspSqrt::newObject(PdMessage *initMessage, PdGraph *graph) {
 }
 
 DspSqrt::DspSqrt(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0, 1, graph) {
-  // nothign to do
+  processFunction = &processSignal;
 }
 
 DspSqrt::~DspSqrt() {
   // nothing to do
 }
 
-const char *DspSqrt::getObjectLabel() {
-  return "sqrt~";
-}
-
-void DspSqrt::processDsp() {
+void DspSqrt::processSignal(DspObject *dspObject, int fromIndex, int toIndex) {
   // [sqrt~] takes no messages, so the full block will be computed every time
+  DspSqrt *d = reinterpret_cast<DspSqrt *>(dspObject);
     
   #if __ARM_NEON__
-  float *inBuff = dspBufferAtInlet[0];
-  float *outBuff = dspBufferAtOutlet[0];
+  float *inBuff = d->dspBufferAtInlet[0];
+  float *outBuff = d->dspBufferAtOutlet[0];
   float32x4_t inVec, outVec;
   float32x4_t zeroVec = vdupq_n_f32(0.0f);
-  int n4 = blockSizeInt & 0xFFFFFFFC;
+  int n4 = toIndex & 0xFFFFFFFC;
   while (n4) {
     inVec = vld1q_f32(inBuff);
     inVec = vmaxq_f32(inVec, zeroVec);
@@ -59,36 +56,39 @@ void DspSqrt::processDsp() {
     inBuff += 4;
     outBuff += 4;
   }
-  switch (blockSizeInt & 0x3) {
+  switch (toIndex & 0x3) {
     case 3: *outBuff++ = (*inBuff > 0.0f) ? sqrtf(*inBuff) : 0.0f; ++inBuff;
     case 2: *outBuff++ = (*inBuff > 0.0f) ? sqrtf(*inBuff) : 0.0f; ++inBuff;
     case 1: *outBuff++ = (*inBuff > 0.0f) ? sqrtf(*inBuff) : 0.0f; ++inBuff;
     default: break;
   }
   #elif __SSE__
-  float *inBuff = dspBufferAtInlet[0];
-  float *outBuff = dspBufferAtOutlet[0];
+  float *inBuff = d->dspBufferAtInlet[0];
+  float *outBuff = d->dspBufferAtOutlet[0];
   __m128 inVec, outVec;
   __m128 zeroVec = _mm_set1_ps(0.0f);
-  int n4 = blockSizeInt & 0xFFFFFFFC;
+  int n4 = toIndex & 0xFFFFFFFC;
   while (n4) {
     inVec = _mm_load_ps(inBuff);
-    inVec = _mm_max_ps(inVec, zeroVec); // ensure that all inputs are non-negative, max(0, inVec)
+    
+    // ensure that all inputs are non-negative, max(0, inVec)
+    // NOTE(mhroth): is this really necessary? What does _mm_sqrt_ps return otherwise?
+    inVec = _mm_max_ps(inVec, zeroVec);
     outVec = _mm_sqrt_ps(inVec);
     _mm_store_ps(outBuff, outVec);
     n4 -= 4;
     inBuff += 4;
     outBuff += 4;
   }
-  switch (blockSizeInt & 0x3) {
+  switch (toIndex & 0x3) {
     case 3: *outBuff++ = (*inBuff > 0.0f) ? sqrtf(*inBuff) : 0.0f; ++inBuff;
     case 2: *outBuff++ = (*inBuff > 0.0f) ? sqrtf(*inBuff) : 0.0f; ++inBuff;
     case 1: *outBuff++ = (*inBuff > 0.0f) ? sqrtf(*inBuff) : 0.0f; ++inBuff;
     default: break;
   }
   #else
-  for (int i = 0; i < blockSizeInt; i++) {
-    dspBufferAtOutlet[0][i] = sqrtf(dspBufferAtInlet[i]);
+  for (int i = 0; i < toIndex; i++) {
+    d->dspBufferAtOutlet[0][i] = sqrtf(d->dspBufferAtInlet[0][i]);
   }
   #endif
 }
