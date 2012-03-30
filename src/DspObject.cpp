@@ -246,18 +246,19 @@ void DspObject::processFunctionMessage(DspObject *dspObject, int fromIndex, int 
     unsigned int inletIndex = messageLetPair.second;
     
     double blockIndexOfCurrentMessage = dspObject->graph->getBlockIndex(message);
-    dspObject->processFunctionNoMessage(dspObject, blockIndexOfLastMessage, blockIndexOfCurrentMessage);
+    dspObject->processFunctionNoMessage(dspObject,
+        ceil(blockIndexOfLastMessage), ceil(blockIndexOfCurrentMessage));
     dspObject->processMessage(inletIndex, message);
     message->freeMessage(); // free the message from the head, the message has been consumed.
     dspObject->messageQueue.pop();
     
     blockIndexOfLastMessage = blockIndexOfCurrentMessage;
   } while (!dspObject->messageQueue.empty());
-  dspObject->processFunctionNoMessage(dspObject, blockIndexOfLastMessage, (double) dspObject->blockSizeInt);
+  dspObject->processFunctionNoMessage(dspObject, ceil(blockIndexOfLastMessage), toIndex);
   
-  // because messages are received much less often than on a per-block basis, one messages are
+  // because messages are received much less often than on a per-block basis, once messages are
   // processed in this block, return to the default process function which assumes that no messages
-  // are present. This improved performance because the messageQueue must not be checked for
+  // are present. This improves performance because the messageQueue must not be checked for
   // any pending messages. It is assumed that there aren't any.
   dspObject->processFunction = dspObject->processFunctionNoMessage;
 }
