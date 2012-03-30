@@ -549,7 +549,7 @@ void PdGraph::addConnectionFromObjectToInlet(MessageObject *messageObject, int o
     case MESSAGE: {
       MessageObject *inletObject = inletList.at(inletIndex);
       if (inletObject->getObjectType() == MESSAGE_INLET) {
-        MessageInlet *messageInlet = (MessageInlet *) inletObject;
+        MessageInlet *messageInlet = reinterpret_cast<MessageInlet *>(inletObject);
         messageInlet->addConnectionFromObjectToInlet(messageObject, outletIndex, 0);
       } else {
         printErr("Connection [%s]:%i is of type DSP and cannot be connected to inlet.",
@@ -560,7 +560,7 @@ void PdGraph::addConnectionFromObjectToInlet(MessageObject *messageObject, int o
     case DSP: {
       MessageObject *inletObject = inletList.at(inletIndex);
       if (inletObject->getObjectType() == DSP_INLET) {
-        DspInlet *dspInlet = (DspInlet *) inletObject;
+        DspInlet *dspInlet = reinterpret_cast<DspInlet *>(inletObject);
         dspInlet->addConnectionFromObjectToInlet(messageObject, outletIndex, 0);
       } else {
         printErr("Connection [%s]:%i is of type MESSAGE and cannot be connected to inlet~.",
@@ -568,21 +568,19 @@ void PdGraph::addConnectionFromObjectToInlet(MessageObject *messageObject, int o
       }
       break;
     }
-    default: {
-      break;
-    }
+    default: break;
   }
 }
 
 void PdGraph::addConnectionToObjectFromOutlet(MessageObject *messageObject, int inletIndex, int outletIndex) {
   switch (getConnectionType(outletIndex)) {
     case MESSAGE: {
-      MessageOutlet *messageOutlet = (MessageOutlet *) outletList.at(inletIndex);
+      MessageOutlet *messageOutlet = reinterpret_cast<MessageOutlet *>(outletList.at(inletIndex));
       messageOutlet->addConnectionToObjectFromOutlet(messageObject, inletIndex, 0);
       break;
     }
     case DSP: {
-      DspOutlet *dspOutlet = (DspOutlet *) outletList.at(outletIndex);
+      DspOutlet *dspOutlet = reinterpret_cast<DspOutlet *>(outletList.at(outletIndex));
       dspOutlet->addConnectionToObjectFromOutlet(messageObject, inletIndex, 0);
       break;
     }
@@ -610,7 +608,7 @@ list<DspObject *> PdGraph::getProcessOrder() {
     isOrdered = true;
     list<DspObject *> processOrder;
     for (vector<MessageObject *>::iterator it = inletList.begin(); it != inletList.end(); ++it) {
-      MessageObject *messageObject = *it++;
+      MessageObject *messageObject = *it;
       switch (messageObject->getObjectType()) {
         case MESSAGE_INLET: {
           MessageInlet *messgeInlet = reinterpret_cast<MessageInlet *>(messageObject);
