@@ -23,6 +23,7 @@
 package me.rjdj.zengarden;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.fail;
 
 import org.junit.After;
@@ -43,7 +44,7 @@ import javax.sound.sampled.AudioSystem;
 public class DspObjectTest implements ZenGardenListener {
   
   private static final int BLOCK_SIZE = 64;
-  private static final int NUM_INPUT_CHANNELS = 0;
+  private static final int NUM_INPUT_CHANNELS = 1;
   private static final int NUM_OUTPUT_CHANNELS = 1;
   private static final float SAMPLE_RATE = 44100.0f;
   private static final short[] INPUT_BUFFER = new short[BLOCK_SIZE * NUM_INPUT_CHANNELS];
@@ -51,10 +52,12 @@ public class DspObjectTest implements ZenGardenListener {
   private static final String TEST_PATHNAME = "./test/dsp";
   
   private AudioInputStream ais;
+  private StringBuffer printBuffer;
   
   @Before
   public void setUp() throws Exception {
     ais = null; // ensure that the audio input stream is clear before beginning a test
+    printBuffer = new StringBuffer();
   }
 
   @After
@@ -80,14 +83,16 @@ public class DspObjectTest implements ZenGardenListener {
    * Executes the generic message test for at least the given minimum runtime (in milliseconds).
    */
   private void genericDspTest(String testFilename, float minmumRuntimeMs) {
+    // create and configure a context
     ZGContext context = new ZGContext(NUM_INPUT_CHANNELS, NUM_OUTPUT_CHANNELS, BLOCK_SIZE, SAMPLE_RATE);
     context.addListener(this);
     ZGGraph graph = context.newGraph(new File(TEST_PATHNAME, testFilename));
     graph.attach();
     
     // process at least as many blocks as necessary to cover the given runtime
-    int numBlocksToProcess = (int) (Math.floor(((minmumRuntimeMs/1000.0f)*SAMPLE_RATE)/BLOCK_SIZE)+1);
+//    int numBlocksToProcess = (int) (Math.floor(((minmumRuntimeMs/1000.0f)*SAMPLE_RATE)/BLOCK_SIZE)+1);
     
+    // open the golden audio file for reading
     try {
       ais = AudioSystem.getAudioInputStream(new File(TEST_PATHNAME,
           testFilename.split("\\.")[0] + ".golden.wav"));
@@ -95,8 +100,10 @@ public class DspObjectTest implements ZenGardenListener {
       fail(e.toString());
     }
     
-    assertEquals("The golden file does not have same length as the audio that will be produced.",
-        numBlocksToProcess*BLOCK_SIZE, ais.getFrameLength());
+//    assertEquals("The golden file does not have same length as the audio that will be produced.",
+//        numBlocksToProcess*BLOCK_SIZE, ais.getFrameLength());
+    int numBlocksToProcess = Math.min((int) (Math.floor(((minmumRuntimeMs/1000.0f)*SAMPLE_RATE)/BLOCK_SIZE)+1),
+        (int) (ais.getFrameLength()/BLOCK_SIZE));
     
     byte[] buffer = new byte[2*BLOCK_SIZE];
     short[] goldenBuffer = new short[BLOCK_SIZE];
@@ -118,22 +125,26 @@ public class DspObjectTest implements ZenGardenListener {
       }
       
       // ensure that the output and expected buffers are the same
-      float blockTimeSec = numBlocksToProcess*BLOCK_SIZE/SAMPLE_RATE;
-      assertEquals("Output not equal to golden file at time " + blockTimeSec + "s.",
+      float blockTimeSec = i*BLOCK_SIZE/SAMPLE_RATE;
+      assertArrayEquals("Output not equal to golden file at time " + blockTimeSec + "s." +
+          "\n\n" + printBuffer.toString(),
           goldenBuffer, OUTPUT_BUFFER);
     }
   }
  
   public void onPrintStd(String message) {
-    // TODO Auto-generated method stub
+    printBuffer.append(message);
+    printBuffer.append(System.getProperty("line.separator"));
   }
 
   public void onPrintErr(String message) {
-    // TODO Auto-generated method stub
+    printBuffer.append("ERROR: " + message);
+    printBuffer.append(System.getProperty("line.separator"));
   }
 
   public void onMessage(String receiverName, Message message) {
-    // TODO Auto-generated method stub
+    printBuffer.append(receiverName + ": " + message.toString());
+    printBuffer.append(System.getProperty("line.separator"));
   }
 
 }
