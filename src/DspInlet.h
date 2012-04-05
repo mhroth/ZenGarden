@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010,2011 Reality Jockey, Ltd.
+ *  Copyright 2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -46,10 +46,12 @@ class DspInlet : public DspObject {
     list<DspObject *> getProcessOrder();
     list<DspObject *> getProcessOrderFromInlet();
   
-    float *getDspBufferAtOutlet(int outletIndex);
-  
     // [inlet~] does nothing with audio
     bool doesProcessAudio() { return false; }
+  
+    bool canSetBufferAtOutlet(unsigned int outletIndex) { return false; }
+    void setDspBufferAtOutlet(float *buffer, unsigned int outletIndex);
+    float *getDspBufferAtOutlet(int outletIndex);
   
   private:
     void onDspBufferAtInletUpdate(float *buffer, unsigned int inletIndex);

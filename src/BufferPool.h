@@ -38,7 +38,7 @@ class BufferPool {
      */
     float *getBuffer(unsigned int numDependencies);
   
-    /** The buffer is released, possibly made available for other objects. */
+    /** The reference count of the buffer is reduced by one, possibly made available for other objects. */
     void releaseBuffer(float *buffer);
   
     /** Resizes all buffers in the pool (reserved and available). */

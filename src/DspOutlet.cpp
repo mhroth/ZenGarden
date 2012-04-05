@@ -20,7 +20,9 @@
  *
  */
 
+#include "BufferPool.h"
 #include "DspOutlet.h"
+#include "PdGraph.h"
 
 MessageObject *DspOutlet::newObject(PdMessage *initMessage, PdGraph *graph) {
   return new DspOutlet(graph);
@@ -50,12 +52,20 @@ bool DspOutlet::isLeafNode() {
   return true;
 }
 
+void DspOutlet::setDspBufferAtOutlet(float *buffer, unsigned int outletIndex) {
+  // nothing to do
+}
+
+float *DspOutlet::getDspBufferAtOutlet(int outletIndex) {
+  return (dspBufferAtInlet[0] == NULL) ? graph->getBufferPool()->getZeroBuffer() : dspBufferAtInlet[0];
+}
+
 void DspOutlet::onDspBufferAtInletUpdate(float *buffer, unsigned int inletIndex) {
   // when the dsp buffer updates at a given inlet, inform all receiving objects
   list<ObjectLetPair> dspConnections = outgoingDspConnections[0];
   for (list<ObjectLetPair>::iterator it = dspConnections.begin(); it != dspConnections.end(); ++it) {
     ObjectLetPair letPair = *it;
     DspObject *dspObject = reinterpret_cast<DspObject *>(letPair.first);
-    dspObject->setDspBufferAtInlet(dspBufferAtInlet[inletIndex], letPair.second);
+    dspObject->setDspBufferAtInlet(dspBufferAtInlet[0], letPair.second);
   }
 }

@@ -218,7 +218,10 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
         graph->addObject(canvasX, canvasY, messageObject);
       } else if (!strcmp(objectType, "restore")) {
         // the graph is finished being defined
-        graph = graph->getParentGraph(); // pop the graph stack to the parent graph
+        // first compute the process order of this graph
+        graph->computeLocalDspProcessOrder();
+        // pop the graph stack to the parent graph
+        graph = graph->getParentGraph();
       } else if (!strcmp(objectType, "text")) {
         float canvasX = (float) atoi(strtok(NULL, " "));
         float canvasY = (float) atoi(strtok(NULL, " "));

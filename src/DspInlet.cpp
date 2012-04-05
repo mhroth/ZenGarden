@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010,2011 Reality Jockey, Ltd.
+ *  Copyright 2010,2011,2011 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -46,14 +46,7 @@ list<DspObject *> DspInlet::getProcessOrder() {
 }
 
 list<DspObject *> DspInlet::getProcessOrderFromInlet() {
-  list<DspObject *> processList;
-  for (list<ObjectLetPair>::iterator it = incomingDspConnections[0].begin();
-      it != incomingDspConnections[0].end(); ++it) {
-    ObjectLetPair objectLetPair = *it;
-    list<DspObject *> parentProcessList = objectLetPair.first->getProcessOrder();
-    processList.splice(processList.end(), parentProcessList);
-  }
-  return processList;
+  return DspObject::getProcessOrder();
 }
 
 void DspInlet::onDspBufferAtInletUpdate(float *buffer, unsigned int inletIndex) {
@@ -62,8 +55,12 @@ void DspInlet::onDspBufferAtInletUpdate(float *buffer, unsigned int inletIndex) 
   for (list<ObjectLetPair>::iterator it = dspConnections.begin(); it != dspConnections.end(); ++it) {
     ObjectLetPair letPair = *it;
     DspObject *dspObject = reinterpret_cast<DspObject *>(letPair.first);
-    dspObject->setDspBufferAtInlet(dspBufferAtInlet[inletIndex], letPair.second);
+    dspObject->setDspBufferAtInlet(dspBufferAtInlet[0], letPair.second);
   }
+}
+
+void DspInlet::setDspBufferAtOutlet(float *buffer, unsigned int outletIndex) {
+  // nothing to do
 }
 
 float *DspInlet::getDspBufferAtOutlet(int outletIndex) {

@@ -51,6 +51,11 @@ class DspOutlet : public DspObject {
     // [outlet~] does nothing with audio
     bool doesProcessAudio() { return false; }
   
+    float *getDspBufferAtOutlet(int outletIndex);
+  
+    bool canSetBufferAtOutlet(unsigned int outletIndex) { return false; }
+    void setDspBufferAtOutlet(float *buffer, unsigned int outletIndex);
+  
   protected:
     void onDspBufferAtInletUpdate(float *buffer, unsigned int inletIndex);
 };

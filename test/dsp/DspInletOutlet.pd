@@ -1,8 +1,8 @@
 #N canvas 510 294 450 300 10;
 #X obj 145 64 osc~ 440;
 #X obj 145 156 dac~;
-#N canvas 0 22 450 300 inlet/outlet 0;
-#X obj 166 89 inlet~;
+#N canvas 0 22 450 300 inlet/outlet 1;
+#X obj 170 105 inlet~;
 #X obj 170 155 outlet~;
 #X connect 0 0 1 0;
 #X restore 145 114 pd inlet/outlet;

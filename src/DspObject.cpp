@@ -372,8 +372,10 @@ list<DspObject *> DspObject::getProcessOrder() {
     
     // set the outlet buffers
     for (int i = 0; i < getNumDspOutlets(); i++) {
-      float *buffer = bufferPool->getBuffer(outgoingDspConnections[i].size());
-      setDspBufferAtOutlet(buffer, i);
+      if (canSetBufferAtOutlet(i)) {
+        float *buffer = bufferPool->getBuffer(outgoingDspConnections[i].size());
+        setDspBufferAtOutlet(buffer, i);
+      }
     }
     
     // NOTE(mhroth): even if an object does not process audio, its buffer still need to be connected.

@@ -222,123 +222,7 @@ void PdGraph::addLetObjectToLetList(MessageObject *inletObject, float newPositio
 }
 
 
-#pragma mark -
-
-float *PdGraph::getDspBufferAtOutlet(int outletIndex) {
-  DspObject *dspOutlet = (DspObject *) outletList.at(outletIndex);
-  return dspOutlet->getDspBufferAtOutlet(0);
-}
-
-
-#pragma mark - Add/Remove Connections
-
-void PdGraph::addConnection(MessageObject *fromObject, int outletIndex, MessageObject *toObject, int inletIndex) {
-  lockContextIfAttached();
-  toObject->addConnectionFromObjectToInlet(fromObject, outletIndex, inletIndex);
-  fromObject->addConnectionToObjectFromOutlet(toObject, inletIndex, outletIndex);
-  
-  // NOTE(mhroth): very heavy handed approach. Always recompute the process order when adding connections.
-  // In theory this function should check to see if a reordering is even necessary and then only make
-  // the appropriate changes. Usually a complete reevaluation shouldn't be necessary, and otherwise
-  // the use of a linked list to store the node list should make the reordering fast.
-//  computeLocalDspProcessOrder(); 
- 
-  unlockContextIfAttached();
-}
-
-void PdGraph::addConnection(int fromObjectIndex, int outletIndex, int toObjectIndex, int inletIndex) {
-  list<MessageObject *>::iterator fromIt = nodeList.begin();
-  for (int i = 0; i < fromObjectIndex; i++) fromIt++;
-  list<MessageObject *>::iterator toIt = nodeList.begin();
-  for (int i = 0; i < toObjectIndex; i++) toIt++;
-  
-  MessageObject *fromObject = *fromIt;
-  MessageObject *toObject = *toIt;
-  addConnection(fromObject, outletIndex, toObject, inletIndex);
-}
-
-/*
- * removeConnection does not force a reordering of the dspNodeList, as lost connections do not create
- * any new constraints on the dsp object ordering that weren't there already. addConnection does
- * force a reevaluation, as the new connection may force a new constrained how how objects are ordered.
- */
-void PdGraph::removeConnection(MessageObject *fromObject, int outletIndex, MessageObject *toObject, int inletIndex) {
-  lockContextIfAttached();
-  toObject->removeConnectionFromObjectToInlet(fromObject, outletIndex, inletIndex);
-  fromObject->removeConnectionToObjectFromOutlet(toObject, inletIndex, outletIndex);
-  unlockContextIfAttached();
-}
-
-list<ObjectLetPair> PdGraph::getIncomingConnections(unsigned int inletIndex) {
-  if (inletList.empty()) {
-    return list<ObjectLetPair>();
-  } else {
-    MessageObject *inletObject = inletList[inletIndex];
-    switch (inletObject->getObjectType()) {
-      case MESSAGE_INLET: {
-        MessageInlet *messageInlet = (MessageInlet *) inletObject;
-        return messageInlet->getIncomingConnections(0);
-        break;
-      }
-      case DSP_INLET: {
-        DspInlet *dspInlet = (DspInlet *) inletObject;
-        return dspInlet->getIncomingConnections(0);
-        break;
-      }
-      default: {
-        return list<ObjectLetPair>();
-      }
-    }
-  }
-}
-
-list<ObjectLetPair> PdGraph::getOutgoingConnections(unsigned int outletIndex) {
-  if (outletList.empty()) {
-    return list<ObjectLetPair>();
-  } else {
-    MessageObject *outletObject = outletList[outletIndex];
-    switch (outletObject->getObjectType()) {
-      case MESSAGE_OUTLET: {
-        MessageOutlet *messageOutlet = (MessageOutlet *) outletObject;
-        return messageOutlet->getOutgoingConnections(0);
-        break;
-      }
-      case DSP_OUTLET: {
-        DspOutlet *dspOutlet = (DspOutlet *) outletObject;
-        return dspOutlet->getOutgoingConnections(0);
-        break;
-      }
-      default: {
-        return list<ObjectLetPair>();
-      }
-    }
-  }
-}
-
-
-#pragma mark -
-
-void PdGraph::attachToContext(bool isAttached) {
-  // ensure that this function is only run on attachement change
-  if (isAttachedToContext != isAttached) {
-    isAttachedToContext = isAttached;
-    // ensure that all subgraphs know if they are attached or not
-    list<MessageObject *>::iterator it = nodeList.begin();
-    list<MessageObject *>::iterator end = nodeList.end();
-    while (it != end) {
-      MessageObject *messageObject = *it++;
-      if (isAttachedToContext) {
-        registerObject(messageObject);
-      } else {
-        unregisterObject(messageObject);
-      }
-      if (messageObject->getObjectType() == OBJECT_PD) {
-        PdGraph *pdGraph = (PdGraph *) messageObject;
-        pdGraph->attachToContext(isAttached);
-      }
-    }
-  }
-}
+#pragma mark - Register/Unregister Objects
 
 void PdGraph::registerObject(MessageObject *messageObject) {
   switch (messageObject->getObjectType()) {
@@ -446,29 +330,32 @@ void PdGraph::unregisterObject(MessageObject *messageObject) {
   }
 }
 
-double PdGraph::getBlockIndex(PdMessage *message) {
-  // sampleRate is in samples/second, but we need samples/millisecond
-  return (message->getTimestamp() - context->getBlockStartTimestamp()) * 0.001 * context->getSampleRate();
+
+#pragma mark -
+
+void PdGraph::attachToContext(bool isAttached) {
+  // ensure that this function is only run on attachement change
+  if (isAttachedToContext != isAttached) {
+    isAttachedToContext = isAttached;
+    // ensure that all subgraphs know if they are attached or not
+    list<MessageObject *>::iterator it = nodeList.begin();
+    list<MessageObject *>::iterator end = nodeList.end();
+    while (it != end) {
+      MessageObject *messageObject = *it++;
+      if (isAttachedToContext) {
+        registerObject(messageObject);
+      } else {
+        unregisterObject(messageObject);
+      }
+      if (messageObject->getObjectType() == OBJECT_PD) {
+        PdGraph *pdGraph = (PdGraph *) messageObject;
+        pdGraph->attachToContext(isAttached);
+      }
+    }
+  }
 }
 
-float PdGraph::getSampleRate() {
-  // there is no such thing as a local sample rate. Return the sample rate of the context.
-  return context->getSampleRate();
-}
-
-int PdGraph::getGraphId() {
-  return graphId;
-}
-
-float *PdGraph::getGlobalDspBufferAtInlet(int inletIndex) {
-  return context->getGlobalDspBufferAtInlet(inletIndex);
-}
-
-float *PdGraph::getGlobalDspBufferAtOutlet(int outletIndex) {
-  return context->getGlobalDspBufferAtOutlet(outletIndex);
-}
-
-char *PdGraph::resolveFullPath(char *filename) {
+char *PdGraph::resolveFullPath(const char *filename) {
   if (DeclareList::isFullPath(filename)) {
     return StaticUtils::fileExists(filename) ? StaticUtils::copyString(filename) : NULL;
   } else {
@@ -477,7 +364,7 @@ char *PdGraph::resolveFullPath(char *filename) {
   }
 }
 
-char *PdGraph::findFilePath(char *filename) {
+char *PdGraph::findFilePath(const char *filename) {
   list<string>::iterator it = declareList->getIterator();
   list<string>::iterator end = declareList->getEnd();
   while (it != end) {
@@ -544,6 +431,91 @@ void PdGraph::processDsp() {
   }
 }
 
+
+#pragma mark - Add/Remove Connections (High Level)
+
+void PdGraph::addConnection(MessageObject *fromObject, int outletIndex, MessageObject *toObject, int inletIndex) {
+  lockContextIfAttached();
+  toObject->addConnectionFromObjectToInlet(fromObject, outletIndex, inletIndex);
+  fromObject->addConnectionToObjectFromOutlet(toObject, inletIndex, outletIndex);
+  
+  // NOTE(mhroth): very heavy handed approach. Always recompute the process order when adding connections.
+  // In theory this function should check to see if a reordering is even necessary and then only make
+  // the appropriate changes. Usually a complete reevaluation shouldn't be necessary, and otherwise
+  // the use of a linked list to store the node list should make the reordering fast.
+  //  computeLocalDspProcessOrder(); 
+  
+  unlockContextIfAttached();
+}
+
+void PdGraph::addConnection(int fromObjectIndex, int outletIndex, int toObjectIndex, int inletIndex) {
+  list<MessageObject *>::iterator fromIt = nodeList.begin();
+  for (int i = 0; i < fromObjectIndex; i++) fromIt++;
+  list<MessageObject *>::iterator toIt = nodeList.begin();
+  for (int i = 0; i < toObjectIndex; i++) toIt++;
+  
+  MessageObject *fromObject = *fromIt;
+  MessageObject *toObject = *toIt;
+  addConnection(fromObject, outletIndex, toObject, inletIndex);
+}
+
+/*
+ * removeConnection does not force a reordering of the dspNodeList, as lost connections do not create
+ * any new constraints on the dsp object ordering that weren't there already. addConnection does
+ * force a reevaluation, as the new connection may force a new constrained how how objects are ordered.
+ */
+void PdGraph::removeConnection(MessageObject *fromObject, int outletIndex, MessageObject *toObject, int inletIndex) {
+  lockContextIfAttached();
+  toObject->removeConnectionFromObjectToInlet(fromObject, outletIndex, inletIndex);
+  fromObject->removeConnectionToObjectFromOutlet(toObject, inletIndex, outletIndex);
+  unlockContextIfAttached();
+}
+
+list<ObjectLetPair> PdGraph::getIncomingConnections(unsigned int inletIndex) {
+  if (inletList.empty()) {
+    return list<ObjectLetPair>();
+  } else {
+    MessageObject *inletObject = inletList[inletIndex];
+    switch (inletObject->getObjectType()) {
+      case MESSAGE_INLET: {
+        MessageInlet *messageInlet = (MessageInlet *) inletObject;
+        return messageInlet->getIncomingConnections(0);
+      }
+      case DSP_INLET: {
+        DspInlet *dspInlet = (DspInlet *) inletObject;
+        return dspInlet->getIncomingConnections(0);
+      }
+      default: {
+        return list<ObjectLetPair>();
+      }
+    }
+  }
+}
+
+list<ObjectLetPair> PdGraph::getOutgoingConnections(unsigned int outletIndex) {
+  if (outletList.empty()) {
+    return list<ObjectLetPair>();
+  } else {
+    MessageObject *outletObject = outletList[outletIndex];
+    switch (outletObject->getObjectType()) {
+      case MESSAGE_OUTLET: {
+        MessageOutlet *messageOutlet = (MessageOutlet *) outletObject;
+        return messageOutlet->getOutgoingConnections(0);
+      }
+      case DSP_OUTLET: {
+        DspOutlet *dspOutlet = (DspOutlet *) outletObject;
+        return dspOutlet->getOutgoingConnections(0);
+      }
+      default: {
+        return list<ObjectLetPair>();
+      }
+    }
+  }
+}
+
+
+#pragma mark - Add/Remove Connections (Low Level)
+
 void PdGraph::addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex) {
   switch (messageObject->getConnectionType(outletIndex)) {
     case MESSAGE: {
@@ -601,6 +573,42 @@ void PdGraph::removeConnectionToObjectFromOutlet(MessageObject *messageObject, i
   outletObject->removeConnectionToObjectFromOutlet(messageObject, inletIndex, 0);
 }
 
+
+#pragma mark - Get/Set Inlet/Outlet Buffers
+
+void PdGraph::setDspBufferAtInlet(float *buffer, unsigned int inletIndex) {
+  MessageObject *inletObject = inletList[inletIndex];
+  if (inletObject->getObjectType() == DSP_INLET) {
+    DspObject *dspInlet = reinterpret_cast<DspInlet *>(inletObject);
+    dspInlet->setDspBufferAtInlet(buffer, 0);
+  }
+}
+
+void PdGraph::setDspBufferAtOutlet(float *buffer, unsigned int outletIndex) {
+  // nothing to do because DspOutlet objects do not allow setting outlet buffers
+}
+
+float *PdGraph::getDspBufferAtInlet(int inletIndex) {
+  MessageObject *inletObject = inletList[inletIndex];
+  if (inletObject->getObjectType() == DSP_INLET) {
+    DspObject *dspInlet = reinterpret_cast<DspInlet *>(inletObject);
+    return dspInlet->getDspBufferAtInlet(0);
+  }
+  return NULL; // if you've gotten this far, something's gone wrong
+}
+
+float *PdGraph::getDspBufferAtOutlet(int outletIndex) {
+  MessageObject *outletObject = outletList[outletIndex];
+  if (outletObject->getObjectType() == DSP_OUTLET) {
+    DspObject *dspOutlet = reinterpret_cast<DspInlet *>(outletObject);
+    return dspOutlet->getDspBufferAtOutlet(0);
+  }
+  return NULL; // if you've gotten this far, something's gone wrong
+}
+
+
+#pragma mark - Process Order
+
 list<DspObject *> PdGraph::getProcessOrder() {
   if (isOrdered) {
     return list<DspObject *>();
@@ -609,6 +617,7 @@ list<DspObject *> PdGraph::getProcessOrder() {
     list<DspObject *> processOrder;
     for (vector<MessageObject *>::iterator it = inletList.begin(); it != inletList.end(); ++it) {
       MessageObject *messageObject = *it;
+      // NOTE(mhroth): try to use some "GraphInlet" interface here
       switch (messageObject->getObjectType()) {
         case MESSAGE_INLET: {
           MessageInlet *messgeInlet = reinterpret_cast<MessageInlet *>(messageObject);
@@ -696,8 +705,7 @@ void PdGraph::computeLocalDspProcessOrder() {
   unlockContextIfAttached();
 }
 
-#pragma mark -
-#pragma mark Print
+#pragma mark - Print
 
 void PdGraph::printErr(const char *msg, ...) {
   int maxStringLength = 1024;
@@ -721,8 +729,29 @@ void PdGraph::printStd(const char *msg, ...) {
   context->printStd(stringBuffer);
 }
 
-#pragma mark -
-#pragma mark Get Attributes
+#pragma mark - Get Attributes
+
+double PdGraph::getBlockIndex(PdMessage *message) {
+  // sampleRate is in samples/second, but we need samples/millisecond
+  return (message->getTimestamp() - context->getBlockStartTimestamp()) * 0.001 * context->getSampleRate();
+}
+
+float PdGraph::getSampleRate() {
+  // there is no such thing as a local sample rate. Return the sample rate of the context.
+  return context->getSampleRate();
+}
+
+int PdGraph::getGraphId() {
+  return graphId;
+}
+
+float *PdGraph::getGlobalDspBufferAtInlet(int inletIndex) {
+  return context->getGlobalDspBufferAtInlet(inletIndex);
+}
+
+float *PdGraph::getGlobalDspBufferAtOutlet(int outletIndex) {
+  return context->getGlobalDspBufferAtOutlet(outletIndex);
+}
 
 PdMessage *PdGraph::getArguments() {
   return graphArguments;

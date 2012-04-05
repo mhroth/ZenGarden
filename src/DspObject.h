@@ -75,6 +75,10 @@ class DspObject : public MessageObject {
     virtual float *getDspBufferAtInlet(int inletIndex);
     virtual float *getDspBufferAtOutlet(int outletIndex);
   
+  
+    /** Return true if a buffer from the Buffer Pool should set set at the given outlet. False otherwise. */
+    virtual bool canSetBufferAtOutlet(unsigned int outletIndex) { return true; }
+  
     virtual void addConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex);
     virtual void addConnectionToObjectFromOutlet(MessageObject *messageObject, int inletIndex, int outletIndex);
     virtual void removeConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex);

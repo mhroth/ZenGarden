@@ -79,6 +79,14 @@ class PdGraph : public DspObject {
     void removeConnectionFromObjectToInlet(MessageObject *messageObject, int outletIndex, int inletIndex);
     void removeConnectionToObjectFromOutlet(MessageObject *messageObject, int inletIndex, int outletIndex);
   
+#pragma mark - Get/Set Buffers
+    
+    bool canSetBufferAtOutlet(unsigned int outletIndex) { return false; }
+    void setDspBufferAtInlet(float *buffer, unsigned int inletIndex);
+    void setDspBufferAtOutlet(float *buffer, unsigned int outletIndex);
+    float *getDspBufferAtInlet(int inletIndex);
+    float *getDspBufferAtOutlet(int outletIndex);
+  
 
 #pragma mark -
   
@@ -169,14 +177,14 @@ class PdGraph : public DspObject {
      * Returns the directory in which the file was found, or NULL if nothing could be found.
      * The returned string SHOULD NOT be free()ed by the caller. It belongs to the DeclareList.
      */
-    char *findFilePath(char *filename);
+    char *findFilePath(const char *filename);
   
     /**
      * Resolves the full path of the given file. If the file is already fully specified then a copy
      * of the string is returned. Otherwise all declared paths are searched and the full path is
      * returned. The returned path SHOULD be freed by the caller.
      */
-    char *resolveFullPath(char *filename);
+    char *resolveFullPath(const char *filename);
   
     /**
      * Adds a full or partial path to the declare list. If it is a relative path, then it will be
@@ -189,8 +197,6 @@ class PdGraph : public DspObject {
     // TODO(mhroth): these are not yet fully implemented
     void setValueForName(char *name, float constant);
     float getValueForName(char *name);
-  
-    float *getDspBufferAtOutlet(int outletIndex);
   
     void processDsp();
   
