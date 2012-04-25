@@ -330,6 +330,18 @@ list<DspObject *> DspObject::getProcessOrder() {
           break;
         }
         default: { // > 1
+          /*
+           * [obj~] [obj~] [obj~]...
+           *   \     /      /
+           *    \   /      /
+           *    [+~~]     /
+           *     \       /
+           *      \     /
+           *       \   /
+           *       [+~~]
+           *        \
+           *         etc...
+           */
           list<ObjectLetPair>::iterator it = incomingDspConnections[i].begin();
           ObjectLetPair leftOlPair = *it++;
           list<DspObject *> parentProcessList = leftOlPair.first->getProcessOrder();

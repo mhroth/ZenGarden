@@ -41,9 +41,10 @@ class DspThrow : public DspObject {
     /** Returns a pointer to the current local input buffer. */
     float *getBuffer();
   
-    char *getName();
-  
-    static const char *getObjectLabel();
+    const char *getName() { return name; }
+    static const char *getObjectLabel() { return "throw~"; }
+    string toString() { return string(getObjectLabel()) + " " + string(name); }
+    ObjectType getObjectType() { return DSP_THROW; }
   
     bool doesProcessAudio() { return false; }
   

@@ -40,14 +40,6 @@ DspThrow::~DspThrow() {
   free(name);
 }
 
-const char *DspThrow::getObjectLabel() {
-  return "throw~";
-}
-
-char *DspThrow::getName() {
-  return name;
-}
-
 float *DspThrow::getBuffer() {
   return dspBufferAtInlet[0];
 }

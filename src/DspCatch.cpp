@@ -82,8 +82,8 @@ void DspCatch::processMany(DspObject *dspObject, int fromIndex, int toIndex) {
   DspCatch *d = reinterpret_cast<DspCatch *>(dspObject);
   list<DspThrow *>::iterator it = d->throwList.begin();
   ArrayArithmetic::add((*it++)->getBuffer(), (*it++)->getBuffer(), d->dspBufferAtOutlet[0], 0, toIndex);
-  while (it++ != d->throwList.end()) {
-    ArrayArithmetic::add(d->dspBufferAtOutlet[0], (*it)->getBuffer(), d->dspBufferAtOutlet[0],
+  while (it != d->throwList.end()) {
+    ArrayArithmetic::add(d->dspBufferAtOutlet[0], (*it++)->getBuffer(), d->dspBufferAtOutlet[0],
         0, toIndex);
   };
 }
