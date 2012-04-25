@@ -63,7 +63,15 @@ void DspCatch::addThrow(DspThrow *dspThrow) {
 }
 
 void DspCatch::removeThrow(DspThrow *dspThrow) {
-  throwList.remove(dspThrow);
+  if (!strcmp(dspThrow->getName(), name)) {
+    throwList.remove(dspThrow);
+    
+    switch (throwList.size()) {
+      case 0: processFunction = &processNone; break;
+      case 1: processFunction = &processOne; break;
+      default: processFunction = &processMany; break;
+    }
+  }
 }
 
 void DspCatch::processNone(DspObject *dspObject, int fromIndex, int toIndex) {
