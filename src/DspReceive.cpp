@@ -21,8 +21,6 @@
  */
 
 #include "DspReceive.h"
-#include "DspSend.h"
-#include "PdContext.h"
 #include "PdGraph.h"
 
 MessageObject *DspReceive::newObject(PdMessage *initMessage, PdGraph *graph) {
