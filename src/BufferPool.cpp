@@ -26,7 +26,7 @@ BufferPool::BufferPool(unsigned short size) {
   bufferSize = size;
  
   zeroBuffer = (float *) valloc(bufferSize * sizeof(float));
-  memset(zeroBuffer, 0, bufferSize * sizeof(float)); // zero the zer buffer!
+  memset(zeroBuffer, 0, bufferSize*sizeof(float)); // zero the zero buffer!
 }
 
 BufferPool::~BufferPool() {
@@ -50,7 +50,7 @@ float *BufferPool::getBuffer(unsigned int numDependencies) {
     buffer = (float *) valloc(bufferSize * sizeof(float));
   }
   reserved.push_back(std::pair<float *, unsigned int>(buffer, numDependencies));
-  printf("%i/%i buffer used.\n", getNumReservedBuffers(), getNumTotalBuffers());
+//  printf("%i/%i buffer used.\n", getNumReservedBuffers(), getNumTotalBuffers());
   return buffer;
 }
 
@@ -61,14 +61,15 @@ void BufferPool::releaseBuffer(float *buffer) {
   for (list<std::pair<float *, unsigned int> >::iterator it = reserved.begin(); it != reserved.end(); ++it) {
     if ((*it).first == buffer) {
       --((*it).second);
-      if ((*it).second == 0) {
+      if ((*it).second <= 0) {
         reserved.erase(it);
         pool.push(buffer);
-        printf("%i/%i buffer used.\n", getNumReservedBuffers(), getNumTotalBuffers());
+//        printf("%i/%i buffer used.\n", getNumReservedBuffers(), getNumTotalBuffers());
         break;
       }
     }
   }
+  // if the buffer is not in the reserved pool, nothing changes. Untracked buffers are left alone.
 }
 
 void BufferPool::resizeBuffers(unsigned int newBufferSize) {

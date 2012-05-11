@@ -1,8 +1,10 @@
-#N canvas 414 213 450 300 10;
-#X obj 139 47 osc~ 440;
-#X obj 141 90 s~ hello;
-#X obj 141 136 r~ hello;
-#X obj 140 182 dac~;
-#X connect 0 0 1 0;
-#X connect 2 0 3 0;
-#X connect 2 0 3 1;
+#N canvas 480 168 481 261 10;
+#X obj 28 49 s~ hello;
+#X obj 28 76 r~ hello;
+#X obj 65 105 dac~;
+#X obj 28 19 osc~ 440;
+#X obj 102 76 receive~ world;
+#X text 101 58 r~ world should not produce any output;
+#X connect 1 0 2 0;
+#X connect 3 0 0 0;
+#X connect 4 0 2 0;

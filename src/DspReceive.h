@@ -33,20 +33,19 @@ class DspReceive : public DspObject {
     DspReceive(PdMessage *initMessage, PdGraph *graph);
     ~DspReceive();
     
-    /** Set a pointer to send~'s input buffer. */
-    void setBuffer(float *buffer);
-    const char *getName();
-    static const char *getObjectLabel();
-    ObjectType getObjectType();
-  
-    bool doesProcessDsp() { return false; }
+    const char *getName() { return name; }
+    static const char *getObjectLabel() { return "receive~"; }
+    string toString() { return string(getObjectLabel()) + " " + string(name); }
+    ObjectType getObjectType() { return DSP_RECEIVE; }
   
     void processMessage(int inletIndex, PdMessage *message);
   
+    bool canSetBufferAtOutlet(unsigned int outletIndex) { return false; }
+  
   private:
+    static void processSignal(DspObject *dspObject, int fromIndex, int toIndex);
+  
     char *name;
-    float **sendBuffer; // double-pointer to the associated send~'s input buffer
-    float *originalLocalOutletBuffer; // pointer to the original local outlet buffer
 };
 
 #endif // _DSP_RECEIVE_H_

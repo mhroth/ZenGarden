@@ -170,7 +170,7 @@ void MessageObject::setCanvasPosition(float x, float y) {
 }
 
 bool MessageObject::isLeafNode() {
-  for (int i = 0; i < outgoingMessageConnections.size(); i++) {
+  for (unsigned int i = 0; i < outgoingMessageConnections.size(); i++) {
     if (!outgoingMessageConnections[i].empty()) return false;
   }
   return true;
@@ -183,7 +183,7 @@ list<DspObject *> MessageObject::getProcessOrder() {
   } else {
     isOrdered = true;
     list<DspObject *> processList;
-    for (int i = 0; i < incomingMessageConnections.size(); i++) {
+    for (unsigned int i = 0; i < incomingMessageConnections.size(); i++) {
       for (list<ObjectLetPair>::iterator it = incomingMessageConnections[i].begin();
          it != incomingMessageConnections[i].end(); ++it) {
         ObjectLetPair objectLetPair = *it;

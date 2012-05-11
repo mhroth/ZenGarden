@@ -134,9 +134,6 @@ class DspObject : public MessageObject {
      */
     virtual void onInletConnectionUpdate(unsigned int inletIndex);
   
-    virtual void onDspBufferAtInletUpdate(float *buffer, unsigned int inletIndex) { }
-    virtual void onDspBufferAtOutletUpdate(float *buffer, unsigned int inletIndex) { }
-  
     /** Immediately deletes all messages in the message queue without executing them. */
     void clearMessageQueue();
     

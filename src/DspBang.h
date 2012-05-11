@@ -36,7 +36,7 @@ class DspBang : public DspObject {
     static const char *getObjectLabel() { return "bang~"; }
     string toString() { return string(getObjectLabel()); }
   
-    ConnectionType getConnectionType(int outletIndex);
+    ConnectionType getConnectionType(int outletIndex) { return MESSAGE; }
     
   private:
     static void processDsp(DspObject *dspObject, int fromIndex, int toIndex);

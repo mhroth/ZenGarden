@@ -63,10 +63,20 @@ public class DspObjectTest implements ZenGardenListener {
   public void tearDown() throws Exception {
     if (ais != null) ais.close(); // no matter what, be sure to close the audio input stream
   }
+  
+  @Test
+  public void testDspInletOutlet() {
+    genericDspTest("DspInletOutlet.pd");
+  }
 
   @Test
   public void testDspOsc() {
     genericDspTest("DspOsc.pd");
+  }
+  
+  @Test
+  public void testDspSendReceive() {
+    genericDspTest("DspSendReceive.pd");
   }
   
   @Test

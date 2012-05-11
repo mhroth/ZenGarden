@@ -163,16 +163,11 @@ void DspObject::removeConnectionToObjectFromOutlet(MessageObject *messageObject,
 void DspObject::setDspBufferAtInlet(float *buffer, unsigned int inletIndex) {
   if (inletIndex < 2) dspBufferAtInlet[inletIndex] = buffer;
   else ((float **) dspBufferAtInlet[2])[inletIndex-2] = buffer;
-  
-  // if the object must take any special steps when updating the input buffer, do so now
-  onDspBufferAtInletUpdate(buffer, inletIndex);
 }
 
 void DspObject::setDspBufferAtOutlet(float *buffer, unsigned int outletIndex) {
   if (outletIndex < 2) dspBufferAtOutlet[outletIndex] = buffer;
   else ((float **) dspBufferAtOutlet[2])[outletIndex-2] = buffer;
-  
-  onDspBufferAtOutletUpdate(buffer, outletIndex);
 }
 
 
@@ -274,7 +269,7 @@ void DspObject::processDspWithIndex(int fromIndex, int toIndex) {
 }
 
 
-#pragma mark -
+#pragma mark - Process Order
 
 bool DspObject::isLeafNode() {
   if (!MessageObject::isLeafNode()) return false;
@@ -325,7 +320,7 @@ list<DspObject *> DspObject::getProcessOrder() {
           // This is so that a buffer at an earlier inlet is not used when resolving buffers
           // while in the getProcessOrder() function of a following inlet.
           
-          // conbine the process lists
+          // combine the process lists
           processList.splice(processList.end(), parentProcessList);
           break;
         }
@@ -348,8 +343,8 @@ list<DspObject *> DspObject::getProcessOrder() {
           processList.splice(processList.end(), parentProcessList);
           
           while (it != incomingDspConnections[i].end()) {
-            ObjectLetPair objectLetPair = *it++;
-            list<DspObject *> parentProcessList = objectLetPair.first->getProcessOrder();
+            ObjectLetPair rightOlPair = *it++;
+            list<DspObject *> parentProcessList = rightOlPair.first->getProcessOrder();
             processList.splice(processList.end(), parentProcessList);
             
             DspImplicitAdd *dspAdd = new DspImplicitAdd(dspAddInitMessage, getGraph());
@@ -357,7 +352,7 @@ list<DspObject *> DspObject::getProcessOrder() {
             dspAdd->setDspBufferAtInlet(buffer, 0);
             bufferPool->releaseBuffer(buffer);
             
-            buffer = reinterpret_cast<DspObject *>(objectLetPair.first)->getDspBufferAtOutlet(objectLetPair.second);
+            buffer = reinterpret_cast<DspObject *>(rightOlPair.first)->getDspBufferAtOutlet(rightOlPair.second);
             dspAdd->setDspBufferAtInlet(buffer, 1);
             bufferPool->releaseBuffer(buffer);
             
@@ -365,7 +360,7 @@ list<DspObject *> DspObject::getProcessOrder() {
             dspAdd->setDspBufferAtOutlet(bufferPool->getBuffer(1), 0);
             
             processList.push_back(dspAdd);
-            leftOlPair = objectLetPair;
+            leftOlPair = make_pair(dspAdd, 0);
           }
           
           float *buffer = reinterpret_cast<DspObject *>(leftOlPair.first)->getDspBufferAtOutlet(leftOlPair.second);
@@ -390,7 +385,7 @@ list<DspObject *> DspObject::getProcessOrder() {
       }
     }
     
-    // NOTE(mhroth): even if an object does not process audio, its buffer still need to be connected.
+    // NOTE(mhroth): even if an object does not process audio, its buffer still needs to be connected.
     // They may be passed on to other objects, such as s~/r~ pairs
     if (doesProcessAudio()) processList.push_back(this);
     return processList;

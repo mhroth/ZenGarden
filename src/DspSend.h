@@ -33,15 +33,14 @@ class DspSend : public DspObject {
     DspSend(PdMessage *initMessage, PdGraph *graph);
     ~DspSend();
     
-    float *getBuffer();
-    const char *getName();
-    static const char *getObjectLabel();
-    string toString();
-    ObjectType getObjectType();
-  
-    bool doesProcessDsp() { return false; }
+    const char *getName() { return name; }
+    static const char *getObjectLabel() { return "send~"; }
+    string toString() { return string(getObjectLabel()) + " " + string(name); }
+    ObjectType getObjectType() { return DSP_SEND; }
     
   private:
+    static void processSignal(DspObject *dspObject, int fromIndex, int toIndex);
+  
     char *name;
 };
 

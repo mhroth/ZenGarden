@@ -35,6 +35,7 @@ class DspDac : public DspObject {
     static const char *getObjectLabel() { return "dac~"; }
     string toString() { return string(DspDac::getObjectLabel()); }
   
+  private:
     static void processSignal(DspObject *dspObject, int fromIndex, int toIndex);
 };
 

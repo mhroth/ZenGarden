@@ -21,6 +21,7 @@
  */
 
 #include "DspSend.h"
+#include "PdContext.h"
 #include "PdGraph.h"
 
 MessageObject *DspSend::newObject(PdMessage *initMessage, PdGraph *graph) {
@@ -30,34 +31,22 @@ MessageObject *DspSend::newObject(PdMessage *initMessage, PdGraph *graph) {
 DspSend::DspSend(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0, 0, graph) {
   if (initMessage->isSymbol(0)) {
     name = StaticUtils::copyString(initMessage->getSymbol(0));
+    dspBufferAtOutlet[0] = (float *) valloc(graph->getBlockSize()*sizeof(float));
   } else {
     name = NULL;
     graph->printErr("send~ not initialised with a name.");
   }
+  processFunction = &processSignal;
 }
 
 DspSend::~DspSend() {
   free(name);
+  free(dspBufferAtOutlet[0]);
 }
 
-const char *DspSend::getObjectLabel() {
-  return "send~";
-}
-
-string DspSend::toString() {
-  char str[snprintf(NULL, 0, "%s %s", getObjectLabel(), name)+1];
-  snprintf(str, sizeof(str), "%s %s", getObjectLabel(), name);
-  return string(str);
-}
-
-ObjectType DspSend::getObjectType() {
-  return DSP_SEND;
-}
-
-const char *DspSend::getName() {
-  return name;
-}
-
-float *DspSend::getBuffer() {
-  return dspBufferAtInlet[0];
+void DspSend::processSignal(DspObject *dspObject, int fromIndex, int toIndex) {
+  // make a defensive copy of the input in case the buffer is reused before all receives
+  // have had the chance to refer to it
+  DspSend *d = reinterpret_cast<DspSend *>(dspObject);
+  memcpy(d->dspBufferAtOutlet[0], d->dspBufferAtInlet[0], toIndex*sizeof(float));
 }

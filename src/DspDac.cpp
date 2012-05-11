@@ -29,11 +29,19 @@ MessageObject *DspDac::newObject(PdMessage *initMessage, PdGraph *graph) {
 }
 
 DspDac::DspDac(PdGraph *graph) : DspObject(0, graph->getNumOutputChannels(), 0, 0, graph) {
+  // cache pointers to global output buffers in dspBufferAtOutlet
+  int numInlets = graph->getNumOutputChannels();
+  if (numInlets > 2) dspBufferAtOutlet[2] = (float *) calloc(numInlets-2, sizeof(float *));
+  
+  for (int i = 0; i < numInlets; i++) {
+    dspBufferAtOutlet[i] = graph->getGlobalDspBufferAtOutlet(i);
+  }
+  
   processFunction = &processSignal;
 }
 
 DspDac::~DspDac() {
-  // nothing to do
+  free(dspBufferAtOutlet[2]);
 }
 
 void DspDac::processSignal(DspObject *dspObject, int fromIndex, int toIndex) {
@@ -49,13 +57,13 @@ void DspDac::processSignal(DspObject *dspObject, int fromIndex, int toIndex) {
       // allow fallthrough
     }
     case 2: {
-      float *globalOutputBuffer = d->graph->getGlobalDspBufferAtOutlet(1);
-      ArrayArithmetic::add(globalOutputBuffer, d->dspBufferAtInlet[1], globalOutputBuffer, fromIndex, toIndex);
+      ArrayArithmetic::add(d->dspBufferAtOutlet[1], d->dspBufferAtInlet[1],
+          d->dspBufferAtOutlet[1], 0, toIndex);
       // allow fallthrough
     }
     case 1: {
-      float *globalOutputBuffer = d->graph->getGlobalDspBufferAtOutlet(0);
-      ArrayArithmetic::add(globalOutputBuffer, d->dspBufferAtInlet[0], globalOutputBuffer, fromIndex, toIndex);
+      ArrayArithmetic::add(d->dspBufferAtOutlet[0], d->dspBufferAtInlet[0],
+          d->dspBufferAtOutlet[0], 0, toIndex);
       // allow fallthrough
     }
     case 0: break;

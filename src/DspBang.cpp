@@ -36,10 +36,6 @@ DspBang::~DspBang() {
   // nothing to do
 }
 
-ConnectionType DspBang::getConnectionType(int outletIndex) {
-  return MESSAGE;
-}
-
 void DspBang::processDsp(DspObject *dspObject, int fromIndex, int toIndex) {
   DspBang *d = reinterpret_cast<DspBang *>(dspObject);
   // message will be automatically rescheduled for beginning of next block

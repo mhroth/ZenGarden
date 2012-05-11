@@ -20,8 +20,9 @@
  *
  */
 
-#include "ArrayArithmetic.h"
 #include "DspReceive.h"
+#include "DspSend.h"
+#include "PdContext.h"
 #include "PdGraph.h"
 
 MessageObject *DspReceive::newObject(PdMessage *initMessage, PdGraph *graph) {
@@ -31,38 +32,30 @@ MessageObject *DspReceive::newObject(PdMessage *initMessage, PdGraph *graph) {
 DspReceive::DspReceive(PdMessage *initMessage, PdGraph *graph) : DspObject(1, 0, 0, 1, graph) {
   if (initMessage->isSymbol(0)) {
     name = StaticUtils::copyString(initMessage->getSymbol(0));
+    dspBufferAtOutlet[0] = (float *) valloc(graph->getBlockSize() * sizeof(float));
   } else {
     name = NULL;
     graph->printErr("receive~ not initialised with a name.");
   }
-  sendBuffer = NULL;
+  processFunction = &processSignal;
+  
+  // this pointer contains the send buffer
+  // default to zero buffer
+  dspBufferAtInlet[0] = graph->getBufferPool()->getZeroBuffer();
 }
 
 DspReceive::~DspReceive() {
   free(name);
-}
-
-const char *DspReceive::getObjectLabel() {
-  return "receive~";
-}
-
-ObjectType DspReceive::getObjectType() {
-  return DSP_RECEIVE;
-}
-
-const char *DspReceive::getName() {
-  return name;
-}
-
-void DspReceive::setBuffer(float *buffer) {
-  // maintain a double-pointer to the buffer of the associated send~
-  dspBufferAtOutlet[0] = buffer;
-  
-  // TODO(mhroth): update input buffers of objects following this receive~
+  free(dspBufferAtOutlet[0]);
 }
 
 void DspReceive::processMessage(int inletIndex, PdMessage *message) {
-  if (message->isSymbol(0, "set")) {
-    graph->printErr("[receive~]: message \"set\" is not yet supported.");
+  if (message->hasFormat("ss") && message->isSymbol(0, "set")) {
+    graph->printErr("[receive~ %s]: message \"set %s\" is not supported.", name, message->getSymbol(1));
   }
+}
+
+void DspReceive::processSignal(DspObject *dspObject, int fromIndex, int toIndex) {
+  DspReceive *d = reinterpret_cast<DspReceive *>(dspObject);
+  memcpy(d->dspBufferAtOutlet[0], d->dspBufferAtInlet[0], toIndex*sizeof(float));
 }

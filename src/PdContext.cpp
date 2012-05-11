@@ -259,29 +259,24 @@ void PdContext::printStd(const char *msg, ...) {
 }
 
 
-#pragma mark - Register/Unregister Objects
-
-void PdContext::registerRemoteMessageReceiver(RemoteMessageReceiver *receiver) {
-  sendController->addReceiver(receiver);
-}
-
-void PdContext::unregisterRemoteMessageReceiver(RemoteMessageReceiver *receiver) {
-  sendController->removeReceiver(receiver);
-}
+#pragma mark - Register/Unregister DspSend/Receive
 
 void PdContext::registerDspReceive(DspReceive *dspReceive) {
-  dspReceiveList.push_back(dspReceive);
+  // NOTE(mhroth): no duplicate check is made for dspReceive
+  list<DspReceive *> *receiveList = &(dspReceiveMap[string(dspReceive->getName())]);
+  receiveList->push_back(dspReceive);
   
   // connect receive~ to associated send~
   DspSend *dspSend = getDspSend(dspReceive->getName());
   if (dspSend != NULL) {
-    dspReceive->setBuffer(dspSend->getBuffer());
+    dspReceive->setDspBufferAtInlet(dspSend->getDspBufferAtInlet(0), 0);
   }
 }
 
 void PdContext::unregisterDspReceive(DspReceive *dspReceive) {
-  dspReceiveList.remove(dspReceive);
-  dspReceive->setBuffer(NULL);
+  list<DspReceive *> *receiveList = &(dspReceiveMap[string(dspReceive->getName())]);
+  receiveList->remove(dspReceive);
+  dspReceive->setDspBufferAtInlet(dspReceive->getGraph()->getBufferPool()->getZeroBuffer(), 0);
 }
 
 void PdContext::registerDspSend(DspSend *dspSend) {
@@ -293,29 +288,40 @@ void PdContext::registerDspSend(DspSend *dspSend) {
   dspSendList.push_back(dspSend);
   
   // connect associated receive~s to send~.
-  for (list<DspReceive *>::iterator it = dspReceiveList.begin(); it != dspReceiveList.end(); it++) {
-    if (!strcmp((*it)->getName(), dspSend->getName())) {
-      (*it)->setBuffer(dspSend->getBuffer());
-    }
-  }
+  updateDspReceiveForSendWitBuffer(dspSend->getName(), dspSend->getDspBufferAtOutlet(0));
 }
 
 void PdContext::unregisterDspSend(DspSend *dspSend) {
   dspSendList.remove(dspSend);
   
   // inform all previously connected receive~s that the send~ buffer does not exist anymore.
-  for (list<DspReceive *>::iterator it = dspReceiveList.begin(); it != dspReceiveList.end(); it++) {
-    if (!strcmp((*it)->getName(), dspSend->getName())) {
-      (*it)->setBuffer(NULL);
-    }
-  }
+  updateDspReceiveForSendWitBuffer(dspSend->getName(), dspSend->getGraph()->getBufferPool()->getZeroBuffer());
 }
 
 DspSend *PdContext::getDspSend(const char *name) {
-  for (list<DspSend *>::iterator it = dspSendList.begin(); it != dspSendList.end(); it++) {
-    if (!strcmp((*it)->getName(), name)) return (*it);
+  for (list<DspSend *>::iterator it = dspSendList.begin(); it != dspSendList.end(); ++it) {
+    if (!strcmp((*it)->getName(), name)) return *it;
   }
   return NULL;
+}
+
+void PdContext::updateDspReceiveForSendWitBuffer(const char *name, float *buffer) {
+  list<DspReceive *> receiveList = dspReceiveMap[string(name)];
+  for (list<DspReceive *>::iterator it = receiveList.begin(); it != receiveList.end(); ++it) {
+    DspReceive *dspReceive = *it;
+    dspReceive->setDspBufferAtInlet(buffer, 0);
+  }
+}
+
+
+#pragma mark - Register/Unregister Objects
+
+void PdContext::registerRemoteMessageReceiver(RemoteMessageReceiver *receiver) {
+  sendController->addReceiver(receiver);
+}
+
+void PdContext::unregisterRemoteMessageReceiver(RemoteMessageReceiver *receiver) {
+  sendController->removeReceiver(receiver);
 }
 
 void PdContext::registerDelayline(DspDelayWrite *delayline) {
@@ -347,6 +353,7 @@ DspDelayWrite *PdContext::getDelayline(char *name) {
 }
 
 void PdContext::registerDspThrow(DspThrow *dspThrow) {
+  // NOTE(mhroth): no duplicate testing for the same object more than once
   throwList.push_back(dspThrow);
   
   DspCatch *dspCatch = getDspCatch(dspThrow->getName());

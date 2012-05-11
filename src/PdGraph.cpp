@@ -338,10 +338,8 @@ void PdGraph::attachToContext(bool isAttached) {
   if (isAttachedToContext != isAttached) {
     isAttachedToContext = isAttached;
     // ensure that all subgraphs know if they are attached or not
-    list<MessageObject *>::iterator it = nodeList.begin();
-    list<MessageObject *>::iterator end = nodeList.end();
-    while (it != end) {
-      MessageObject *messageObject = *it++;
+    for (list<MessageObject *>::iterator it = nodeList.begin(); it != nodeList.end(); ++it) {
+      MessageObject *messageObject = *it;
       if (isAttachedToContext) {
         registerObject(messageObject);
       } else {
