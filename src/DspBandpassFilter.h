@@ -36,7 +36,7 @@ class DspBandpassFilter : public DspFilter {
     DspBandpassFilter(PdMessage *initMessage, PdGraph *graph);
     ~DspBandpassFilter();
   
-    static const char *getObjectLabel();
+    static const char *getObjectLabel() { return "bp~"; }
 
   private:
     void processMessage(int inletIndex, PdMessage *message);

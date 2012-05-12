@@ -35,10 +35,6 @@ DspLowpassFilter::~DspLowpassFilter() {
   // nothing to do
 }
 
-const char *DspLowpassFilter::getObjectLabel() {
-  return "lop~";
-}
-
 // http://en.wikipedia.org/wiki/Low_pass_filter
 void DspLowpassFilter::calcFiltCoeff(float fc) {
   if (fc > 0.5f * graph->getSampleRate()) fc = 0.5f * graph->getSampleRate();
@@ -72,9 +68,7 @@ void DspLowpassFilter::processMessage(int inletIndex, PdMessage *message) {
       break;
     }
     case 1: {
-      if (message->isFloat(0)) {
-        calcFiltCoeff(message->getFloat(0));
-      }
+      if (message->isFloat(0)) calcFiltCoeff(message->getFloat(0));
       break;
     }
     default: break;

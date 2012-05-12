@@ -36,7 +36,7 @@ class DspHighpassFilter : public DspFilter {
     DspHighpassFilter(PdMessage *initMessage, PdGraph *graph);
     ~DspHighpassFilter();
   
-    static const char *getObjectLabel();
+    static const char *getObjectLabel() { return "hip~"; }
   
   private:
     void processMessage(int inletIndex, PdMessage *message);

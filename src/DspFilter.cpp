@@ -26,14 +26,17 @@
 
 DspFilter::DspFilter(int numMessageInlets, PdGraph *graph) : DspObject(numMessageInlets, 1, 0, 1, graph) {
   x1 = x2 = 0.0f;
-  
+
   // resize the output buffer to be 2 samples larger
-  float *buffer = (float *) realloc(dspBufferAtOutlet[0], (blockSizeInt+2)*sizeof(float));
+  float *buffer = (float *) realloc(dspBufferAtOutlet[0], (graph->getBlockSize()+2)*sizeof(float));
   if (buffer != dspBufferAtOutlet[0]) {
     free(dspBufferAtOutlet[0]);
-    dspBufferAtOutlet[0] = (float *) valloc((blockSizeInt+2)*sizeof(float));
+    dspBufferAtOutlet[0] = (float *) valloc((graph->getBlockSize()+2)*sizeof(float));
   }
-  memset(dspBufferAtOutlet[0], 0, (blockSizeInt+2)*sizeof(float)); // clear the buffer
+  memset(dspBufferAtOutlet[0], 0, (graph->getBlockSize()+2)*sizeof(float)); // clear the buffer
+  
+  processFunction = &processFilter;
+  processFunctionNoMessage = &processFilter;
 }
 
 DspFilter::~DspFilter() {
@@ -44,25 +47,28 @@ void DspFilter::onInletConnectionUpdate(unsigned int inletIndex) {
   // TODO(mhroth)
 }
 
-float *DspFilter::getDspBufferAtOutlet(int outletIndex) {
-  return dspBufferAtOutlet[0]+2;
-}
-
-void DspFilter::processDspWithIndex(int fromIndex, int toIndex) {
-//  switch (codepath) {
-//    case DSP_FILTER_DSP: {
-//      float buffer[blockSizeInt+2];
-//      ArrayArithmetic::fill(buffer, signalConstant, 0, blockSizeInt+2);
-//      processFilter(buffer, fromIndex, toIndex);
-//      break;
-//    }
-//    case DSP_FILTER_MESSAGE:
-//    default: { // some number of audio ins, and messages
-      float buffer[blockSizeInt+2];
-      buffer[0] = x2; buffer[1] = x1;
-      memcpy(buffer+2, dspBufferAtInlet[0], blockSizeInt*sizeof(float));
-      processFilter(buffer, fromIndex, toIndex);
-//      break;
-//    }
-//  }
+void DspFilter::processFilter(DspObject *dspObject, int fromIndex, int toIndex) {
+  DspFilter *d = reinterpret_cast<DspFilter *>(dspObject);
+  
+  float buffer[toIndex+2]; // buffer may be longer than necessary, but that's ok
+  buffer[0] = d->x2; buffer[1] = d->x1; // new inlet buffer
+  memcpy(buffer+2, d->dspBufferAtInlet[0]+fromIndex, (toIndex-fromIndex)*sizeof(float));
+  
+  #if __APPLE__
+  vDSP_deq22(buffer, 1, d->b, d->dspBufferAtOutlet[0]+fromIndex, 1, toIndex-fromIndex);
+  #else
+  int _toIndex = toIndex + 2;
+  for (int i = fromIndex+2; i < _toIndex; ++i) {
+    d->dspBufferAtOutlet[0][i] = b[0]*buffer[i] + b[1]*buffer[i-1] + b[2]*buffer[i-2] -
+        b[3]*d->dspBufferAtOutlet[0][i-1] - b[4]*d->dspBufferAtOutlet[0][i-2];
+  }
+  #endif
+  
+  // retain last input
+  d->x2 = buffer[toIndex];
+  d->x1 = buffer[toIndex+1];
+  
+  // retain last output
+  d->dspBufferAtOutlet[0][0] = d->dspBufferAtOutlet[0][toIndex];
+  d->dspBufferAtOutlet[0][1] = d->dspBufferAtOutlet[0][toIndex+1];
 }

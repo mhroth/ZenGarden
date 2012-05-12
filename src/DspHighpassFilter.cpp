@@ -36,10 +36,6 @@ DspHighpassFilter::~DspHighpassFilter() {
   // nothing to do
 }
 
-const char *DspHighpassFilter::getObjectLabel() {
-  return "hip~";
-}
-
 // http://en.wikipedia.org/wiki/High-pass_filter
 void DspHighpassFilter::calcFiltCoeff(float fc) {
   if (fc > 0.5f*graph->getSampleRate()) fc = 0.5f * graph->getSampleRate();

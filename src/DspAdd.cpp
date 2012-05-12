@@ -38,11 +38,8 @@ DspAdd::~DspAdd() {
 }
 
 void DspAdd::onInletConnectionUpdate(unsigned int inletIndex) {
-  if (incomingDspConnections[0].size() > 0 && incomingDspConnections[1].size() > 0) {
-    processFunction = &processSignal;
-  } else {
-    processFunction = &processScalar;
-  }
+  processFunction = (incomingDspConnections[0].size() > 0 && incomingDspConnections[1].size() > 0)
+      ? &processSignal : &processScalar;
 }
 
 string DspAdd::toString() {
@@ -53,8 +50,8 @@ string DspAdd::toString() {
 }
 
 void DspAdd::processMessage(int inletIndex, PdMessage *message) {
-  if (inletIndex == 1) {
-    if (message->isFloat(0)) constant = message->getFloat(0);
+  if (inletIndex == 1 && message->isFloat(0)) {
+    constant = message->getFloat(0);
   }
 }
 

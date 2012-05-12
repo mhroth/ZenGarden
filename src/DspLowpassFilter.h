@@ -36,7 +36,7 @@ class DspLowpassFilter : public DspFilter {
     DspLowpassFilter(PdMessage *initMessage, PdGraph *graph);
     ~DspLowpassFilter();
   
-    static const char *getObjectLabel();
+    static const char *getObjectLabel() { return "lop~"; }
   
     void processMessage(int inletIndex, PdMessage *message);
   

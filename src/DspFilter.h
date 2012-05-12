@@ -32,33 +32,15 @@ class DspFilter : public DspObject {
     DspFilter(int numMessageInlets, PdGraph *graph);
     ~DspFilter();
   
-    float *getDspBufferAtOutlet(int outletIndex);
+    float *getDspBufferAtOutlet(int outletIndex) { return dspBufferAtOutlet[0]+2; }
   
     void onInletConnectionUpdate(unsigned int inletIndex);
   
-  protected:
-    void processDspWithIndex(int fromIndex, int toIndex);
+    bool canSetBufferAtOutlet(unsigned int outletIndex) { return false; }
+  
+  protected:  
+    static void processFilter(DspObject *dspObject, int fromIndex, int toIndex);
     
-    inline void processFilter(float *buffer, int fromIndex, int toIndex) {
-      #if __APPLE__
-      vDSP_deq22(buffer+fromIndex, 1, b, dspBufferAtOutlet[0]+fromIndex, 1, toIndex - fromIndex);
-      #else
-      int _toIndex = toIndex + 2;
-      for (int i = fromIndex+2; i < _toIndex; ++i) {
-        dspBufferAtOutlet0[i] = b[0]*buffer[i] + b[1]*buffer[i-1] + b[2]*buffer[i-2] -
-            b[3]*dspBufferAtOutlet0[i-1] - b[4]*dspBufferAtOutlet0[i-2];
-      }
-      #endif
-      
-      // retain last input
-      x1 = buffer[toIndex+1];
-      x2 = buffer[toIndex];
-      
-      // retain last output
-      dspBufferAtOutlet[0][0] = dspBufferAtOutlet[0][toIndex];
-      dspBufferAtOutlet[0][1] = dspBufferAtOutlet[0][toIndex+1];
-    }
-
     float x1, x2;
     float b[5]; // filter coefficients
 };

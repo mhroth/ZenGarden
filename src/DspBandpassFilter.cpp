@@ -37,10 +37,6 @@ DspBandpassFilter::~DspBandpassFilter() {
   // nothing to do
 }
 
-const char *DspBandpassFilter::getObjectLabel() {
-  return "bp~";
-}
-
 // http://www.musicdsp.org/files/Audio-EQ-Cookbook.txt
 void DspBandpassFilter::calcFiltCoeff(float fc, float q) {
   if (fc > 0.5f * graph->getSampleRate()) fc = 0.5f * graph->getSampleRate();
