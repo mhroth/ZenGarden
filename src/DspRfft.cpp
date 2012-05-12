@@ -32,9 +32,12 @@ DspRfft::DspRfft(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0, 2,
   #if __APPLE__
   log2n = lrintf(log2f((float) blockSizeInt));
   fftSetup = vDSP_create_fftsetup(log2n, kFFTRadix2);
+  zeroBuffer = graph->getBufferPool()->getZeroBuffer(); // cache the local zero buffer
   #else
   graph->printErr("[rfft~] is not supported on this platform. It is only supported on Apple OS X and iOS platforms.");
   #endif // __APPLE__
+  
+  processFunction = &processSignal;
 }
 
 DspRfft::~DspRfft() {
@@ -43,15 +46,17 @@ DspRfft::~DspRfft() {
   #endif // __APPLE__
 }
 
-void DspRfft::processDsp() {
+void DspRfft::processSignal(DspObject *dspObject, int fromIndex, int toIndex) {
+  DspRfft *d = reinterpret_cast<DspRfft *>(dspObject);
+  
   #if __APPLE__
   DSPSplitComplex inputVector;
-  inputVector.realp = dspBufferAtInlet[0];
-  inputVector.imagp = graph->getBufferPool()->getZeroBuffer();
+  inputVector.realp = d->dspBufferAtInlet[0];
+  inputVector.imagp = d->zeroBuffer;
   DSPSplitComplex outputVector;
-  outputVector.realp = dspBufferAtOutlet[0];
-  outputVector.imagp = getDspBufferAtOutlet(1);
-  vDSP_fft_zop(fftSetup, &inputVector, 1, &outputVector, 1, log2n, kFFTDirection_Forward);
+  outputVector.realp = d->dspBufferAtOutlet[0];
+  outputVector.imagp = d->dspBufferAtOutlet[1];
+  vDSP_fft_zop(d->fftSetup, &inputVector, 1, &outputVector, 1, d->log2n, kFFTDirection_Forward);
   
   // NOTE(mhroth): vDSP_fft_zop outputs the entire series of symmetric coefficients.
   // Pd only returns the unique values. The below code makes this object output values in the same

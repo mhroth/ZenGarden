@@ -40,7 +40,6 @@ DspObject::DspObject(int numMessageInlets, int numDspInlets, int numMessageOutle
 
 void DspObject::init(int numDspInlets, int numDspOutlets, int blockSize) {
   blockSizeInt = blockSize;
-  codepath = DSP_OBJECT_PROCESS_NO_MESSAGE;
   processFunction = &processFunctionDefaultNoMessage;
   processFunctionNoMessage = &processFunctionDefaultNoMessage;
   
@@ -189,7 +188,6 @@ void DspObject::receiveMessage(int inletIndex, PdMessage *message) {
     // Copy the message to the heap so that it is available to process later.
     // The message is released once it is consumed in processDsp().
     messageQueue.push(make_pair(message->copyToHeap(), inletIndex));
-    codepath = DSP_OBJECT_PROCESS_MESSAGE;
     
     // only process the message if the process function is set to the default no-message function.
     // If it is set to anything else, then it is assumed that messages should not be processed.
@@ -201,32 +199,7 @@ void DspObject::receiveMessage(int inletIndex, PdMessage *message) {
 #pragma mark - processDsp
 
 void DspObject::processDsp() {
-  switch (codepath) {
-    case DSP_OBJECT_PROCESS_MESSAGE: {
-      double blockIndexOfLastMessage = 0.0; // reset the block index of the last received message
-      do { // there is at least one message
-        MessageLetPair messageLetPair = messageQueue.front();
-        PdMessage *message = messageLetPair.first;
-        unsigned int inletIndex = messageLetPair.second;
-        
-        double blockIndexOfCurrentMessage = graph->getBlockIndex(message);
-        processDspWithIndex(blockIndexOfLastMessage, blockIndexOfCurrentMessage);
-        processMessage(inletIndex, message);
-        message->freeMessage(); // free the message from the head, the message has been consumed.
-        messageQueue.pop();
-        
-        blockIndexOfLastMessage = blockIndexOfCurrentMessage;
-      } while (!messageQueue.empty());
-      processDspWithIndex(blockIndexOfLastMessage, (double) blockSizeInt);
-      codepath = DSP_OBJECT_PROCESS_NO_MESSAGE;
-      break;
-    }
-    default:
-    case DSP_OBJECT_PROCESS_NO_MESSAGE: {
-      processDspWithIndex(0, blockSizeInt);
-      break;
-    }
-  }
+
 }
 
 void DspObject::processFunctionDefaultNoMessage(DspObject *dspObject, int fromIndex, int toIndex) {

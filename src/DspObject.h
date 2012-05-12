@@ -29,12 +29,6 @@
 
 typedef std::pair<PdMessage *, unsigned int> MessageLetPair;
 
-enum DspObjectProcessMessage {
-  DSP_OBJECT_PROCESS_MESSAGE,    // a message will be processing during this block
-  DSP_OBJECT_PROCESS_NO_MESSAGE, // no message will be processed this block
-  DSP_OBJECT_PROCESS_OTHER       // some other process operation will take place
-};
-
 /**
  * A <code>DspObject</code> is the abstract superclass of any object which processes audio.
  * <code>DspObject</code> is a subclass of <code>MessageObject</code>, such that all of the former

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010,2011 Reality Jockey, Ltd.
+ *  Copyright 2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -33,9 +33,10 @@ class DspReciprocalSqrt : public DspObject {
     DspReciprocalSqrt(PdMessage *initMessage, PdGraph *graph);
     ~DspReciprocalSqrt();
     
-    static const char *getObjectLabel();
+    static const char *getObjectLabel() { return "rsqrt~"; }
   
-    void processDsp();
+  private:
+    static void processSignal(DspObject *dspObject, int fromIndex, int toIndex);
 };
 
 #endif // _DSP_RSQRT_H_

@@ -36,12 +36,13 @@ class DspRfft : public DspObject {
     
     static const char *getObjectLabel() { return "rfft~"; }
   
-    void processDsp();
-    
   private:
+    static void processSignal(DspObject *dspObject, int fromIndex, int toIndex);
+  
     #if __APPLE__
     vDSP_Length log2n;
     FFTSetup fftSetup;
+    float *zeroBuffer;
     #endif // __APPLE__
   
 };
