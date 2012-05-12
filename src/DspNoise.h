@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -36,11 +36,11 @@ class DspNoise : public DspObject {
     DspNoise(PdGraph *graph);
     ~DspNoise();
   
-    static const char *getObjectLabel();
-  
-    void processDsp();
+    static const char *getObjectLabel() { return "noise~"; }
   
   private:
+    static void processSignal(DspObject *dspObject, int fromIndex, int toIndex);
+  
     MTRand *twister;
 };
 

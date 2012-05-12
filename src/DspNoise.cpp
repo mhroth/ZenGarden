@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -29,18 +29,17 @@ MessageObject *DspNoise::newObject(PdMessage *initMessage, PdGraph *graph) {
 
 DspNoise::DspNoise(PdGraph *graph) : DspObject(1, 0, 0, 1, graph) {
   twister = new MTRand(); // use new seed
+  processFunction = &processSignal;
 }
 
 DspNoise::~DspNoise() {
   delete twister;
 }
 
-const char *DspNoise::getObjectLabel() {
-  return "noise~";
-}
-
-void DspNoise::processDsp() {
-  for (int i = 0; i < blockSizeInt; i++) {
-    dspBufferAtOutlet[0][i] = ((float) twister->rand(2.0)) - 1.0f;
+void DspNoise::processSignal(DspObject *dspObject, int fromIndex, int toIndex) {
+  DspNoise *d = reinterpret_cast<DspNoise *>(dspObject);
+  
+  for (int i = 0; i < toIndex; i++) {
+    d->dspBufferAtOutlet[0][i] = ((float) d->twister->rand(2.0)) - 1.0f;
   }
 }
