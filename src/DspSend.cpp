@@ -43,6 +43,15 @@ DspSend::~DspSend() {
   free(dspBufferAtOutlet[0]);
 }
 
+/*
+ * It would be very nice to not have to use memcpys with send~ and receive~, but unfortunately
+ * things become very complicated very quickly. If s~ is already in an attached graph, then
+ * everything works out fine. If s~ does not yet exist, then it is also easy for r~ to use the
+ * zero buffer as its output. Ideally, we'd like to remove s~ and r~ entirely from the dsp graph
+ * and all objects receiving from r~ to simply refer to the buffer at s~. But for that we'd need
+ * to make sure that the s~ buffer is accordingly retained and not reused before all r~ receivers
+ * have had a chance to use it.
+ */
 void DspSend::processSignal(DspObject *dspObject, int fromIndex, int toIndex) {
   // make a defensive copy of the input in case the buffer is reused before all receives
   // have had the chance to refer to it

@@ -47,6 +47,7 @@ DspDelayWrite::DspDelayWrite(PdMessage *initMessage, PdGraph *graph) : DspObject
     bufferLength = 0;
     name = NULL;
   }
+  processFunction = processSignal;
 }
 
 DspDelayWrite::~DspDelayWrite() {
@@ -55,22 +56,12 @@ DspDelayWrite::~DspDelayWrite() {
   dspBufferAtOutlet[0] = NULL;
 }
 
-const char *DspDelayWrite::getObjectLabel() {
-  return "delwrite~";
-}
-
-ObjectType DspDelayWrite::getObjectType() {
-  return DSP_DELAY_WRITE;
-}
-
-char *DspDelayWrite::getName() {
-  return name;
-}
-
-void DspDelayWrite::processDsp() {
+void DspDelayWrite::processSignal(DspObject *dspObject, int fromIndex, int toIndex) {
+  DspDelayWrite *d = reinterpret_cast<DspDelayWrite *>(dspObject);
+  
   // copy inlet buffer to delay buffer
-  memcpy(dspBufferAtOutlet[0] + headIndex, dspBufferAtInlet[0], blockSizeInt*sizeof(float));
-  if (headIndex == 0) dspBufferAtOutlet[0][bufferLength] = dspBufferAtOutlet[0][0];
-  headIndex += blockSizeInt;
-  if (headIndex >= bufferLength) headIndex = 0;
+  memcpy(d->dspBufferAtOutlet[0] + d->headIndex, d->dspBufferAtInlet[0], toIndex*sizeof(float));
+  if (d->headIndex == 0) d->dspBufferAtOutlet[0][d->bufferLength] = d->dspBufferAtOutlet[0][0];
+  d->headIndex += toIndex;
+  if (d->headIndex >= d->bufferLength) d->headIndex = 0;
 }

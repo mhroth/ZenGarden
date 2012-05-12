@@ -345,8 +345,8 @@ void PdContext::registerDelayReceiver(DelayReceiver *delayReceiver) {
   delayReceiver->setDelayline(delayline);
 }
 
-DspDelayWrite *PdContext::getDelayline(char *name) {
-  for (list<DspDelayWrite *>::iterator it = delaylineList.begin(); it != delaylineList.end(); it++) {
+DspDelayWrite *PdContext::getDelayline(const char *name) {
+  for (list<DspDelayWrite *>::iterator it = delaylineList.begin(); it != delaylineList.end(); ++it) {
     if (!strcmp((*it)->getName(), name)) return *it;
   }
   return NULL;

@@ -38,15 +38,17 @@ class DspDelayRead : public DelayReceiver {
     DspDelayRead(PdMessage *initString, PdGraph *graph);
     ~DspDelayRead();
   
-    static const char *getObjectLabel();
-    ObjectType getObjectType();
+    static const char *getObjectLabel() { return "delread~"; }
+    ObjectType getObjectType() { return DSP_DELAY_READ; }
+  
+    void onInletConnectionUpdate(unsigned int inletIndex);
   
   private:
+    static void processSignal(DspObject *dspObject, int fromIndex, int toIndex);
+  
     void processMessage(int inletIndex, PdMessage *message);
-    void processDspWithIndex(int fromIndex, int toIndex);
   
     float delayInSamples;
-    int delayInSamplesInt;
 };
 
 #endif // _DSP_DELAY_READ_H_

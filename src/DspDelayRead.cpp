@@ -33,70 +33,48 @@ DspDelayRead::DspDelayRead(PdMessage *initMessage, PdGraph *graph) : DelayReceiv
   if (initMessage->isSymbol(0) && initMessage->isFloat(1)) {
     name = StaticUtils::copyString(initMessage->getSymbol(0));
     delayInSamples = StaticUtils::millisecondsToSamples(initMessage->getFloat(1), graph->getSampleRate());
-    delayInSamplesInt = (int) delayInSamples;
   } else {
     graph->printErr("delread~ must be initialised in the format [delread~ name delay].");
     delayInSamples = 0.0f;
   }
+  processFunction = &processSignal;
+  
+  // TODO(mhroth): implement process function for case of receiving messages
+//  processFunctionNoMessage = &processNoMessage;
 }
 
 DspDelayRead::~DspDelayRead() {
   // nothing to do
 }
 
-const char *DspDelayRead::getObjectLabel() {
-  return "delread~";
-}
-
-ObjectType DspDelayRead::getObjectType() {
-  return DSP_DELAY_READ;
+void DspDelayRead::onInletConnectionUpdate(unsigned int inletIndex) {
+//  processFunction = (incomingMessageConnections[0].size() > 0) ? &processNoMessage : &processSignal;
 }
 
 void DspDelayRead::processMessage(int inletIndex, PdMessage *message) {
-  if (message->isFloat(0)) {
+  if (inletIndex == 0 && message->isFloat(0)) {
     // update the delay time
     delayInSamples = StaticUtils::millisecondsToSamples(message->getFloat(0), graph->getSampleRate());
-    delayInSamplesInt = (int) delayInSamples;
   }
 }
 
-void DspDelayRead::processDspWithIndex(int fromIndex, int toIndex) {
-  int headIndex;
-  int bufferLength;
-  float *buffer = delayline->getBuffer(&headIndex, &bufferLength);
-  if (fromIndex == 0 && toIndex == blockSizeInt) {
-    // this handles the most common case. Messages are rarely sent to delread~.
-    int delayIndex = headIndex - blockSizeInt - delayInSamplesInt;
-    if (delayIndex < 0) {
-      delayIndex += bufferLength;
-    }
-    if (delayIndex > bufferLength - blockSizeInt) {
-      int samplesInBuffer = bufferLength - delayIndex; // samples remaining in the buffer that belong in this block
-      memcpy(dspBufferAtOutlet[0], buffer + delayIndex, samplesInBuffer * sizeof(float));
-      memcpy(dspBufferAtOutlet[0] + samplesInBuffer, buffer, (blockSizeInt - samplesInBuffer) * sizeof(float));
-    } else {
-      memcpy(dspBufferAtOutlet[0], buffer + delayIndex, blockSizeInt*sizeof(float));
-    }
+void DspDelayRead::processSignal(DspObject *dspObject, int fromIndex, int toIndex) {
+  DspDelayRead *d = reinterpret_cast<DspDelayRead *>(dspObject);
+  
+  int headIndex = 0;
+  int bufferLength = 0;
+  float *buffer = d->delayline->getBuffer(&headIndex, &bufferLength);
+  
+  // this handles the most common case. Messages are rarely sent to delread~.
+  int delayIndex = headIndex - toIndex - ((int) d->delayInSamples);
+  if (delayIndex < 0) {
+    delayIndex += bufferLength;
+  }
+  if (delayIndex > bufferLength - toIndex) {
+    int samplesInBuffer = bufferLength - delayIndex; // samples remaining in the buffer that belong in this block
+    memcpy(d->dspBufferAtOutlet[0], buffer + delayIndex, samplesInBuffer * sizeof(float));
+    memcpy(d->dspBufferAtOutlet[0] + samplesInBuffer, buffer, (toIndex - samplesInBuffer) * sizeof(float));
   } else {
-    /*
-    //float delayIndex = (float) headIndex - delayInSamples - ((float) graph->getBlockSize() - blockIndexOfLastMessage);
-    int delayIndex = (headIndex-blockSizeInt) - (int) (delayInSamples+blockIndexOfLastMessage);
-    if (delayIndex < 0) {
-      delayIndex += bufferLength;
-    }
-    
-     * TODO(mhroth): finish this logic
-    if (delayIndex > bufferLength - blockSizeInt) {
-      int samplesInBuffer = bufferLength - delayIndex;
-      memcpy(originalOutputBuffer, buffer + delayIndex, samplesInBuffer * sizeof(float));
-      memcpy(originalOutputBuffer + samplesInBuffer, buffer, (blockSizeInt - samplesInBuffer) * sizeof(float));
-      localDspBufferAtOutlet[0] = originalOutputBuffer;
-    } else {
-      memcpy(originalOutputBuffer + getStartSampleIndex(), 
-             buffer + delayIndex, 
-             (int) (newBlockIndex - blockIndexOfLastMessage) * sizeof(float));
-    }
-    */
-    //localDspBufferAtOutlet[0] = originalOutputBuffer;
+    memcpy(d->dspBufferAtOutlet[0], buffer + delayIndex, toIndex*sizeof(float));
   }
 }

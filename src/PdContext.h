@@ -96,7 +96,7 @@ class PdContext {
     void registerDelayline(DspDelayWrite *delayline);
     
     /** Returns the named global <code>DspDelayWrite</code> object. */
-    DspDelayWrite *getDelayline(char *name);
+    DspDelayWrite *getDelayline(const char *name);
     
     /**
      * Globally register a [delread~] or [vd~] object. Registration is necessary such that they can

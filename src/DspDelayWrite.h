@@ -32,10 +32,11 @@ class DspDelayWrite : public DspObject {
     DspDelayWrite(PdMessage *initMessage, PdGraph *graph);
     ~DspDelayWrite();
   
-    static const char *getObjectLabel();
-    ObjectType getObjectType();
+    static const char *getObjectLabel() { return "delwrite~"; }
+    string toString() { return string(getObjectLabel()) + " " + string(name); }
+    ObjectType getObjectType() { return DSP_DELAY_WRITE; }
   
-    char *getName();
+    const char *getName() { return name; }
   
     inline float *getBuffer(int *index, int *length) {
       *index = headIndex;
@@ -43,9 +44,8 @@ class DspDelayWrite : public DspObject {
       return dspBufferAtOutlet[0];
     }
   
-    void processDsp();
-  
   private:
+    static void processSignal(DspObject *dspObject, int fromIndex, int toIndex);
   
     char *name;
     int bufferLength;
