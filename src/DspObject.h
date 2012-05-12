@@ -57,7 +57,6 @@ class DspObject : public MessageObject {
     virtual bool shouldDistributeMessageToInlets() { return false; }
     
     /** Process audio buffers in this block. */
-    virtual void processDsp();
     void (*processFunction)(DspObject *dspObject, int fromIndex, int toIndex);
   
     /** Returns the connection type of the given outlet. */
@@ -117,7 +116,7 @@ class DspObject : public MessageObject {
     static void processFunctionDefaultNoMessage(DspObject *dspObject, int fromIndex, int toIndex);
     static void processFunctionMessage(DspObject *dspObject, int fromIndex, int toIndex);
   
-    /* IMPORTANT: one of these two functions MUST be overridden (or processDsp()) */
+    /* IMPORTANT: one of these two functions MUST be overridden (or processFunction()) */
     virtual void processDspWithIndex(double fromIndex, double toIndex);
     virtual void processDspWithIndex(int fromIndex, int toIndex);
   
@@ -149,9 +148,6 @@ class DspObject : public MessageObject {
   
     /** List of all dsp objects to which this object connects at each outlet. */
     vector<list<ObjectLetPair> > outgoingDspConnections;
-  
-    /** The indication of what to do when <code>processDsp</code> is called. */
-    int codepath;
   
     /** The process function to use when acting on a message. */
     void (*processFunctionNoMessage)(DspObject *dspObject, int fromIndex, int toIndex);

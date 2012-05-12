@@ -259,7 +259,7 @@ class PdGraph : public DspObject {
     
     /**
      * A list of all <code>DspObject</code>s in this graph, in the order in which they should be
-     * called in the <code>processDsp()</code> loop.
+     * called in the <code>processFunction()</code> loop.
      */
     list<DspObject *> dspNodeList;
     

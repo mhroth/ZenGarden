@@ -198,10 +198,6 @@ void DspObject::receiveMessage(int inletIndex, PdMessage *message) {
 
 #pragma mark - processDsp
 
-void DspObject::processDsp() {
-
-}
-
 void DspObject::processFunctionDefaultNoMessage(DspObject *dspObject, int fromIndex, int toIndex) {
   dspObject->processDspWithIndex(fromIndex, toIndex);
 }
