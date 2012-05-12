@@ -31,17 +31,13 @@ class DspFilter : public DspObject {
   public:
     DspFilter(int numMessageInlets, PdGraph *graph);
     ~DspFilter();
-  
-    float *getDspBufferAtOutlet(int outletIndex) { return dspBufferAtOutlet[0]+2; }
-  
+
     void onInletConnectionUpdate(unsigned int inletIndex);
-  
-    bool canSetBufferAtOutlet(unsigned int outletIndex) { return false; }
   
   protected:  
     static void processFilter(DspObject *dspObject, int fromIndex, int toIndex);
     
-    float x1, x2;
+    float x1, x2, y1, y2;
     float b[5]; // filter coefficients
 };
 

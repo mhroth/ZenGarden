@@ -25,16 +25,8 @@
 #include "PdGraph.h"
 
 DspFilter::DspFilter(int numMessageInlets, PdGraph *graph) : DspObject(numMessageInlets, 1, 0, 1, graph) {
-  x1 = x2 = 0.0f;
+  x1 = x2 = y1 = y2 = 0.0f;
 
-  // resize the output buffer to be 2 samples larger
-  float *buffer = (float *) realloc(dspBufferAtOutlet[0], (graph->getBlockSize()+2)*sizeof(float));
-  if (buffer != dspBufferAtOutlet[0]) {
-    free(dspBufferAtOutlet[0]);
-    dspBufferAtOutlet[0] = (float *) valloc((graph->getBlockSize()+2)*sizeof(float));
-  }
-  memset(dspBufferAtOutlet[0], 0, (graph->getBlockSize()+2)*sizeof(float)); // clear the buffer
-  
   processFunction = &processFilter;
   processFunctionNoMessage = &processFilter;
 }
@@ -50,25 +42,27 @@ void DspFilter::onInletConnectionUpdate(unsigned int inletIndex) {
 void DspFilter::processFilter(DspObject *dspObject, int fromIndex, int toIndex) {
   DspFilter *d = reinterpret_cast<DspFilter *>(dspObject);
   
-  float buffer[toIndex+2]; // buffer may be longer than necessary, but that's ok
-  buffer[0] = d->x2; buffer[1] = d->x1; // new inlet buffer
-  memcpy(buffer+2, d->dspBufferAtInlet[0]+fromIndex, (toIndex-fromIndex)*sizeof(float));
+  int n = toIndex - fromIndex; // number of samples to process
+  float bufferIn[n+2]; // buffer may be longer than necessary, but that's ok
+  bufferIn[0] = d->x2; bufferIn[1] = d->x1; // new inlet buffer
+  memcpy(bufferIn+2, d->dspBufferAtInlet[0]+fromIndex, n*sizeof(float));
+  
+  float bufferOut[n+2];
+  bufferOut[0] = d->y2; bufferOut[1] = d->y1;
   
   #if __APPLE__
-  vDSP_deq22(buffer, 1, d->b, d->dspBufferAtOutlet[0]+fromIndex, 1, toIndex-fromIndex);
+  vDSP_deq22(bufferIn, 1, d->b, bufferOut, 1, n);
   #else
   int _toIndex = toIndex + 2;
   for (int i = fromIndex+2; i < _toIndex; ++i) {
-    d->dspBufferAtOutlet[0][i] = b[0]*buffer[i] + b[1]*buffer[i-1] + b[2]*buffer[i-2] -
-        b[3]*d->dspBufferAtOutlet[0][i-1] - b[4]*d->dspBufferAtOutlet[0][i-2];
+    d->dspBufferAtOutlet[0][i] = b[0]*bufferIn[i] + b[1]*bufferIn[i-1] + b[2]*bufferIn[i-2] -
+        b[3]*bufferOut[i-1] - b[4]*bufferOut[i-2];
   }
   #endif
   
-  // retain last input
-  d->x2 = buffer[toIndex];
-  d->x1 = buffer[toIndex+1];
+  memcpy(d->dspBufferAtOutlet[0]+fromIndex, bufferOut+2, n*sizeof(float));
   
-  // retain last output
-  d->dspBufferAtOutlet[0][0] = d->dspBufferAtOutlet[0][toIndex];
-  d->dspBufferAtOutlet[0][1] = d->dspBufferAtOutlet[0][toIndex+1];
+  // retain state
+  d->x2 = bufferIn[n]; d->x1 = bufferIn[n+1];
+  d->y2 = bufferOut[n]; d->y1 = bufferOut[n+1];
 }
