@@ -39,6 +39,8 @@ class DspAdc : public DspObject {
     // in the dsp list
     bool doesProcessAudio() { return false; }
   
+    bool canSetBufferAtOutlet(unsigned int outletIndex) { return false; }
+  
     float *getDspBufferAtOutlet(int outletIndex);
 };
 
