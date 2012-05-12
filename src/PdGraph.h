@@ -197,9 +197,7 @@ class PdGraph : public DspObject {
     // TODO(mhroth): these are not yet fully implemented
     void setValueForName(char *name, float constant);
     float getValueForName(char *name);
-  
-    void processDsp();
-  
+
     unsigned int getNumInlets();
     unsigned int getNumOutlets();
   
@@ -221,6 +219,8 @@ class PdGraph : public DspObject {
     BufferPool *getBufferPool() { return bufferPool; }
   
   private:
+    static void processGraph(DspObject *dspObject, int fromIndex, int toIndex);
+  
     /** Create a new object based on its initialisation string. */
     MessageObject *newObject(char *objectType, char *objectLabel, PdMessage *initMessage, PdGraph *graph);
   

@@ -53,6 +53,7 @@ PdGraph::PdGraph(PdMessage *initMessage, PdGraph *parentGraph, PdContext *contex
   isAttachedToContext = false;
   switched = true; // graphs are switched on by default
   bufferPool = new BufferPool(blockSizeInt);
+  processFunction = &processGraph;
       
   // initialise the graph arguments
   this->graphId = graphId;
@@ -413,8 +414,10 @@ void PdGraph::receiveMessage(int inletIndex, PdMessage *message) {
   inlet->receiveMessage(0, message);
 }
 
-void PdGraph::processDsp() {
-  if (switched) {
+void PdGraph::processGraph(DspObject *dspObject, int fromIndex, int toIndex) {
+  PdGraph *d = reinterpret_cast<PdGraph *>(dspObject);
+  
+  if (d->switched) {
     // when inlets are processed, they will resolve their buffers and everything will proceed as normal
     
     // process all dsp objects
@@ -422,9 +425,9 @@ void PdGraph::processDsp() {
     
     // TODO(mhroth): iterate depending on local blocksize relative to parent
     // execute all nodes which process audio
-    for (list<DspObject *>::iterator it = dspNodeList.begin(); it != dspNodeList.end(); ++it) {
+    for (list<DspObject *>::iterator it = d->dspNodeList.begin(); it != d->dspNodeList.end(); ++it) {
       DspObject *dspObject = *it;
-      dspObject->processFunction(dspObject, 0, blockSizeInt);
+      dspObject->processFunction(dspObject, 0, d->blockSizeInt);
     }
   }
 }

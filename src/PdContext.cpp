@@ -171,12 +171,12 @@ void PdContext::process(float *inputBuffers, float *outputBuffers) {
   
   switch (graphList.size()) {
     case 0: break;
-    case 1: graphList.front()->processDsp(); break;
+    case 1: graphList.front()->processFunction(graphList.front(), 0, 0); break;
     default: {
       int numGraphs = graphList.size();
       PdGraph **graph = &graphList.front();
       for (int i = 0; i < numGraphs; ++i) {
-        graph[i]->processDsp();
+        graph[i]->processFunction(graph[i], 0, 0);
       }
     }
   }
