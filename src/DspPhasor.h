@@ -38,13 +38,17 @@ class DspPhasor : public DspObject {
   
     void onInletConnectionUpdate(unsigned int inletIndex);
 
-  protected:
-    void processMessage(int inletIndex, PdMessage *message);
-
   private:
+    static void processSignal(DspObject *dspObject, int fromIndex, int toIndex);
     static void processScalar(DspObject *dspObject, int fromIndex, int toIndex);
+    void processMessage(int inletIndex, PdMessage *message);
   
     float frequency;
+  
+    #if __SSE3__
+    __m64 inc; // the amount by which to increment indicies every step
+    __m64 indicies; // the table lookup indicies
+    #endif
 };
 
 #endif // _DSP_PHASOR_H_
