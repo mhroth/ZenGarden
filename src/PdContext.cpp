@@ -55,9 +55,9 @@ PdContext::PdContext(int numInputChannels, int numOutputChannels, int blockSize,
   
   numBytesInInputBuffers = blockSize * numInputChannels * sizeof(float);
   numBytesInOutputBuffers = blockSize * numOutputChannels * sizeof(float);
-  globalDspInputBuffers = (float *) valloc(numBytesInInputBuffers);
+  globalDspInputBuffers = ALLOC_ALIGNED_BUFFER(numBytesInInputBuffers);
   memset(globalDspInputBuffers, 0, numBytesInInputBuffers);
-  globalDspOutputBuffers = (float *) valloc(blockSize * numOutputChannels * sizeof(float));
+  globalDspOutputBuffers = ALLOC_ALIGNED_BUFFER(blockSize * numOutputChannels * sizeof(float));
   memset(globalDspOutputBuffers, 0, numBytesInOutputBuffers);
   
   sendController = new MessageSendController(this);
@@ -70,8 +70,8 @@ PdContext::PdContext(int numInputChannels, int numOutputChannels, int blockSize,
 }
 
 PdContext::~PdContext() {
-  free(globalDspInputBuffers);
-  free(globalDspOutputBuffers);
+  FREE_ALIGNED_BUFFER(globalDspInputBuffers);
+  FREE_ALIGNED_BUFFER(globalDspOutputBuffers);
   
   delete messageCallbackQueue;
   delete sendController;

@@ -21,11 +21,12 @@
  */
 
 #include "BufferPool.h"
+#include "DspObject.h"
 
 BufferPool::BufferPool(unsigned short size) {
   bufferSize = size;
  
-  zeroBuffer = (float *) valloc(bufferSize * sizeof(float));
+  zeroBuffer = ALLOC_ALIGNED_BUFFER(bufferSize * sizeof(float));
   memset(zeroBuffer, 0, bufferSize*sizeof(float)); // zero the zero buffer!
 }
 
@@ -35,7 +36,7 @@ BufferPool::~BufferPool() {
     free((*it).first);
   }
   while (!pool.empty()) {
-    free(pool.top());
+    FREE_ALIGNED_BUFFER(pool.top());
     pool.pop();
   }
   free(zeroBuffer);
@@ -47,7 +48,7 @@ float *BufferPool::getBuffer(unsigned int numDependencies) {
     buffer = pool.top();
     pool.pop();
   } else {
-    buffer = (float *) valloc(bufferSize * sizeof(float));
+    buffer = ALLOC_ALIGNED_BUFFER(bufferSize * sizeof(float));
   }
   reserved.push_back(std::pair<float *, unsigned int>(buffer, numDependencies));
 //  printf("%i/%i buffer used.\n", getNumReservedBuffers(), getNumTotalBuffers());

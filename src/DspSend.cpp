@@ -30,7 +30,7 @@ MessageObject *DspSend::newObject(PdMessage *initMessage, PdGraph *graph) {
 DspSend::DspSend(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0, 0, graph) {
   if (initMessage->isSymbol(0)) {
     name = StaticUtils::copyString(initMessage->getSymbol(0));
-    dspBufferAtOutlet[0] = (float *) valloc(graph->getBlockSize()*sizeof(float));
+    dspBufferAtOutlet[0] = ALLOC_ALIGNED_BUFFER(graph->getBlockSize()*sizeof(float));
   } else {
     name = NULL;
     graph->printErr("send~ not initialised with a name.");
@@ -40,7 +40,7 @@ DspSend::DspSend(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0, 0,
 
 DspSend::~DspSend() {
   free(name);
-  free(dspBufferAtOutlet[0]);
+  FREE_ALIGNED_BUFFER(dspBufferAtOutlet[0]);
 }
 
 /*

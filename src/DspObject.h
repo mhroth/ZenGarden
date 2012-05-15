@@ -27,6 +27,19 @@
 #include "ArrayArithmetic.h"
 #include "MessageObject.h"
 
+#if __SSE__
+#define ALLOC_ALIGNED_BUFFER(_numBytes) (float *) _mm_malloc(_numBytes, 16);
+#else
+// NOTE(mhroth): valloc seems to work well, but is deprecated!
+#define ALLOC_ALIGNED_BUFFER(_numBytes) (float *) valloc(_numBytes);
+#endif
+
+#if __SSE__
+#define FREE_ALIGNED_BUFFER(_buffer) _mm_free(_buffer);
+#else
+#define FREE_ALIGNED_BUFFER(_buffer) free(_buffer);
+#endif
+
 typedef std::pair<PdMessage *, unsigned int> MessageLetPair;
 
 /**

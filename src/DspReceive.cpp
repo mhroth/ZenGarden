@@ -30,7 +30,7 @@ MessageObject *DspReceive::newObject(PdMessage *initMessage, PdGraph *graph) {
 DspReceive::DspReceive(PdMessage *initMessage, PdGraph *graph) : DspObject(1, 0, 0, 1, graph) {
   if (initMessage->isSymbol(0)) {
     name = StaticUtils::copyString(initMessage->getSymbol(0));
-    dspBufferAtOutlet[0] = (float *) valloc(graph->getBlockSize() * sizeof(float));
+    dspBufferAtOutlet[0] = ALLOC_ALIGNED_BUFFER(graph->getBlockSize() * sizeof(float));
   } else {
     name = NULL;
     graph->printErr("receive~ not initialised with a name.");
@@ -44,7 +44,7 @@ DspReceive::DspReceive(PdMessage *initMessage, PdGraph *graph) : DspObject(1, 0,
 
 DspReceive::~DspReceive() {
   free(name);
-  free(dspBufferAtOutlet[0]);
+  FREE_ALIGNED_BUFFER(dspBufferAtOutlet[0]);
 }
 
 void DspReceive::processMessage(int inletIndex, PdMessage *message) {

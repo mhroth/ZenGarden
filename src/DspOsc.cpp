@@ -43,7 +43,7 @@ DspOsc::DspOsc(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, g
   phase = 0.0f;
   refCount++;
   if (cos_table == NULL) {
-    cos_table = (float *) valloc(65536 * sizeof(float));
+    cos_table = ALLOC_ALIGNED_BUFFER(65536 * sizeof(float));
     for (int i = 0; i < 65536; i++) {
       cos_table[i] = cosf(2.0f * M_PI * ((float) i) / 65536.0f);
     }
@@ -55,7 +55,7 @@ DspOsc::DspOsc(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, g
 
 DspOsc::~DspOsc() {
   if (--refCount == 0) {
-    free(cos_table);
+    FREE_ALIGNED_BUFFER(cos_table);
     cos_table = NULL;
   }
 }

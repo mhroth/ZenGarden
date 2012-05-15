@@ -43,19 +43,18 @@ void DspFilter::processFilter(DspObject *dspObject, int fromIndex, int toIndex) 
   DspFilter *d = reinterpret_cast<DspFilter *>(dspObject);
   
   int n = toIndex - fromIndex; // number of samples to process
-  float bufferIn[n+2]; // buffer may be longer than necessary, but that's ok
-  bufferIn[0] = d->x2; bufferIn[1] = d->x1; // new inlet buffer
+  float bufferIn[n+2]; // new inlet buffer
   memcpy(bufferIn+2, d->dspBufferAtInlet[0]+fromIndex, n*sizeof(float));
   
-  float bufferOut[n+2];
+  float bufferOut[n+2]; // new outlet buffer
   bufferOut[0] = d->y2; bufferOut[1] = d->y1;
   
   #if __APPLE__
   vDSP_deq22(bufferIn, 1, d->b, bufferOut, 1, n);
   #else
-  int _toIndex = toIndex + 2;
-  for (int i = fromIndex+2; i < _toIndex; ++i) {
-    d->dspBufferAtOutlet[0][i] = b[0]*bufferIn[i] + b[1]*bufferIn[i-1] + b[2]*bufferIn[i-2] -
+  int _toIndex = n + 2;
+  for (int i = 2; i < _toIndex; ++i) {
+    bufferOut[i] = b[0]*bufferIn[i] + b[1]*bufferIn[i-1] + b[2]*bufferIn[i-2] -
         b[3]*bufferOut[i-1] - b[4]*bufferOut[i-2];
   }
   #endif
