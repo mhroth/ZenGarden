@@ -75,6 +75,11 @@ public class DspObjectTest implements ZenGardenListener {
   }
   
   @Test
+  public void testDspPhasor() {
+    genericDspTest("DspPhasor.pd");
+  }
+  
+  @Test
   public void testDspSendReceive() {
     genericDspTest("DspSendReceive.pd");
   }
