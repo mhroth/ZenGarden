@@ -23,21 +23,17 @@
 #include "DspPhasor.h"
 #include "PdGraph.h"
 
+#define SHORT_TO_FLOAT_RATIO 0.0000152590219f // == 1/(2^16 - 1)
+
 MessageObject *DspPhasor::newObject(PdMessage *initMessage, PdGraph *graph) {
   return new DspPhasor(initMessage, graph);
 }
 
-DspPhasor::DspPhasor(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {
-  frequency = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
+DspPhasor::DspPhasor(PdMessage *initMessage, PdGraph *graph) : DspObject(2, 2, 0, 1, graph) {  
+  PdMessage *message = PD_MESSAGE_ON_STACK(1);
+  message->initWithTimestampAndFloat(0.0, initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f);
+  processMessage(0, message);
 
-  #if __SSE3__
-  sampRatio = 65536.0f / graph->getSampleRate();
-  float sampleStep = frequency * sampRatio;
-  short s = (short) sampleStep; // signed as step size may be negative as well!
-  inc = _mm_set_pi16(4*s, 4*s, 4*s, 4*s);
-  indicies = _mm_set_pi16(3*s, 2*s, s, 0);
-  #endif // __SSE3__
-  
   processFunction = &processScalar;
   processFunctionNoMessage = &processScalar;
 }
@@ -62,9 +58,9 @@ void DspPhasor::processMessage(int inletIndex, PdMessage *message) {
       if (message->isFloat(0)) {
         frequency = message->getFloat(0);
         #if __SSE3__
-        float sampleStep = frequency * sampRatio;
+        float sampleStep = frequency * 65536.0f / graph->getSampleRate();
         short s = (short) sampleStep; // signed as step size may be negative as well!
-        inc = _mm_set_pi16(4*s, 4*s, 4*s, 4*s);
+        inc = _mm_set1_pi16(4*s);
         #endif // __SSE3__
       }
       break;
@@ -84,18 +80,17 @@ void DspPhasor::processSignal(DspObject *dspObject, int fromIndex, int n4) {
   float *input = d->dspBufferAtInlet[0];
   float *output = d->dspBufferAtOutlet[0];
   __m64 indicies = d->indicies;
-  #define SHORT_TO_FLOAT_RATIO 0.0000152590219f // == 1/(2^16 - 1)
-  __m128 constVec = _mm_set1_ps(SHORT_TO_FLOAT_RATIO);
-  __m128 sampVec = _mm_set1_ps(d->sampRatio);
+  static __m128 constVec = _mm_set1_ps(SHORT_TO_FLOAT_RATIO);
+  static __m128 sampVec = _mm_set1_ps(65536.0f/d->graph->getSampleRate());
 
-  // process are many 4-tuples as possible in the remaining array length
   while (n4) {
-    // conver signal input to sample increments
+    // convert signal input to sample increments
     // (short) (input * (65536.0f/d->graph->getSampleRate()))
     __m64 inc = _mm_cvtps_pi16(_mm_mul_ps(_mm_load_ps(input),sampVec));
     
     // cumulative summation of increments
-    inc = _mm_add_pi16(_mm_add_pi16(_mm_add_pi16(inc,_mm_slli_si64(inc,16)),_mm_slli_si64(inc,32)),_mm_slli_si64(inc,48));
+    inc = _mm_add_pi16(_mm_add_pi16(_mm_add_pi16(inc,_mm_slli_si64(inc,16)),
+        _mm_slli_si64(inc,32)),_mm_slli_si64(inc,48));
     
     // add increments to index
     indicies = _mm_add_pi16(_mm_set1_pi16(_mm_extract_pi16(indicies,3)), inc);
@@ -126,7 +121,7 @@ void DspPhasor::processScalar(DspObject *dspObject, int fromIndex, int toIndex) 
   float *output = d->dspBufferAtOutlet[0]+fromIndex;
   __m64 inc = d->inc;
   short s = _mm_extract_pi16(inc,0) >> 2; // == / 4 in order to recover original step size
-  __m128 constVec = _mm_set1_ps(SHORT_TO_FLOAT_RATIO);
+  static __m128 constVec = _mm_set1_ps(SHORT_TO_FLOAT_RATIO);
   unsigned short idx;
   
   // ensure that input and output vectors are 16-byte aligned
@@ -145,6 +140,7 @@ void DspPhasor::processScalar(DspObject *dspObject, int fromIndex, int toIndex) 
     default: indicies = d->indicies; break;
   }
   
+  // compute as many 4-tuples as possible
   int n4 = n & 0xFFFFFFFC; // we can process 4 indicies at a time
   while (n4) {
     // output = ((float) indicies) * (1/(2^16-1))
@@ -154,6 +150,7 @@ void DspPhasor::processScalar(DspObject *dspObject, int fromIndex, int toIndex) 
     n4 -= 4;
   }
   
+  // finish the remaining (up to 3) samples
   switch (n & 0x3) {
     case 3: {
       idx = _mm_extract_pi16(d->indicies,3);
