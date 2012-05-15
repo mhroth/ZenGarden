@@ -44,6 +44,7 @@ void DspFilter::processFilter(DspObject *dspObject, int fromIndex, int toIndex) 
   
   int n = toIndex - fromIndex; // number of samples to process
   float bufferIn[n+2]; // new inlet buffer
+  bufferIn[0] = d->x2; bufferIn[1] = d->x1;
   memcpy(bufferIn+2, d->dspBufferAtInlet[0]+fromIndex, n*sizeof(float));
   
   float bufferOut[n+2]; // new outlet buffer
