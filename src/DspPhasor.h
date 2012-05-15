@@ -46,6 +46,7 @@ class DspPhasor : public DspObject {
     float frequency;
   
     #if __SSE3__
+    float sampRatio; // cache the ratio between sample increments and local sample rate (65536/sampleRate)
     __m64 inc; // the amount by which to increment indicies every step
     __m64 indicies; // the table lookup indicies
     #endif
