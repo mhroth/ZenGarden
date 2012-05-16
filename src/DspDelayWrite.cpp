@@ -47,7 +47,7 @@ DspDelayWrite::DspDelayWrite(PdMessage *initMessage, PdGraph *graph) : DspObject
     bufferLength = 0;
     name = NULL;
   }
-  processFunction = processSignal;
+  processFunction = &processSignal;
 }
 
 DspDelayWrite::~DspDelayWrite() {
