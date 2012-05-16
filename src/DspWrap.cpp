@@ -35,24 +35,29 @@ DspWrap::~DspWrap() {
   // nothing to do
 }
 
-void DspWrap::processSignal(DspObject *dspObject, int fromIndex, int toIndex) {
+void DspWrap::processSignal(DspObject *dspObject, int fromIndex, int n4) {
   DspWrap *d = reinterpret_cast<DspWrap *>(dspObject);
   // as no messages are received and there is only one inlet, processDsp does not need much of the
   // infrastructure provided by DspObject
   
-  #if __APPLE__
-  float one = 1.0f;
-  // get fractional part of all input
-  vDSP_vfrac(d->dspBufferAtInlet[0], 1, d->dspBufferAtOutlet[0], 1, toIndex);
-  // add one to all fractions (making negative fractions positive)
-  vDSP_vsadd(d->dspBufferAtOutlet[0], 1, &one, d->dspBufferAtOutlet[0], 1, toIndex);
-  // take fractional part again, removing positive results greater than one
-  vDSP_vfrac(d->dspBufferAtOutlet[0], 1, d->dspBufferAtOutlet[0], 1, toIndex);
+  #if __SSE4__
+  float *input = d->dspBufferAtInlet[0];
+  float *output = d->dspBufferAtOutlet[0];
+  while (n4) {
+    __m128 in = _mm_load_ps(input);
+    _mm_store1_ps(output, _mm_sub_ps(in, mm_floor_ps(in)));
+    
+    input += 4;
+    output += 4;
+    n4 -= 4;
+  }
   #else
-  float *buffer = dspBufferAtInlet[0];
-  for (int i = fromIndex; i < toIndex; i++) {
-    float f = buffer[i];
-    dspBufferAtOutlet[0][i] = f - floorf(f);
+  // NOTE(mhroth): amazingly, this seemingly ghetto code is pretty fast. Compiler autovectorises it.
+  float *input = d->dspBufferAtInlet[0];
+  float *output = d->dspBufferAtOutlet[0];
+  for (int i = 0; i < n4; i+=4) {
+    float a = input[i]; float b = input[i+1]; float c = input[i+3]; float d = input[i+4];
+    output[i]=a-floorf(a); output[i+1]=b-floorf(b); output[i+2]=c-floorf(c); output[i+3]=d-floorf(d);
   }
   #endif
 }
