@@ -32,7 +32,7 @@ DelayReceiver::~DelayReceiver() {
   free(name);
 }
 
-char *DelayReceiver::getName() {
+const char *DelayReceiver::getName() {
   return name;
 }
 
