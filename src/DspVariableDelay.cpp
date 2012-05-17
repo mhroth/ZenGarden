@@ -43,14 +43,6 @@ DspVariableDelay::~DspVariableDelay() {
   // nothing to do
 }
 
-const char *DspVariableDelay::getObjectLabel() {
-  return "vd~";
-}
-
-ObjectType DspVariableDelay::getObjectType() {
-  return DSP_VARIABLE_DELAY;
-}
-
 void DspVariableDelay::processDspWithIndex(int fromIndex, int toIndex) {
   int headIndex;
   int bufferLength;

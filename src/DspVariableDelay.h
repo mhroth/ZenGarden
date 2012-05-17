@@ -38,8 +38,9 @@ class DspVariableDelay : public DelayReceiver {
     DspVariableDelay(PdMessage *initMessage, PdGraph *graph);
     ~DspVariableDelay();
   
-    static const char *getObjectLabel();
-    ObjectType getObjectType();
+    static const char *getObjectLabel() { return "vd~"; }
+    string toString() { return string(getObjectLabel()) + " " + string(name); }
+    ObjectType getObjectType() { return DSP_VARIABLE_DELAY; }
     
   private:
     void processDspWithIndex(int fromIndex, int toIndex);
