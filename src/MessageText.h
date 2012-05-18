@@ -33,10 +33,10 @@ class MessageText : public MessageObject {
     MessageText(PdMessage *initMessage, PdGraph *graph);
     ~MessageText();
     
-    static const char *getObjectLabel();
+    static const char *getObjectLabel() { return "text"; }
     string toString();
   
-    char *getComment();
+    const char *getComment() { return comment; }
   
   private:
     char *comment;

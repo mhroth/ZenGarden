@@ -39,7 +39,7 @@ BufferPool::~BufferPool() {
     FREE_ALIGNED_BUFFER(pool.top());
     pool.pop();
   }
-  free(zeroBuffer);
+  FREE_ALIGNED_BUFFER(zeroBuffer);
 }
 
 float *BufferPool::getBuffer(unsigned int numDependencies) {
@@ -73,6 +73,20 @@ void BufferPool::releaseBuffer(float *buffer) {
   // if the buffer is not in the reserved pool, nothing changes. Untracked buffers are left alone.
 }
 
+void BufferPool::reserveBuffer(float *buffer, unsigned int reserveCount) {
+  if (buffer == zeroBuffer) return; // no need to reserve the zero buffer
+  
+  for (list<std::pair<float *, unsigned int> >::iterator it = reserved.begin(); it != reserved.end(); ++it) {
+    if ((*it).first == buffer) {
+      (*it).second += reserveCount;
+      return;
+    }
+  }
+  
+  printf("Attempt to reserve unreserved buffer %p +%i.\n  This may be ok if the buffer is global such as an adc~ input buffer.\n", buffer, reserveCount);
+}
+
+/*
 void BufferPool::resizeBuffers(unsigned int newBufferSize) {
   for (list<std::pair<float *, unsigned int> >::iterator it = reserved.begin(); it != reserved.end(); ++it) {
     float *buffer = (*it).first;
@@ -86,3 +100,4 @@ void BufferPool::resizeBuffers(unsigned int newBufferSize) {
   
   // TODO(mhroth): resize all buffers in pool
 }
+*/

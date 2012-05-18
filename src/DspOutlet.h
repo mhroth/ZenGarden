@@ -42,22 +42,19 @@ class DspOutlet : public DspObject {
     DspOutlet(PdGraph *graph);
     ~DspOutlet();
   
-    static const char *getObjectLabel();
-    string toString();
-    ObjectType getObjectType();
+    static const char *getObjectLabel() { return "outlet~"; }
+    string toString() { return string(getObjectLabel()); }
+    ObjectType getObjectType() { return DSP_OUTLET; }
 
-    bool isLeafNode();
+    bool isLeafNode() { return true; }
   
     // [outlet~] does nothing with audio
     bool doesProcessAudio() { return false; }
   
     float *getDspBufferAtOutlet(int outletIndex);
   
+    void setDspBufferAtInlet(float *buffer, unsigned int inletIndex);
     bool canSetBufferAtOutlet(unsigned int outletIndex) { return false; }
-    void setDspBufferAtOutlet(float *buffer, unsigned int outletIndex);
-  
-  protected:
-    void onDspBufferAtInletUpdate(float *buffer, unsigned int inletIndex);
 };
 
 #endif // _DSP_OUTLET_H_

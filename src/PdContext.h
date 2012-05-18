@@ -29,6 +29,7 @@
 #include "PdGraph.h"
 #include "ZGCallbackFunction.h"
 
+class BufferPool;
 class DspCatch;
 class DelayReceiver;
 class DspDelayWrite;
@@ -207,6 +208,8 @@ class PdContext {
     /** Unregister an object label. */
     void unregisterExternalObject(const char *objectLabel);
   
+    BufferPool *getBufferPool() { return bufferPool; }
+  
   private:
     /** Returns <code>true</code> if the graph was successfully configured. <code>false</code> otherwise. */
     bool configureEmptyGraphWithParser(PdGraph *graph, PdFileParser *fileParser);
@@ -270,6 +273,8 @@ class PdContext {
     list<TableReceiverInterface *> tableReceiverList;
   
     ObjectFactoryMap *objectFactoryMap;
+  
+    BufferPool *bufferPool;
 };
 
 #endif // _PD_CONTEXT_H_

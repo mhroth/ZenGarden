@@ -52,7 +52,6 @@ PdGraph::PdGraph(PdMessage *initMessage, PdGraph *parentGraph, PdContext *contex
   // all graphs start out unattached to any context, though they exist in a context
   isAttachedToContext = false;
   switched = true; // graphs are switched on by default
-  bufferPool = new BufferPool(blockSizeInt);
   processFunction = &processGraph;
       
   // initialise the graph arguments
@@ -68,7 +67,6 @@ PdGraph::PdGraph(PdMessage *initMessage, PdGraph *parentGraph, PdContext *contex
 PdGraph::~PdGraph() {
   graphArguments->freeMessage();
   delete declareList;
-  delete bufferPool;
 
   // remove all implicit +~~ objects
   for (list<DspObject *>::iterator it = dspNodeList.begin(); it != dspNodeList.end(); ++it) {
@@ -557,9 +555,7 @@ void PdGraph::addConnectionToObjectFromOutlet(MessageObject *messageObject, int 
       dspOutlet->addConnectionToObjectFromOutlet(messageObject, inletIndex, 0);
       break;
     }
-    default: {
-      break;
-    }
+    default: break;
   }
 }
 
@@ -635,6 +631,7 @@ list<DspObject *> PdGraph::getProcessOrder() {
         default: break;
       }
     }
+    computeLocalDspProcessOrder();
     if (doesProcessAudio()) processOrder.push_back(this);
     return processOrder;
   }
@@ -685,6 +682,7 @@ void PdGraph::computeLocalDspProcessOrder() {
   // for all leaf nodes, order the tree
   for (list<MessageObject *>::iterator it = leafNodeList.begin(); it != leafNodeList.end(); ++it) {
     MessageObject *object = *it;
+    printStd("%s", object->toString().c_str());
     list<DspObject *> processSubList = object->getProcessOrder();
     dspNodeList.splice(dspNodeList.end(), processSubList);
   }
@@ -834,4 +832,8 @@ PdContext *PdGraph::getContext() {
 
 list<MessageObject *> PdGraph::getNodeList() {
   return nodeList;
+}
+
+BufferPool *PdGraph::getBufferPool() {
+  return context->getBufferPool();
 }

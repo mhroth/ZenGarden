@@ -20,7 +20,6 @@
  *
  */
 
-#include "BufferPool.h"
 #include "DspOutlet.h"
 #include "PdGraph.h"
 
@@ -36,31 +35,16 @@ DspOutlet::~DspOutlet() {
   // nothing to do
 }
 
-const char *DspOutlet::getObjectLabel() {
-  return "outlet~";
-}
-
-string DspOutlet::toString() {
-  return string(getObjectLabel());
-}
-
-ObjectType DspOutlet::getObjectType() {
-  return DSP_OUTLET;
-}
-
-bool DspOutlet::isLeafNode() {
-  return true;
-}
-
-void DspOutlet::setDspBufferAtOutlet(float *buffer, unsigned int outletIndex) {
-  // nothing to do
-}
-
 float *DspOutlet::getDspBufferAtOutlet(int outletIndex) {
   return (dspBufferAtInlet[0] == NULL) ? graph->getBufferPool()->getZeroBuffer() : dspBufferAtInlet[0];
 }
 
-void DspOutlet::onDspBufferAtInletUpdate(float *buffer, unsigned int inletIndex) {
+void DspOutlet::setDspBufferAtInlet(float *buffer, unsigned int inletIndex) {
+  DspObject::setDspBufferAtInlet(buffer, inletIndex);
+  
+  // additionally reserve buffer to account for outgoing connections
+  graph->getBufferPool()->reserveBuffer(buffer, outgoingDspConnections[0].size());
+  
   // when the dsp buffer updates at a given inlet, inform all receiving objects
   list<ObjectLetPair> dspConnections = outgoingDspConnections[0];
   for (list<ObjectLetPair>::iterator it = dspConnections.begin(); it != dspConnections.end(); ++it) {

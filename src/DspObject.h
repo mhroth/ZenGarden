@@ -25,9 +25,11 @@
 
 #include <queue>
 #include "ArrayArithmetic.h"
+#include "BufferPool.h"
 #include "MessageObject.h"
 
 #if __SSE__
+// allocate memory aligned to 16-bytes memory boundary
 #define ALLOC_ALIGNED_BUFFER(_numBytes) (float *) _mm_malloc(_numBytes, 16);
 #else
 // NOTE(mhroth): valloc seems to work well, but is deprecated!

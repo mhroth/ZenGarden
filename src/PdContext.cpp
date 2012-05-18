@@ -20,6 +20,7 @@
  *
  */
 
+#include "BufferPool.h"
 #include "MessageSendController.h"
 #include "ObjectFactoryMap.h"
 #include "PdContext.h"
@@ -52,6 +53,7 @@ PdContext::PdContext(int numInputChannels, int numOutputChannels, int blockSize,
   messageCallbackQueue = new OrderedMessageQueue();
   objectFactoryMap = new ObjectFactoryMap();
   globalGraphId = 0;
+  bufferPool = new BufferPool(blockSize);
   
   numBytesInInputBuffers = blockSize * numInputChannels * sizeof(float);
   numBytesInOutputBuffers = blockSize * numOutputChannels * sizeof(float);
@@ -76,6 +78,7 @@ PdContext::~PdContext() {
   delete messageCallbackQueue;
   delete sendController;
   delete objectFactoryMap;
+  delete bufferPool;
   
   // delete all of the PdGraphs in the graph list
   for (int i = 0; i < graphList.size(); i++) {

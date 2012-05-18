@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010,2011,2011 Reality Jockey, Ltd.
+ *  Copyright 2010,2011,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -36,10 +36,6 @@ DspInlet::~DspInlet() {
   // nothing to do
 }
 
-ObjectType DspInlet::getObjectType() {
-  return DSP_INLET;
-}
-
 list<DspObject *> DspInlet::getProcessOrder() {
   // inlet~ does not process audio, so it always returns an empty list
   return list<DspObject *>();
@@ -49,18 +45,19 @@ list<DspObject *> DspInlet::getProcessOrderFromInlet() {
   return DspObject::getProcessOrder();
 }
 
-void DspInlet::onDspBufferAtInletUpdate(float *buffer, unsigned int inletIndex) {
+void DspInlet::setDspBufferAtInlet(float *buffer, unsigned int inletIndex) {
+  DspObject::setDspBufferAtInlet(buffer, inletIndex);
+  
+  // additionally reserve this buffer in order to account for outgoing connections
+  graph->getBufferPool()->reserveBuffer(buffer, outgoingDspConnections[0].size());
+  
   // when the dsp buffer updates at a given inlet, inform all receiving objects
-  list<ObjectLetPair> dspConnections = outgoingDspConnections[0];
-  for (list<ObjectLetPair>::iterator it = dspConnections.begin(); it != dspConnections.end(); ++it) {
+  for (list<ObjectLetPair>::iterator it = outgoingDspConnections[0].begin();
+      it != outgoingDspConnections[0].end(); ++it) {
     ObjectLetPair letPair = *it;
     DspObject *dspObject = reinterpret_cast<DspObject *>(letPair.first);
     dspObject->setDspBufferAtInlet(dspBufferAtInlet[0], letPair.second);
   }
-}
-
-void DspInlet::setDspBufferAtOutlet(float *buffer, unsigned int outletIndex) {
-  // nothing to do
 }
 
 float *DspInlet::getDspBufferAtOutlet(int outletIndex) {

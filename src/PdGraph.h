@@ -23,10 +23,10 @@
 #ifndef _PD_GRAPH_H_
 #define _PD_GRAPH_H_
 
-#include "BufferPool.h"
 #include "DspObject.h"
 #include "OrderedMessageQueue.h"
 
+class BufferPool;
 class DeclareList;
 class DelayReceiver;
 class DspCatch;
@@ -145,6 +145,10 @@ class PdGraph : public DspObject {
     /** (Re-)Computes the local tree and node processing ordering for dsp nodes. */
     void computeLocalDspProcessOrder();
   
+    /**
+     * Get the process order as if this object (i.e. graph) were an atomic object. The internal
+     * process order is not changed.
+     */
     list<DspObject *> getProcessOrder();
     bool isLeafNode();
   
@@ -216,7 +220,7 @@ class PdGraph : public DspObject {
     /** Unlocks the context if this graph is attached. */
     void unlockContextIfAttached();
   
-    BufferPool *getBufferPool() { return bufferPool; }
+    BufferPool *getBufferPool();
   
   private:
     static void processGraph(DspObject *dspObject, int fromIndex, int toIndex);
@@ -271,8 +275,6 @@ class PdGraph : public DspObject {
   
     /** A global list of all declared directories (-path and -stdpath) */
     DeclareList *declareList;
-  
-    BufferPool *bufferPool;
 };
 
 #endif // _PD_GRAPH_H_

@@ -41,7 +41,7 @@ class DspInlet : public DspObject {
   
     static const char *getObjectLabel() { return "inlet~"; }
     string toString() { return string(getObjectLabel()); }
-    ObjectType getObjectType();
+    ObjectType getObjectType() { return DSP_INLET; }
   
     list<DspObject *> getProcessOrder();
     list<DspObject *> getProcessOrderFromInlet();
@@ -49,12 +49,9 @@ class DspInlet : public DspObject {
     // [inlet~] does nothing with audio
     bool doesProcessAudio() { return false; }
   
+    void setDspBufferAtInlet(float *buffer, unsigned int inletIndex);
     bool canSetBufferAtOutlet(unsigned int outletIndex) { return false; }
-    void setDspBufferAtOutlet(float *buffer, unsigned int outletIndex);
     float *getDspBufferAtOutlet(int outletIndex);
-  
-  private:
-    void onDspBufferAtInletUpdate(float *buffer, unsigned int inletIndex);
 };
 
 #endif // _DSP_INLET_H_
