@@ -442,7 +442,7 @@ void PdGraph::addConnection(MessageObject *fromObject, int outletIndex, MessageO
   // In theory this function should check to see if a reordering is even necessary and then only make
   // the appropriate changes. Usually a complete reevaluation shouldn't be necessary, and otherwise
   // the use of a linked list to store the node list should make the reordering fast.
-  //  computeLocalDspProcessOrder(); 
+  //  computeDeepLocalDspProcessOrder(); 
   
   unlockContextIfAttached();
 }
@@ -631,7 +631,7 @@ list<DspObject *> PdGraph::getProcessOrder() {
         default: break;
       }
     }
-    computeLocalDspProcessOrder();
+    computeDeepLocalDspProcessOrder();
     if (doesProcessAudio()) processOrder.push_back(this);
     return processOrder;
   }
@@ -648,7 +648,7 @@ bool PdGraph::isLeafNode() {
   return true;
 }
 
-void PdGraph::computeLocalDspProcessOrder() {
+void PdGraph::computeDeepLocalDspProcessOrder() {
   lockContextIfAttached();
 
   /* clear/reset dspNodeList

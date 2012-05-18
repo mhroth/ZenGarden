@@ -41,6 +41,7 @@ class BufferPool {
     /** The reference count of the buffer is reduced by one, possibly made available for other objects. */
     void releaseBuffer(float *buffer);
   
+    /** Add to the reserve cound of the given buffer. */
     void reserveBuffer(float *buffer, unsigned int reserveCount);
   
     /** Resizes all buffers in the pool (reserved and available). */

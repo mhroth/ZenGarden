@@ -44,9 +44,8 @@ class DspDelayRead : public DelayReceiver {
     void onInletConnectionUpdate(unsigned int inletIndex);
   
   private:
-    static void processSignal(DspObject *dspObject, int fromIndex, int toIndex);
-  
     void processMessage(int inletIndex, PdMessage *message);
+    static void processSignal(DspObject *dspObject, int fromIndex, int toIndex);
   
     float delayInSamples;
 };

@@ -218,9 +218,8 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
         graph->addObject(canvasX, canvasY, messageObject);
       } else if (!strcmp(objectType, "restore")) {
         // the graph is finished being defined
-        // first compute the process order of this graph
-//        graph->computeLocalDspProcessOrder();
         // pop the graph stack to the parent graph
+        // the process order will be computed by the parent graph
         graph = graph->getParentGraph();
       } else if (!strcmp(objectType, "text")) {
         float canvasX = (float) atoi(strtok(NULL, " "));
@@ -275,7 +274,7 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
   
   // force dsp ordering as the last step
   // some graphs may not have any connections (only abstractions), and thus may appear to do nothing
-  graph->computeLocalDspProcessOrder();
+  graph->computeDeepLocalDspProcessOrder();
   
   return graph;
 }

@@ -142,8 +142,8 @@ class PdGraph : public DspObject {
     /** Returns the graphId of this graph. */
     int getGraphId();
   
-    /** (Re-)Computes the local tree and node processing ordering for dsp nodes. */
-    void computeLocalDspProcessOrder();
+    /** Computes the local tree and node processing ordering for dsp nodes, including subgraphs. */
+    void computeDeepLocalDspProcessOrder();
   
     /**
      * Get the process order as if this object (i.e. graph) were an atomic object. The internal

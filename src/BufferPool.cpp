@@ -33,7 +33,7 @@ BufferPool::BufferPool(unsigned short size) {
 BufferPool::~BufferPool() {
   // free all buffers, reserved and available
   for (list<std::pair<float *, unsigned int> >::iterator it = reserved.begin(); it != reserved.end(); ++it) {
-    free((*it).first);
+    FREE_ALIGNED_BUFFER((*it).first);
   }
   while (!pool.empty()) {
     FREE_ALIGNED_BUFFER(pool.top());
