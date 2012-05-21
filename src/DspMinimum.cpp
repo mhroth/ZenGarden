@@ -64,6 +64,18 @@ void DspMinimum::processSignal(DspObject *dspObject, int fromIndex, int toIndex)
   #if __APPLE__
   vDSP_vmin(d->dspBufferAtInlet[0], 1, d->dspBufferAtInlet[1], 1,
       d->dspBufferAtOutlet[0], 1, toIndex);
+  #elif __SSE__
+  // NOTE(mhroth): it is assumed that toIndex is a multiple of 4
+  float *input0 = d->dspBufferAtInlet[0];
+  float *input1 = d->dspBufferAtInlet[1];
+  float *output = d->dspBufferAtOutlet[0];
+  while (toIndex) {
+    _mm_store_ps(output, _mm_min_ps(_mm_load_ps(input0), _mm_load_ps(input1)));
+    
+    input0 += 4; input1 += 4;
+    output += 4;
+    toIndex -= 4;
+  }
   #else
   float *inputBuffer0 = d->dspBufferAtInlet[0];
   float *inputBuffer1 = d->dspBufferAtInlet[1];
