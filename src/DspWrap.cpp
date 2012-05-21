@@ -45,7 +45,7 @@ void DspWrap::processSignal(DspObject *dspObject, int fromIndex, int n4) {
   float *output = d->dspBufferAtOutlet[0];
   while (n4) {
     __m128 in = _mm_load_ps(input);
-    _mm_store1_ps(output, _mm_sub_ps(in, mm_floor_ps(in)));
+    _mm_store_ps(output, _mm_sub_ps(in, mm_floor_ps(in)));
     
     input += 4;
     output += 4;
