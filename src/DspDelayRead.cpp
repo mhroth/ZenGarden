@@ -40,7 +40,7 @@ DspDelayRead::DspDelayRead(PdMessage *initMessage, PdGraph *graph) : DelayReceiv
   processFunction = &processSignal;
   
   // TODO(mhroth): implement process function for case of receiving messages
-//  processFunctionNoMessage = &processNoMessage;
+//  processFunctionNoMessage = &processScalar;
 }
 
 DspDelayRead::~DspDelayRead() {
@@ -48,7 +48,7 @@ DspDelayRead::~DspDelayRead() {
 }
 
 void DspDelayRead::onInletConnectionUpdate(unsigned int inletIndex) {
-//  processFunction = (incomingMessageConnections[0].size() > 0) ? &processNoMessage : &processSignal;
+//  processFunction = (incomingMessageConnections[0].size() > 0) ? &processScalar : &processSignal;
 }
 
 void DspDelayRead::processMessage(int inletIndex, PdMessage *message) {
