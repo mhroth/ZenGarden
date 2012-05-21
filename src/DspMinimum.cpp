@@ -38,10 +38,6 @@ DspMinimum::~DspMinimum() {
   // nothing to do
 }
 
-const char *DspMinimum::getObjectLabel() {
-  return "min~";
-}
-
 string DspMinimum::toString() {
   char str[snprintf(NULL, 0, "%s %g", getObjectLabel(), constant)+1];
   snprintf(str, sizeof(str), "%s %g", getObjectLabel(), constant);
@@ -55,7 +51,8 @@ void DspMinimum::processMessage(int inletIndex, PdMessage *message) {
 }
 
 void DspMinimum::onInletConnectionUpdate(unsigned int inletIndex) {
-  processFunction = (incomingDspConnections[0].size() > 0 && incomingDspConnections[1].size() > 0)
+  processFunction = (!incomingDspConnections[0].empty() &&
+      (!incomingDspConnections[1].empty() || incomingMessageConnections[1].empty()))
       ? &processSignal : &processScalar;
 }
 

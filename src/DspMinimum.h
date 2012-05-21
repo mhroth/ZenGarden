@@ -33,7 +33,7 @@ class DspMinimum : public DspObject {
     DspMinimum(PdMessage *initMessage, PdGraph *graph);
     ~DspMinimum();
     
-    static const char *getObjectLabel();
+    static const char *getObjectLabel() { return "min~"; }
     string toString();
   
     void onInletConnectionUpdate(unsigned int inletIndex);
