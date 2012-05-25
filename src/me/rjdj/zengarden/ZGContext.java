@@ -108,6 +108,9 @@ public class ZGContext {
     if (file == null) {
       throw new NullPointerException("The file cannot be null.");
     }
+    if (!file.exists()) {
+      throw new IllegalArgumentException("The file does not exist: " + file.toString());
+    }
     if (!file.isFile()) {
       throw new IllegalArgumentException("The file object must refer to a file: " + 
           file.toString());
