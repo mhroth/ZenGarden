@@ -41,22 +41,31 @@ public class DspGenWave extends ZenGardenAdapter {
    * generating golden wavs.
    */
   public static void main(String[] args) throws Exception {
-    if (args.length != 2) {
-      System.out.println("Usage: DspGenWave path/to/pd/file durationInMs");
+    if (args.length < 2) {
+      System.out.println("Usage: DspGenWave path/to/pd/file durationInMs\n" +
+      		"  -in/--input path/to/input.wav");
       return;
     }
     
     File pdFile = new File(args[0]).getCanonicalFile();
     File wavFile = new File(pdFile.getPath().split("\\.")[0] + ".golden.wav");
     float durationMs = new Float(args[1]).floatValue();
+    
+    AudioInputStream ais = null;
+    if (args.length > 2) {
+      if ("-in".equals(args[2]) || "--input".equals(args[2])) {
+        File inputFile = new File(args[3]).getCanonicalFile();
+        ais = AudioSystem.getAudioInputStream(inputFile);
+      }
+    }
 
     // 16-bit signed mono 
     AudioFormat audioFormat = new AudioFormat(SAMPLE_RATE, 16, NUM_OUTPUT_CHANNELS, true, false);
     ZGInputStream zgis = new ZGInputStream(pdFile, NUM_INPUT_CHANNELS, NUM_OUTPUT_CHANNELS,
-        BLOCK_SIZE, SAMPLE_RATE);
+        BLOCK_SIZE, SAMPLE_RATE, ais);
     
-    AudioInputStream ais = new AudioInputStream(zgis, audioFormat,
+    AudioInputStream inputStream = new AudioInputStream(zgis, audioFormat,
         (long) (SAMPLE_RATE*durationMs/1000.0f));
-    AudioSystem.write(ais, AudioFileFormat.Type.WAVE, wavFile);
+    AudioSystem.write(inputStream, AudioFileFormat.Type.WAVE, wavFile);
   }
 }

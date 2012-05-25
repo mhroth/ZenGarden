@@ -26,12 +26,15 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.sound.sampled.AudioInputStream;
+
 class ZGInputStream extends InputStream {
   
   private ZGContext context;
-  short[] inputBuffer;
-  short[] outputBuffer;
-  int pos, byteIndex;
+  private short[] inputBuffer;
+  private short[] outputBuffer;
+  private int pos, byteIndex;
+  private AudioInputStream inputStream;
   
   /**
    * A wrapper around a ZenGarden context in the form of at {@link InputStream}.
@@ -40,8 +43,11 @@ class ZGInputStream extends InputStream {
    * @param numOutputchannels
    * @param blockSize
    * @param sampleRate
+   * @param inputStream
    */
-  public ZGInputStream(File pdFile, int numInputChannels, int numOutputchannels, int blockSize, float sampleRate) {
+  public ZGInputStream(File pdFile, int numInputChannels, int numOutputchannels, int blockSize,
+      float sampleRate, AudioInputStream inputStream) {
+    this.inputStream = inputStream;
     context = new ZGContext(numInputChannels, numOutputchannels, blockSize, sampleRate);
     context.addListener(new ZenGardenAdapter());
     ZGGraph graph = context.newGraph(pdFile);
@@ -50,6 +56,7 @@ class ZGInputStream extends InputStream {
     inputBuffer = new short[numInputChannels*blockSize];
     outputBuffer = new short[numOutputchannels*blockSize];
     
+    fillInputBufferIfAvaiable();
     context.process(inputBuffer, outputBuffer);
     
     pos = 0;
@@ -75,9 +82,29 @@ class ZGInputStream extends InputStream {
       byteIndex = 0;
       if (++pos == outputBuffer.length) {
         pos = 0;
+
+        fillInputBufferIfAvaiable();
         context.process(inputBuffer, outputBuffer);
       }
       return (int) ((((int) s) & 0x0000FF00) >> 8);
+    }
+  }
+  
+  private void fillInputBufferIfAvaiable() {
+    if (inputStream != null) {
+      byte[] byteBuffer = new byte[inputBuffer.length * 2];
+      try {
+        inputStream.read(byteBuffer);
+      } catch (IOException e) {
+        e.printStackTrace(System.err);
+      }
+      for (int i = 0, j = 0; i < inputBuffer.length; i++, j+=2) {
+        short r = (short) byteBuffer[j];
+        short x = (short) byteBuffer[j+1];
+        x = (short) ((x << 8) & 0x0000FF00);
+        r = (short) (r & 0x00FF);
+        inputBuffer[i] = (short) (r | x);
+      }
     }
   }
 }
