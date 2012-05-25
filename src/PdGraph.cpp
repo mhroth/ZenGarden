@@ -434,6 +434,18 @@ void PdGraph::processGraph(DspObject *dspObject, int fromIndex, int toIndex) {
 #pragma mark - Add/Remove Connections (High Level)
 
 void PdGraph::addConnection(MessageObject *fromObject, int outletIndex, MessageObject *toObject, int inletIndex) {
+  // check to make sure that this connection can even work. Otherwise don't bother.
+  if (outletIndex >= fromObject->getNumOutlets() || inletIndex >= toObject->getNumInlets()) {
+    printErr("mismatched connnection. Attempt to make a connection from "
+        "%s(%p):%i to %s(%p):%i, but %p has only %i outlets and %p has only %i inlets. "
+        "Connection ignored.",
+        fromObject->toString().c_str(), fromObject, outletIndex,
+        toObject->toString().c_str(), toObject, inletIndex,
+        fromObject, fromObject->getNumOutlets(),
+        toObject, toObject->getNumInlets());
+    return;
+  }
+  
   lockContextIfAttached();
   toObject->addConnectionFromObjectToInlet(fromObject, outletIndex, inletIndex);
   fromObject->addConnectionToObjectFromOutlet(toObject, inletIndex, outletIndex);
