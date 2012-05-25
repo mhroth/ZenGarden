@@ -63,7 +63,7 @@ void DspCosine::procesSignal(DspObject *dspObject, int fromIndex, int toIndex) {
   // infrastructure provided by DspObject
   
   #if __APPLE__
-  float twoPi = 2.0f*M_PI;
+  static float twoPi = 2.0f*M_PI;
   vDSP_vsmul(d->dspBufferAtInlet[0], 1, &twoPi, d->dspBufferAtOutlet[0], 1, toIndex);
   vvcosf(d->dspBufferAtOutlet[0], d->dspBufferAtOutlet[0], &toIndex);
   #else
