@@ -51,8 +51,7 @@ void DspMinimum::processMessage(int inletIndex, PdMessage *message) {
 }
 
 void DspMinimum::onInletConnectionUpdate(unsigned int inletIndex) {
-  processFunction = (!incomingDspConnections[0].empty() &&
-      (!incomingDspConnections[1].empty() || incomingMessageConnections[1].empty()))
+  processFunction = (!incomingDspConnections[0].empty() && !incomingDspConnections[1].empty())
       ? &processSignal : &processScalar;
 }
 
