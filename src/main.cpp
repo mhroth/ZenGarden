@@ -31,17 +31,9 @@
 extern "C" {
   void *callbackFunction(ZGCallbackFunction function, void *userData, void *ptr) {
     switch (function) {
-      case ZG_PRINT_STD: {
-        printf("%s\n", (char *) ptr);
-        break;
-      }
-      case ZG_PRINT_ERR: {
-        printf("ERROR: %s\n", (char *) ptr);
-        break;
-      }
-      default: {
-        break;
-      }
+      case ZG_PRINT_STD: printf("%s\n", (char *) ptr); break;
+      case ZG_PRINT_ERR: printf("ERROR: %s\n", (char *) ptr); break;
+      default: break;
     }
     return NULL;
   }
