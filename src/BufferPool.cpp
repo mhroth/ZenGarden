@@ -83,7 +83,8 @@ void BufferPool::reserveBuffer(float *buffer, unsigned int reserveCount) {
     }
   }
   
-  printf("Attempt to reserve unreserved buffer %p +%i.\n  This may be ok if the buffer is global such as an adc~ input buffer.\n", buffer, reserveCount);
+  printf("Attempt to reserve unreserved buffer %p +%i.\n  "
+      "This may be ok if the buffer is global such as an adc~ input buffer.\n", buffer, reserveCount);
 }
 
 /*
