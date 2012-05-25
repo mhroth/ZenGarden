@@ -33,7 +33,7 @@ public class DspGenWave extends ZenGardenAdapter {
 
   private static final int BLOCK_SIZE = 64;
   private static final int NUM_INPUT_CHANNELS = 1;
-  private static final int NUM_OUTPUT_CHANNELS = 1;
+  private static final int NUM_OUTPUT_CHANNELS = 2;
   private static final float SAMPLE_RATE = 44100.0f;
 
   /**
@@ -56,6 +56,13 @@ public class DspGenWave extends ZenGardenAdapter {
       if ("-in".equals(args[2]) || "--input".equals(args[2])) {
         File inputFile = new File(args[3]).getCanonicalFile();
         ais = AudioSystem.getAudioInputStream(inputFile);
+        if (ais.getFormat().getChannels() != NUM_INPUT_CHANNELS) {
+          throw new RuntimeException("The input audio file must have the same number of channels as ZenGarden: " +
+              ais.getFormat().getChannels() + " != " + NUM_INPUT_CHANNELS);
+        }
+        if (ais.getFormat().getSampleRate() != SAMPLE_RATE) {
+          throw new RuntimeException("Input audio file sample rate does not match.");
+        }
       }
     }
 
