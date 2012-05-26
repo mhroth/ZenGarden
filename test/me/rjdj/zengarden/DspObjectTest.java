@@ -103,7 +103,7 @@ public class DspObjectTest implements ZenGardenListener {
   }
   
   @Test
-  public void testDspWraph() {
+  public void testDspWrap() {
     genericDspTest("DspWrap.pd");
   }
   
