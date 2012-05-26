@@ -56,7 +56,7 @@ void DspWrap::processSignal(DspObject *dspObject, int fromIndex, int n4) {
   float *input = d->dspBufferAtInlet[0];
   float *output = d->dspBufferAtOutlet[0];
   for (int i = 0; i < n4; i+=4) {
-    float a = input[i]; float b = input[i+1]; float c = input[i+3]; float d = input[i+4];
+    float a = input[i]; float b = input[i+1]; float c = input[i+2]; float d = input[i+3];
     output[i]=a-floorf(a); output[i+1]=b-floorf(b); output[i+2]=c-floorf(c); output[i+3]=d-floorf(d);
   }
   #endif

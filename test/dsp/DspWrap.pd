@@ -1,0 +1,15 @@
+#N canvas 650 293 450 300 10;
+#X obj 115 53 loadbang;
+#X obj 93 148 line~;
+#X obj 93 178 wrap~;
+#X obj 93 208 dac~;
+#X obj 115 81 t b b;
+#X msg 147 114 -2;
+#X msg 93 114 2 1000;
+#X connect 0 0 4 0;
+#X connect 1 0 2 0;
+#X connect 2 0 3 0;
+#X connect 4 0 6 0;
+#X connect 4 1 5 0;
+#X connect 5 0 1 0;
+#X connect 6 0 1 0;
