@@ -73,6 +73,11 @@ public class DspObjectTest implements ZenGardenListener {
   public void testDspInletOutlet() {
     genericDspTest("DspInletOutlet.pd");
   }
+  
+  @Test
+  public void testDspLine() {
+    genericDspTest("DspLine.pd");
+  }
 
   @Test
   public void testDspOsc() {
