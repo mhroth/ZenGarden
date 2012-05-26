@@ -694,7 +694,6 @@ void PdGraph::computeDeepLocalDspProcessOrder() {
   // for all leaf nodes, order the tree
   for (list<MessageObject *>::iterator it = leafNodeList.begin(); it != leafNodeList.end(); ++it) {
     MessageObject *object = *it;
-    printStd("%s", object->toString().c_str());
     list<DspObject *> processSubList = object->getProcessOrder();
     dspNodeList.splice(dspNodeList.end(), processSubList);
   }
