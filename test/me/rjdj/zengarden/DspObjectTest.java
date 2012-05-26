@@ -84,9 +84,12 @@ public class DspObjectTest implements ZenGardenListener {
     genericDspTest("DspOsc.pd");
   }
   
+  /**
+   * Test the signal input component of the phasor~ object.
+   */
   @Test
-  public void testDspPhasor() {
-    genericDspTest("DspPhasor.pd");
+  public void testDspPhasorSignal() {
+    genericDspTest("DspPhasorSignal.pd");
   }
   
   @Test
