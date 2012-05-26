@@ -94,7 +94,7 @@ void DspLine::processDspWithIndex(int fromIndex, int toIndex) {
         #else
         // if we will process more samples than we have remaining to the target
         // i.e., if we will arrive at the target while processing
-        dspBufferAtOutlet[0][fromIndex] = lastOutputSample + slope;
+        dspBufferAtOutlet[0][fromIndex] = lastOutputSample;
         for (int i = fromIndex+1; i < targetIndexInt; i++) {
           dspBufferAtOutlet[0][i] = dspBufferAtOutlet0[i-1] + slope;
         }
@@ -109,12 +109,12 @@ void DspLine::processDspWithIndex(int fromIndex, int toIndex) {
         #if __APPLE__
         vDSP_vramp(&lastOutputSample, &slope, dspBufferAtOutlet[0]+fromIndex, 1, n);
         #else
-        dspBufferAtOutlet[0][fromIndex] = lastOutputSample + slope;
+        dspBufferAtOutlet[0][fromIndex] = lastOutputSample;
         for (int i = fromIndex+1; i < toIndex; i++) {
           dspBufferAtOutlet[0][i] = dspBufferAtOutlet0[i-1] + slope;
         }
         #endif
-        lastOutputSample = dspBufferAtOutlet[0][toIndex-1];  
+        lastOutputSample = dspBufferAtOutlet[0][toIndex-1] + slope;
         numSamplesToTarget -= n;
       }
     }

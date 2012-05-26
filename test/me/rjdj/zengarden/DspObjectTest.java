@@ -89,6 +89,11 @@ public class DspObjectTest implements ZenGardenListener {
     genericDspTest("DspThrowCatch.pd");
   }
   
+  @Test
+  public void testDspWraph() {
+    genericDspTest("DspWrap.pd");
+  }
+  
   /**
    * Encompasses a generic test for audio objects. It processes the graph for one second once and
    * compares the standard output to the golden file.
