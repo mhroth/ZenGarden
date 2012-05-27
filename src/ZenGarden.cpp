@@ -157,12 +157,9 @@ ZGGraph *zg_context_new_empty_graph(PdContext *context) {
 }
 
 ZGGraph *zg_context_new_graph_from_file(PdContext *context, const char *directory, const char *filename) {
-  char path[snprintf(NULL, 0, "%s%s", directory, filename)+1]; // directory assumed to have trailing path seperator
-  snprintf(path, sizeof(path), "%s%s", directory, filename);
-  
-  // TODO(mhroth): ensure that directory is added to declared path set
-  PdFileParser *parser = new PdFileParser(path);
+  PdFileParser *parser = new PdFileParser(string(directory), string(filename));
   PdGraph *graph = parser->execute(context);
+  graph->addDeclarePath(directory); // ensure that the root director is added to the declared path set
   delete parser;
   return graph;
 }
@@ -408,8 +405,8 @@ ZGObject **zg_graph_get_objects(ZGGraph *graph, unsigned int *n) {
 #pragma mark - Table
 
 float *zg_table_get_buffer(MessageObject *table, unsigned int *n) {
-  if (table->getObjectType() == MESSAGE_TABLE) {
-    MessageTable *messageTable = (MessageTable *) table;
+  if (table != NULL && table->getObjectType() == MESSAGE_TABLE) {
+    MessageTable *messageTable = reinterpret_cast<MessageTable *>(table);
     int x = 0;
     float *buffer = messageTable->getBuffer(&x);
     *n = x;
@@ -420,11 +417,11 @@ float *zg_table_get_buffer(MessageObject *table, unsigned int *n) {
 }
 
 void zg_table_set_buffer(MessageObject *table, float *buffer, unsigned int n) {
-  if (table->getObjectType() == MESSAGE_TABLE)  {
-    MessageTable *messageTable = (MessageTable *) table;
+  if (table != NULL && table->getObjectType() == MESSAGE_TABLE)  {
+    MessageTable *messageTable = reinterpret_cast<MessageTable *>(table);
     messageTable->getGraph()->lockContextIfAttached();
-    float *tableBuffer = messageTable->resizeBuffer(n);
-    memcpy(tableBuffer, buffer, n*sizeof(float));
+    float *tableBuffer = messageTable->resizeBuffer(n); // resize the buffer to the new size (if necessary)
+    memcpy(tableBuffer, buffer, n*sizeof(float)); // copy the contents of the buffer to the table
     messageTable->getGraph()->unlockContextIfAttached();
   }
 }

@@ -26,6 +26,7 @@
 MessageObject::MessageObject(int numMessageInlets, int numMessageOutlets, PdGraph *graph) {
   this->graph = graph;
   this->isOrdered = false;
+  canvasX = canvasY = 0.0f;
 
   // initialise incoming connections list
   incomingMessageConnections = vector<list<ObjectLetPair> >(numMessageInlets);

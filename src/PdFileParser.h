@@ -43,7 +43,7 @@ using namespace std;
 class PdFileParser {
 
   public:
-    PdFileParser(const char *fullPath);
+    PdFileParser(string directory, string fullname);
     PdFileParser(string aString);
     ~PdFileParser();
   
@@ -69,6 +69,7 @@ class PdFileParser {
     size_t pos; // current position in the string
     string line;
     string message;
+    string rootPath;
     bool isDone;
 };
 

@@ -82,14 +82,6 @@ PdGraph::~PdGraph() {
   }
 }
 
-const char *PdGraph::getObjectLabel() {
-  return "pd";
-}
-
-ObjectType PdGraph::getObjectType() {
-  return OBJECT_PD;
-}
-
 
 #pragma mark - Lock/Unlock Context
 
@@ -330,7 +322,7 @@ void PdGraph::unregisterObject(MessageObject *messageObject) {
 }
 
 
-#pragma mark -
+#pragma mark - Attach to Context
 
 void PdGraph::attachToContext(bool isAttached) {
   // ensure that this function is only run on attachement change
@@ -352,23 +344,24 @@ void PdGraph::attachToContext(bool isAttached) {
   }
 }
 
+
+#pragma mark - Path Listing
+
 char *PdGraph::resolveFullPath(const char *filename) {
   if (DeclareList::isFullPath(filename)) {
     return StaticUtils::fileExists(filename) ? StaticUtils::copyString(filename) : NULL;
   } else {
-    char *directory = findFilePath(filename);
-    return (directory != NULL) ? StaticUtils::concatStrings(directory, filename) : NULL;
+    string directory = findFilePath(filename);
+    return (!directory.empty()) ? StaticUtils::concatStrings(directory.c_str(), filename) : NULL;
   }
 }
 
-char *PdGraph::findFilePath(const char *filename) {
-  list<string>::iterator it = declareList->getIterator();
-  list<string>::iterator end = declareList->getEnd();
-  while (it != end) {
-    string directory = *it++;
+string PdGraph::findFilePath(const char *filename) {
+  for (list<string>::iterator it = declareList->getIterator(); it != declareList->getEnd(); ++it) {
+    string directory = *it;
     string fullPath = directory + string(filename);
     if (StaticUtils::fileExists(fullPath.c_str())) {
-      return (char *) directory.c_str();
+      return directory;
     }
   }
   return isRootGraph() ? NULL : parentGraph->findFilePath(filename);
@@ -389,8 +382,7 @@ void PdGraph::addDeclarePath(const char *path) {
 }
 
 
-#pragma mark -
-#pragma mark Manage Messages
+#pragma mark - Manage Messages
 
 PdMessage *PdGraph::scheduleMessage(MessageObject *messageObject, int outletIndex, PdMessage *message) {
   return context->scheduleMessage(messageObject, outletIndex, message);
@@ -437,12 +429,9 @@ void PdGraph::addConnection(MessageObject *fromObject, int outletIndex, MessageO
   // check to make sure that this connection can even work. Otherwise don't bother.
   if (outletIndex >= fromObject->getNumOutlets() || inletIndex >= toObject->getNumInlets()) {
     printErr("mismatched connnection. Attempt to make a connection from "
-        "%s(%p):%i to %s(%p):%i, but %p has only %i outlets and %p has only %i inlets. "
-        "Connection ignored.",
-        fromObject->toString().c_str(), fromObject, outletIndex,
-        toObject->toString().c_str(), toObject, inletIndex,
-        fromObject, fromObject->getNumOutlets(),
-        toObject, toObject->getNumInlets());
+        "%s(%p):%i/%i to %s(%p):%i/%i. Connection ignored.",
+        fromObject->toString().c_str(), fromObject, outletIndex, fromObject->getNumOutlets(),
+        toObject->toString().c_str(), toObject, inletIndex, toObject->getNumInlets());
     return;
   }
   

@@ -90,8 +90,9 @@ class PdGraph : public DspObject {
 
 #pragma mark -
   
-    static const char *getObjectLabel();
-    ObjectType getObjectType();
+    static const char *getObjectLabel() { return "pd"; }
+    ObjectType getObjectType() { return OBJECT_PD; }
+    string toString() { return name.empty() ? string(getObjectLabel()) : name; }
   
     ConnectionType getConnectionType(int outletIndex);
   
@@ -181,7 +182,7 @@ class PdGraph : public DspObject {
      * Returns the directory in which the file was found, or NULL if nothing could be found.
      * The returned string SHOULD NOT be free()ed by the caller. It belongs to the DeclareList.
      */
-    char *findFilePath(const char *filename);
+    string findFilePath(const char *filename);
   
     /**
      * Resolves the full path of the given file. If the file is already fully specified then a copy
@@ -221,6 +222,9 @@ class PdGraph : public DspObject {
     void unlockContextIfAttached();
   
     BufferPool *getBufferPool();
+  
+    /** Set the graph name. */
+    void setName(string newName) { name = newName; }
   
   private:
     static void processGraph(DspObject *dspObject, int fromIndex, int toIndex);
@@ -275,6 +279,9 @@ class PdGraph : public DspObject {
   
     /** A global list of all declared directories (-path and -stdpath) */
     DeclareList *declareList;
+  
+    /** PdGraphs may have an associated name, such as their abstraction name. */
+    string name;
 };
 
 #endif // _PD_GRAPH_H_

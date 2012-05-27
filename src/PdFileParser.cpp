@@ -25,8 +25,10 @@
 #include "PdFileParser.h"
 #include "PdGraph.h"
 
-PdFileParser::PdFileParser(const char *filePath) {
-  FILE *fp = fopen(filePath, "rb"); // open the file in binary mode
+PdFileParser::PdFileParser(string directory, string filename) {
+  rootPath = string(directory);
+  
+  FILE *fp = fopen((directory+filename).c_str(), "rb"); // open the file in binary mode
   pos = 0; // initialise position in stringDesc
   if (fp == NULL) {
     // error condition
@@ -141,6 +143,11 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
         if (graph == NULL) { // if no parent graph exists
           initMessage->initWithTimestampAndNumElements(0.0, 0); // make a dummy initMessage
           newGraph = new PdGraph(initMessage, NULL, context, context->getNextGraphId());
+          if (!rootPath.empty()) {
+            // inform the root graph of where it is in the file system, if this information exists.
+            // This will allow abstractions to be correctly loaded.
+            newGraph->addDeclarePath(rootPath.c_str());
+          }
         } else {
           newGraph = new PdGraph(graph->getArguments(), graph, context, graph->getGraphId());
           graph->addObject(0, 0, newGraph); // add the new graph to the current one as an object
@@ -165,32 +172,33 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
             resBuffer, RESOLUTION_BUFFER_LENGTH);
         MessageObject *messageObject = context->newObject(objectLabel, initMessage, graph);
         if (messageObject == NULL) { // object could not be created based on any known object factory functions
-          char filename[snprintf(NULL, 0, "%s.pd", objectLabel)+1];
-          snprintf(filename, sizeof(filename), "%s.pd", objectLabel);
-          char *directory = graph->findFilePath(filename);
-          if (directory == NULL) {
+          string filename = string(objectLabel) + ".pd";
+          string directory = graph->findFilePath(filename.c_str());
+          if (directory.empty()) {
             // if the system cannot find the file itself, make a final effort to find the file via
             // the user supplied callback
             if (context->callbackFunction != NULL) {
-              directory = (char *) context->callbackFunction(ZG_CANNOT_FIND_OBJECT,
+              char *dir = (char *) context->callbackFunction(ZG_CANNOT_FIND_OBJECT,
                   context->callbackUserData, objectLabel);
-              if (directory != NULL) {
+              if (dir != NULL) {
                 // TODO(mhroth): create new object based on returned path
-                free(directory); // free the returned objectpath
+                free(dir); // free the returned objectpath
               } else {
                 context->printErr("Unknown object or abstraction \"%s\".", objectLabel);
               }
             }
           }
-          char filepath[snprintf(NULL, 0, "%s%s", directory, filename)+1];
-          snprintf(NULL, 0, "%s%s", directory, filename);
-          PdFileParser *parser = new PdFileParser(filepath);
-          messageObject = parser->execute(initMessage, graph, NULL);
+          PdFileParser *parser = new PdFileParser(directory, filename);
+          messageObject = parser->execute(initMessage, graph, context);
+          // set graph name according to abstraction. useful for debugging.
+          reinterpret_cast<PdGraph *>(messageObject)->setName(objectLabel);
           delete parser;
+          // because the object is a graph, and thus defined by #canvas, it has already been added
+          // to the parent graph
+        } else {
+          // add the object to the local graph and make any necessary registrations
+          graph->addObject(canvasX, canvasY, messageObject);
         }
-        
-        // add the object to the local graph and make any necessary registrations
-        graph->addObject(canvasX, canvasY, messageObject);
       } else if (!strcmp(objectType, "msg")) {
         float canvasX = (float) atoi(strtok(NULL, " ")); // read the first canvas coordinate
         float canvasY = (float) atoi(strtok(NULL, " ")); // read the second canvas coordinate
