@@ -20,6 +20,7 @@
  *
  */
 
+#include "BufferPool.h"
 #include "DspOutlet.h"
 #include "PdGraph.h"
 

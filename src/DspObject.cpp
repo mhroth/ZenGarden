@@ -21,6 +21,7 @@
  */
 
 #include "ArrayArithmetic.h"
+#include "BufferPool.h"
 #include "DspImplicitAdd.h"
 #include "DspObject.h"
 #include "PdGraph.h"
