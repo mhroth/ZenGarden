@@ -46,22 +46,14 @@ void DspReciprocalSqrt::processSignal(DspObject *dspObject, int fromIndex, int t
   float *outBuff = d->dspBufferAtOutlet[0];
   float32x4_t inVec, outVec;
   float32x4_t zeroVec = vdupq_n_f32(FLT_MIN);
-  int n = blockSizeInt;
-  int n4 = n & 0xFFFFFFFC;
-  while (n4) {
+  while (toIndex) {
     inVec = vld1q_f32(inBuff);
     inVec = vmaxq_f32(inVec, zeroVec);
     outVec = vrsqrteq_f32(inVec);
     vst1q_f32((float32_t *) outBuff, outVec);
-    n4 -= 4;
+    toIndex -= 4;
     inBuff += 4;
     outBuff += 4;
-  }
-  switch (n & 0x3) {
-    case 3: *outBuff++ = 1.0f / sqrtf((*inBuff >= 0.0f) ? *inBuff : FLT_MIN); ++inBuff;
-    case 2: *outBuff++ = 1.0f / sqrtf((*inBuff >= 0.0f) ? *inBuff : FLT_MIN); ++inBuff;
-    case 1: *outBuff++ = 1.0f / sqrtf((*inBuff >= 0.0f) ? *inBuff : FLT_MIN); ++inBuff;
-    default: break;
   }
   #elif __SSE__
   // NOTE: for all non-positive numbers, this routine will output a very large number (not Inf) == 1/sqrt(FLT_MIN)
@@ -69,30 +61,22 @@ void DspReciprocalSqrt::processSignal(DspObject *dspObject, int fromIndex, int t
   float *outBuff = d->dspBufferAtOutlet[0];
   __m128 inVec, outVec;
   __m128 zeroVec = _mm_set1_ps(FLT_MIN);
-  int n = toIndex;
-  int n4 = n & 0xFFFFFFFC;
-  while (n4) {
-    inVec = _mm_loadu_ps(inBuff); // unaligned load must be used because inBuff could point anywhere
+  while (toIndex) {
+    inVec = _mm_load_ps(inBuff); // unaligned load must be used because inBuff could point anywhere
     // ensure that all inputs are positive, max(FLT_MIN, inVec), preventing divide-by-zero
     inVec = _mm_max_ps(inVec, zeroVec);
     outVec = _mm_rsqrt_ps(inVec);
     // aligned store may be used because outBuff always points to the beginning of the output buffer
     _mm_store_ps(outBuff, outVec);
-    n4 -= 4;
+    toIndex -= 4;
     inBuff += 4;
     outBuff += 4;
-  }
-  switch (n & 0x3) {
-    case 3: *outBuff++ = 1.0f / sqrtf((*inBuff >= 0.0f) ? *inBuff : FLT_MIN); ++inBuff;
-    case 2: *outBuff++ = 1.0f / sqrtf((*inBuff >= 0.0f) ? *inBuff : FLT_MIN); ++inBuff;
-    case 1: *outBuff++ = 1.0f / sqrtf((*inBuff >= 0.0f) ? *inBuff : FLT_MIN); ++inBuff;
-    default: break;
   }
   #else
   // http://en.wikipedia.org/wiki/Fast_inverse_square_root
   int j;
   float y;
-  for (int i = 0; i < blockSizeInt; ++i) {
+  for (int i = 0; i < toIndex; ++i) {
     float f = dspBufferAtInlet[0][i];
     if (f <= 0.0f) {
       dspBufferAtOutlet0[i] = 0.0f;
