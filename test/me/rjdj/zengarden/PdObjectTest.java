@@ -105,6 +105,11 @@ public class PdObjectTest implements ZenGardenListener {
   public void testMessageCosine() {
     genericMessageTest("MessageCosine.pd");
   }
+  
+  @Test
+  public void testMessageDiv() {
+    genericMessageTest("MessageDiv.pd");
+  }
 
   @Test
   public void testMessageDivide() {

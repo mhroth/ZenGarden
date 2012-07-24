@@ -34,12 +34,12 @@ class MessageDiv : public MessageObject {
     ~MessageDiv();
     
     static const char *getObjectLabel() { return "div"; }
-    string toString();
+    string toString() { return string(getObjectLabel()); }
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
   
-    float constant;
+    float constant; // should always be positive
 };
 
 #endif // _MESSAGE_DIVIDE_H_
