@@ -596,6 +596,9 @@
 		905C40481205D274001B31A7 /* MessageListAppend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 905C40451205D274001B31A7 /* MessageListAppend.cpp */; };
 		905C40491205D274001B31A7 /* MessageListAppend.h in Headers */ = {isa = PBXBuildFile; fileRef = 905C40441205D274001B31A7 /* MessageListAppend.h */; };
 		905C404A1205D274001B31A7 /* MessageListAppend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 905C40451205D274001B31A7 /* MessageListAppend.cpp */; };
+		906145F815BE8CF3009BB7C8 /* MessageDiv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 906145F715BE8CF3009BB7C8 /* MessageDiv.cpp */; };
+		906145F915BE8CF3009BB7C8 /* MessageDiv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 906145F715BE8CF3009BB7C8 /* MessageDiv.cpp */; };
+		906145FA15BE8CF3009BB7C8 /* MessageDiv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 906145F715BE8CF3009BB7C8 /* MessageDiv.cpp */; };
 		9069DFD211D17BD600889A5B /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9069DFD111D17BD600889A5B /* Accelerate.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		9069DFD311D17BF100889A5B /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9069DFD111D17BD600889A5B /* Accelerate.framework */; };
 		907B1F52129965D900B263E2 /* DspBang.h in Headers */ = {isa = PBXBuildFile; fileRef = 907B1F50129965D900B263E2 /* DspBang.h */; };
@@ -969,6 +972,8 @@
 		905C402B1205CF52001B31A7 /* MessageListTrim.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageListTrim.cpp; path = ../src/MessageListTrim.cpp; sourceTree = SOURCE_ROOT; };
 		905C40441205D274001B31A7 /* MessageListAppend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessageListAppend.h; path = ../src/MessageListAppend.h; sourceTree = SOURCE_ROOT; };
 		905C40451205D274001B31A7 /* MessageListAppend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageListAppend.cpp; path = ../src/MessageListAppend.cpp; sourceTree = SOURCE_ROOT; };
+		906145F715BE8CF3009BB7C8 /* MessageDiv.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageDiv.cpp; path = ../src/MessageDiv.cpp; sourceTree = "<group>"; };
+		906145FB15BE8D07009BB7C8 /* MessageDiv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MessageDiv.h; path = ../src/MessageDiv.h; sourceTree = "<group>"; };
 		9069DFD111D17BD600889A5B /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		907B1F50129965D900B263E2 /* DspBang.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspBang.h; path = ../src/DspBang.h; sourceTree = SOURCE_ROOT; };
 		907B1F51129965D900B263E2 /* DspBang.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspBang.cpp; path = ../src/DspBang.cpp; sourceTree = SOURCE_ROOT; };
@@ -1184,6 +1189,8 @@
 				90337BBE11D0D847009FCC01 /* MessageDeclare.h */,
 				90337BBF11D0D847009FCC01 /* MessageDelay.cpp */,
 				90337BC011D0D847009FCC01 /* MessageDelay.h */,
+				906145F715BE8CF3009BB7C8 /* MessageDiv.cpp */,
+				906145FB15BE8D07009BB7C8 /* MessageDiv.h */,
 				90337BC211D0D847009FCC01 /* MessageDivide.cpp */,
 				90337BC311D0D847009FCC01 /* MessageDivide.h */,
 				90337BC611D0D847009FCC01 /* MessageElementType.h */,
@@ -1908,6 +1915,7 @@
 				90A42CC0143E68BB00DBF988 /* DspFilter.cpp in Sources */,
 				90119EF61500DB0700A9AB46 /* DspImplicitAdd.cpp in Sources */,
 				90D4564D1516A26A00ED6B05 /* BufferPool.cpp in Sources */,
+				906145F815BE8CF3009BB7C8 /* MessageDiv.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2052,6 +2060,7 @@
 				90A42CC1143E68BB00DBF988 /* DspFilter.cpp in Sources */,
 				90119EF71500DB0700A9AB46 /* DspImplicitAdd.cpp in Sources */,
 				90D4564E1516A26A00ED6B05 /* BufferPool.cpp in Sources */,
+				906145F915BE8CF3009BB7C8 /* MessageDiv.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2196,6 +2205,7 @@
 				90A42CC2143E68BB00DBF988 /* DspFilter.cpp in Sources */,
 				90119EF81500DB0700A9AB46 /* DspImplicitAdd.cpp in Sources */,
 				90D4564F1516A26A00ED6B05 /* BufferPool.cpp in Sources */,
+				906145FA15BE8CF3009BB7C8 /* MessageDiv.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

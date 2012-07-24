@@ -58,6 +58,7 @@ LOCAL_SRC_FILES := \
 ./MessageDbToRms.cpp \
 ./MessageDeclare.cpp \
 ./MessageDelay.cpp \
+./MessageDiv.cpp \
 ./MessageDivide.cpp \
 ./MessageElement.cpp \
 ./MessageEqualsEquals.cpp \

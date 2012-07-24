@@ -35,6 +35,7 @@
 #include "MessageCputime.h"
 #include "MessageDeclare.h"
 #include "MessageDelay.h"
+#include "MessageDiv.h"
 #include "MessageDivide.h"
 #include "MessageDbToPow.h"
 #include "MessageDbToRms.h"
@@ -167,6 +168,7 @@ ObjectFactoryMap::ObjectFactoryMap() {
   objectFactoryMap[string(MessageDeclare::getObjectLabel())] = &MessageDeclare::newObject;
   objectFactoryMap[string(MessageDelay::getObjectLabel())] = &MessageDelay::newObject;
   objectFactoryMap[string("del")] = &MessageDelay::newObject;
+  objectFactoryMap[string(MessageDiv::getObjectLabel())] = &MessageDiv::newObject;
   objectFactoryMap[string(MessageDivide::getObjectLabel())] = &MessageDivide::newObject;
   objectFactoryMap[string(MessageEqualsEquals::getObjectLabel())] = &MessageEqualsEquals::newObject;
   objectFactoryMap[string(MessageExp::getObjectLabel())] = &MessageExp::newObject;
