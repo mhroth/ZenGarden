@@ -215,6 +215,11 @@ public class PdObjectTest implements ZenGardenListener {
   public void testMessageLogicalOr() {
     genericMessageTest("MessageLogicalOr.pd");
   }
+  
+  @Test
+  public void testMessageMakefilename() {
+    genericMessageTest("MessageMakefilename.pd");
+  }  
 
   @Test
   public void testMessageMaximum() {
