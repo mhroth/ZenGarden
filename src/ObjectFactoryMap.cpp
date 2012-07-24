@@ -59,6 +59,7 @@
 #include "MessageLog.h"
 #include "MessageLogicalAnd.h"
 #include "MessageLogicalOr.h"
+#include "MessageMakefilename.h"
 #include "MessageMaximum.h"
 #include "MessageMessageBox.h"
 #include "MessageMetro.h"
@@ -191,6 +192,7 @@ ObjectFactoryMap::ObjectFactoryMap() {
   objectFactoryMap[string(MessageLog::getObjectLabel())] = &MessageLog::newObject;
   objectFactoryMap[string(MessageLogicalAnd::getObjectLabel())] = &MessageLogicalAnd::newObject;
   objectFactoryMap[string(MessageLogicalOr::getObjectLabel())] = &MessageLogicalOr::newObject;
+  objectFactoryMap[string(MessageMakefilename::getObjectLabel())] = &MessageMakefilename::newObject;
   objectFactoryMap[string(MessageMaximum::getObjectLabel())] = &MessageMaximum::newObject;
   objectFactoryMap[string(MessageMessageBox::getObjectLabel())] = &MessageMessageBox::newObject;
   objectFactoryMap[string(MessageMetro::getObjectLabel())] = &MessageMetro::newObject;

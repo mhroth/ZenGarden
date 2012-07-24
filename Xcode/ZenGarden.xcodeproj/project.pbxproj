@@ -631,6 +631,9 @@
 		90A42CC0143E68BB00DBF988 /* DspFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90A42CBF143E68BB00DBF988 /* DspFilter.cpp */; };
 		90A42CC1143E68BB00DBF988 /* DspFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90A42CBF143E68BB00DBF988 /* DspFilter.cpp */; };
 		90A42CC2143E68BB00DBF988 /* DspFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90A42CBF143E68BB00DBF988 /* DspFilter.cpp */; };
+		90A51E2215BF184400A101C9 /* MessageMakefilename.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90A51E2115BF184400A101C9 /* MessageMakefilename.cpp */; };
+		90A51E2315BF184400A101C9 /* MessageMakefilename.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90A51E2115BF184400A101C9 /* MessageMakefilename.cpp */; };
+		90A51E2415BF184400A101C9 /* MessageMakefilename.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90A51E2115BF184400A101C9 /* MessageMakefilename.cpp */; };
 		90AD81761298675C0029E2B1 /* DspRfft.h in Headers */ = {isa = PBXBuildFile; fileRef = 90AD81741298675C0029E2B1 /* DspRfft.h */; };
 		90AD81771298675C0029E2B1 /* DspRfft.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90AD81751298675C0029E2B1 /* DspRfft.cpp */; };
 		90AD81781298675C0029E2B1 /* DspRfft.h in Headers */ = {isa = PBXBuildFile; fileRef = 90AD81741298675C0029E2B1 /* DspRfft.h */; };
@@ -983,6 +986,8 @@
 		909608DD120B8A1C00135B03 /* MessageStripNote.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageStripNote.cpp; path = ../src/MessageStripNote.cpp; sourceTree = SOURCE_ROOT; };
 		90988E79143E69120028E2B7 /* DspFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspFilter.h; path = ../src/DspFilter.h; sourceTree = "<group>"; };
 		90A42CBF143E68BB00DBF988 /* DspFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspFilter.cpp; path = ../src/DspFilter.cpp; sourceTree = "<group>"; };
+		90A51E2115BF184400A101C9 /* MessageMakefilename.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageMakefilename.cpp; path = ../src/MessageMakefilename.cpp; sourceTree = "<group>"; };
+		90A51E2515BF186D00A101C9 /* MessageMakefilename.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MessageMakefilename.h; path = ../src/MessageMakefilename.h; sourceTree = "<group>"; };
 		90AD81741298675C0029E2B1 /* DspRfft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspRfft.h; path = ../src/DspRfft.h; sourceTree = SOURCE_ROOT; };
 		90AD81751298675C0029E2B1 /* DspRfft.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspRfft.cpp; path = ../src/DspRfft.cpp; sourceTree = SOURCE_ROOT; };
 		90AD81B612986DE10029E2B1 /* DspPrint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspPrint.h; path = ../src/DspPrint.h; sourceTree = SOURCE_ROOT; };
@@ -1236,6 +1241,8 @@
 				90F4C18C12328AC1001182CF /* MessageLogicalAnd.h */,
 				90F4C19812328CFC001182CF /* MessageLogicalOr.cpp */,
 				90F4C19912328CFC001182CF /* MessageLogicalOr.h */,
+				90A51E2115BF184400A101C9 /* MessageMakefilename.cpp */,
+				90A51E2515BF186D00A101C9 /* MessageMakefilename.h */,
 				90337BE911D0D847009FCC01 /* MessageMaximum.cpp */,
 				90337BEA11D0D847009FCC01 /* MessageMaximum.h */,
 				90337BEB11D0D847009FCC01 /* MessageMessageBox.cpp */,
@@ -1916,6 +1923,7 @@
 				90119EF61500DB0700A9AB46 /* DspImplicitAdd.cpp in Sources */,
 				90D4564D1516A26A00ED6B05 /* BufferPool.cpp in Sources */,
 				906145F815BE8CF3009BB7C8 /* MessageDiv.cpp in Sources */,
+				90A51E2215BF184400A101C9 /* MessageMakefilename.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2061,6 +2069,7 @@
 				90119EF71500DB0700A9AB46 /* DspImplicitAdd.cpp in Sources */,
 				90D4564E1516A26A00ED6B05 /* BufferPool.cpp in Sources */,
 				906145F915BE8CF3009BB7C8 /* MessageDiv.cpp in Sources */,
+				90A51E2315BF184400A101C9 /* MessageMakefilename.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2206,6 +2215,7 @@
 				90119EF81500DB0700A9AB46 /* DspImplicitAdd.cpp in Sources */,
 				90D4564F1516A26A00ED6B05 /* BufferPool.cpp in Sources */,
 				906145FA15BE8CF3009BB7C8 /* MessageDiv.cpp in Sources */,
+				90A51E2415BF184400A101C9 /* MessageMakefilename.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2229,7 +2239,15 @@
 					/usr/local/lib,
 					"\"$(SRCROOT)/../libs/Darwin\"",
 				);
-				OTHER_LDFLAGS = "-lprofiler";
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-stdlib=libc++",
+					"-std=c++0x",
+				);
+				OTHER_LDFLAGS = (
+					"-lprofiler",
+					"-stdlib=libc++",
+				);
 				PRODUCT_NAME = ZenGarden;
 				VALID_ARCHS = "i386 x86_64";
 			};
@@ -2243,7 +2261,7 @@
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				INSTALL_PATH = /usr/local/bin;
@@ -2252,7 +2270,15 @@
 					/usr/local/lib,
 					"\"$(SRCROOT)/../libs/Darwin\"",
 				);
-				OTHER_LDFLAGS = "-lprofiler";
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-stdlib=libc++",
+					"-std=c++0x",
+				);
+				OTHER_LDFLAGS = (
+					"-lprofiler",
+					"-stdlib=libc++",
+				);
 				PRODUCT_NAME = ZenGarden;
 				SEPARATE_STRIP = YES;
 				STRIP_INSTALLED_PRODUCT = YES;
