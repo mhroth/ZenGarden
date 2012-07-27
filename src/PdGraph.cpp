@@ -219,21 +219,21 @@ void PdGraph::registerObject(MessageObject *messageObject) {
   switch (messageObject->getObjectType()) {
     case MESSAGE_RECEIVE:
     case MESSAGE_NOTEIN: {
-      context->registerRemoteMessageReceiver((RemoteMessageReceiver *) messageObject);
+      context->registerRemoteMessageReceiver(reinterpret_cast<RemoteMessageReceiver *>(messageObject));
       break;
     }
     case MESSAGE_TABLE: {
       // tables must be registered globally as a table, but can also receive remote messages
-      context->registerRemoteMessageReceiver((RemoteMessageReceiver *) messageObject);
+      context->registerRemoteMessageReceiver(reinterpret_cast<RemoteMessageReceiver *>(messageObject));
       context->registerTable((MessageTable *) messageObject);
       break;
     }
     case MESSAGE_TABLE_READ: {
-      context->registerTableReceiver((MessageTableRead *) messageObject);
+      context->registerTableReceiver(reinterpret_cast<MessageTableRead *>(messageObject));
       break;
     }
     case MESSAGE_TABLE_WRITE: {
-      context->registerTableReceiver((MessageTableWrite *) messageObject);
+      context->registerTableReceiver(reinterpret_cast<MessageTableWrite *>(messageObject));
       break;
     }
     case DSP_CATCH: {

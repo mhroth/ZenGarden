@@ -75,10 +75,8 @@ void MessageSendController::sendMessage(int outletIndex, PdMessage *message) {
     context->receiveSystemMessage(message);
   } else {
     set<RemoteMessageReceiver *> receiverSet = sendStack[outletIndex].second;
-    set<RemoteMessageReceiver *>::iterator it = receiverSet.begin();
-    set<RemoteMessageReceiver *>::iterator end = receiverSet.end();
-    while (it != end) {
-      RemoteMessageReceiver *receiver = *it++;
+    for (set<RemoteMessageReceiver *>::iterator it = receiverSet.begin(); it != receiverSet.end(); ++it) {
+      RemoteMessageReceiver *receiver = *it;
       receiver->receiveMessage(0, message);
     }
   }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -30,21 +30,13 @@ MessageReceive::MessageReceive(PdMessage *initMessage, PdGraph *graph) :
     RemoteMessageReceiver(0, 1, graph) {
   // a receive object can be instantiated with no name. It receives a default.
   name = StaticUtils::copyString(initMessage->isSymbol(0)
-      ? initMessage->getSymbol(0) : (char *) "zg_default_sendreceive_name");
+      ? initMessage->getSymbol(0) : "zg_default_sendreceive_name");
 }
 
 MessageReceive::~MessageReceive() {
   free(name);
 }
 
-const char *MessageReceive::getObjectLabel() {
-  return "receive";
-}
-
-ObjectType MessageReceive::getObjectType() {
-  return MESSAGE_RECEIVE;
-}
-
 void MessageReceive::receiveMessage(int inletIndex, PdMessage *message) {
-  sendMessage(0, message);
+  sendMessage(0, message); // send all received messages to the outlet
 }
