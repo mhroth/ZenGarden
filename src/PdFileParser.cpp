@@ -122,6 +122,7 @@ PdGraph *PdFileParser::execute(PdContext *context) {
 }
 
 PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *context) {
+#define OBJECT_LABEL_RESOLUTION_BUFFER_LENGTH 32
 #define RESOLUTION_BUFFER_LENGTH 512
 #define INIT_MESSAGE_MAX_ELEMENTS 32
   PdMessage *initMessage = PD_MESSAGE_ON_STACK(INIT_MESSAGE_MAX_ELEMENTS);
@@ -165,12 +166,21 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
         float canvasX = (float) atoi(strtok(NULL, " "));
         float canvasY = (float) atoi(strtok(NULL, " "));
         
+        // resolve $ variables in the object label (such as objects that are simply labeled "$1")
         char *objectLabel = strtok(NULL, " ;"); // delimit with " " or ";"
+        char resBufferLabel[OBJECT_LABEL_RESOLUTION_BUFFER_LENGTH];
+        PdMessage::resolveString(objectLabel, graph->getArguments(), 0,
+          resBufferLabel, OBJECT_LABEL_RESOLUTION_BUFFER_LENGTH); // object labels are always strings
+                                                                  // even if they are numbers, e.g. "1"
+        
+        // resolve $ variables in the object arguments
         char *objectInitString = strtok(NULL, ";"); // get the object initialisation string
         char resBuffer[RESOLUTION_BUFFER_LENGTH];
         initMessage->initWithSARb(INIT_MESSAGE_MAX_ELEMENTS, objectInitString, graph->getArguments(),
             resBuffer, RESOLUTION_BUFFER_LENGTH);
-        MessageObject *messageObject = context->newObject(objectLabel, initMessage, graph);
+        
+        // create the object
+        MessageObject *messageObject = context->newObject(resBufferLabel, initMessage, graph);
         if (messageObject == NULL) { // object could not be created based on any known object factory functions
           string filename = string(objectLabel) + ".pd";
           string directory = graph->findFilePath(filename.c_str());
