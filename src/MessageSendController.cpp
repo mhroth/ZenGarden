@@ -95,8 +95,8 @@ void MessageSendController::addReceiver(RemoteMessageReceiver *receiver) {
     nameIndex = sendStack.size()-1;
   }
   
-  set<RemoteMessageReceiver *> receiverSet = sendStack[nameIndex].second;
-  receiverSet.insert(receiver);
+  set<RemoteMessageReceiver *> *receiverSet = &(sendStack[nameIndex].second);
+  receiverSet->insert(receiver);
 }
 
 void MessageSendController::removeReceiver(RemoteMessageReceiver *receiver) {
