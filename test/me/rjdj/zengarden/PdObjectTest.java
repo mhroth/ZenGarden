@@ -386,6 +386,11 @@ public class PdObjectTest implements ZenGardenListener {
     genericMessageTest("MessageWrap.pd");
   }
   
+  @Test
+  public void testMultipleReceiversWithSameNameAllReceiveMessage() {
+    genericMessageTest("multiple-receiver-test.pd");
+  }
+  
   /**
    * Executes the generic message test for at least the given minimum runtime (in milliseconds).
    */

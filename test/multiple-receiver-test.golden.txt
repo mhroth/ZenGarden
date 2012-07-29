@@ -1,0 +1,2 @@
+[@ 0.000ms] test1: bang
+[@ 0.000ms] test2: bang
