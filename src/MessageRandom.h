@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -36,9 +36,9 @@ class MessageRandom : public MessageObject {
     MessageRandom(PdMessage *initMessage, PdGraph *graph);
     ~MessageRandom();
 
-    static const char *getObjectLabel();
+    static const char *getObjectLabel() { return "random"; }
 
-    bool shouldDistributeMessageToInlets();
+    bool shouldDistributeMessageToInlets() { return false; }
 
   protected:
     void processMessage(int inletIndex, PdMessage *message);

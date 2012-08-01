@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2011 Reality Jockey, Ltd.
+ *  Copyright 2009,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  *
@@ -35,14 +35,6 @@ MessageRandom::~MessageRandom() {
   delete twister;
 }
 
-const char *MessageRandom::getObjectLabel() {
-  return "random";
-}
-
-bool MessageRandom::shouldDistributeMessageToInlets() {
-  return false;
-}
-
 void MessageRandom::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
@@ -59,9 +51,7 @@ void MessageRandom::processMessage(int inletIndex, PdMessage *message) {
           sendMessage(0, outgoingMessage);
           break;
         }
-        default: {
-          break;
-        }
+        default: break;
       }
       break;
     }
@@ -71,8 +61,6 @@ void MessageRandom::processMessage(int inletIndex, PdMessage *message) {
       }
       break;
     }
-    default: {
-      break; // ERROR!
-    }
+    default: break; // ERROR!
   }
 }
