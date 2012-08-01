@@ -285,7 +285,8 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
       } else if (!strcmp(objectType, "coords")) {
         // NOTE(mhroth): not really sure what this object type does, but it doesn't seem to have
         // any effect on the function of the patch (i.e. it seems to be purely cosmetic).
-        context->printErr("WARNING: Unsure what object type #X coords does: \"%s\"", message.c_str());
+        context->printErr("WARNING: Unsure what object type #X coords does: \"%s\"\n"
+            "  There is (probably) no reason to worry.", message.c_str());
       } else {
         context->printErr("Unrecognised #X object type: \"%s\"", message.c_str());
       }
