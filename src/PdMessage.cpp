@@ -48,7 +48,7 @@ void PdMessage::initWithString(double ts, unsigned int maxElements, char *initSt
 void PdMessage::parseAndSetMessageElement(unsigned int index, char *token) {
   if (StaticUtils::isNumeric(token)) {
     setFloat(index, atof(token)); // element is a float
-  } else if (!strcmp("!", token)) {
+  } else if (!strcmp("!", token) || !strcmp("bang", token)) {
     setBang(index); // element is a bang
   } else {
     setSymbol(index, token); // element is symbolic
@@ -86,7 +86,7 @@ void PdMessage::resolveString(char *initString, PdMessage *arguments, unsigned i
         case '7': { argumentIndex = 7; break; }
         case '8': { argumentIndex = 8; break; }
         case '9': { argumentIndex = 9; break; }
-        default: { continue; }
+        default: continue;
       }
       argumentIndex -= offset;
       if (argumentIndex >= 0 && argumentIndex < numArguments) {
@@ -109,9 +109,7 @@ void PdMessage::resolveString(char *initString, PdMessage *arguments, unsigned i
             }
             break;
           }
-          default: {
-            break;
-          }
+          default: break;
         }
       }
     }
