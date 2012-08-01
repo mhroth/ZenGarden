@@ -38,7 +38,7 @@
 
 #pragma mark - Constructor/Deconstructor
 
-// a PdGraph begins with zero inlets and zero outlets. thses will be added as inlet/~ and outlet/~
+// a PdGraph begins with zero inlets and zero outlets. These will be added as inlet/~ and outlet/~
 // objects are added to the graph
 PdGraph::PdGraph(PdMessage *initMessage, PdGraph *parentGraph, PdContext *context, int graphId) :
     DspObject(0, 0, 0, 0, (parentGraph == NULL) ? context->getBlockSize() : parentGraph->getBlockSize(), parentGraph) {
