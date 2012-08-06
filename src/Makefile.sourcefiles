@@ -43,6 +43,7 @@ LOCAL_SRC_FILES := \
 ./DspTableRead4.cpp \
 ./DspThrow.cpp \
 ./DspVariableDelay.cpp \
+./DspVariableLine.cpp \
 ./DspVCF.cpp \
 ./DspWrap.cpp \
 ./MessageAbsoluteValue.cpp \

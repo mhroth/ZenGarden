@@ -28,9 +28,8 @@ OrderedMessageQueue::OrderedMessageQueue() {
 
 OrderedMessageQueue::~OrderedMessageQueue() {
   // destroy all remaining inserted messages
-  list<ObjectMessageLetPair>::iterator it = orderedMessageQueue.begin();
-  list<ObjectMessageLetPair>::iterator end = orderedMessageQueue.end();
-  while (it != end) {
+  for (list<ObjectMessageLetPair>::iterator it = orderedMessageQueue.begin();
+       it != orderedMessageQueue.end(); ++it) {
     ObjectMessageLetPair omlPair = *it++;
     omlPair.second.first->freeMessage();
   }
@@ -38,32 +37,25 @@ OrderedMessageQueue::~OrderedMessageQueue() {
 
 void OrderedMessageQueue::insertMessage(MessageObject *messageObject, int outletIndex, PdMessage *message) {
   ObjectMessageLetPair omlPair = make_pair(messageObject, make_pair(message, outletIndex));
-  
-  list<ObjectMessageLetPair>::iterator it = orderedMessageQueue.begin();
-  list<ObjectMessageLetPair>::iterator end = orderedMessageQueue.end();
-  while (it != end) {
+  for (list<ObjectMessageLetPair>::iterator it = orderedMessageQueue.begin();
+       it != orderedMessageQueue.end(); ++it) {
     if (message->getTimestamp() < it->second.first->getTimestamp()) {
       orderedMessageQueue.insert(it, omlPair);
       return;
-    } else {
-      ++it;
     }
   }
   orderedMessageQueue.push_back(omlPair); // insert at end
 }
 
 void OrderedMessageQueue::removeMessage(MessageObject *messageObject, int outletIndex, PdMessage *message) {
-  list<ObjectMessageLetPair>::iterator it = orderedMessageQueue.begin();
-  list<ObjectMessageLetPair>::iterator end = orderedMessageQueue.end();
-  while (it != end) {
+  for (list<ObjectMessageLetPair>::iterator it = orderedMessageQueue.begin();
+       it != orderedMessageQueue.end(); ++it) {
     ObjectMessageLetPair omlPair = *it;
     if (omlPair.first == messageObject &&
         omlPair.second.first == message &&
         omlPair.second.second == outletIndex) {
       orderedMessageQueue.erase(it);
       return;
-    } else {
-      ++it;
     }
   }
 }
