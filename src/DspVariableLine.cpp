@@ -29,11 +29,18 @@ MessageObject *DspVariableLine::newObject(PdMessage *initMessage, PdGraph *graph
 }
 
 DspVariableLine::DspVariableLine(PdMessage *initMessage, PdGraph *graph) : DspObject(3, 0, 0, 1, graph) {
+  numSamplesToTarget = 0.0f;
+  target = 0.0f;
+  slope = 0.0f;
+  lastOutputSample = 0.0f;
   
+  processFunction = &processSignal;
+  processFunctionNoMessage = &processSignal;
 }
 
 DspVariableLine::~DspVariableLine() {
-  clearAllMessagesFrom(messageList.begin()); // delete all messages in the list
+  // because all messages are stored in (and thus owned by) the context, it is not necessary
+  // to delete pending messages here
 }
 
 void DspVariableLine::processMessage(int inletIndex, PdMessage *message) {
@@ -41,44 +48,124 @@ void DspVariableLine::processMessage(int inletIndex, PdMessage *message) {
     case 0: { 
       if (message->isFloat(0)) {
         float target = message->getFloat(0);
-        float interval = message->isFloat(1) ? message->isFloat(1) : 0.0f;
-        float delay = message->isFloat(2) ? message->isFloat(2) : 0.0f;
+        float interval = message->isFloat(1) ? message->getFloat(1) : 0.0f;
+        float delay = message->isFloat(2) ? message->getFloat(2) : 0.0f;
         
         // clear all messages after the given start time, insert the new message into the list
-        PdMessage *controlMessage = PD_MESSAGE_ON_STACK(3);
-        controlMessage->initWithTimestampAndFloat(message->getTimestamp() + delay, target);
+        PdMessage *controlMessage = PD_MESSAGE_ON_STACK(2);
+        controlMessage->initWithTimestampAndNumElements(message->getTimestamp() + delay, 2);
+        controlMessage->setFloat(0, target);
         controlMessage->setFloat(1, interval);
         
-        addAndClearLaterMessages(controlMessage->copyToHeap());
-       } else if (message->isSymbol(0, "stop")) {
-         // freeze output at current value
-       }
+        clearAllMessagesAfter(controlMessage);
+        
+        if (delay == 0.0f) {
+          // if there is no delay on the message, act on it immediately
+          updatePathWithMessage(controlMessage);
+        } else {
+          PdMessage *heapMessage = graph->scheduleMessage(this, 0, controlMessage);
+          messageList.push_back(heapMessage);
+        }
+        
+      } else if (message->isSymbol(0, "stop")) {
+        // clear all pending messages
+        clearAllMessagesFrom(messageList.begin());
+        
+        // freeze output at current value
+        updatePathWithMessage(NULL);
+      }
       break;
     }
     case 1:
     case 2:
     default: {
       graph->printErr("vline~ does not respond to messages on 2nd and 3rd inlets. "
-          "All messages should be sent to left-most inlet.");
+          "All messages must be sent to left-most inlet.");
       break;
     }
   }
 }
 
-void DspVariableLine::addAndClearLaterMessages(PdMessage *newMessage) {
+void DspVariableLine::clearAllMessagesAfter(PdMessage *stackMessage) {
   for (list<PdMessage *>::iterator it = messageList.begin(); it != messageList.end(); ++it) {
     PdMessage *message = *it;
-    if (newMessage->getTimestamp() < message->getTimestamp()) {
+    if (stackMessage->getTimestamp() < message->getTimestamp()) {
       clearAllMessagesFrom(it);
       break;
     }
   }
-  messageList.push_back(newMessage);
 }
 
 void DspVariableLine::clearAllMessagesFrom(list<PdMessage *>::iterator it) {
   while (it != messageList.end()) {
     PdMessage *message = *it++;
-    message->freeMessage();
+    graph->cancelMessage(this, 0, message);
+  }
+  
+  messageList.erase(it, messageList.end());
+}
+
+void DspVariableLine::updatePathWithMessage(PdMessage *message) {
+  if (message == NULL) {
+    // no message, level everything off
+    lastOutputSample = target;
+    numSamplesToTarget = 0.0f;
+    slope = 0.0f;
+  } else {
+    target = message->getFloat(0);
+    numSamplesToTarget = StaticUtils::millisecondsToSamples(message->getFloat(1), graph->getSampleRate());
+    if (numSamplesToTarget == 0.0f) {
+      lastOutputSample = target;
+    } else {
+      slope = (target - lastOutputSample) / numSamplesToTarget;
+    }
+  }
+}
+
+void DspVariableLine::sendMessage(int outletIndex, PdMessage *message) {
+  // this message should be at the front of the messageList, but we use the more general remove
+  // function just in case
+  messageList.remove(message);
+
+  updatePathWithMessage(message);
+}
+
+void DspVariableLine::processSignal(DspObject *dspObject, int fromIndex, int toIndex) {
+  DspVariableLine *d = reinterpret_cast<DspVariableLine *>(dspObject);
+  
+  if (d->numSamplesToTarget <= 0.0f) {
+    // there are no pending messages
+    #if __APPLE__
+    vDSP_vfill(d->dspBufferAtOutlet[0]+fromIndex, &(d->lastOutputSample), 1, toIndex-fromIndex);
+    #else
+      
+    #endif
+  } else {
+    // there are pending messages
+    int n = toIndex - fromIndex;
+    if (n < (int) d->numSamplesToTarget) {
+      // can update entire buffer
+      #if __APPLE__
+      vDSP_vramp(&(d->lastOutputSample), &(d->slope), d->dspBufferAtOutlet[0]+fromIndex, 1, n);
+      #else
+            
+      #endif
+    } else {
+      // must update slope in this buffer
+      #if __APPLE__
+      vDSP_vramp(&(d->lastOutputSample), &(d->slope), d->dspBufferAtOutlet[0]+fromIndex, 1, (int) d->numSamplesToTarget);
+      #else
+            
+      #endif
+      // update the path
+      d->slope = 0.0f;
+      d->lastOutputSample = d->dspBufferAtOutlet[0][fromIndex + (int) d->numSamplesToTarget];
+      d->numSamplesToTarget = 0.0f;
+      
+      // process the remainder of the buffer
+      processSignal(dspObject, fromIndex + (int) ceilf(d->numSamplesToTarget), toIndex);
+    }
+    d->lastOutputSample = d->dspBufferAtOutlet[0][toIndex-1] + d->slope;
+    d->numSamplesToTarget -= n;
   }
 }

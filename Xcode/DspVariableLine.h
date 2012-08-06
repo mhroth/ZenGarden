@@ -38,18 +38,29 @@ class DspVariableLine : public DspObject {
   
     // this implementation assumes that all messages arrive only on the left-most inlet
     bool shouldDistributeMessageToInlets() { return false; }
+  
+    // override sendMessage in order to update path
+    void sendMessage(int outletIndex, PdMessage *message);
     
   private:
+    static void processSignal(DspObject *dspObject, int fromIndex, int toIndex);
+  
     void processMessage(int inletIndex, PdMessage *message);
   
-    void addAndClearLaterMessages(PdMessage *newMessage);
+    void clearAllMessagesAfter(PdMessage *newMessage);
   
     void clearAllMessagesFrom(list<PdMessage *>::iterator it);
   
-    float slope;
+    /** Immediately updates the path variables based on the info in the message. */
+    void updatePathWithMessage(PdMessage *message);
   
+    float target;
+    float slope; // change per sample
+    float numSamplesToTarget;
+    float lastOutputSample;
+  
+    // a list of pending path messages
     list<PdMessage *> messageList;
-
 };
 
 #endif // _DSP_VARIABLE_LINE_H_
