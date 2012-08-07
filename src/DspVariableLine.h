@@ -47,7 +47,7 @@ class DspVariableLine : public DspObject {
   
     void processMessage(int inletIndex, PdMessage *message);
   
-    void clearAllMessagesAfter(PdMessage *newMessage);
+    void clearAllMessagesAtOrAfter(double timestamp);
   
     void clearAllMessagesFrom(list<PdMessage *>::iterator it);
   

@@ -57,7 +57,7 @@ void DspVariableLine::processMessage(int inletIndex, PdMessage *message) {
         controlMessage->setFloat(0, target);
         controlMessage->setFloat(1, interval);
         
-        clearAllMessagesAfter(controlMessage);
+        clearAllMessagesAtOrAfter(controlMessage->getTimestamp());
         
         if (delay == 0.0f) {
           // if there is no delay on the message, act on it immediately
@@ -86,10 +86,10 @@ void DspVariableLine::processMessage(int inletIndex, PdMessage *message) {
   }
 }
 
-void DspVariableLine::clearAllMessagesAfter(PdMessage *stackMessage) {
+void DspVariableLine::clearAllMessagesAtOrAfter(double timestamp) {
   for (list<PdMessage *>::iterator it = messageList.begin(); it != messageList.end(); ++it) {
     PdMessage *message = *it;
-    if (stackMessage->getTimestamp() < message->getTimestamp()) {
+    if (timestamp < message->getTimestamp()) {
       clearAllMessagesFrom(it);
       break;
     }
@@ -97,12 +97,13 @@ void DspVariableLine::clearAllMessagesAfter(PdMessage *stackMessage) {
 }
 
 void DspVariableLine::clearAllMessagesFrom(list<PdMessage *>::iterator it) {
+  list<PdMessage *>::iterator itCopy = it;
   while (it != messageList.end()) {
     PdMessage *message = *it++;
     graph->cancelMessage(this, 0, message);
   }
   
-  messageList.erase(it, messageList.end());
+  messageList.erase(itCopy, messageList.end());
 }
 
 void DspVariableLine::updatePathWithMessage(PdMessage *message) {

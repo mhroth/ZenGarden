@@ -749,6 +749,7 @@
 		90251D3912042F38000EAF40 /* MessageOpenPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessageOpenPanel.cpp; path = ../src/MessageOpenPanel.cpp; sourceTree = SOURCE_ROOT; };
 		90251D5512043445000EAF40 /* DspSignal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspSignal.cpp; path = ../src/DspSignal.cpp; sourceTree = SOURCE_ROOT; };
 		90251D5612043445000EAF40 /* DspSignal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspSignal.h; path = ../src/DspSignal.h; sourceTree = SOURCE_ROOT; };
+		9032EC0C15D17830005CBE1C /* DspVariableLine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DspVariableLine.h; path = ../src/DspVariableLine.h; sourceTree = "<group>"; };
 		90337B4A11D0D847009FCC01 /* ArrayArithmetic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArrayArithmetic.h; path = ../src/ArrayArithmetic.h; sourceTree = SOURCE_ROOT; };
 		90337B4B11D0D847009FCC01 /* ConnectionType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConnectionType.h; path = ../src/ConnectionType.h; sourceTree = SOURCE_ROOT; };
 		90337B4C11D0D847009FCC01 /* DelayReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DelayReceiver.cpp; path = ../src/DelayReceiver.cpp; sourceTree = SOURCE_ROOT; };
@@ -982,7 +983,6 @@
 		906145FB15BE8D07009BB7C8 /* MessageDiv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MessageDiv.h; path = ../src/MessageDiv.h; sourceTree = "<group>"; };
 		9069DFD111D17BD600889A5B /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		906AB54815C583F00002FC1E /* DspVariableLine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspVariableLine.cpp; path = ../src/DspVariableLine.cpp; sourceTree = "<group>"; };
-		906AB54C15C5841A0002FC1E /* DspVariableLine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DspVariableLine.h; sourceTree = "<group>"; };
 		907B1F50129965D900B263E2 /* DspBang.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspBang.h; path = ../src/DspBang.h; sourceTree = SOURCE_ROOT; };
 		907B1F51129965D900B263E2 /* DspBang.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DspBang.cpp; path = ../src/DspBang.cpp; sourceTree = SOURCE_ROOT; };
 		9086906A129AC67B00D3BD5D /* DspSqrt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DspSqrt.h; path = ../src/DspSqrt.h; sourceTree = SOURCE_ROOT; };
@@ -1168,7 +1168,7 @@
 				90337B8C11D0D847009FCC01 /* DspVariableDelay.cpp */,
 				90337B8D11D0D847009FCC01 /* DspVariableDelay.h */,
 				906AB54815C583F00002FC1E /* DspVariableLine.cpp */,
-				906AB54C15C5841A0002FC1E /* DspVariableLine.h */,
+				9032EC0C15D17830005CBE1C /* DspVariableLine.h */,
 				901F57FB1398E808009781F0 /* DspVCF.cpp */,
 				901F57FC1398E808009781F0 /* DspVCF.h */,
 				90337B9011D0D847009FCC01 /* DspWrap.cpp */,
