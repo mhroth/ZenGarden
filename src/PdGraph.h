@@ -200,8 +200,8 @@ class PdGraph : public DspObject {
   
     /** Used with MessageValue for keeping track of global variables. */
     // TODO(mhroth): these are not yet fully implemented
-    void setValueForName(char *name, float constant);
-    float getValueForName(char *name);
+    void setValueForName(const char *name, float constant);
+    float getValueForName(const char *name);
 
     unsigned int getNumInlets();
     unsigned int getNumOutlets();

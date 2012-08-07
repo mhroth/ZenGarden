@@ -420,13 +420,12 @@ void PdContext::unregisterTableReceiver(TableReceiverInterface *tableReceiver) {
   tableReceiver->setTable(NULL);
 }
 
-void PdContext::setValueForName(char *name, float constant) {
-  // TODO(mhroth): requires implementation!
+void PdContext::setValueForName(const char *name, float constant) {
+  valueMap[string(name)] = constant;
 }
 
-float PdContext::getValueForName(char *name) {
-  // TODO(mhroth): requires implementation!
-  return 0.0f;
+float PdContext::getValueForName(const char *name) {
+  return valueMap[string(name)];
 }
 
 void PdContext::registerExternalReceiver(const char *receiverName) {

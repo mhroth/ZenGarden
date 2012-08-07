@@ -186,8 +186,8 @@ class PdContext {
     int getNextGraphId();
   
     /** Used with MessageValue for keeping track of global variables. */
-    void setValueForName(char *name, float constant);
-    float getValueForName(char *name);
+    void setValueForName(const char *name, float constant);
+    float getValueForName(const char *name);
   
     /** Create a new object in a graph. */
     MessageObject *newObject(const char *objectLabel, PdMessage *initMessage, PdGraph *graph);
@@ -275,6 +275,9 @@ class PdContext {
     ObjectFactoryMap *objectFactoryMap;
   
     BufferPool *bufferPool;
+  
+    /** A global map storing values for Value objects. */
+    map<string,float> valueMap;
 };
 
 #endif // _PD_CONTEXT_H_

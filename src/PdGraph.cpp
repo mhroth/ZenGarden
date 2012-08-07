@@ -810,11 +810,11 @@ bool PdGraph::isSwitchedOn() {
   return switched;
 }
 
-void PdGraph::setValueForName(char *name, float constant) {
+void PdGraph::setValueForName(const char *name, float constant) {
   context->setValueForName(name, constant);
 }
 
-float PdGraph::getValueForName(char *name) {
+float PdGraph::getValueForName(const char *name) {
   return context->getValueForName(name);
 }
 

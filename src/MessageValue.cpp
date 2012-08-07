@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010,2011 Reality Jockey, Ltd.
+ *  Copyright 2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -40,8 +40,8 @@ MessageValue::~MessageValue() {
   free(name);
 }
 
-const char *MessageValue::getObjectLabel() {
-  return "value";
+string MessageValue::toString() {
+  return string(getObjectLabel()) + name;
 }
 
 void MessageValue::processMessage(int inletIndex, PdMessage *message) {
@@ -56,8 +56,6 @@ void MessageValue::processMessage(int inletIndex, PdMessage *message) {
       sendMessage(0, outgoingMessage);
       break;
     }
-    default: {
-      break;
-    }
+    default: break;
   }
 }
