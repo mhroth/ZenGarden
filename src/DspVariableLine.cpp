@@ -108,7 +108,6 @@ void DspVariableLine::clearAllMessagesFrom(list<PdMessage *>::iterator it) {
 void DspVariableLine::updatePathWithMessage(PdMessage *message) {
   if (message == NULL) {
     // no message, level everything off
-    lastOutputSample = target;
     numSamplesToTarget = 0.0f;
     slope = 0.0f;
   } else {
@@ -116,6 +115,7 @@ void DspVariableLine::updatePathWithMessage(PdMessage *message) {
     numSamplesToTarget = StaticUtils::millisecondsToSamples(message->getFloat(1), graph->getSampleRate());
     if (numSamplesToTarget == 0.0f) {
       lastOutputSample = target;
+      slope = 0.0f;
     } else {
       slope = (target - lastOutputSample) / numSamplesToTarget;
     }
@@ -130,16 +130,12 @@ void DspVariableLine::sendMessage(int outletIndex, PdMessage *message) {
   updatePathWithMessage(message);
 }
 
+// NOTE(mhroth): this code could be improved to be sub-sample accurate with regards to calculating last sample output
 void DspVariableLine::processSignal(DspObject *dspObject, int fromIndex, int toIndex) {
   DspVariableLine *d = reinterpret_cast<DspVariableLine *>(dspObject);
   
   if (d->numSamplesToTarget <= 0.0f) {
-    // there are no pending messages
-    #if __APPLE__
-    vDSP_vfill(d->dspBufferAtOutlet[0]+fromIndex, &(d->lastOutputSample), 1, toIndex-fromIndex);
-    #else
-      
-    #endif
+    ArrayArithmetic::fill(d->dspBufferAtOutlet[0], d->lastOutputSample, fromIndex, toIndex);
   } else {
     // there are pending messages
     int n = toIndex - fromIndex;
@@ -150,6 +146,9 @@ void DspVariableLine::processSignal(DspObject *dspObject, int fromIndex, int toI
       #else
             
       #endif
+      
+      d->lastOutputSample = d->dspBufferAtOutlet[0][toIndex-1] + d->slope;
+      d->numSamplesToTarget -= n;
     } else {
       // must update slope in this buffer
       #if __APPLE__
@@ -159,13 +158,12 @@ void DspVariableLine::processSignal(DspObject *dspObject, int fromIndex, int toI
       #endif
       // update the path
       d->slope = 0.0f;
-      d->lastOutputSample = d->dspBufferAtOutlet[0][fromIndex + (int) d->numSamplesToTarget];
+      d->lastOutputSample = d->target;
+      fromIndex += (int) ceilf(d->numSamplesToTarget);
       d->numSamplesToTarget = 0.0f;
       
       // process the remainder of the buffer
-      processSignal(dspObject, fromIndex + (int) ceilf(d->numSamplesToTarget), toIndex);
+     ArrayArithmetic::fill(d->dspBufferAtOutlet[0], d->lastOutputSample, fromIndex, toIndex);
     }
-    d->lastOutputSample = d->dspBufferAtOutlet[0][toIndex-1] + d->slope;
-    d->numSamplesToTarget -= n;
   }
 }
