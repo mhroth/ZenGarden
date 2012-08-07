@@ -380,6 +380,11 @@ public class PdObjectTest implements ZenGardenListener {
   public void testMessageUntil() {
     genericMessageTest("MessageUntil.pd");
   }
+  
+  @Test
+  public void testMessageValue() {
+    genericMessageTest("MessageValue.pd");
+  }
 
   @Test
   public void testMessageWrap() {
