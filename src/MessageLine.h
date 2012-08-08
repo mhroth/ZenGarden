@@ -35,13 +35,15 @@ class MessageLine : public MessageObject {
     MessageLine(PdMessage *initMessage, PdGraph *graph);
     ~MessageLine();
   
-    bool shouldDistributeMessageToInlets();
+    bool shouldDistributeMessageToInlets() { return false; }
     void sendMessage(int outletIndex, PdMessage *message);
   
-    static const char *getObjectLabel();
+    static const char *getObjectLabel() { return "line"; }
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
+  
+    /** Cancels the pending message, if one exists. */
     void cancelPendingMessage();
   
     double grainRate;

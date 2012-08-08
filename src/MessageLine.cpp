@@ -33,18 +33,13 @@ MessageLine::MessageLine(PdMessage *initMessage, PdGraph *graph) : MessageObject
   currentValue = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
   grainRate = initMessage->isFloat(1) ? (double) initMessage->getFloat(1) : DEFAULT_GRAIN_RATE;
   slope = 0.0f;
+  pendingMessage = NULL;
+  lastMessageTimestamp = 0.0;
+  targetValue = 0.0f;
 }
 
 MessageLine::~MessageLine() {
   // nothing to do
-}
-
-const char *MessageLine::getObjectLabel() {
-  return "line";
-}
-
-bool MessageLine::shouldDistributeMessageToInlets() {
-  return false;
 }
 
 void MessageLine::processMessage(int inletIndex, PdMessage *message) {
@@ -69,7 +64,7 @@ void MessageLine::processMessage(int inletIndex, PdMessage *message) {
           break;
         }
         case 2: {
-          if (message->isFloat(0) && message->isFloat(1)) {
+          if (message->hasFormat("ff")) {
             // set value and target
             targetValue = message->getFloat(0);
             float duration = message->getFloat(1);
@@ -120,8 +115,10 @@ void MessageLine::processMessage(int inletIndex, PdMessage *message) {
 }
 
 void MessageLine::cancelPendingMessage() {
-  graph->cancelMessage(this, 0, pendingMessage);
-  pendingMessage = NULL;
+  if (pendingMessage != NULL) {
+    graph->cancelMessage(this, 0, pendingMessage);
+    pendingMessage = NULL;
+  }
 }
 
 void MessageLine::sendMessage(int outletIndex, PdMessage *message) {  
