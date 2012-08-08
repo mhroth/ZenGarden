@@ -30,22 +30,27 @@ MessageObject *DspThrow::newObject(PdMessage *initMessage, PdGraph *graph) {
 DspThrow::DspThrow(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0, 0, graph) {
   if (initMessage->isSymbol(0)) {
     name = StaticUtils::copyString(initMessage->getSymbol(0));
+    buffer = ALLOC_ALIGNED_BUFFER(graph->getBlockSize() * sizeof(float));
   } else {
     name = NULL;
+    buffer = NULL;
     graph->printErr("throw~ may not be initialised without a name. \"set\" message not supported.");
   }
+  processFunction = &processSignal;
 }
 
 DspThrow::~DspThrow() {
+  FREE_ALIGNED_BUFFER(buffer);
   free(name);
-}
-
-float *DspThrow::getBuffer() {
-  return dspBufferAtInlet[0];
 }
 
 void DspThrow::processMessage(int inletIndex, PdMessage *message) {
   if (inletIndex == 0 && message->isSymbol(0, "set") && message->isSymbol(1)) {
     graph->printErr("throw~ does not support the \"set\" message.");
   }
+}
+
+void DspThrow::processSignal(DspObject *dspObject, int fromIndex, int toIndex) {
+  DspThrow *d = reinterpret_cast<DspThrow *>(dspObject);
+  memcpy(d->buffer, d->dspBufferAtInlet[0], toIndex*sizeof(float));
 }

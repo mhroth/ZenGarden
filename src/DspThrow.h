@@ -38,20 +38,20 @@ class DspThrow : public DspObject {
     DspThrow(PdMessage *initMessage, PdGraph *graph);
     ~DspThrow();
     
-    /** Returns a pointer to the current local input buffer. */
-    float *getBuffer();
+    float *getBuffer() { return buffer; }
   
     const char *getName() { return name; }
     static const char *getObjectLabel() { return "throw~"; }
     string toString() { return string(getObjectLabel()) + " " + string(name); }
     ObjectType getObjectType() { return DSP_THROW; }
-  
-    bool doesProcessAudio() { return false; }
-  
+
     void processMessage(int inletIndex, PdMessage *message);
     
   private:
+    static void processSignal(DspObject *dspObject, int fromIndex, int toIndex);
+  
     char *name;
+    float *buffer;
 };
 
 #endif // _DSP_THROW_H_
