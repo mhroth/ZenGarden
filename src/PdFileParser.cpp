@@ -118,10 +118,10 @@ PdGraph *PdFileParser::execute(PdContext *context) {
     return NULL;
   }
   */
-  return execute(NULL, NULL, context);
+  return execute(NULL, NULL, context, true);
 }
 
-PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *context) {
+PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *context, bool isSubPatch) {
 #define OBJECT_LABEL_RESOLUTION_BUFFER_LENGTH 32
 #define RESOLUTION_BUFFER_LENGTH 512
 #define INIT_MESSAGE_MAX_ELEMENTS 32
@@ -150,7 +150,12 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
             newGraph->addDeclarePath(rootPath.c_str());
           }
         } else {
-          newGraph = new PdGraph(graph->getArguments(), graph, context, graph->getGraphId());
+          if (isSubPatch) {
+            newGraph = new PdGraph(graph->getArguments(), graph, context, graph->getGraphId());
+          } else {
+            newGraph = new PdGraph(initMsg, graph, context, context->getNextGraphId());
+            isSubPatch = true;
+          }
           graph->addObject(0, 0, newGraph); // add the new graph to the current one as an object
         }
         
@@ -199,7 +204,7 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
             }
           }
           PdFileParser *parser = new PdFileParser(directory, filename);
-          messageObject = parser->execute(initMessage, graph, context);
+          messageObject = parser->execute(initMessage, graph, context, false);
           // set graph name according to abstraction. useful for debugging.
           reinterpret_cast<PdGraph *>(messageObject)->setName(objectLabel);
           delete parser;

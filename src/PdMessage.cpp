@@ -89,14 +89,14 @@ void PdMessage::resolveString(char *initString, PdMessage *arguments, unsigned i
         default: continue;
       }
       argumentIndex -= offset;
-      if (argumentIndex >= 0 && argumentIndex < numArguments) {
+      if (argumentIndex >= 0 && argumentIndex < numArguments) { // bounds check
         switch (arguments->getType(argumentIndex)) {
           case FLOAT: {
             numCharsWritten = snprintf(buffer + bufferPos, bufferLength - bufferPos,
                 "%g", arguments->getFloat(argumentIndex));
             bufferPos += numCharsWritten;
             if (bufferPos >= bufferLength-1) {
-              printf("WTF: %s", buffer);
+              printf("WTF: %s\n", buffer);
             }
             break;
           }
@@ -105,12 +105,18 @@ void PdMessage::resolveString(char *initString, PdMessage *arguments, unsigned i
                 "%s", arguments->getSymbol(argumentIndex));
             bufferPos += numCharsWritten;
             if (bufferPos >= bufferLength-1) {
-              printf("WTF: %s", buffer);
+              printf("WTF: %s\n", buffer);
             }
             break;
           }
           default: break;
         }
+      } else {
+        // index is out of bounds. Something has gone terribly wrong.
+        // just write a zero. That's what pd seems to do?
+        numCharsWritten = snprintf(buffer + bufferPos, bufferLength - bufferPos, "0");
+        bufferPos += numCharsWritten;
+        printf("$var is out of bounds. WTF are you doing?\n");
       }
     }
     
