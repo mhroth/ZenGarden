@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -28,21 +28,13 @@ MessageObject *MessageSend::newObject(PdMessage *initMessage, PdGraph *graph) {
 }
 
 MessageSend::MessageSend(PdMessage *initMessage, PdGraph *graph) :
-    MessageObject((initMessage->getNumElements() == 0) ? 2 : 1, 0, graph) {
+    MessageObject(initMessage->isSymbol(0) ? 1 : 2, 0, graph) {
   name = StaticUtils::copyString(initMessage->isSymbol(0)
       ? initMessage->getSymbol(0) : "zg_default_sendreceive_name");
 }
 
 MessageSend::~MessageSend() {
   free(name);
-}
-
-const char *MessageSend::getObjectLabel() {
-  return "send";
-}
-
-ObjectType MessageSend::getObjectType() {
-  return MESSAGE_SEND;
 }
 
 void MessageSend::receiveMessage(int inletIndex, PdMessage *message) {
@@ -52,7 +44,6 @@ void MessageSend::receiveMessage(int inletIndex, PdMessage *message) {
       if (message->isSymbol(0)) {
         free(name);
         name = StaticUtils::copyString(message->getSymbol(0));
-        // TODO(mhroth): unregister this object from previous name, and reregister with current name
       }
       break;
     }

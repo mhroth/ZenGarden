@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Reality Jockey, Ltd.
+ *  Copyright 2009,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -33,8 +33,8 @@ class MessageSend : public MessageObject {
     MessageSend(PdMessage *initMessage, PdGraph *graph);
     ~MessageSend();
     
-    static const char *getObjectLabel();
-    ObjectType getObjectType();
+    static const char *getObjectLabel() { return "send"; }
+    ObjectType getObjectType() { return MESSAGE_SEND; }
   
     void receiveMessage(int inletIndex, PdMessage *message);
   

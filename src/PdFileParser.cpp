@@ -172,14 +172,14 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
         float canvasY = (float) atoi(strtok(NULL, " "));
         
         // resolve $ variables in the object label (such as objects that are simply labeled "$1")
-        char *objectLabel = strtok(NULL, " ;"); // delimit with " " or ";"
+        char *objectLabel = strtok(NULL, " ;\r"); // delimit with " " or ";"
         char resBufferLabel[OBJECT_LABEL_RESOLUTION_BUFFER_LENGTH];
         PdMessage::resolveString(objectLabel, graph->getArguments(), 0,
           resBufferLabel, OBJECT_LABEL_RESOLUTION_BUFFER_LENGTH); // object labels are always strings
                                                                   // even if they are numbers, e.g. "1"
         
         // resolve $ variables in the object arguments
-        char *objectInitString = strtok(NULL, ";"); // get the object initialisation string
+        char *objectInitString = strtok(NULL, ";\r"); // get the object initialisation string
         char resBuffer[RESOLUTION_BUFFER_LENGTH];
         initMessage->initWithSARb(INIT_MESSAGE_MAX_ELEMENTS, objectInitString, graph->getArguments(),
             resBuffer, RESOLUTION_BUFFER_LENGTH);
