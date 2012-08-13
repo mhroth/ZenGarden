@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -38,11 +38,7 @@ MessageSymbol::~MessageSymbol() {
   // nothing to do
 }
 
-const char *MessageSymbol::getObjectLabel() {
-  return "symbol";
-}
-
-bool MessageSymbol::copyString(char *s) {
+bool MessageSymbol::copyString(const char *s) {
   if (strlen(s) < SYMBOL_BUFFER_LENGTH) {
     strcpy(symbol, s);
     return true;
@@ -65,9 +61,7 @@ void MessageSymbol::processMessage(int inletIndex, PdMessage *message) {
           sendMessage(0, outgoingMessage);
           break;
         }
-        default: {
-          break;
-        }
+        default: break;
       }
       break;
     }
@@ -77,8 +71,6 @@ void MessageSymbol::processMessage(int inletIndex, PdMessage *message) {
       }
       break;
     }
-    default: {
-      break;
-    }
+    default: break;
   }
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009,2010,2011 Reality Jockey, Ltd.
+ *  Copyright 2009,2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -34,12 +34,13 @@ class MessageSymbol : public MessageObject {
     MessageSymbol(PdMessage *initMessage, PdGraph *graph);
     ~MessageSymbol();
   
-    static const char *getObjectLabel();
+    static const char *getObjectLabel() { return "symbol"; }
+    string toString() { return string(getObjectLabel()) + string(" ") + symbol; }
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
   
-    bool copyString(char *s);
+    bool copyString(const char *s);
 
     char symbol[SYMBOL_BUFFER_LENGTH];
 };
