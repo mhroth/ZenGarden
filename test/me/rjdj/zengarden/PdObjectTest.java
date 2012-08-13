@@ -314,7 +314,12 @@ public class PdObjectTest implements ZenGardenListener {
   @Test
   public void testMessageSend() {
     genericMessageTest("MessageSend.pd");
-  }	
+  }
+  
+  @Test
+  public void testMessageSend_variable() {
+    genericMessageTest("MessageSend_variable.pd");
+  }
 
   @Test
   public void testMessageSine() {
