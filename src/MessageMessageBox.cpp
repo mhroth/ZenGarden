@@ -65,10 +65,11 @@ MessageMessageBox::MessageMessageBox(char *initString, PdGraph *graph) : Message
   for (int i = 1; i < messageInitListAll.size(); i++) {
     string initString = messageInitListAll[i];
     if (strcmp(initString.c_str(), ";") != 0) {
-      // NOTE(mhroth): name string is not resolved
-      // get named destination (first element, delimited by space)
+      // trim any leading spaces. This will otherwise message up the parsing
+      initString = string(initString, initString.find_first_not_of(" "));
+      
       string name = string(initString, 0, initString.find(" "));
-      string messageString = string(initString, initString.find(" ")+2);
+      string messageString = string(initString, initString.find(" ")+1);
       int maxElements = (messageString.size()/2)+1;
       PdMessage *message = PD_MESSAGE_ON_STACK(maxElements);
       char str[messageString.size()+1]; strcpy(str, messageString.c_str());

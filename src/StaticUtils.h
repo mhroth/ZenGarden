@@ -38,7 +38,7 @@ class StaticUtils {
     };
     static char *concatStrings(const char *path0, const char *path1);
     static float sineApprox(float x);
-    static vector<string> tokenizeString(char *str, const char *delim);
+    static vector<string> tokenizeString(const char *str, const char *delim);
   
     /** This is a helper function for printing error (or info) messages. */
     static const char *messageElementTypeToString(MessageElementType type);

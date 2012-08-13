@@ -217,7 +217,7 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
       } else if (!strcmp(objectType, "msg")) {
         float canvasX = (float) atoi(strtok(NULL, " ")); // read the first canvas coordinate
         float canvasY = (float) atoi(strtok(NULL, " ")); // read the second canvas coordinate
-        char *objectInitString = strtok(NULL, ";"); // get the message initialisation string
+        char *objectInitString = strtok(NULL, "\n\r"); // get the message initialisation string (including trailing ';')
         initMessage->initWithTimestampAndSymbol(0.0, objectInitString);
         MessageObject *messageObject = context->newObject("msg", initMessage, graph);
         graph->addObject(canvasX, canvasY, messageObject);

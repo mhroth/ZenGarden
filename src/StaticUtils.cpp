@@ -75,11 +75,11 @@ float StaticUtils::sineApprox(float x) {
   //return (1.273239544735163f * x) - (0.405284734569351f * x) * (*(float *)&y);
 }
 
-vector<string> StaticUtils::tokenizeString(char *str, const char *delim) {
+vector<string> StaticUtils::tokenizeString(const char *str, const char *delim) {
   vector<string> tokenizedStrings = vector<string>();
   string s0 = string(str);
   
-  char *head = str;
+  const char *head = str;
   char *tail = NULL;
   while ((tail = strstr(head, delim)) != NULL) {
     int numBytes = tail-head;
