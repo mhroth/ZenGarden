@@ -22,7 +22,8 @@
 
 #include "ArrayArithmetic.h"
 #include "DspMinimum.h"
-#include "PdGraph.h"
+
+class PdGraph;
 
 MessageObject *DspMinimum::newObject(PdMessage *initMessage, PdGraph *graph) {
   return new DspMinimum(initMessage, graph);
@@ -67,20 +68,15 @@ void DspMinimum::processSignal(DspObject *dspObject, int fromIndex, int toIndex)
   float *output = d->dspBufferAtOutlet[0];
   while (toIndex) {
     _mm_store_ps(output, _mm_min_ps(_mm_load_ps(input0), _mm_load_ps(input1)));
-    
     input0 += 4; input1 += 4;
     output += 4;
     toIndex -= 4;
   }
   #else
-  float *inputBuffer0 = d->dspBufferAtInlet[0];
-  float *inputBuffer1 = d->dspBufferAtInlet[1];
+  float *in0 = d->dspBufferAtInlet[0];
+  float *in1 = d->dspBufferAtInlet[1];
   for (int i = fromIndex; i < toIndex; i++) {
-    if (inputBuffer0[i] <= inputBuffer1[i]) {
-      d->dspBufferAtOutlet0[i] = inputBuffer0[i];
-    } else {
-      d->dspBufferAtOutlet0[i] = inputBuffer1[i];
-    }
+    d->dspBufferAtOutlet[0][i] = (in0[i] <= in10[i]) ? in0[i] : in1[i];
   }
   #endif
 }
@@ -94,13 +90,11 @@ void DspMinimum::processScalar(DspObject *dspObject, int fromIndex, int toIndex)
   vDSP_vmin(d->dspBufferAtInlet[0] + fromIndex, 1, vconst, 1, d->dspBufferAtOutlet[0] + fromIndex, 1,
       duration);
   #else
-  float *inputBuffer = dspBufferAtInlet[0];
-  for (int i = fromIndex; i < toIndex; i++) {
-    if (inputBuffer[i] <= constant) {
-      dspBufferAtOutlet0[i] = inputBuffer[i];
-    } else {
-      dspBufferAtOutlet0[i] = constant;
-    }
+  float *in = d->dspBufferAtInlet[0];
+  float *out = d->dspBufferAtOutlet[0];
+  float c = d->constant;
+  for (int i = fromIndex; i < toIndex; ++i) {
+    out[i] = (in[i] <= c) ? in[i] : c;
   }
   #endif
 }

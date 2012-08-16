@@ -136,8 +136,8 @@ void DspEnvelope::processSignal(DspObject *dspObject, int fromIndex, int toIndex
     vDSP_vmul(rmsBuffer, 1, d->hanningCoefficients, 1, rmsBuffer, 1, d->windowSize); // * hanning window
     vDSP_sve(rmsBuffer, 1, &rms, d->windowSize); // sum the result
     #else
-    for (int i = 0; i < windowSize; i++) {
-      rms += signalBuffer[i] * signalBuffer[i] * hanningCoefficients[i];
+    for (int i = 0; i < d->windowSize; ++i) {
+      rms += d->signalBuffer[i] * d->signalBuffer[i] * d->hanningCoefficients[i];
     }
     #endif
     // finish RMS calculation. sqrt is removed as it can be combined with the log operation.

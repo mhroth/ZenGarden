@@ -38,10 +38,6 @@ DspLog::~DspLog() {
   // nothing to do
 }
 
-const char *DspLog::getObjectLabel() {
-  return "log~";
-}
-
 void DspLog::onInletConnectionUpdate(unsigned int inletIndex) {
   processFunction = (incomingDspConnections[0].size() > 0 && incomingDspConnections[1].size() > 0)
       ? &processSignal : &processScalar;
@@ -84,9 +80,9 @@ void DspLog::processScalar(DspObject *dspObject, int fromIndex, int toIndex) {
   int length = toIndex - fromIndex;
   vvlog2f((d->dspBufferAtOutlet[0])+fromIndex, (d->dspBufferAtInlet[0])+fromIndex, &length);
   #else
-  float *buffer = dspBufferAtInlet[0];
+  float *buffer = d->dspBufferAtInlet[0];
   for (int i = fromIndex; i < toIndex; i++) {
-    d->dspBufferAtOutlet0[i] = (buffer[i] <= 0.0f) ? -1000.0f : log2Approx(buffer[i]);
+    d->dspBufferAtOutlet[0][i] = (buffer[i] <= 0.0f) ? -1000.0f : d->log2Approx(buffer[i]);
   }
   #endif
   ArrayArithmetic::multiply(d->dspBufferAtOutlet[0], d->invLog2Base, d->dspBufferAtOutlet[0], fromIndex, toIndex);

@@ -33,7 +33,7 @@ class DspLine : public DspObject {
     DspLine(PdMessage *initMessage, PdGraph *graph);
     ~DspLine();
   
-    static const char *getObjectLabel();
+    static const char *getObjectLabel() { return "line~"; }
     
   private:
     void processMessage(int inletIndex, PdMessage *message);

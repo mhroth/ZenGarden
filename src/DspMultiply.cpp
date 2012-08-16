@@ -22,7 +22,8 @@
 
 #include "ArrayArithmetic.h"
 #include "DspMultiply.h"
-#include "PdGraph.h"
+
+class PdGraph;
 
 MessageObject *DspMultiply::newObject(PdMessage *initMessage, PdGraph *graph) {
   return new DspMultiply(initMessage, graph);

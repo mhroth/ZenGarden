@@ -33,7 +33,7 @@ class DspLog : public DspObject {
     DspLog(PdMessage *initMessage, PdGraph *graph);
     ~DspLog();
   
-    static const char *getObjectLabel();
+    static const char *getObjectLabel() { return "log~"; }
   
     void onInletConnectionUpdate(unsigned int inletIndex);
   

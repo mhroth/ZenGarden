@@ -39,10 +39,6 @@ DspLine::~DspLine() {
   // nothing to do
 }
 
-const char *DspLine::getObjectLabel() {
-  return "line~";
-}
-
 void DspLine::processMessage(int inletIndex, PdMessage *message) {
   if (inletIndex == 0) { // not sure what the right inlet is for
     switch (message->getNumElements()) {
@@ -96,7 +92,7 @@ void DspLine::processDspWithIndex(int fromIndex, int toIndex) {
         // i.e., if we will arrive at the target while processing
         dspBufferAtOutlet[0][fromIndex] = lastOutputSample;
         for (int i = fromIndex+1; i < targetIndexInt; i++) {
-          dspBufferAtOutlet[0][i] = dspBufferAtOutlet0[i-1] + slope;
+          dspBufferAtOutlet[0][i] = dspBufferAtOutlet[0][i-1] + slope;
         }
         for (int i = targetIndexInt; i < toIndex; i++) {
           dspBufferAtOutlet[0][i] = target;
@@ -111,7 +107,7 @@ void DspLine::processDspWithIndex(int fromIndex, int toIndex) {
         #else
         dspBufferAtOutlet[0][fromIndex] = lastOutputSample;
         for (int i = fromIndex+1; i < toIndex; i++) {
-          dspBufferAtOutlet[0][i] = dspBufferAtOutlet0[i-1] + slope;
+          dspBufferAtOutlet[0][i] = dspBufferAtOutlet[0][i-1] + slope;
         }
         #endif
         lastOutputSample = dspBufferAtOutlet[0][toIndex-1] + slope;

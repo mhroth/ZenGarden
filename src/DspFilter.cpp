@@ -22,7 +22,8 @@
 
 #include "ArrayArithmetic.h"
 #include "DspFilter.h"
-#include "PdGraph.h"
+
+class PdGraph;
 
 DspFilter::DspFilter(int numMessageInlets, PdGraph *graph) : DspObject(numMessageInlets, 1, 0, 1, graph) {
   x1 = x2 = y1 = y2 = 0.0f;
@@ -55,8 +56,8 @@ void DspFilter::processFilter(DspObject *dspObject, int fromIndex, int toIndex) 
   #else
   int _toIndex = n + 2;
   for (int i = 2; i < _toIndex; ++i) {
-    bufferOut[i] = b[0]*bufferIn[i] + b[1]*bufferIn[i-1] + b[2]*bufferIn[i-2] -
-        b[3]*bufferOut[i-1] - b[4]*bufferOut[i-2];
+    bufferOut[i] = d->b[0]*bufferIn[i] + d->b[1]*bufferIn[i-1] + d->b[2]*bufferIn[i-2] -
+        d->b[3]*bufferOut[i-1] - d->b[4]*bufferOut[i-2];
   }
   #endif
   

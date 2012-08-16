@@ -22,7 +22,8 @@
 
 #include "ArrayArithmetic.h"
 #include "DspAdd.h"
-#include "PdGraph.h"
+
+class PdGraph;
 
 MessageObject *DspAdd::newObject(PdMessage *initMessage, PdGraph *graph) {
   return new DspAdd(initMessage, graph);

@@ -35,7 +35,7 @@ MessageObject *DspCosine::newObject(PdMessage *initMessage, PdGraph *graph) {
 DspCosine::DspCosine(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0, 1, graph) {
   this->sampleRate = graph->getSampleRate();
   processFunction = &procesSignal;
-  #if __APPLE__ == 0 // only create the lookup table if it is really needed
+  #if !__APPLE__ // only create the lookup table if it is really needed
   refCount++;
   if (cos_table == NULL) {
     int sampleRateInt = (int) sampleRate;
@@ -49,7 +49,7 @@ DspCosine::DspCosine(PdMessage *initMessage, PdGraph *graph) : DspObject(0, 1, 0
 }
 
 DspCosine::~DspCosine() {
-  #if __APPLE__ == 0
+  #if !__APPLE__
   if (--refCount == 0) {
     free(cos_table);
     cos_table = NULL;
@@ -67,11 +67,11 @@ void DspCosine::procesSignal(DspObject *dspObject, int fromIndex, int toIndex) {
   vDSP_vsmul(d->dspBufferAtInlet[0], 1, &twoPi, d->dspBufferAtOutlet[0], 1, toIndex);
   vvcosf(d->dspBufferAtOutlet[0], d->dspBufferAtOutlet[0], &toIndex);
   #else
-  for (int i = fromIndex; i < toIndex; i++) {
+  for (int i = fromIndex; i < toIndex; ++i) {
     // works because cosine is symmetric about zero
-    float f = fabsf(dspBufferAtInlet[0][i]);
+    float f = fabsf(d->dspBufferAtInlet[0][i]);
     f -= floorf(f);
-    dspBufferAtOutlet0[i] = cos_table[(int) (f * sampleRate)];
+    d->dspBufferAtOutlet[0][i] = cos_table[(int) (f * d->sampleRate)];
   }
   #endif
 }

@@ -22,7 +22,8 @@
 
 #include "ArrayArithmetic.h"
 #include "DspClip.h"
-#include "PdGraph.h"
+
+class PdGraph;
 
 MessageObject *DspClip::newObject(PdMessage *initMessage, PdGraph *graph) {
   return new DspClip(initMessage, graph);
@@ -59,14 +60,15 @@ void DspClip::processScalar(DspObject *dspObject, int fromIndex, int toIndex) {
   vDSP_vclip(d->dspBufferAtInlet[0]+fromIndex, 1, &(d->lowerBound), &(d->upperBound),
       d->dspBufferAtOutlet[0]+fromIndex, 1, toIndex-fromIndex);
   #else
-  float *buffer = dspBufferAtInlet[0];
+  float *in = d->dspBufferAtInlet[0];
+  float *out = d->dspBufferAtOutlet[0];
   for (int i = fromIndex; i < toIndex; i++) {
-    if (buffer[i] <= lowerBound) {
-      dspBufferAtOutlet[0][i] = lowerBound;
-    } else if (buffer[i] >= upperBound) {
-      dspBufferAtOutlet[0][i] = upperBound;
+    if (in[i] < d->lowerBound) {
+      out[i] = d->lowerBound;
+    } else if (in[i] > d->upperBound) {
+      out[i] = d->upperBound;
     } else {
-      dspBufferAtOutlet[0][i] = buffer[i];
+      out[i] = in[i];
     }
   }
   #endif

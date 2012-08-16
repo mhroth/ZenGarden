@@ -22,7 +22,8 @@
 
 #include "ArrayArithmetic.h"
 #include "DspSubtract.h"
-#include "PdGraph.h"
+
+class PdGraph;
 
 MessageObject *DspSubtract::newObject(PdMessage *initMessage, PdGraph *graph) {
   return new DspSubtract(initMessage, graph);
