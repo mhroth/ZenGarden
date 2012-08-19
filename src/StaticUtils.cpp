@@ -107,7 +107,8 @@ const char *StaticUtils::messageElementTypeToString(MessageElementType type) {
 }
 
 bool StaticUtils::fileExists(const char *path) {
-  if (FILE *fp = fopen(path, "r")) {
+  FILE *fp = fopen(path, "r");
+  if (fp != NULL) {
     fclose(fp);
     return true;
   }
