@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010,2011 Reality Jockey, Ltd.
+ *  Copyright 2010,2011,2012 Reality Jockey, Ltd.
  *                 info@rjdj.me
  *                 http://rjdj.me/
  * 
@@ -20,7 +20,11 @@
  *
  */
 
+#include "MessageFloat.h"
+#include "MessageMessageBox.h"
+#include "MessageSymbol.h"
 #include "MessageTable.h"
+#include "MessageText.h"
 #include "PdContext.h"
 #include "PdFileParser.h"
 #include "PdGraph.h"
@@ -53,6 +57,9 @@ PdFileParser::PdFileParser(string directory, string filename) {
 }
 
 PdFileParser::PdFileParser(string aString) {
+  // if we're just loading a string, the default root path is "/"
+  rootPath = string("/");
+  
   if (aString.empty()) {
     isDone = true;
   } else {
@@ -98,26 +105,6 @@ string PdFileParser::nextLine() {
 #pragma mark - execute
 
 PdGraph *PdFileParser::execute(PdContext *context) {
-  // TODO(mhroth): add directory path to declare list
-  
-  // it is assumed that a new Pd file is read, and thus it necessarily begins with a canvas message
-  // unlike the remainder of the parser, if the first line is a canvas message, then the graph id
-  // is incremented from the new graph. Usually such a message indicates a subgraph and the graph id
-  // is not incremented.
-  
-  /*
-  string message = nextMessage();
-  if (message.find("#N canvas") != string::npos) {
-    PdMessage *emptyGraphInitMessage = PD_MESSAGE_ON_STACK(0);
-    emptyGraphInitMessage->initWithTimestampAndNumElements(0.0, 0);
-    PdGraph *graph = new PdGraph(emptyGraphInitMessage, NULL, context, context->getNextGraphId());
-    execute(NULL, graph, context);
-    return graph;
-  } else {
-    context->printErr("First line of Pd file does not define a canvas: %s", message.c_str());
-    return NULL;
-  }
-  */
   return execute(NULL, NULL, context, true);
 }
 
@@ -219,7 +206,8 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
         float canvasY = (float) atoi(strtok(NULL, " ")); // read the second canvas coordinate
         char *objectInitString = strtok(NULL, "\n\r"); // get the message initialisation string (including trailing ';')
         initMessage->initWithTimestampAndSymbol(0.0, objectInitString);
-        MessageObject *messageObject = context->newObject("msg", initMessage, graph);
+        MessageObject *messageObject = context->newObject(
+          MessageMessageBox::getObjectLabel(), initMessage, graph);
         graph->addObject(canvasX, canvasY, messageObject);
       } else if (!strcmp(objectType, "connect")) {
         int fromObjectIndex = atoi(strtok(NULL, " "));
@@ -231,13 +219,15 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
         float canvasX = (float) atoi(strtok(NULL, " "));
         float canvasY = (float) atoi(strtok(NULL, " "));
         initMessage->initWithTimestampAndFloat(0.0, 0.0f);
-        MessageObject *messageObject = context->newObject("float", initMessage, graph); // defines a number box
+        MessageObject *messageObject = context->newObject(
+            MessageFloat::getObjectLabel(), initMessage, graph); // defines a number box
         graph->addObject(canvasX, canvasY, messageObject);
       } else if (!strcmp(objectType, "symbolatom")) {
         float canvasX = (float) atoi(strtok(NULL, " "));
         float canvasY = (float) atoi(strtok(NULL, " "));
         initMessage->initWithTimestampAndSymbol(0.0, NULL);
-        MessageObject *messageObject = context->newObject("symbol", initMessage, graph);
+        MessageObject *messageObject = context->newObject(
+            MessageSymbol::getObjectLabel(), initMessage, graph);
         graph->addObject(canvasX, canvasY, messageObject);
       } else if (!strcmp(objectType, "restore")) {
         // the graph is finished being defined
@@ -250,7 +240,8 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
         char *comment = strtok(NULL, ";"); // get the comment
         PdMessage *message = PD_MESSAGE_ON_STACK(1);
         message->initWithTimestampAndSymbol(0.0, comment);
-        MessageObject *messageText = context->newObject("text", initMessage, graph);
+        MessageObject *messageText = context->newObject(
+            MessageText::getObjectLabel(), initMessage, graph);
         graph->addObject(canvasX, canvasY, messageText);
       } else if (!strcmp(objectType, "declare")) {
         // set environment for loading patch
