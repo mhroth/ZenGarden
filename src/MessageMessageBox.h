@@ -35,7 +35,7 @@ class MessageMessageBox : public MessageObject {
     MessageMessageBox(char *initString, PdGraph *graph);
     ~MessageMessageBox();
   
-    static const char *getObjectLabel();
+    static const char *getObjectLabel() { return "msg"; }
   
   private:
     void processMessage(int inletIndex, PdMessage *message);

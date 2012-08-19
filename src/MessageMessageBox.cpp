@@ -95,10 +95,6 @@ MessageMessageBox::~MessageMessageBox() {
   }
 }
 
-const char *MessageMessageBox::getObjectLabel() {
-  return "msg";
-}
-
 void MessageMessageBox::processMessage(int inletIndex, PdMessage *message) {
 #define RES_BUFFER_LENGTH 64
   char resolvedName[RES_BUFFER_LENGTH]; // resolution buffer for named destination
