@@ -61,7 +61,7 @@ DspOsc::~DspOsc() {
 }
 
 void DspOsc::onInletConnectionUpdate(unsigned int inletIndex) {
-  // TODO(mhroth): suppoer this with processSignal
+  // TODO(mhroth): support this with processSignal
 }
 
 string DspOsc::toString() {
@@ -108,44 +108,48 @@ void DspOsc::processScalar(DspObject *dspObject, int fromIndex, int toIndex) {
   float *output = d->dspBufferAtOutlet[0]+fromIndex;
   __m128i inc = d->inc;
   __m128i indicies = d->indicies;
-  if (fromIndex & 0x3) {
-    while (n4) {
-      __m128 values = _mm_set_ps(DspOsc::cos_table[_mm_extract_epi16(indicies,3)], DspOsc::cos_table[_mm_extract_epi16(indicies,2)],
-          DspOsc::cos_table[_mm_extract_epi16(indicies,1)], DspOsc::cos_table[_mm_extract_epi16(indicies,0)]);
-      _mm_storeu_ps(output, values);
-      output += 4;
-      values = _mm_set_ps(DspOsc::cos_table[_mm_extract_epi16(indicies,7)], DspOsc::cos_table[_mm_extract_epi16(indicies,6)],
-          DspOsc::cos_table[_mm_extract_epi16(indicies,5)], DspOsc::cos_table[_mm_extract_epi16(indicies,4)]);
-      _mm_storeu_ps(output, values);
-      indicies = _mm_add_epi16(indicies, inc); // increment all indicies
-      output += 4;
-      n4 -= 8;
-    }
-  } else {
-    while (n4) {
-      __m128 values = _mm_set_ps(DspOsc::cos_table[_mm_extract_epi16(indicies,3)], DspOsc::cos_table[_mm_extract_epi16(indicies,2)],
-          DspOsc::cos_table[_mm_extract_epi16(indicies,1)], DspOsc::cos_table[_mm_extract_epi16(indicies,0)]);
-      _mm_store_ps(output, values);
-      output += 4;
-      values = _mm_set_ps(DspOsc::cos_table[_mm_extract_epi16(indicies,7)], DspOsc::cos_table[_mm_extract_epi16(indicies,6)],
-          DspOsc::cos_table[_mm_extract_epi16(indicies,5)], DspOsc::cos_table[_mm_extract_epi16(indicies,4)]);
-      _mm_store_ps(output, values);
-      indicies = _mm_add_epi16(indicies, inc);
-      output += 4;
-      n4 -= 8;
-    }
-  }
+  
   unsigned short currentIndex = _mm_extract_epi16(indicies,0);
   short step = _mm_extract_epi16(inc,0)/8;
   
+  switch (fromIndex & 0x7) {
+    case 0: default: break;
+    case 1: *output++ = DspOsc::cos_table[currentIndex]; currentIndex += step; // allow fallthrough
+    case 2: *output++ = DspOsc::cos_table[currentIndex]; currentIndex += step;
+    case 3: *output++ = DspOsc::cos_table[currentIndex]; currentIndex += step;
+    case 4: *output++ = DspOsc::cos_table[currentIndex]; currentIndex += step;
+    case 5: *output++ = DspOsc::cos_table[currentIndex]; currentIndex += step;
+    case 6: *output++ = DspOsc::cos_table[currentIndex]; currentIndex += step;
+    case 7: {
+      *output++ = DspOsc::cos_table[currentIndex]; currentIndex += step;
+      
+      d->indicies = _mm_set_epi16(7*step+currentIndex, 6*step+currentIndex, 5*step+currentIndex,
+          4*step+currentIndex, 3*step+currentIndex, 2*step+currentIndex, step+currentIndex, currentIndex);
+    }
+  }
+  
+  while (n4) {
+    __m128 values = _mm_set_ps(DspOsc::cos_table[(unsigned short) _mm_extract_epi16(indicies,3)], DspOsc::cos_table[(unsigned short) _mm_extract_epi16(indicies,2)],
+                               DspOsc::cos_table[(unsigned short) _mm_extract_epi16(indicies,1)], DspOsc::cos_table[(unsigned short) _mm_extract_epi16(indicies,0)]);
+    _mm_store_ps(output, values);
+    output += 4;
+    values = _mm_set_ps(DspOsc::cos_table[(unsigned short) _mm_extract_epi16(indicies,7)], DspOsc::cos_table[(unsigned short) _mm_extract_epi16(indicies,6)],
+                        DspOsc::cos_table[(unsigned short) _mm_extract_epi16(indicies,5)], DspOsc::cos_table[(unsigned short) _mm_extract_epi16(indicies,4)]);
+    _mm_store_ps(output, values);
+    indicies = _mm_add_epi16(indicies, inc);
+    output += 4;
+    n4 -= 8;
+  }
+  
+  currentIndex = _mm_extract_epi16(indicies,0);
   switch (n & 0x7) {
-    case 7: {*output++ = DspOsc::cos_table[currentIndex]; currentIndex += step; }
-    case 6: {*output++ = DspOsc::cos_table[currentIndex]; currentIndex += step; }
-    case 5: {*output++ = DspOsc::cos_table[currentIndex]; currentIndex += step; }
-    case 4: {*output++ = DspOsc::cos_table[currentIndex]; currentIndex += step; }
-    case 3: {*output++ = DspOsc::cos_table[currentIndex]; currentIndex += step; }
-    case 2: {*output++ = DspOsc::cos_table[currentIndex]; currentIndex += step; }
-    case 1: {*output++ = DspOsc::cos_table[currentIndex]; currentIndex += step; }
+    case 7: *output++ = DspOsc::cos_table[currentIndex]; currentIndex += step; // allow fallthrough
+    case 6: *output++ = DspOsc::cos_table[currentIndex]; currentIndex += step;
+    case 5: *output++ = DspOsc::cos_table[currentIndex]; currentIndex += step;
+    case 4: *output++ = DspOsc::cos_table[currentIndex]; currentIndex += step;
+    case 3: *output++ = DspOsc::cos_table[currentIndex]; currentIndex += step;
+    case 2: *output++ = DspOsc::cos_table[currentIndex]; currentIndex += step;
+    case 1: *output++ = DspOsc::cos_table[currentIndex]; currentIndex += step;
     default: {
       // set the current index to the correct location, given that the step size is actually
       // a real number, not an integer
