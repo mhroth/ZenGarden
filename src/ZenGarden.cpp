@@ -139,7 +139,7 @@ char *zg_object_to_string(ZGObject *object) {
 #pragma mark - Context
 
 ZGContext *zg_context_new(int numInputChannels, int numOutputChannels, int blockSize, float sampleRate,
-      void *(*callbackFunction)(ZGCallbackFunction function, void *userData, void *ptr), void *userData) {
+      void *(*callbackFunction)(ZGCallbackFunction, void *, void *), void *userData) {
   return new PdContext(numInputChannels, numOutputChannels, blockSize, sampleRate,
       callbackFunction, userData);
 }
@@ -176,11 +176,11 @@ void zg_context_process(PdContext *context, float *inputBuffers, float *outputBu
 }
 
 void zg_context_process_s(ZGContext *context, short *inputBuffers, short *outputBuffers) {
-  int numInputChannels = context->getNumInputChannels();
-  int numOutputChannels = context->getNumOutputChannels();
-  int blockSize = context->getBlockSize();
-  int inputBufferLength = numInputChannels*blockSize;
-  int outputBufferLength = numOutputChannels*blockSize;
+  const int numInputChannels = context->getNumInputChannels();
+  const int numOutputChannels = context->getNumOutputChannels();
+  const int blockSize = context->getBlockSize();
+  const int inputBufferLength = numInputChannels*blockSize;
+  const int outputBufferLength = numOutputChannels*blockSize;
   float finputBuffers[inputBufferLength];
   float foutputBuffers[outputBufferLength];
   
@@ -255,9 +255,7 @@ void zg_context_process_s(ZGContext *context, short *inputBuffers, short *output
   // clip the output to [-1,1]
   for (int i = 0; i < outputBufferLength; i++) {
     float f = foutputBuffers[i];
-    if (f < -1.0f) f = -1.0f;
-    else if (f > 1.0f) f = 1.0f;
-    foutputBuffers[i] = f;
+    foutputBuffers[i] = (f < -1.0) ? -1.0f : (f > 1.0f) ? 1.0f : f;
   }
   
   // interleave and float->short the samples in finputBuffers to cinputBuffers

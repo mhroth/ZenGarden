@@ -75,8 +75,8 @@ ConnectionType DspObject::getConnectionType(int outletIndex) {
 }
 
 float *DspObject::getDspBufferAtInlet(int inletIndex) {
-  if (inletIndex < 2) return dspBufferAtInlet[inletIndex];
-  else return ((float **) dspBufferAtInlet[2])[inletIndex-2];
+  return (inletIndex < 2)
+      ? dspBufferAtInlet[inletIndex] : ((float **) dspBufferAtInlet[2])[inletIndex-2];
 }
 
 float *DspObject::getDspBufferAtOutlet(int outletIndex) {

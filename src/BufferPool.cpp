@@ -49,6 +49,7 @@ float *BufferPool::getBuffer(unsigned int numDependencies) {
     pool.pop();
   } else {
     buffer = ALLOC_ALIGNED_BUFFER(bufferSize * sizeof(float));
+    memset(buffer, 0, bufferSize * sizeof(float));
   }
   reserved.push_back(std::pair<float *, unsigned int>(buffer, numDependencies));
 //  printf("%i/%i buffer used.\n", getNumReservedBuffers(), getNumTotalBuffers());

@@ -34,7 +34,7 @@ DspDac::DspDac(PdGraph *graph) : DspObject(0, graph->getNumOutputChannels(), 0, 
   if (numInlets > 2) dspBufferAtOutlet[2] = (float *) calloc(numInlets-2, sizeof(float *));
   
   for (int i = 0; i < numInlets; i++) {
-    dspBufferAtOutlet[i] = graph->getGlobalDspBufferAtOutlet(i);
+    setDspBufferAtOutlet(graph->getGlobalDspBufferAtOutlet(i), i);
   }
   
   processFunction = &processSignal;
