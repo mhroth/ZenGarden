@@ -29,12 +29,12 @@
 
 #if __SSE__
 // allocate memory aligned to 16-bytes memory boundary
-#define ALLOC_ALIGNED_BUFFER(_numBytes) (float *) _mm_malloc(_numBytes, 16);
-#define FREE_ALIGNED_BUFFER(_buffer) _mm_free(_buffer);
+#define ALLOC_ALIGNED_BUFFER(_numBytes) (float *) _mm_malloc(_numBytes, 16)
+#define FREE_ALIGNED_BUFFER(_buffer) _mm_free(_buffer)
 #else
 // NOTE(mhroth): valloc seems to work well, but is deprecated!
-#define ALLOC_ALIGNED_BUFFER(_numBytes) (float *) valloc(_numBytes);
-#define FREE_ALIGNED_BUFFER(_buffer) free(_buffer);
+#define ALLOC_ALIGNED_BUFFER(_numBytes) (float *) valloc(_numBytes)
+#define FREE_ALIGNED_BUFFER(_buffer) free(_buffer)
 #endif
 
 typedef std::pair<PdMessage *, unsigned int> MessageLetPair;
