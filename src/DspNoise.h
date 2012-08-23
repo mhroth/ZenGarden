@@ -24,8 +24,8 @@
 #define _DSP_NOISE_H_
 
 #include "DspObject.h"
-#include "MersenneTwister.h"
 
+class MTRand;
 class PdGraph;
 
 /** [noise~] */
