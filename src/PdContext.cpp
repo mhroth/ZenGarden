@@ -57,9 +57,9 @@ PdContext::PdContext(int numInputChannels, int numOutputChannels, int blockSize,
   
   numBytesInInputBuffers = blockSize * numInputChannels * sizeof(float);
   numBytesInOutputBuffers = blockSize * numOutputChannels * sizeof(float);
-  globalDspInputBuffers = ALLOC_ALIGNED_BUFFER(numBytesInInputBuffers);
+  globalDspInputBuffers = (numBytesInInputBuffers > 0) ? ALLOC_ALIGNED_BUFFER(numBytesInInputBuffers) : NULL;
   memset(globalDspInputBuffers, 0, numBytesInInputBuffers);
-  globalDspOutputBuffers = ALLOC_ALIGNED_BUFFER(blockSize * numOutputChannels * sizeof(float));
+  globalDspOutputBuffers = (numBytesInOutputBuffers > 0) ? ALLOC_ALIGNED_BUFFER(numBytesInOutputBuffers) : NULL;
   memset(globalDspOutputBuffers, 0, numBytesInOutputBuffers);
   
   sendController = new MessageSendController(this);
