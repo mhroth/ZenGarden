@@ -129,12 +129,16 @@ void DspOsc::processScalar(DspObject *dspObject, int fromIndex, int toIndex) {
   }
   
   while (n4) {
-    __m128 values = _mm_set_ps(DspOsc::cos_table[(unsigned short) _mm_extract_epi16(indicies,3)], DspOsc::cos_table[(unsigned short) _mm_extract_epi16(indicies,2)],
-                               DspOsc::cos_table[(unsigned short) _mm_extract_epi16(indicies,1)], DspOsc::cos_table[(unsigned short) _mm_extract_epi16(indicies,0)]);
+    __m128 values = _mm_set_ps(DspOsc::cos_table[(unsigned short) _mm_extract_epi16(indicies,3)],
+                               DspOsc::cos_table[(unsigned short) _mm_extract_epi16(indicies,2)],
+                               DspOsc::cos_table[(unsigned short) _mm_extract_epi16(indicies,1)],
+                               DspOsc::cos_table[(unsigned short) _mm_extract_epi16(indicies,0)]);
     _mm_store_ps(output, values);
     output += 4;
-    values = _mm_set_ps(DspOsc::cos_table[(unsigned short) _mm_extract_epi16(indicies,7)], DspOsc::cos_table[(unsigned short) _mm_extract_epi16(indicies,6)],
-                        DspOsc::cos_table[(unsigned short) _mm_extract_epi16(indicies,5)], DspOsc::cos_table[(unsigned short) _mm_extract_epi16(indicies,4)]);
+    values = _mm_set_ps(DspOsc::cos_table[(unsigned short) _mm_extract_epi16(indicies,7)],
+                        DspOsc::cos_table[(unsigned short) _mm_extract_epi16(indicies,6)],
+                        DspOsc::cos_table[(unsigned short) _mm_extract_epi16(indicies,5)],
+                        DspOsc::cos_table[(unsigned short) _mm_extract_epi16(indicies,4)]);
     _mm_store_ps(output, values);
     indicies = _mm_add_epi16(indicies, inc);
     output += 4;
