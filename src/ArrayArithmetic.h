@@ -51,23 +51,26 @@ class ArrayArithmetic {
       input1 += startIndex;
       output += startIndex;
       int n = endIndex - startIndex;
-      int n4 = n & 0xFFFFFFFC;
-      if (startIndex & 0x3) {
-        while (n4) {
-          _mm_storeu_ps(output, _mm_add_ps(_mm_loadu_ps(input0), _mm_loadu_ps(input1)));
-          n4 -= 4; input0 += 4; input1 += 4; output += 4;
-        }
-      } else {
-        while (n4) {
-          _mm_store_ps(output, _mm_add_ps(_mm_load_ps(input0), _mm_load_ps(input1)));
-          n4 -= 4; input0 += 4; input1 += 4; output += 4;
-        }
+      
+      // align buffer to 16-byte boundary
+      switch (startIndex & 0x3) {
+        case 0: default: break;
+        case 1: *output++ = *input0++ + *input1++; --n;
+        case 2: *output++ = *input0++ + *input1++; --n;
+        case 3: *output++ = *input0++ + *input1++; --n;
       }
+      
+      int n4 = n & 0xFFFFFFFC;
+      while (n4) {
+        _mm_store_ps(output, _mm_add_ps(_mm_load_ps(input0), _mm_load_ps(input1)));
+        n4 -= 4; input0 += 4; input1 += 4; output += 4;
+      }
+      
       switch (n & 0x3) {
         case 3: *output++ = *input0++ + *input1++;
         case 2: *output++ = *input0++ + *input1++;
         case 1: *output++ = *input0++ + *input1++;
-        default: break;
+        case 0: default: break;
       }
       #elif __ARM_NEON__
       input0 += startIndex;
@@ -106,24 +109,27 @@ class ArrayArithmetic {
       input += startIndex;
       output += startIndex;
       int n = endIndex - startIndex;
-      int n4 = n & 0xFFFFFFFC;
-      __m128 constVec = _mm_set1_ps(constant);
-      if (startIndex & 0x3) {
-        while (n4) {
-          _mm_storeu_ps(output, _mm_add_ps(_mm_loadu_ps(input), constVec));
-          n4 -= 4; input += 4; output += 4;
-        }
-      } else {
-        while (n4) {
-          _mm_store_ps(output, _mm_add_ps(_mm_load_ps(input), constVec));
-          n4 -= 4; input += 4; output += 4;
-        }
+      
+      // align buffer to 16-byte boundary
+      switch (startIndex & 0x3) {
+        case 0: default: break;
+        case 1: *output++ += constant; --n;
+        case 2: *output++ += constant; --n;
+        case 3: *output++ += constant; --n;
       }
+      
+      int n4 = n & 0xFFFFFFFC;
+      const __m128 constVec = _mm_set1_ps(constant);
+      while (n4) {
+        _mm_store_ps(output, _mm_add_ps(_mm_load_ps(input), constVec));
+        n4 -= 4; input += 4; output += 4;
+      }
+      
       switch (n & 0x3) {
         case 3: *output++ += constant;
         case 2: *output++ += constant;
         case 1: *output++ += constant;
-        default: break;
+        case 0: default: break;
       }
       #elif __ARM_NEON__
       input += startIndex;
@@ -161,23 +167,25 @@ class ArrayArithmetic {
       input1 += startIndex;
       output += startIndex;
       int n = endIndex - startIndex;
-      int n4 = n & 0xFFFFFFFC;
-      if (startIndex & 0x3) {
-        while (n4) {
-          _mm_storeu_ps(output, _mm_sub_ps(_mm_loadu_ps(input0), _mm_loadu_ps(input1)));
-          n4 -= 4; input0 += 4; input1 += 4; output += 4;
-        }
-      } else {
-        while (n4) {
-          _mm_store_ps(output, _mm_sub_ps(_mm_load_ps(input0), _mm_load_ps(input1)));
-          n4 -= 4; input0 += 4; input1 += 4; output += 4;
-        }
+      
+      switch (startIndex & 0x3) {
+        case 0: default: break;
+        case 1: *output++ = *input0++ - *input1++; --n;
+        case 2: *output++ = *input0++ - *input1++; --n;
+        case 3: *output++ = *input0++ - *input1++; --n;
       }
+      
+      int n4 = n & 0xFFFFFFFC;
+      while (n4) {
+        _mm_store_ps(output, _mm_sub_ps(_mm_load_ps(input0), _mm_load_ps(input1)));
+        n4 -= 4; input0 += 4; input1 += 4; output += 4;
+      }
+      
       switch (n & 0x3) {
         case 3: *output++ = *input0++ - *input1++;
         case 2: *output++ = *input0++ - *input1++;
         case 1: *output++ = *input0++ - *input1++;
-        default: break;
+        case 0: default: break;
       }
       #elif __ARM_NEON__
       input0 += startIndex;
@@ -217,24 +225,26 @@ class ArrayArithmetic {
       input += startIndex;
       output += startIndex;
       int n = endIndex - startIndex;
-      int n4 = n & 0xFFFFFFFC;
-      __m128 constVec = _mm_set1_ps(constant);
-      if (startIndex & 0x3) {
-        while (n4) {
-          _mm_storeu_ps(output, _mm_sub_ps(_mm_loadu_ps(input), constVec));
-          n4 -= 4; input += 4; output += 4;
-        }
-      } else {
-        while (n4) {
-          _mm_store_ps(output, _mm_sub_ps(_mm_load_ps(input), constVec));
-          n4 -= 4; input += 4; output += 4;
-        }
+      
+      switch (startIndex & 0x3) {
+        case 0: default: break;
+        case 1: *output++ -= constant; --n;
+        case 2: *output++ -= constant; --n;
+        case 3: *output++ -= constant; --n;
       }
+      
+      int n4 = n & 0xFFFFFFFC;
+      const __m128 constVec = _mm_set1_ps(constant);
+      while (n4) {
+        _mm_store_ps(output, _mm_sub_ps(_mm_load_ps(input), constVec));
+        n4 -= 4; input += 4; output += 4;
+      }
+      
       switch (n & 0x3) {
         case 3: *output++ -= constant;
         case 2: *output++ -= constant;
         case 1: *output++ -= constant;
-        default: break;
+        case 0: default: break;
       }
       #elif __ARM_NEON__
       input += startIndex;
@@ -271,23 +281,25 @@ class ArrayArithmetic {
       input1 += startIndex;
       output += startIndex;
       int n = endIndex - startIndex;
-      int n4 = n & 0xFFFFFFFC;
-      if (startIndex & 0x3) {
-        while (n4) {
-          _mm_storeu_ps(output, _mm_mul_ps(_mm_loadu_ps(input0), _mm_loadu_ps(input1)));
-          n4 -= 4; input0 += 4; input1 += 4; output += 4;
-        }
-      } else {
-        while (n4) {
-          _mm_store_ps(output, _mm_mul_ps(_mm_load_ps(input0), _mm_load_ps(input1)));
-          n4 -= 4; input0 += 4; input1 += 4; output += 4;
-        }
+      
+      switch (startIndex & 0x3) {
+        case 0: default: break;
+        case 1: *output++ = *input0++ * *input1++; --n;
+        case 2: *output++ = *input0++ * *input1++; --n;
+        case 3: *output++ = *input0++ * *input1++; --n;
       }
+      
+      int n4 = n & 0xFFFFFFFC;
+      while (n4) {
+        _mm_store_ps(output, _mm_mul_ps(_mm_load_ps(input0), _mm_load_ps(input1)));
+        n4 -= 4; input0 += 4; input1 += 4; output += 4;
+      }
+      
       switch (n & 0x3) {
         case 3: *output++ = *input0++ * *input1++;
         case 2: *output++ = *input0++ * *input1++;
         case 1: *output++ = *input0++ * *input1++;
-        default: break;
+        case 0: default: break;
       }
       #elif __ARM_NEON__
       input0 += startIndex;
@@ -326,24 +338,26 @@ class ArrayArithmetic {
       input += startIndex;
       output += startIndex;
       int n = endIndex - startIndex;
-      int n4 = n & 0xFFFFFFFC;
-      __m128 constVec = _mm_set1_ps(constant);
-      if (startIndex & 0x3) { // array must start on 16-byte boundary otherwise unaligned load must be used
-        while (n4) {
-          _mm_storeu_ps(output, _mm_mul_ps(_mm_loadu_ps(input), constVec));
-          n4 -= 4; input += 4; output += 4;
-        }
-      } else {
-        while (n4) {
-          _mm_store_ps(output, _mm_mul_ps(_mm_load_ps(input), constVec));
-          n4 -= 4; input += 4; output += 4;
-        }
+      
+      switch (startIndex & 0x3) {
+        case 0: default: break;
+        case 1: *output++ *= constant; --n;
+        case 2: *output++ *= constant; --n;
+        case 3: *output++ *= constant; --n;
       }
+      
+      int n4 = n & 0xFFFFFFFC;
+      const __m128 constVec = _mm_set1_ps(constant);
+      while (n4) {
+        _mm_store_ps(output, _mm_mul_ps(_mm_load_ps(input), constVec));
+        n4 -= 4; input += 4; output += 4;
+      }
+      
       switch (n & 0x3) {
         case 3: *output++ *= constant;
         case 2: *output++ *= constant;
         case 1: *output++ *= constant;
-        default: break;
+        case 0: default: break;
       }
       #elif __ARM_NEON__
       input += startIndex;
@@ -381,23 +395,25 @@ class ArrayArithmetic {
       input1 += startIndex;
       output += startIndex;
       int n = endIndex - startIndex;
-      int n4 = n & 0xFFFFFFFC;
-      if (startIndex & 0x3) {
-        while (n4) {
-          _mm_storeu_ps(output, _mm_div_ps(_mm_loadu_ps(input0), _mm_loadu_ps(input1)));
-          n4 -= 4; input0 += 4; input1 += 4; output += 4;
-        }
-      } else {
-        while (n4) {
-          _mm_store_ps(output, _mm_div_ps(_mm_load_ps(input0), _mm_load_ps(input1)));
-          n4 -= 4; input0 += 4; input1 += 4; output += 4;
-        }
+      
+      switch (startIndex & 0x3) {
+        case 0: default: break;
+        case 1: *output++ = *input0++ / *input1++; --n;
+        case 2: *output++ = *input0++ / *input1++; --n;
+        case 3: *output++ = *input0++ / *input1++; --n;
       }
+      
+      int n4 = n & 0xFFFFFFFC;
+      while (n4) {
+        _mm_store_ps(output, _mm_div_ps(_mm_load_ps(input0), _mm_load_ps(input1)));
+        n4 -= 4; input0 += 4; input1 += 4; output += 4;
+      }
+      
       switch (n & 0x3) {
         case 3: *output++ = *input0++ / *input1++;
         case 2: *output++ = *input0++ / *input1++;
         case 1: *output++ = *input0++ / *input1++;
-        default: break;
+        case 0: default: break;
       }
       #else
       for (int i = startIndex; i < endIndex; i++) {
@@ -413,24 +429,26 @@ class ArrayArithmetic {
       input += startIndex;
       output += startIndex;
       int n = endIndex - startIndex;
-      int n4 = n & 0xFFFFFFFC;
-      __m128 constVec = _mm_set1_ps(constant);
-      if (startIndex & 0x3) {
-        while (n4) {
-          _mm_storeu_ps(output, _mm_div_ps(_mm_loadu_ps(input), constVec));
-          n4 -= 4; input += 4; output += 4;
-        }
-      } else {
-        while (n4) {
-          _mm_store_ps(output, _mm_div_ps(_mm_load_ps(input), constVec));
-          n4 -= 4; input += 4; output += 4;
-        }
+      
+      switch (startIndex & 0x3) {
+        case 0: default: break;
+        case 1: *output++ /= constant; --n;
+        case 2: *output++ /= constant; --n;
+        case 3: *output++ /= constant; --n;
       }
+      
+      int n4 = n & 0xFFFFFFFC;
+      const __m128 constVec = _mm_set1_ps(constant);
+      while (n4) {
+        _mm_store_ps(output, _mm_div_ps(_mm_load_ps(input), constVec));
+        n4 -= 4; input += 4; output += 4;
+      }
+      
       switch (n & 0x3) {
         case 3: *output++ /= constant;
         case 2: *output++ /= constant;
         case 1: *output++ /= constant;
-        default: break;
+        case 0: default: break;
       }
       #else
       for (int i = startIndex; i < endIndex; i++) {
@@ -442,6 +460,30 @@ class ArrayArithmetic {
     static inline void fill(float *input, float constant, int startIndex, int endIndex) {
       #if __APPLE__
       vDSP_vfill(&constant, input+startIndex, 1, endIndex-startIndex);
+      #elif __SSE__
+      input += startIndex;
+      int n = endIndex - startIndex;
+      
+      switch (startIndex & 0x3) {
+        case 0: default: break;
+        case 1: *input++ = constant; --n;
+        case 2: *input++ = constant; --n;
+        case 3: *input++ = constant; --n;
+      }
+      
+      int n4 = n & 0xFFFFFFFC; // force n to be a multiple of 4
+      const __m128 constVec = _mm_set1_ps(constant);
+      while (n4) {
+        _mm_store_ps(input, constVec);
+        n4 -= 4; input += 4;
+      }
+      
+      switch (n & 0x3) {
+        case 3: *input++ = constant;
+        case 2: *input++ = constant;
+        case 1: *input++ = constant;
+        case 0: default: break;
+      }
       #elif __ARM_NEON__
       input += startIndex;
       int n = endIndex - startIndex;
@@ -451,28 +493,6 @@ class ArrayArithmetic {
         vst1q_f32((float32_t *) input, constVec);
         n4 -= 4;
         input += 4;
-      }
-      switch (n & 0x3) {
-        case 3: *input++ = constant;
-        case 2: *input++ = constant;
-        case 1: *input++ = constant;
-        default: break;
-      }
-      #elif __SSE__
-      input += startIndex;
-      int n = endIndex - startIndex;
-      int n4 = n & 0xFFFFFFFC; // force n to be a multiple of 4
-      const __m128 constVec = _mm_set1_ps(constant);
-      if (startIndex & 0x3) {
-        while (n4) {
-          _mm_storeu_ps(input, constVec);
-          n4 -= 4; input += 4;
-        }        
-      } else {
-        while (n4) {
-          _mm_store_ps(input, constVec);
-          n4 -= 4; input += 4;
-        }
       }
       switch (n & 0x3) {
         case 3: *input++ = constant;
