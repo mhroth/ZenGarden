@@ -103,31 +103,31 @@ void DspOsc::processScalar(DspObject *dspObject, int fromIndex, int toIndex) {
    * of length 2^16. These indicies are incremented by a step size based on the desired frequency.
    * As the indicies overflow during addition, they loop back around to zero.
    */
-  int n = toIndex - fromIndex;
-  int n4 = n & 0xFFFFFFF8; // we can process 8 indicies at a time
   float *output = d->dspBufferAtOutlet[0]+fromIndex;
   __m128i inc = d->inc;
   __m128i indicies = d->indicies;
+  int n = toIndex - fromIndex;
   
   unsigned short currentIndex = _mm_extract_epi16(indicies,0);
   short step = _mm_extract_epi16(inc,0)/8;
   
   switch (fromIndex & 0x7) {
     case 0: default: break;
-    case 1: *output++ = DspOsc::cos_table[currentIndex]; currentIndex += step; // allow fallthrough
-    case 2: *output++ = DspOsc::cos_table[currentIndex]; currentIndex += step;
-    case 3: *output++ = DspOsc::cos_table[currentIndex]; currentIndex += step;
-    case 4: *output++ = DspOsc::cos_table[currentIndex]; currentIndex += step;
-    case 5: *output++ = DspOsc::cos_table[currentIndex]; currentIndex += step;
-    case 6: *output++ = DspOsc::cos_table[currentIndex]; currentIndex += step;
+    case 1: *output++ = DspOsc::cos_table[currentIndex]; currentIndex += step; --n; // allow fallthrough
+    case 2: *output++ = DspOsc::cos_table[currentIndex]; currentIndex += step; --n;
+    case 3: *output++ = DspOsc::cos_table[currentIndex]; currentIndex += step; --n;
+    case 4: *output++ = DspOsc::cos_table[currentIndex]; currentIndex += step; --n;
+    case 5: *output++ = DspOsc::cos_table[currentIndex]; currentIndex += step; --n;
+    case 6: *output++ = DspOsc::cos_table[currentIndex]; currentIndex += step; --n;
     case 7: {
-      *output++ = DspOsc::cos_table[currentIndex]; currentIndex += step;
+      *output++ = DspOsc::cos_table[currentIndex]; currentIndex += step; --n;
       
       d->indicies = _mm_set_epi16(7*step+currentIndex, 6*step+currentIndex, 5*step+currentIndex,
           4*step+currentIndex, 3*step+currentIndex, 2*step+currentIndex, step+currentIndex, currentIndex);
     }
   }
   
+  int n4 = n & 0xFFFFFFF8; // we can process 8 indicies at a time
   while (n4) {
     __m128 values = _mm_set_ps(DspOsc::cos_table[(unsigned short) _mm_extract_epi16(indicies,3)],
                                DspOsc::cos_table[(unsigned short) _mm_extract_epi16(indicies,2)],
@@ -160,8 +160,10 @@ void DspOsc::processScalar(DspObject *dspObject, int fromIndex, int toIndex) {
       // NOTE(mhroth): but doing this will cause clicks :-/ Osc will thus go out of phase over time
       // Will anyone complain?
 //      d->currentIndex = currentIndex + ((short) ((d->sampleStep - floorf(d->sampleStep)) * n));
-      if ((n & 0x7) == 0) d->indicies = indicies;
-      else {
+      
+      if ((n & 0x7) == 0) {
+        d->indicies = indicies;
+      } else {
         d->indicies = _mm_set_epi16(7*step+currentIndex, 6*step+currentIndex, 5*step+currentIndex,
             4*step+currentIndex, 3*step+currentIndex, 2*step+currentIndex, step+currentIndex, currentIndex);        
       }
