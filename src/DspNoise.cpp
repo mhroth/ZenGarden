@@ -21,7 +21,7 @@
  */
 
 #include "DspNoise.h"
-#include "PdGraph.h"
+#include "MersenneTwister.h"
 
 MessageObject *DspNoise::newObject(PdMessage *initMessage, PdGraph *graph) {
   return new DspNoise(graph);

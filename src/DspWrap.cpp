@@ -47,9 +47,7 @@ void DspWrap::processSignal(DspObject *dspObject, int fromIndex, int n4) {
     __m128 in = _mm_load_ps(input);
     _mm_store_ps(output, _mm_sub_ps(in, mm_floor_ps(in)));
     
-    input += 4;
-    output += 4;
-    n4 -= 4;
+    input += 4; output += 4; n4 -= 4;
   }
   #else
   // NOTE(mhroth): amazingly, this seemingly ghetto code is pretty fast. Compiler autovectorises it.
