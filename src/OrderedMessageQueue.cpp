@@ -30,7 +30,7 @@ OrderedMessageQueue::~OrderedMessageQueue() {
   // destroy all remaining inserted messages
   for (list<ObjectMessageLetPair>::iterator it = orderedMessageQueue.begin();
        it != orderedMessageQueue.end(); ++it) {
-    ObjectMessageLetPair omlPair = *it++;
+    ObjectMessageLetPair omlPair = *it;
     omlPair.second.first->freeMessage();
   }
 }
