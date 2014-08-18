@@ -64,7 +64,8 @@ PdFileParser::PdFileParser(string aString) {
     isDone = true;
   } else {
     stringDesc = aString;
-    nextLine(); // read the first line
+    pos = 0;
+	nextLine(); // read the first line
     isDone = false;
   }
 }
