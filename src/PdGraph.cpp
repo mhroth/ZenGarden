@@ -364,7 +364,7 @@ string PdGraph::findFilePath(const char *filename) {
       return directory;
     }
   }
-  return isRootGraph() ? NULL : parentGraph->findFilePath(filename);
+  return isRootGraph() ? "" : parentGraph->findFilePath(filename);
 }
 
 void PdGraph::addDeclarePath(const char *path) {
