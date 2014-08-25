@@ -372,7 +372,7 @@ void zg_graph_attach(ZGGraph *graph) {
 }
 
 void zg_graph_unattach(ZGGraph *graph) {
-  graph->attachToContext(false);
+  graph->getContext()->unattachGraph(graph);
 }
 
 void zg_graph_add_connection(ZGGraph *graph, ZGObject *fromObject, int outletIndex, ZGObject *toObject, int inletIndex) {

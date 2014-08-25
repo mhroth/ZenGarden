@@ -206,7 +206,8 @@ void PdContext::attachGraph(PdGraph *graph) {
 
 void PdContext::unattachGraph(PdGraph *graph) {
   lock();
-  //graphList.erase(graph); // TODO(mhroth): remove the graph from the graphList
+  graphList.erase(std::remove(graphList.begin(), graphList.end(), graph),
+                  graphList.end());
   graph->attachToContext(false);
   unlock();
 }
