@@ -71,6 +71,8 @@ DspObject::~DspObject() {
 #pragma mark -
 
 ConnectionType DspObject::getConnectionType(int outletIndex) {
+  if (outletIndex >= getNumDspOutlets())
+    return MESSAGE;
   return DSP;
 }
 
