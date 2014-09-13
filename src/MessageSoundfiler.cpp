@@ -147,3 +147,4 @@ void MessageSoundfiler::processMessage(int inletIndex, PdMessage *message)
     graph->printErr("[soundfiler]: The 'write' command is not supported yet.");
   }
 }
+
