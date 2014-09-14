@@ -207,7 +207,7 @@ void PdContext::attachGraph(PdGraph *graph) {
 void PdContext::unattachGraph(PdGraph *graph) {
   lock();
   graphList.erase(std::remove(graphList.begin(), graphList.end(), graph),
-                  graphList.end());
+    graphList.end());
   graph->attachToContext(false);
   unlock();
 }
