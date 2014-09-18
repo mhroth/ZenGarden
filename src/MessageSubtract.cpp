@@ -27,7 +27,8 @@ MessageObject *MessageSubtract::newObject(PdMessage *initMessage, PdGraph *graph
 }
 
 MessageSubtract::MessageSubtract(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
-  constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
+  rightOperand = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
+  leftOperand = 0.0f;
 }
 
 MessageSubtract::~MessageSubtract() {
@@ -35,24 +36,30 @@ MessageSubtract::~MessageSubtract() {
 }
 
 string MessageSubtract::toString() {
-  char str[snprintf(NULL, 0, "- %g", constant)+1];
-  snprintf(str, sizeof(str), "- %g", constant);
+  char str[snprintf(NULL, 0, "- %g", rightOperand)+1];
+  snprintf(str, sizeof(str), "- %g", rightOperand);
   return string(str);
 }
 
 void MessageSubtract::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
+      PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+      
       if (message->isFloat(0)) {
-        PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
-        outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), message->getFloat(0)-constant);
+        leftOperand = message->getFloat(0);
+        outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), leftOperand - rightOperand);
+        sendMessage(0, outgoingMessage);
+      }
+      else if (message->isBang(0)) {
+        outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), leftOperand - rightOperand);
         sendMessage(0, outgoingMessage);
       }
       break;
     }
     case 1: {
       if (message->isFloat(0)) {
-        constant = message->getFloat(0);
+        rightOperand = message->getFloat(0);
       }
       break;
     }

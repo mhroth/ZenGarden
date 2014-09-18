@@ -39,7 +39,8 @@ class MessageSubtract : public MessageObject {
   private:
     void processMessage(int inletIndex, PdMessage *message);
 
-    float constant;
+    float rightOperand;
+    float leftOperand;
 };
 
 #endif // _MESSAGE_SUBTRACT_H_

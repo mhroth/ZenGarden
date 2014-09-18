@@ -27,7 +27,8 @@ MessageObject *MessageDivide::newObject(PdMessage *initMessage, PdGraph *graph) 
 }
 
 MessageDivide::MessageDivide(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
-  constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
+  rightOperand = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
+  leftOperand = 0.0f;
 }
 
 MessageDivide::~MessageDivide() {
@@ -35,17 +36,25 @@ MessageDivide::~MessageDivide() {
 }
 
 string MessageDivide::toString() {
-  char str[snprintf(NULL, 0, "/ %g", constant)+1];
-  snprintf(str, sizeof(str), "/ %g", constant);
+  char str[snprintf(NULL, 0, "/ %g", rightOperand)+1];
+  snprintf(str, sizeof(str), "/ %g", rightOperand);
   return string(str);
 }
 
 void MessageDivide::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
+      PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+      float result;
+      
       if (message->isFloat(0)) {
-        float result = (constant == 0.0f) ? 0.0f : message->getFloat(0) / constant;
-        PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+        leftOperand = message->getFloat(0);
+        result = (rightOperand == 0.0f) ? 0.0f : leftOperand / rightOperand;
+        outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), result);
+        sendMessage(0, outgoingMessage);
+      }
+      else if (message->isBang(0)) {
+        result = (rightOperand == 0.0f) ? 0.0f : leftOperand / rightOperand;
         outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), result);
         sendMessage(0, outgoingMessage);
       }
@@ -53,7 +62,7 @@ void MessageDivide::processMessage(int inletIndex, PdMessage *message) {
     }
     case 1: {
       if (message->isFloat(0)) {
-        constant = message->getFloat(0);
+        rightOperand = message->getFloat(0);
       }
       break;
     }

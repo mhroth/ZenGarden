@@ -39,7 +39,8 @@ class MessageMultiply : public MessageObject {
   private:
     void processMessage(int inletIndex, PdMessage *message);
 
-    float constant;
+    float rightOperand;
+    float leftOperand;
 };
 
 #endif // _MESSAGE_MULTIPLY_H_

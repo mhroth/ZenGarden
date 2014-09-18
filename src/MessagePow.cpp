@@ -27,7 +27,8 @@ MessageObject *MessagePow::newObject(PdMessage *initMessage, PdGraph *graph) {
 }
 
 MessagePow::MessagePow(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
-  constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
+  rightOperand = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
+  leftOperand = 0.0f;
 }
 
 MessagePow::~MessagePow() {
@@ -41,17 +42,22 @@ const char *MessagePow::getObjectLabel() {
 void MessagePow::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
+      PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+      
       if (message->isFloat(0)) {
-        PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
-        float value = (message->getFloat(0) <= 0.0f) ? 0.0f : powf(message->getFloat(0), constant);
-        outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), value);
+        leftOperand = message->getFloat(0);
+        outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), powf(leftOperand, rightOperand));
+        sendMessage(0, outgoingMessage);
+      }
+      else if (message->isBang(0)) {
+        outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), powf(leftOperand, rightOperand));
         sendMessage(0, outgoingMessage);
       }
       break;
     }
     case 1: {
       if (message->isFloat(0)) {
-        constant = message->getFloat(0);
+        rightOperand = message->getFloat(0);
       }
       break;
     }

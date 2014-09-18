@@ -38,7 +38,8 @@ class MessagePow : public MessageObject {
   private:
     void processMessage(int inletIndex, PdMessage *message);
 
-    float constant;
+    float leftOperand;
+    float rightOperand;
 };
 
 #endif // _MESSAGE_POW_H_

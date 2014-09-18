@@ -39,7 +39,8 @@ class MessageDivide : public MessageObject {
   private:
     void processMessage(int inletIndex, PdMessage *message);
 
-    float constant;
+    float rightOperand;
+    float leftOperand;
 };
 
 #endif // _MESSAGE_DIVIDE_H_

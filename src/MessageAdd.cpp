@@ -27,7 +27,8 @@ MessageObject *MessageAdd::newObject(PdMessage *initMessage, PdGraph *graph) {
 }
 
 MessageAdd::MessageAdd(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
-  constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
+  rightOperand = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
+  leftOperand = 0.0f;
 }
 
 MessageAdd::~MessageAdd() {
@@ -35,24 +36,30 @@ MessageAdd::~MessageAdd() {
 }
 
 string MessageAdd::toString() {
-  char str[snprintf(NULL, 0, "+ %g", constant)+1];
-  snprintf(str, sizeof(str), "+ %g", constant);
+  char str[snprintf(NULL, 0, "+ %g", rightOperand)+1];
+  snprintf(str, sizeof(str), "+ %g", rightOperand);
   return string(str);
 }
 
 void MessageAdd::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
+      PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+      
       if (message->isFloat(0)) {
-        PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
-        outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), message->getFloat(0) + constant);
+        leftOperand = message->getFloat(0);
+        outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), leftOperand + rightOperand);
+        sendMessage(0, outgoingMessage); // send a message from outlet 0
+      }
+      else if (message->isBang(0)) {
+        outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), leftOperand + rightOperand);
         sendMessage(0, outgoingMessage); // send a message from outlet 0
       }
       break;
     }
     case 1: {
       if (message->isFloat(0)) {
-        constant = message->getFloat(0);
+        rightOperand = message->getFloat(0);
       }
       break;
     }
