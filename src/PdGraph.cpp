@@ -547,7 +547,7 @@ void PdGraph::addConnectionFromObjectToInlet(MessageObject *messageObject, int o
 void PdGraph::addConnectionToObjectFromOutlet(MessageObject *messageObject, int inletIndex, int outletIndex) {
   switch (getConnectionType(outletIndex)) {
     case MESSAGE: {
-      MessageOutlet *messageOutlet = reinterpret_cast<MessageOutlet *>(outletList.at(inletIndex));
+      MessageOutlet *messageOutlet = reinterpret_cast<MessageOutlet *>(outletList.at(outletIndex));
       messageOutlet->addConnectionToObjectFromOutlet(messageObject, inletIndex, 0);
       break;
     }
