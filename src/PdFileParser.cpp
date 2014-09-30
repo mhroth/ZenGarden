@@ -242,7 +242,7 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
         PdMessage *message = PD_MESSAGE_ON_STACK(1);
         message->initWithTimestampAndSymbol(0.0, comment);
         MessageObject *messageText = context->newObject(
-            MessageText::getObjectLabel(), initMessage, graph);
+            MessageText::getObjectLabel(), message, graph);
         graph->addObject(canvasX, canvasY, messageText);
       } else if (!strcmp(objectType, "declare")) {
         // set environment for loading patch
