@@ -35,6 +35,12 @@ MessagePow::~MessagePow() {
   // nothing to do
 }
 
+std::string MessagePow::toString() {
+  char str[snprintf(NULL, 0, "pow %g", constant)+1];
+  snprintf(str, sizeof(str), "pow %g", constant);
+  return string(str);
+}
+
 void MessagePow::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
@@ -63,11 +69,4 @@ void MessagePow::processMessage(int inletIndex, PdMessage *message) {
       break;
     }
   }
-
-}
-
-std::string MessagePow::toString() {
-  char str[snprintf(NULL, 0, "pow %g", constant)+1];
-  snprintf(str, sizeof(str), "pow %g", constant);
-  return string(str);
 }
