@@ -54,3 +54,7 @@ void DspThrow::processSignal(DspObject *dspObject, int fromIndex, int toIndex) {
   DspThrow *d = reinterpret_cast<DspThrow *>(dspObject);
   memcpy(d->buffer, d->dspBufferAtInlet[0], toIndex*sizeof(float));
 }
+
+bool DspThrow::isLeafNode() {
+  return graph->getContext()->getDspCatch(name) == NULL;
+}
