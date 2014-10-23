@@ -291,9 +291,5 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
     }
   }
   
-  // force dsp ordering as the last step
-  // some graphs may not have any connections (only abstractions), and thus may appear to do nothing
-  graph->computeDeepLocalDspProcessOrder();
-  
   return graph;
 }

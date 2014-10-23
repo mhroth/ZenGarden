@@ -38,6 +38,8 @@ class DspCatch : public DspObject {
     DspCatch(PdMessage *initMessage, PdGraph *graph);
     ~DspCatch();
 
+    list<DspObject *> getProcessOrder();
+  
     void addThrow(DspThrow *dspThrow);
     void removeThrow(DspThrow *dspThrow);
   

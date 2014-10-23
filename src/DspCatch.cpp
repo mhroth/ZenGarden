@@ -21,9 +21,12 @@
  */
 
 #include "ArrayArithmetic.h"
+#include "BufferPool.h"
 #include "DspCatch.h"
 #include "DspThrow.h"
+#include "PdContext.h"
 #include "PdGraph.h"
+
 
 MessageObject *DspCatch::newObject(PdMessage *initMessage, PdGraph *graph) {
   return new DspCatch(initMessage, graph);
@@ -95,3 +98,33 @@ void DspCatch::processMany(DspObject *dspObject, int fromIndex, int toIndex) {
         0, toIndex);
   };
 }
+
+// catch objects should be processed after their corresponding throw object even though
+// there is no connection between them
+list<DspObject *> DspCatch::getProcessOrder() {
+  if (isOrdered) {
+    // if this object has already been ordered, then move on
+    return list<DspObject *>();
+  } else {
+    isOrdered = true;
+    list<DspObject *> processList;
+    
+    for (std::list<DspThrow *>::iterator throwIt = throwList.begin(); throwIt != throwList.end(); ++throwIt) {
+      list<DspObject *> parentProcessList = (*throwIt)->getProcessOrder();
+      // combine the process lists
+      processList.splice(processList.end(), parentProcessList);
+    }
+    
+    // set the outlet buffers
+    for (int i = 0; i < getNumDspOutlets(); i++) {
+      if (canSetBufferAtOutlet(i)) {
+        float *buffer = graph->getContext()->getBufferPool()->getBuffer(outgoingDspConnections[i].size());
+        setDspBufferAtOutlet(buffer, i);
+      }
+    }
+    
+    processList.push_back(this);
+    return processList;
+  }
+}
+

@@ -46,6 +46,8 @@ class DspThrow : public DspObject {
     ObjectType getObjectType() { return DSP_THROW; }
 
     void processMessage(int inletIndex, PdMessage *message);
+  
+    bool isLeafNode();
     
   private:
     static void processSignal(DspObject *dspObject, int fromIndex, int toIndex);
