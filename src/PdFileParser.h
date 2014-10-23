@@ -70,6 +70,7 @@ class PdFileParser {
     string line;
     string message;
     string rootPath;
+    string fileName; // the name of the file that is being parsed
     bool isDone;
 };
 

@@ -21,6 +21,7 @@
  */
 
 #include "DspThrow.h"
+#include "PdContext.h"
 #include "PdGraph.h"
 
 MessageObject *DspThrow::newObject(PdMessage *initMessage, PdGraph *graph) {
