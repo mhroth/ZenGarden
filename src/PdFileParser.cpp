@@ -125,13 +125,19 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
     if (!strcmp(hashType, "#N")) {
       char *objectType = strtok(NULL, " ");
       if (!strcmp(objectType, "canvas")) {
+        int canvasX = atoi(strtok(NULL, " "));
+        int canvasY = atoi(strtok(NULL, " "));
+        int canvasW = atoi(strtok(NULL, " "));
+        int canvasH = atoi(strtok(NULL, " "));
+        const char *canvasName = strtok(NULL, " ");
+
         // A new graph is defined inline. No arguments are passed (from this line)
         // the graphId is not incremented as this is a subpatch, not an abstraction
         // NOTE(mhroth): pixel location is not recorded
         PdGraph *newGraph = NULL;
         if (graph == NULL) { // if no parent graph exists
           initMessage->initWithTimestampAndNumElements(0.0, 0); // make a dummy initMessage
-          newGraph = new PdGraph(initMessage, NULL, context, context->getNextGraphId());
+          newGraph = new PdGraph(initMessage, NULL, context, context->getNextGraphId(), "root");
           if (!rootPath.empty()) {
             // inform the root graph of where it is in the file system, if this information exists.
             // This will allow abstractions to be correctly loaded.
@@ -139,9 +145,9 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
           }
         } else {
           if (isSubPatch) {
-            newGraph = new PdGraph(graph->getArguments(), graph, context, graph->getGraphId());
+            newGraph = new PdGraph(graph->getArguments(), graph, context, graph->getGraphId(), canvasName);
           } else {
-            newGraph = new PdGraph(initMsg, graph, context, context->getNextGraphId());
+            newGraph = new PdGraph(initMsg, graph, context, context->getNextGraphId(), "???");
             isSubPatch = true;
           }
           graph->addObject(0, 0, newGraph); // add the new graph to the current one as an object
