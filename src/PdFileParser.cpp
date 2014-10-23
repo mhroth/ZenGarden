@@ -239,10 +239,9 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
         float canvasX = (float) atoi(strtok(NULL, " "));
         float canvasY = (float) atoi(strtok(NULL, " "));
         char *comment = strtok(NULL, ";"); // get the comment
-        PdMessage *message = PD_MESSAGE_ON_STACK(1);
-        message->initWithTimestampAndSymbol(0.0, comment);
+        initMessage->initWithTimestampAndSymbol(0.0, comment);
         MessageObject *messageText = context->newObject(
-            MessageText::getObjectLabel(), message, graph);
+            MessageText::getObjectLabel(), initMessage, graph);
         graph->addObject(canvasX, canvasY, messageText);
       } else if (!strcmp(objectType, "declare")) {
         // set environment for loading patch
