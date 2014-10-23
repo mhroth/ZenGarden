@@ -34,12 +34,17 @@ class MessagePow : public MessageObject {
     ~MessagePow();
 
     static const char *getObjectLabel();
+    std::string toString();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
 
-    float leftOperand;
-    float rightOperand;
+    float constant;
+    float last;
 };
+
+inline const char *MessagePow::getObjectLabel() {
+  return "pow";
+}
 
 #endif // _MESSAGE_POW_H_

@@ -33,14 +33,18 @@ class MessageMultiply : public MessageObject {
     MessageMultiply(PdMessage *initMessage, PdGraph *graph);
     ~MessageMultiply();
 
-    static const char *getObjectLabel() { return "*"; }
-    string toString();
+    static const char *getObjectLabel();
+    std::string toString();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
 
-    float rightOperand;
-    float leftOperand;
+    float constant;
+    float last;
 };
+
+inline const char *MessageMultiply::getObjectLabel() {
+  return "*";
+}
 
 #endif // _MESSAGE_MULTIPLY_H_

@@ -27,37 +27,35 @@ MessageObject *MessagePow::newObject(PdMessage *initMessage, PdGraph *graph) {
 }
 
 MessagePow::MessagePow(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
-  rightOperand = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
-  leftOperand = 0.0f;
+  constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
+  last = 0.0f;
 }
 
 MessagePow::~MessagePow() {
   // nothing to do
 }
 
-const char *MessagePow::getObjectLabel() {
-  return "pow";
-}
-
 void MessagePow::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
-      PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
-      
-      if (message->isFloat(0)) {
-        leftOperand = message->getFloat(0);
-        outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), powf(leftOperand, rightOperand));
-        sendMessage(0, outgoingMessage);
-      }
-      else if (message->isBang(0)) {
-        outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), powf(leftOperand, rightOperand));
-        sendMessage(0, outgoingMessage);
+      switch (message->getType(0)) {
+        case FLOAT: {
+          last = powf(message->getFloat(0), constant);
+          // allow fallthrough
+        }
+        case BANG: {
+          PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+          outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), last);
+          sendMessage(0, outgoingMessage);
+          break;
+        }
+        default: return;
       }
       break;
     }
     case 1: {
       if (message->isFloat(0)) {
-        rightOperand = message->getFloat(0);
+        constant = message->getFloat(0);
       }
       break;
     }
@@ -65,4 +63,11 @@ void MessagePow::processMessage(int inletIndex, PdMessage *message) {
       break;
     }
   }
+
+}
+
+std::string MessagePow::toString() {
+  char str[snprintf(NULL, 0, "pow %g", constant)+1];
+  snprintf(str, sizeof(str), "pow %g", constant);
+  return string(str);
 }

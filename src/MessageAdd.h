@@ -33,14 +33,18 @@ class MessageAdd : public MessageObject {
     MessageAdd(PdMessage *initMessage, PdGraph *graph);
     ~MessageAdd();
 
-    static const char *getObjectLabel() { return "+"; }
-    string toString();
+    static const char *getObjectLabel();
+    std::string toString();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
 
-    float leftOperand;
-    float rightOperand;
+    float last;
+    float constant;
 };
+
+inline const char *MessageAdd::getObjectLabel() {
+  return "+";
+}
 
 #endif // _MESSAGE_ADD_H_
