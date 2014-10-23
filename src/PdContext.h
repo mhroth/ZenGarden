@@ -43,6 +43,7 @@ class RemoteMessageReceiver;
 class TableReceiverInterface;
 class PdMessage;
 class ObjectFactoryMap;
+class PdAbstractionDataBase;
 
 /**
  * The <code>PdContext</code> is a container for a set of <code>PdGraph</code>s operating in
@@ -209,6 +210,8 @@ class PdContext {
     void unregisterExternalObject(const char *objectLabel);
   
     BufferPool *getBufferPool() { return bufferPool; }
+
+    PdAbstractionDataBase *getAbstractionDataBase();
   
   private:
     /** Returns <code>true</code> if the graph was successfully configured. <code>false</code> otherwise. */
@@ -278,6 +281,8 @@ class PdContext {
   
     /** A global map storing values for Value objects. */
     map<string,float> valueMap;
+
+    PdAbstractionDataBase *abstractionDatabase;
 };
 
 #endif // _PD_CONTEXT_H_

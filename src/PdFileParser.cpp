@@ -28,6 +28,7 @@
 #include "PdContext.h"
 #include "PdFileParser.h"
 #include "PdGraph.h"
+#include "PdAbstractionDataBase.h"
 
 PdFileParser::PdFileParser(string directory, string filename) {
   rootPath = string(directory);
@@ -167,6 +168,7 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
         
         // resolve $ variables in the object label (such as objects that are simply labeled "$1")
         char *objectLabel = strtok(NULL, " ;\r"); // delimit with " " or ";"
+        
         char resBufferLabel[OBJECT_LABEL_RESOLUTION_BUFFER_LENGTH];
         PdMessage::resolveString(objectLabel, graph->getArguments(), 0,
           resBufferLabel, OBJECT_LABEL_RESOLUTION_BUFFER_LENGTH); // object labels are always strings
@@ -181,29 +183,40 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
         // create the object
         MessageObject *messageObject = context->newObject(resBufferLabel, initMessage, graph);
         if (messageObject == NULL) { // object could not be created based on any known object factory functions
-          string filename = string(objectLabel) + ".pd";
-          string directory = graph->findFilePath(filename.c_str());
-          if (directory.empty()) {
-            // if the system cannot find the file itself, make a final effort to find the file via
-            // the user supplied callback
-            if (context->callbackFunction != NULL) {
-              char *dir = (char *) context->callbackFunction(ZG_CANNOT_FIND_OBJECT,
+          if (context->getAbstractionDataBase()->isThereAnAbstractionWithThatKey(objectLabel)) {
+            PdFileParser *parser = new PdFileParser(context->getAbstractionDataBase()->getAbstraction(objectLabel));
+            messageObject = parser->execute(initMessage, graph, context, false);
+            // set graph name according to abstraction. useful for debugging.
+            reinterpret_cast<PdGraph *>(messageObject)->setName(objectLabel);
+            delete parser;
+            // because the object is a graph, and thus defined by #canvas, it has already been added
+            // to the parent graph
+          }
+          else {
+            string filename = string(objectLabel) + ".pd";
+            string directory = graph->findFilePath(filename.c_str());
+            if (directory.empty()) {
+              // if the system cannot find the file itself, make a final effort to find the file via
+              // the user supplied callback
+              if (context->callbackFunction != NULL) {
+                char *dir = (char *) context->callbackFunction(ZG_CANNOT_FIND_OBJECT,
                   context->callbackUserData, objectLabel);
-              if (dir != NULL) {
+                if (dir != NULL) {
                 // TODO(mhroth): create new object based on returned path
-                free(dir); // free the returned objectpath
-              } else {
-                context->printErr("Unknown object or abstraction \"%s\".", objectLabel);
+                  free(dir); // free the returned objectpath
+                } else {
+                  context->printErr("Unknown object or abstraction '%s'.", objectLabel);
+                }
               }
             }
+            PdFileParser *parser = new PdFileParser(directory, filename);
+            messageObject = parser->execute(initMessage, graph, context, false);
+            // set graph name according to abstraction. useful for debugging.
+            reinterpret_cast<PdGraph *>(messageObject)->setName(objectLabel);
+            delete parser;
+            // because the object is a graph, and thus defined by #canvas, it has already been added
+            // to the parent graph
           }
-          PdFileParser *parser = new PdFileParser(directory, filename);
-          messageObject = parser->execute(initMessage, graph, context, false);
-          // set graph name according to abstraction. useful for debugging.
-          reinterpret_cast<PdGraph *>(messageObject)->setName(objectLabel);
-          delete parser;
-          // because the object is a graph, and thus defined by #canvas, it has already been added
-          // to the parent graph
         } else {
           // add the object to the local graph and make any necessary registrations
           graph->addObject(canvasX, canvasY, messageObject);

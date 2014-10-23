@@ -29,6 +29,7 @@
 #include "PdFileParser.h"
 #include "PdGraph.h"
 #include "ZenGarden.h"
+#include "PdAbstractionDataBase.h"
 
 /*
 void zg_remove_graph(PdContext *context, PdGraph *graph) {
@@ -487,4 +488,14 @@ const char *zg_message_get_symbol(PdMessage *message, unsigned int index) {
 
 char *zg_message_to_string(ZGMessage *message) {
   return message->toString();
+}
+
+void zg_context_register_abstraction(ZGContext *context, const char *objectLabel, const char *abstraction)
+{
+  context->getAbstractionDataBase()->addAbstraction(objectLabel, abstraction);
+}
+
+void zg_context_unregister_abstraction(ZGContext *context, const char *objectLabel)
+{
+  context->getAbstractionDataBase()->removeAbstraction(objectLabel);
 }
