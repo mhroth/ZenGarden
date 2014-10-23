@@ -21,11 +21,12 @@
  */
 
 #include "ArrayArithmetic.h"
+#include "BufferPool.h"
 #include "DspCatch.h"
 #include "DspThrow.h"
-#include "PdGraph.h"
 #include "PdContext.h"
-#include "BufferPool.h"
+#include "PdGraph.h"
+
 
 MessageObject *DspCatch::newObject(PdMessage *initMessage, PdGraph *graph) {
   return new DspCatch(initMessage, graph);
@@ -98,6 +99,8 @@ void DspCatch::processMany(DspObject *dspObject, int fromIndex, int toIndex) {
   };
 }
 
+// catch objects should be processed after their corresponding throw object even though
+// there is no connection between them
 list<DspObject *> DspCatch::getProcessOrder() {
   if (isOrdered) {
     // if this object has already been ordered, then move on
@@ -106,10 +109,7 @@ list<DspObject *> DspCatch::getProcessOrder() {
     isOrdered = true;
     list<DspObject *> processList;
     
-    for (std::list<DspThrow *>::iterator throwIt = throwList.begin();
-      throwIt != throwList.end();
-      ++throwIt) {
-
+    for (std::list<DspThrow *>::iterator throwIt = throwList.begin(); throwIt != throwList.end(); ++throwIt) {
       list<DspObject *> parentProcessList = (*throwIt)->getProcessOrder();
       // combine the process lists
       processList.splice(processList.end(), parentProcessList);
@@ -123,9 +123,7 @@ list<DspObject *> DspCatch::getProcessOrder() {
       }
     }
     
-    // NOTE(mhroth): even if an object does not process audio, its buffer still needs to be connected.
-    // They may be passed on to other objects, such as s~/r~ pairs
-    if (doesProcessAudio()) processList.push_back(this);
+    processList.push_back(this);
     return processList;
   }
 }
