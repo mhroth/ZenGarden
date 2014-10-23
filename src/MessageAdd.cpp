@@ -28,6 +28,7 @@ MessageObject *MessageAdd::newObject(PdMessage *initMessage, PdGraph *graph) {
 
 MessageAdd::MessageAdd(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
   constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
+  last = 0.0f;
 }
 
 MessageAdd::~MessageAdd() {
@@ -43,10 +44,18 @@ string MessageAdd::toString() {
 void MessageAdd::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
-      if (message->isFloat(0)) {
-        PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
-        outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), message->getFloat(0) + constant);
-        sendMessage(0, outgoingMessage); // send a message from outlet 0
+      switch (message->getType(0)) {
+        case FLOAT: {
+          last = message->getFloat(0) + constant;
+          // allow fallthrough
+        }
+        case BANG: {
+          PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+          outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), last);
+          sendMessage(0, outgoingMessage);
+          break;
+        }
+        default: return;
       }
       break;
     }

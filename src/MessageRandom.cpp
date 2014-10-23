@@ -57,7 +57,7 @@ void MessageRandom::processMessage(int inletIndex, PdMessage *message) {
     }
     case 1: {
       if (message->isFloat(0)) {
-        max_inc = ((int) message->getFloat(0)) - 1;
+        max_inc = static_cast<int>(fmaxf(message->getFloat(0) - 1.0f, 0.0f));
       }
       break;
     }

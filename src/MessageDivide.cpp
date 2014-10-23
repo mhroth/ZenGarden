@@ -28,13 +28,14 @@ MessageObject *MessageDivide::newObject(PdMessage *initMessage, PdGraph *graph) 
 
 MessageDivide::MessageDivide(PdMessage *initMessage, PdGraph *graph) : MessageObject(2, 1, graph) {
   constant = initMessage->isFloat(0) ? initMessage->getFloat(0) : 0.0f;
+  last = 0.0f;
 }
 
 MessageDivide::~MessageDivide() {
   // nothing to do
 }
 
-string MessageDivide::toString() {
+std::string MessageDivide::toString() {
   char str[snprintf(NULL, 0, "/ %g", constant)+1];
   snprintf(str, sizeof(str), "/ %g", constant);
   return string(str);
@@ -43,11 +44,18 @@ string MessageDivide::toString() {
 void MessageDivide::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
-      if (message->isFloat(0)) {
-        float result = (constant == 0.0f) ? 0.0f : message->getFloat(0) / constant;
-        PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
-        outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), result);
-        sendMessage(0, outgoingMessage);
+      switch (message->getType(0)) {
+        case FLOAT: {
+          last = constant == 0.0f ? 0.0f : message->getFloat(0) / constant;
+          // allow fallthrough
+        }
+        case BANG: {
+          PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
+          outgoingMessage->initWithTimestampAndFloat(message->getTimestamp(), last);
+          sendMessage(0, outgoingMessage);
+          break;
+        }
+        default: return;
       }
       break;
     }

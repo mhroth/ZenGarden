@@ -33,13 +33,18 @@ class MessageSubtract : public MessageObject {
     MessageSubtract(PdMessage *initMessage, PdGraph *graph);
     ~MessageSubtract();
 
-    static const char *getObjectLabel() { return "-"; }
-    string toString();
+    static const char *getObjectLabel();
+    std::string toString();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
 
     float constant;
+    float last;
 };
+
+inline const char *MessageSubtract::getObjectLabel() {
+  return "-";
+}
 
 #endif // _MESSAGE_SUBTRACT_H_
