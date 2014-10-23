@@ -72,6 +72,8 @@ PdGraph::~PdGraph() {
   // remove all implicit +~~ objects
   for (list<DspObject *>::iterator it = dspNodeList.begin(); it != dspNodeList.end(); ++it) {
     DspObject *dspObject = *it;
+    
+    if (dspObject->getGraph() != this) break;
     if (!strcmp(dspObject->toString().c_str(), DspImplicitAdd::getObjectLabel())) {
       delete dspObject;
     }
