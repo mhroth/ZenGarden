@@ -152,7 +152,7 @@ ZGGraph *zg_context_new_empty_graph(PdContext *context) {
   PdMessage *initMessage = PD_MESSAGE_ON_STACK(0); // create an empty message to use for initialisation
   initMessage->initWithTimestampAndNumElements(0.0, 0);
   // the new graph has no parent graph and is created in the given context with a unique id
-  PdGraph *graph = new PdGraph(initMessage, NULL, context, context->getNextGraphId());
+  PdGraph *graph = new PdGraph(initMessage, NULL, context, context->getNextGraphId(), "root");
   return graph;
 }
 

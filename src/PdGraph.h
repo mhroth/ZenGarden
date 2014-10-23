@@ -45,7 +45,7 @@ class PdGraph : public DspObject {
   
   public:
     /** Instantiate an empty graph. */
-    PdGraph(PdMessage *initMessage, PdGraph *graph, PdContext *context, int graphId);
+    PdGraph(PdMessage *initMessage, PdGraph *graph, PdContext *context, int graphId, const char *graphName);
     ~PdGraph();
     
     /**

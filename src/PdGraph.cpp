@@ -40,7 +40,7 @@
 
 // a PdGraph begins with zero inlets and zero outlets. These will be added as inlet/~ and outlet/~
 // objects are added to the graph
-PdGraph::PdGraph(PdMessage *initMessage, PdGraph *parentGraph, PdContext *context, int graphId) :
+PdGraph::PdGraph(PdMessage *initMessage, PdGraph *parentGraph, PdContext *context, int graphId, const char *graphName) :
     DspObject(0, 0, 0, 0, (parentGraph == NULL) ? context->getBlockSize() : parentGraph->getBlockSize(), parentGraph) {
   this->parentGraph = parentGraph; // == NULL if this is a root graph
   this->context = context;
@@ -62,6 +62,7 @@ PdGraph::PdGraph(PdMessage *initMessage, PdGraph *parentGraph, PdContext *contex
   graphArguments->setFloat(0, (float) graphId); // $0
   memcpy(graphArguments->getElement(1), initMessage->getElement(0), numInitElements * sizeof(MessageAtom));
   graphArguments = graphArguments->copyToHeap();
+  name = graphName;
 }
 
 PdGraph::~PdGraph() {
