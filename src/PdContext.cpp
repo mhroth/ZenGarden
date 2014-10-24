@@ -23,6 +23,7 @@
 #include "BufferPool.h"
 #include "MessageSendController.h"
 #include "ObjectFactoryMap.h"
+#include "PdAbstractionDataBase.h"
 #include "PdContext.h"
 #include "PdFileParser.h"
 
@@ -63,12 +64,14 @@ PdContext::PdContext(int numInputChannels, int numOutputChannels, int blockSize,
   memset(globalDspOutputBuffers, 0, numBytesInOutputBuffers);
   
   sendController = new MessageSendController(this);
-    
+
+  abstractionDatabase = new PdAbstractionDataBase();
+  
   // configure the context lock, which is recursive
   pthread_mutexattr_t mta;
   pthread_mutexattr_init(&mta);
   pthread_mutexattr_settype(&mta, PTHREAD_MUTEX_RECURSIVE);
-  pthread_mutex_init(&contextLock, &mta); 
+  pthread_mutex_init(&contextLock, &mta);
 }
 
 PdContext::~PdContext() {
@@ -84,6 +87,8 @@ PdContext::~PdContext() {
   for (int i = 0; i < graphList.size(); i++) {
     delete graphList[i];
   }
+
+  delete abstractionDatabase;
 
   pthread_mutex_destroy(&contextLock);
 }
@@ -521,4 +526,8 @@ void PdContext::receiveSystemMessage(PdMessage *message) {
     printErr("Unrecognised system command: %s", messageString);
     free(messageString);
   }
+}
+
+PdAbstractionDataBase *PdContext::getAbstractionDataBase() {
+  return abstractionDatabase;
 }

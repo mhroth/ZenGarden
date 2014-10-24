@@ -25,6 +25,7 @@
 #endif
 #include <string.h>
 #include "MessageTable.h"
+#include "PdAbstractionDataBase.h"
 #include "PdContext.h"
 #include "PdFileParser.h"
 #include "PdGraph.h"
@@ -487,4 +488,13 @@ const char *zg_message_get_symbol(PdMessage *message, unsigned int index) {
 
 char *zg_message_to_string(ZGMessage *message) {
   return message->toString();
+}
+
+void zg_context_register_memorymapped_abstraction(ZGContext *context, const char *objectLabel,
+  const char *abstraction) {
+  context->getAbstractionDataBase()->addAbstraction(objectLabel, abstraction);
+}
+
+void zg_context_unregister_memorymapped_abstraction(ZGContext *context, const char *objectLabel) {
+  context->getAbstractionDataBase()->removeAbstraction(objectLabel);
 }

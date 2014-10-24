@@ -118,6 +118,14 @@ typedef enum ZGConnectionType {
   void zg_context_unregister_external_object(ZGContext *context, const char *objectLabel);
   
 
+#pragma mark - Abstractions from Context
+  /** Register an abstraction from memory. */
+  void zg_context_register_memorymapped_abstraction(ZGContext *context, const char *objectLabel,
+    const char *abstraction);
+
+  /** Unregister an abstraction. */
+  void zg_context_unregister_memorymapped_abstraction(ZGContext *context, const char *objectLabel);
+
 #pragma mark - Objects from Context
   
   /** Returns the global table object with the given name. NULL if the table does not exist. */
