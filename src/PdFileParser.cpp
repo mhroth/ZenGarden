@@ -192,8 +192,6 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
             // set graph name according to abstraction. useful for debugging.
             reinterpret_cast<PdGraph *>(messageObject)->setName(objectLabel);
             delete parser;
-            // because the object is a graph, and thus defined by #canvas, it has already been added
-            // to the parent graph
           } else {
             string filename = string(objectLabel) + ".pd";
             string directory = graph->findFilePath(filename.c_str());
@@ -214,8 +212,6 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
             PdFileParser *parser = new PdFileParser(directory, filename);
             messageObject = parser->execute(initMessage, graph, context, false);
             delete parser;
-            // because the object is a graph, and thus defined by #canvas, it has already been added
-            // to the parent graph
           }
         } else {
           // add the object to the local graph and make any necessary registrations

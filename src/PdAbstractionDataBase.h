@@ -27,14 +27,14 @@
 #include <map>
 
 /**
-  * This is class is used to registered memory mapped abstractions so that the PdFileParser can
-  * find them while parsing a patch.
-  *
-  * Every PdContext has its own PdAbstractionDatabase instance. The user can register / unregister
-  * memory mappep abstraction using the ZenGarden functions declared in ZenGarden.h:
-  * - zg_context_register_memorymapped_abstraction
-  * - zg_context_unregister_memorymapped_abstraction
-  */
+ * This class is used to register memory mapped abstractions so that the PdFileParser can
+ * find them while parsing a patch.
+ *
+ * Every PdContext has its own PdAbstractionDatabase instance. The user can register / unregister
+ * memorymapped abstractions using the ZenGarden functions declared in ZenGarden.h:
+ * - zg_context_register_memorymapped_abstraction
+ * - zg_context_unregister_memorymapped_abstraction
+ */
 
 class PdAbstractionDataBase {
 public :

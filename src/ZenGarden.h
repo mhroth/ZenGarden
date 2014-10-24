@@ -119,9 +119,10 @@ typedef enum ZGConnectionType {
   
 
 #pragma mark - Abstractions from Context
+
   /** Register an abstraction from memory. */
   void zg_context_register_memorymapped_abstraction(ZGContext *context, const char *objectLabel,
-    const char *abstraction);
+      const char *abstraction);
 
   /** Unregister an abstraction. */
   void zg_context_unregister_memorymapped_abstraction(ZGContext *context, const char *objectLabel);
