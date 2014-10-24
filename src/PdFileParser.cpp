@@ -99,6 +99,11 @@ string PdFileParser::nextLine() {
     // remove trailing '\n' from the line
     line = string(stringDesc, pos, newPos-pos);
     pos = newPos + 1; // one past the '\n'
+
+    size_t commaIndex;
+    if ((commaIndex = line.find_last_of(",")) != std::string::npos && commaIndex > 0 && line[commaIndex - 1] != '\\') {
+      line = line.substr(0, commaIndex) + ";";
+    }
     return line;
   }
 }
@@ -117,12 +122,14 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
   PdMessage *initMessage = PD_MESSAGE_ON_STACK(INIT_MESSAGE_MAX_ELEMENTS);
   
   string message;
+  MessageTable *lastArrayCreated = NULL;  // used to know on which table the #A line values have to be set
   while (!(message = nextMessage()).empty()) {
     // create a non-const copy of message such that strtok can modify it
     char line[message.size()+1];
     strncpy(line, message.c_str(), sizeof(line));
-        
+    
     char *hashType = strtok(line, " ");
+
     if (!strcmp(hashType, "#N")) {
       char *objectType = strtok(NULL, " ");
       if (!strcmp(objectType, "canvas")) {
@@ -156,7 +163,7 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
         
         // the new graph is pushed onto the stack
         graph = newGraph;
-      } else {
+    } else {
         context->printErr("Unrecognised #N object type: \"%s\".", line);
       }
     } else if (!strcmp(hashType, "#X")) {
@@ -272,35 +279,41 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
           context->printErr("declare \"%s\" flag is not supported.", initMessage->getSymbol(0));
         }
       } else if (!strcmp(objectType, "array")) {
-        /*
         // creates a new table
         // objectInitString should contain both name and buffer length
         char *objectInitString = strtok(NULL, ";"); // get the object initialisation string
         char resBuffer[RESOLUTION_BUFFER_LENGTH];
         initMessage->initWithSARb(4, objectInitString, graph->getArguments(), resBuffer, RESOLUTION_BUFFER_LENGTH);
-        MessageTable *table = (MessageTable *) context->newObject("table", initMessage, graph);
-        graph->addObject(0, 0, table);
-        int bufferLength = 0;
-        float *buffer = table->getBuffer(&bufferLength);
-         // next many lines should be elements of that array
-         // while the next line begins with #A
-         while (!strcmp(strtok(line = nextMessage(), " ;"), "#A")) {
-           int index = atoi(strtok(NULL, " ;"));
-           char *nextNumber = NULL;
-           // ensure that file does not attempt to write more than stated numbers
-           while (((nextNumber = strtok(NULL, " ;")) != NULL) && (index < bufferLength)) {
-             buffer[index++] = atof(nextNumber);
-           }
-         }
-         // ignore the #X coords line
-         */
+        lastArrayCreated = reinterpret_cast<MessageTable *>(
+          context->newObject("table", initMessage, graph));
+        graph->addObject(0, 0, lastArrayCreated);
+        context->printStd("PdFileParser: Replacer array with table, name: '%s'", initMessage->getSymbol(0));
       } else if (!strcmp(objectType, "coords")) {
         // NOTE(mhroth): not really sure what this object type does, but it doesn't seem to have
         // any effect on the function of the patch (i.e. it seems to be purely cosmetic).
-        context->printErr("WARNING: Unsure what object type #X coords does: \"%s\"\n"
-            "  There is (probably) no reason to worry.", message.c_str());
+        // context->printErr("WARNING: Unsure what object type #X coords does: \"%s\"\n"
+        //    "  There is (probably) no reason to worry.", message.c_str());*/
       } else {
         context->printErr("Unrecognised #X object type: \"%s\"", message.c_str());
+      }
+    } else if (!strcmp(hashType, "#A")) {
+      if (!lastArrayCreated)
+        context->printErr("#A line but no array were created");
+      else {
+        int bufferLength = 0;
+        float *buffer = lastArrayCreated->getBuffer(&bufferLength);
+        char *token;
+        
+        int index = atoi(strtok(NULL, " ;"));
+        while ((token = strtok(NULL, " ;")) != NULL) {
+          if (index >= bufferLength) {
+            context->printErr("#A trying to add value at index %d \
+              while buffer length is %d", index, bufferLength);
+            break;
+          }
+          buffer[index] = atof(token);
+          ++index;
+        }
       }
     } else {
       context->printErr("Unrecognised hash type: \"%s\"", message.c_str());
