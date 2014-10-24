@@ -403,6 +403,9 @@ void PdContext::registerTable(MessageTable *table) {
   
   for (list<TableReceiverInterface *>::iterator it = tableReceiverList.begin();
       it != tableReceiverList.end(); it++) {
+    // in case the table receiver doesn't have the table name yet
+    if ((*it)->getName() == NULL)
+      continue;
     if (!strcmp((*it)->getName(), table->getName())) (*it)->setTable(table);
   }
 }
@@ -417,8 +420,11 @@ MessageTable *PdContext::getTable(const char *name) {
 void PdContext::registerTableReceiver(TableReceiverInterface *tableReceiver) {
   tableReceiverList.push_back(tableReceiver); // add the new receiver
   
-  MessageTable *table = getTable(tableReceiver->getName());
-  tableReceiver->setTable(table); // set table whether it is NULL or not
+  // in case the tableread doesnt have the name of the table yet
+  if (tableReceiver->getName()) {
+    MessageTable *table = getTable(tableReceiver->getName());
+    tableReceiver->setTable(table); // set table whether it is NULL or not
+  }
 }
 
 void PdContext::unregisterTableReceiver(TableReceiverInterface *tableReceiver) {
