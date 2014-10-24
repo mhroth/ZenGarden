@@ -100,6 +100,13 @@ string PdFileParser::nextLine() {
     // remove trailing '\n' from the line
     line = string(stringDesc, pos, newPos-pos);
     pos = newPos + 1; // one past the '\n'
+
+    // remove comma indicating GUI box resize
+    int commaIndex = 0;
+    if ((commaIndex = line.find_last_of(",")) != std::string::npos && commaIndex > 0 && line[commaIndex - 1] != '\\') {
+      line = line.substr(0, commaIndex) + ";";
+    }
+
     return line;
   }
 }
