@@ -490,12 +490,11 @@ char *zg_message_to_string(ZGMessage *message) {
   return message->toString();
 }
 
-void zg_context_register_abstraction(ZGContext *context, const char *objectLabel, const char *abstraction)
-{
+void zg_context_register_memorymapped_abstraction(ZGContext *context, const char *objectLabel,
+  const char *abstraction) {
   context->getAbstractionDataBase()->addAbstraction(objectLabel, abstraction);
 }
 
-void zg_context_unregister_abstraction(ZGContext *context, const char *objectLabel)
-{
+void zg_context_unregister_memorymapped_abstraction(ZGContext *context, const char *objectLabel) {
   context->getAbstractionDataBase()->removeAbstraction(objectLabel);
 }

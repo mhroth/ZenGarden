@@ -43,11 +43,9 @@ void PdAbstractionDataBase::removeAbstraction(const std::string &key) {
 }
 
 std::string PdAbstractionDataBase::getAbstraction(const std::string &key) const {
-  if (isThereAnAbstractionWithThatKey(key))
-    return database.at(key);
-  return "";
+  return existsAbstraction(key) ? database.at(key) : "";
 }
 
-bool PdAbstractionDataBase::isThereAnAbstractionWithThatKey(const std::string &key) const {
+bool PdAbstractionDataBase::existsAbstraction(const std::string &key) const {
   return (database.find(key) != database.end());
 }

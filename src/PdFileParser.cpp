@@ -183,7 +183,7 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
         // create the object
         MessageObject *messageObject = context->newObject(resBufferLabel, initMessage, graph);
         if (messageObject == NULL) { // object could not be created based on any known object factory functions
-          if (context->getAbstractionDataBase()->isThereAnAbstractionWithThatKey(objectLabel)) {
+          if (context->getAbstractionDataBase()->existsAbstraction(objectLabel)) {
             PdFileParser *parser = new PdFileParser(context->getAbstractionDataBase()->getAbstraction(objectLabel));
             messageObject = parser->execute(initMessage, graph, context, false);
             // set graph name according to abstraction. useful for debugging.
@@ -191,8 +191,7 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
             delete parser;
             // because the object is a graph, and thus defined by #canvas, it has already been added
             // to the parent graph
-          }
-          else {
+          } else {
             string filename = string(objectLabel) + ".pd";
             string directory = graph->findFilePath(filename.c_str());
             if (directory.empty()) {
@@ -211,8 +210,6 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
             }
             PdFileParser *parser = new PdFileParser(directory, filename);
             messageObject = parser->execute(initMessage, graph, context, false);
-            // set graph name according to abstraction. useful for debugging.
-            reinterpret_cast<PdGraph *>(messageObject)->setName(objectLabel);
             delete parser;
             // because the object is a graph, and thus defined by #canvas, it has already been added
             // to the parent graph

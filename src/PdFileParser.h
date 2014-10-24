@@ -48,9 +48,10 @@ class PdFileParser {
     ~PdFileParser();
   
     PdGraph *execute(PdContext *context);
-    PdGraph *execute(PdMessage *initMsg, PdGraph *graph, PdContext *context, bool isSubPatch);
-    
+
   private:
+    PdGraph *execute(PdMessage *initMsg, PdGraph *graph, PdContext *context, bool isSubPatch);
+
     /**
      * Returns the next logical message in the file, or <code>NULL</code> if the end of the file
      * has been reached.

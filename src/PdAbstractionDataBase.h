@@ -26,6 +26,16 @@
 #include <string>
 #include <map>
 
+/**
+  * This is class is used to registered memory mapped abstractions so that the PdFileParser can
+  * find them while parsing a patch.
+  *
+  * Every PdContext has its own PdAbstractionDatabase instance. The user can register / unregister
+  * memory mappep abstraction using the ZenGarden functions declared in ZenGarden.h:
+  * - zg_context_register_memorymapped_abstraction
+  * - zg_context_unregister_memorymapped_abstraction
+  */
+
 class PdAbstractionDataBase {
 public :
   PdAbstractionDataBase();
@@ -37,7 +47,7 @@ public :
   void addAbstraction(const std::string &key, const std::string &abstraction);
   void removeAbstraction(const std::string &key);
   std::string getAbstraction(const std::string &key) const;
-  bool isThereAnAbstractionWithThatKey(const std::string &key) const;
+  bool existsAbstraction(const std::string &key) const;
   
 private :
   std::map<std::string, std::string> database;
