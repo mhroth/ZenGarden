@@ -32,6 +32,7 @@
 
 PdFileParser::PdFileParser(string directory, string filename) {
   rootPath = string(directory);
+  fileName = string(filename);
   
   FILE *fp = fopen((directory+filename).c_str(), "rb"); // open the file in binary mode
   pos = 0; // initialise position in stringDesc
@@ -100,7 +101,8 @@ string PdFileParser::nextLine() {
     line = string(stringDesc, pos, newPos-pos);
     pos = newPos + 1; // one past the '\n'
 
-    size_t commaIndex;
+    // remove comma indicating GUI box resize
+    int commaIndex = 0;
     if ((commaIndex = line.find_last_of(",")) != std::string::npos && commaIndex > 0 && line[commaIndex - 1] != '\\') {
       line = line.substr(0, commaIndex) + ";";
     }
@@ -145,7 +147,7 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
         PdGraph *newGraph = NULL;
         if (graph == NULL) { // if no parent graph exists
           initMessage->initWithTimestampAndNumElements(0.0, 0); // make a dummy initMessage
-          newGraph = new PdGraph(initMessage, NULL, context, context->getNextGraphId(), "root");
+          newGraph = new PdGraph(initMessage, NULL, context, context->getNextGraphId(), "zg_root");
           if (!rootPath.empty()) {
             // inform the root graph of where it is in the file system, if this information exists.
             // This will allow abstractions to be correctly loaded.
@@ -153,9 +155,11 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
           }
         } else {
           if (isSubPatch) {
+            // a graph made a subpatch
             newGraph = new PdGraph(graph->getArguments(), graph, context, graph->getGraphId(), canvasName);
           } else {
-            newGraph = new PdGraph(initMsg, graph, context, context->getNextGraphId(), "???");
+            // a graph made as an abstraction
+            newGraph = new PdGraph(initMsg, graph, context, context->getNextGraphId(), rootPath+fileName);
             isSubPatch = true;
           }
           graph->addObject(0, 0, newGraph); // add the new graph to the current one as an object
@@ -193,11 +197,7 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
           if (context->getAbstractionDataBase()->existsAbstraction(objectLabel)) {
             PdFileParser *parser = new PdFileParser(context->getAbstractionDataBase()->getAbstraction(objectLabel));
             messageObject = parser->execute(initMessage, graph, context, false);
-            // set graph name according to abstraction. useful for debugging.
-            reinterpret_cast<PdGraph *>(messageObject)->setName(objectLabel);
             delete parser;
-            // because the object is a graph, and thus defined by #canvas, it has already been added
-            // to the parent graph
           } else {
             string filename = string(objectLabel) + ".pd";
             string directory = graph->findFilePath(filename.c_str());
@@ -218,8 +218,6 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
             PdFileParser *parser = new PdFileParser(directory, filename);
             messageObject = parser->execute(initMessage, graph, context, false);
             delete parser;
-            // because the object is a graph, and thus defined by #canvas, it has already been added
-            // to the parent graph
           }
         } else {
           // add the object to the local graph and make any necessary registrations
@@ -291,8 +289,7 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
       } else if (!strcmp(objectType, "coords")) {
         // NOTE(mhroth): not really sure what this object type does, but it doesn't seem to have
         // any effect on the function of the patch (i.e. it seems to be purely cosmetic).
-        // context->printErr("WARNING: Unsure what object type #X coords does: \"%s\"\n"
-        //    "  There is (probably) no reason to worry.", message.c_str());*/
+        continue;
       } else {
         context->printErr("Unrecognised #X object type: \"%s\"", message.c_str());
       }

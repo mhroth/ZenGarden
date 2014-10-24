@@ -153,7 +153,7 @@ ZGGraph *zg_context_new_empty_graph(PdContext *context) {
   PdMessage *initMessage = PD_MESSAGE_ON_STACK(0); // create an empty message to use for initialisation
   initMessage->initWithTimestampAndNumElements(0.0, 0);
   // the new graph has no parent graph and is created in the given context with a unique id
-  PdGraph *graph = new PdGraph(initMessage, NULL, context, context->getNextGraphId(), "root");
+  PdGraph *graph = new PdGraph(initMessage, NULL, context, context->getNextGraphId(), "zg_free");
   return graph;
 }
 
@@ -490,8 +490,7 @@ char *zg_message_to_string(ZGMessage *message) {
   return message->toString();
 }
 
-void zg_context_register_memorymapped_abstraction(ZGContext *context, const char *objectLabel,
-  const char *abstraction) {
+void zg_context_register_memorymapped_abstraction(ZGContext *context, const char *objectLabel, const char *abstraction) {
   context->getAbstractionDataBase()->addAbstraction(objectLabel, abstraction);
 }
 
