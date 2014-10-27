@@ -36,11 +36,19 @@ public:
   DspImplicitAdd(PdMessage *initMessage, PdGraph *graph);
   ~DspImplicitAdd();
   
-  static const char *getObjectLabel() { return "+~~"; }
-  string toString() { return string(getObjectLabel()); }
+  static const char *getObjectLabel();
+  std::string toString();
   
   private:
     static void processSignal(DspObject *dspObject, int fromIndex, int toIndex);
 };
+
+inline const char *DspImplicitAdd::getObjectLabel() {
+  return "+~~";
+}
+
+inline std::string DspImplicitAdd::toString() {
+  return DspImplicitAdd::getObjectLabel();
+}
 
 #endif // _DSP_IMPLICIT_ADD_H_

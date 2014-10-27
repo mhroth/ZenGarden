@@ -36,8 +36,9 @@ class DspBandpassFilter : public DspFilter {
     DspBandpassFilter(PdMessage *initMessage, PdGraph *graph);
     ~DspBandpassFilter();
   
-    static const char *getObjectLabel() { return "bp~"; }
-
+    static const char *getObjectLabel();
+    std::string toString();
+    
   private:
     void processMessage(int inletIndex, PdMessage *message);
     void calcFiltCoeff(float fc, float q);
@@ -45,5 +46,13 @@ class DspBandpassFilter : public DspFilter {
     float fc; // the center frequency
     float q;
 };
+
+inline std::string DspBandpassFilter::toString() {
+  return DspBandpassFilter::getObjectLabel();
+}
+
+inline const char *DspBandpassFilter::getObjectLabel() {
+  return "bp~";
+}
 
 #endif // _DSP_BAND_PASS_FILTER_H_

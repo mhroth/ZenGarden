@@ -34,11 +34,20 @@ class MessageChange : public MessageObject {
     ~MessageChange();
 
     static const char *getObjectLabel();
+    std::string toString();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
 
     float prevValue;
 };
+
+inline const char *MessageChange::getObjectLabel() {
+  return "change";
+}
+
+inline std::string MessageChange::toString() {
+  return MessageChange::getObjectLabel();
+}
 
 #endif // _MESSAGE_CHANGE_H_

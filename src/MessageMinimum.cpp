@@ -35,10 +35,6 @@ MessageMinimum::~MessageMinimum() {
   // nothing to do
 }
 
-const char *MessageMinimum::getObjectLabel() {
-  return "min";
-}
-
 void MessageMinimum::processMessage(int inletIndex, PdMessage *message) {
    switch (inletIndex) {
     case 0: {

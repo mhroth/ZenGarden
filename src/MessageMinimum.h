@@ -35,6 +35,7 @@ class MessageMinimum : public MessageObject {
     ~MessageMinimum();
 
     static const char *getObjectLabel();
+    std::string toString();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
@@ -42,5 +43,13 @@ class MessageMinimum : public MessageObject {
     float constant;
     float lastOutput;
 };
+
+inline const char *MessageMinimum::getObjectLabel() {
+  return "min";
+}
+
+inline std::string MessageMinimum::toString() {
+  return MessageMinimum::getObjectLabel();
+}
 
 #endif // _MESSAGE_MINIMUM_H_

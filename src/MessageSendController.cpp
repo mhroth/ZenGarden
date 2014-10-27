@@ -37,10 +37,6 @@ MessageSendController::~MessageSendController() {
   // nothing to do
 }
 
-const char *MessageSendController::getObjectLabel() {
-  return "sendcontroller";
-}
-
 bool MessageSendController::receiverExists(const char *receiverName) {
   return (getNameIndex(receiverName) >= 0);
 }

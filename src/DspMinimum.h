@@ -33,8 +33,8 @@ class DspMinimum : public DspObject {
     DspMinimum(PdMessage *initMessage, PdGraph *graph);
     ~DspMinimum();
     
-    static const char *getObjectLabel() { return "min~"; }
-    string toString();
+    static const char *getObjectLabel();
+    std::string toString();
   
     void onInletConnectionUpdate(unsigned int inletIndex);
     
@@ -45,5 +45,9 @@ class DspMinimum : public DspObject {
     
     float constant;
 };
+
+inline const char *DspMinimum::getObjectLabel() {
+  return "min~";
+}
 
 #endif // _DSP_MINIMUM_H_

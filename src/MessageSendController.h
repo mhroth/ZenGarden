@@ -53,6 +53,7 @@ class MessageSendController : public MessageObject {
     ~MessageSendController();
   
     static const char *getObjectLabel();
+    std::string toString();
   
     /** Sends the message on to all receivers with the given name. */
     void receiveMessage(const char *name, PdMessage *message);
@@ -83,5 +84,13 @@ class MessageSendController : public MessageObject {
   
     set<string> externalReceiverSet;
 };
+
+inline const char *MessageSendController::getObjectLabel() {
+  return "sendcontroller";
+}
+
+inline std::string MessageSendController::toString() {
+  return MessageSendController::getObjectLabel();
+}
 
 #endif // _MESSAGE_SEND_CONTROLLER_H_

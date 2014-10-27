@@ -32,11 +32,19 @@ class DspDac : public DspObject {
     DspDac(PdGraph *graph);
     ~DspDac();
   
-    static const char *getObjectLabel() { return "dac~"; }
-    string toString() { return string(DspDac::getObjectLabel()); }
+    static const char *getObjectLabel();
+    std::string toString();
   
   private:
     static void processSignal(DspObject *dspObject, int fromIndex, int toIndex);
 };
+
+inline std::string DspDac::toString() {
+  return DspDac::getObjectLabel();
+}
+
+inline const char *DspDac::getObjectLabel() {
+  return "dac~";
+}
 
 #endif // _DSP_DAC_H_

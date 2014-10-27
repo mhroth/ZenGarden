@@ -33,8 +33,8 @@ class DspClip : public DspObject {
     DspClip(PdMessage *initMessage, PdGraph *graph);
     ~DspClip();
   
-    static const char *getObjectLabel() { return "clip~"; }
-    string toString();
+    static const char *getObjectLabel();
+    std::string toString();
 
   private:
     static void processScalar(DspObject *dspObject, int fromIndex, int toIndex);
@@ -43,5 +43,9 @@ class DspClip : public DspObject {
     float lowerBound;
     float upperBound;
 };
+
+inline const char *DspClip::getObjectLabel() {
+  return "clip~";
+}
 
 #endif // _DSP_CLIP_H_

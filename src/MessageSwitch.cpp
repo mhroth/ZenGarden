@@ -35,10 +35,6 @@ MessageSwitch::~MessageSwitch() {
   // nothing to do
 }
 
-const char *MessageSwitch::getObjectLabel() {
-  return "switch~";
-}
-
 void MessageSwitch::processMessage(int inletIndex, PdMessage *message) {
   if (message->isFloat(0)) {
     graph->setSwitch(message->getFloat(0) != 0.0f);

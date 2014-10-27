@@ -33,8 +33,8 @@ class DspSnapshot : public DspObject {
     DspSnapshot(PdMessage *initMessage, PdGraph *graph);
     ~DspSnapshot();
     
-    static const char *getObjectLabel() { return "snapshot~"; }
-    string toString() { return string(getObjectLabel()); }
+    static const char *getObjectLabel();
+    std::string toString();
     
     ConnectionType getConnectionType(int outletIndex);
     
@@ -42,5 +42,13 @@ class DspSnapshot : public DspObject {
     static void processNull(DspObject *dspObject, int fromIndex, int toIndex);
     void processMessage(int inletIndex, PdMessage *message);
 };
+
+inline std::string DspSnapshot::toString() {
+  return DspSnapshot::getObjectLabel();
+}
+
+inline const char *DspSnapshot::getObjectLabel() {
+  return "snapshot~";
+}
 
 #endif // _DSP_SNAPSHOT_H_

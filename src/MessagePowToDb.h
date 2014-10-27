@@ -34,9 +34,18 @@ class MessagePowToDb : public MessageObject {
     ~MessagePowToDb();
 
     static const char *getObjectLabel();
+    std::string toString();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
 };
+
+inline const char *MessagePowToDb::getObjectLabel() {
+  return "powtodb";
+}
+
+inline std::string MessagePowToDb::toString() {
+  return MessagePowToDb::getObjectLabel();
+}
 
 #endif // _MESSAGE_POWTODB_H_

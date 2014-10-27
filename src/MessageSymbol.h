@@ -34,9 +34,9 @@ class MessageSymbol : public MessageObject {
     MessageSymbol(PdMessage *initMessage, PdGraph *graph);
     ~MessageSymbol();
   
-    static const char *getObjectLabel() { return "symbol"; }
-    string toString() { return string(getObjectLabel()) + string(" ") + symbol; }
-    
+    static const char *getObjectLabel();
+    std::string toString();
+  
   private:
     void processMessage(int inletIndex, PdMessage *message);
   
@@ -44,5 +44,13 @@ class MessageSymbol : public MessageObject {
 
     char symbol[SYMBOL_BUFFER_LENGTH];
 };
+
+inline const char *MessageSymbol::getObjectLabel() {
+  return "symbol";
+}
+
+inline std::string MessageSymbol::toString() {
+  return std::string(MessageSymbol::getObjectLabel()) + " " + symbol;
+}
 
 #endif // _MESSAGE_SYMBOL_H_

@@ -34,6 +34,7 @@ class MessageTable : public RemoteMessageReceiver {
     ~MessageTable();
   
     static const char *getObjectLabel();
+    std::string toString();
     ObjectType getObjectType();
   
     /** Get a pointer to the table's buffer. */
@@ -53,5 +54,17 @@ class MessageTable : public RemoteMessageReceiver {
     float *buffer;
     int bufferLength;
 };
+
+inline const char *MessageTable::getObjectLabel() {
+  return "table";
+}
+
+inline ObjectType MessageTable::getObjectType() {
+  return MESSAGE_TABLE;
+}
+
+inline std::string MessageTable::toString() {
+  return std::string(MessageTable::getObjectLabel()) + " " + name;
+}
 
 #endif // _MESSAGE_TABLE_H_

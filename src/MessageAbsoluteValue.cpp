@@ -34,10 +34,6 @@ MessageAbsoluteValue::~MessageAbsoluteValue() {
   // nothing to do
 }
 
-const char *MessageAbsoluteValue::getObjectLabel() {
-  return "abs";
-}
-
 void MessageAbsoluteValue::processMessage(int inletIndex, PdMessage *message) {
   if (message->isFloat(0)) {
     PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);

@@ -36,7 +36,7 @@ class MessageMetro : public MessageObject {
     ~MessageMetro();
   
     static const char *getObjectLabel();
-    string toString();
+    std::string toString();
   
     void sendMessage(int outletIndex, PdMessage *message);
     
@@ -52,5 +52,9 @@ class MessageMetro : public MessageObject {
     PdMessage *pendingMessage;
     double intervalInMs;
 };
+
+inline const char *MessageMetro::getObjectLabel() {
+  return "metro";
+}
 
 #endif // _MESSAGE_METRO_H_

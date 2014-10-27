@@ -34,9 +34,18 @@ class MessageSoundfiler : public MessageObject {
     ~MessageSoundfiler();
   
     static const char *getObjectLabel();
+    std::string toString();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
 };
+
+inline const char *MessageSoundfiler::getObjectLabel() {
+  return "soundfiler";
+}
+
+inline std::string MessageSoundfiler::toString() {
+  return MessageSoundfiler::getObjectLabel();
+}
 
 #endif // _MESSAGE_SOUNDFILER_H_

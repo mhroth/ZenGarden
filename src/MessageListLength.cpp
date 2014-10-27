@@ -30,10 +30,6 @@ MessageListLength::~MessageListLength() {
   // nothing to do
 }
 
-const char *MessageListLength::getObjectLabel() {
-  return "list length";
-}
-
 void MessageListLength::processMessage(int inletIndex, PdMessage *message) {
   PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
   // bangs are not considered to add length to lists

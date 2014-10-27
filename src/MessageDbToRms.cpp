@@ -34,10 +34,6 @@ MessageDbToRms::~MessageDbToRms() {
   // nothing to do
 }
 
-const char *MessageDbToRms::getObjectLabel() {
-  return "dbtorms";
-}
-
 void MessageDbToRms::processMessage(int inletIndex, PdMessage *message) {
   if (message->isFloat(0)) {
     float dbToRms = (message->getFloat(0) <= 0.0f) ? 0.0f :

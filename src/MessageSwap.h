@@ -34,6 +34,7 @@ class MessageSwap : public MessageObject {
     ~MessageSwap();
 
     static const char *getObjectLabel();
+    std::string toString();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
@@ -41,5 +42,13 @@ class MessageSwap : public MessageObject {
     float left;
     float right;
 };
+
+inline const char *MessageSwap::getObjectLabel() {
+  return "swap";
+}
+
+inline std::string MessageSwap::toString() {
+  return MessageSwap::getObjectLabel();
+}
 
 #endif // _MESSAGE_SWAP_H_

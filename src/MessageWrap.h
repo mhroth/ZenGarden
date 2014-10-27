@@ -34,11 +34,20 @@ class MessageWrap : public MessageObject {
     ~MessageWrap();
   
     static const char *getObjectLabel();
+    std::string toString();
  
   private:
     void processMessage(int inletIndex, PdMessage *message);
     
     float lower,upper,range,value;
 }; 
+
+inline const char *MessageWrap::getObjectLabel() {
+  return "wrap";
+}
+
+inline std::string MessageWrap::toString() {
+  return MessageWrap::getObjectLabel();
+}
 
 #endif // _MESSAGE_WRAP_H_

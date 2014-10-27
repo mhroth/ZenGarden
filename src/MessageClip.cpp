@@ -47,10 +47,6 @@ void MessageClip::init(float lowerBound, float upperBound) {
   this->upperBound = upperBound;
 }
 
-const char *MessageClip::getObjectLabel() {
-  return "clip";
-}
-
 void MessageClip::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {

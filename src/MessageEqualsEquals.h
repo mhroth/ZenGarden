@@ -34,6 +34,7 @@ class MessageEqualsEquals : public MessageObject {
     ~MessageEqualsEquals();
 
     static const char *getObjectLabel();
+    std::string toString();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
@@ -41,5 +42,13 @@ class MessageEqualsEquals : public MessageObject {
     float constant;
     float lastOutput;
 };
+
+inline const char *MessageEqualsEquals::getObjectLabel() {
+  return "==";
+}
+
+inline std::string MessageEqualsEquals::toString() {
+  return MessageEqualsEquals::getObjectLabel();
+}
 
 #endif // _MESSAGE_EQUALSEQUALS_H_

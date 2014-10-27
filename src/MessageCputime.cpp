@@ -34,10 +34,6 @@ MessageCputime::~MessageCputime() {
   // nothing to do
 }
 
-const char *MessageCputime::getObjectLabel() {
-  return "cputime";
-}
-
 void MessageCputime::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {

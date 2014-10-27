@@ -33,7 +33,8 @@ class DspPrint : public DspObject {
     DspPrint(PdMessage *initMessage, PdGraph *graph);
     ~DspPrint();
 
-    static const char *getObjectLabel() { return "print~"; }
+    static const char *getObjectLabel();
+    std::string toString();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
@@ -41,5 +42,13 @@ class DspPrint : public DspObject {
   
     char *name;
 };
+
+inline const char *DspPrint::getObjectLabel() {
+  return "print~";
+}
+
+inline std::string DspPrint::toString() {
+  return std::string(DspPrint::getObjectLabel()) + " " + name;
+}
 
 #endif // _DSP_PRINT_H_

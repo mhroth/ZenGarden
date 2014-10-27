@@ -34,9 +34,18 @@ class MessageSine : public MessageObject {
     ~MessageSine();
 
     static const char *getObjectLabel();
+    std::string toString();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
 };
+
+inline const char *MessageSine::getObjectLabel() {
+  return "sin";
+}
+
+inline std::string MessageSine::toString() {
+  return MessageSine::getObjectLabel();
+}
 
 #endif // _MESSAGE_SINE_H_

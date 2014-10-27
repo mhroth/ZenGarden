@@ -34,6 +34,7 @@ class MessageMaximum : public MessageObject {
     ~MessageMaximum();
 
     static const char *getObjectLabel();
+    std::string toString();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
@@ -41,5 +42,13 @@ class MessageMaximum : public MessageObject {
     float constant;
     float lastOutput;
 };
+
+inline const char *MessageMaximum::getObjectLabel() {
+  return "max";
+}
+
+inline std::string MessageMaximum::toString() {
+  return MessageMaximum::getObjectLabel();
+}
 
 #endif // _MESSAGE_MAXIMUM_H_

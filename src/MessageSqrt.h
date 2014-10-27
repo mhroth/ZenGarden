@@ -34,9 +34,18 @@ class MessageSqrt : public MessageObject {
     ~MessageSqrt();
 
     static const char *getObjectLabel();
+    std::string toString();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
 };
+
+inline const char *MessageSqrt::getObjectLabel() {
+  return "sqrt";
+}
+
+inline std::string MessageSqrt::toString() {
+  return MessageSqrt::getObjectLabel();
+}
 
 #endif // _MESSAGE_SQRT_H_

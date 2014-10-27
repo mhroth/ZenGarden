@@ -34,10 +34,6 @@ MessageUntil::~MessageUntil() {
   // nothing to do
 }
 
-const char *MessageUntil::getObjectLabel() {
-  return "until";
-}
-
 void MessageUntil::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {

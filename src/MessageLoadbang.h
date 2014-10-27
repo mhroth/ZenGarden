@@ -34,6 +34,15 @@ class MessageLoadbang : public MessageObject {
     ~MessageLoadbang();
   
     static const char *getObjectLabel();
+    std::string toString();
 };
+
+inline const char *MessageLoadbang::getObjectLabel() {
+  return "loadbang";
+}
+
+inline std::string MessageLoadbang::toString() {
+  return MessageLoadbang::getObjectLabel();
+}
 
 #endif // _MESSAGE_LOADBANG_H_

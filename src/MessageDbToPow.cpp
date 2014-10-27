@@ -34,10 +34,6 @@ MessageDbToPow::~MessageDbToPow() {
   // nothing to do
 }
 
-const char *MessageDbToPow::getObjectLabel() {
-  return "dbtopow";
-}
-
 void MessageDbToPow::processMessage(int inletIndex, PdMessage *message) {
   if (message->isFloat(0)) {
     float dbToPow = (message->getFloat(0) <= 0.0f) ? 0.0f :

@@ -33,11 +33,20 @@ class MessageListSplit : public MessageObject {
     ~MessageListSplit();
 
   static const char *getObjectLabel();
+  std::string toString();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
   
     int splitIndex;
 };
+
+inline const char *MessageListSplit::getObjectLabel() {
+  return "list split";
+}
+
+inline std::string MessageListSplit::toString() {
+  return MessageListSplit::getObjectLabel();
+}
 
 #endif // _MESSAGE_LIST_SPLIT_H_

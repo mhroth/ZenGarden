@@ -33,8 +33,8 @@ class DspSignal : public DspObject {
     DspSignal(PdMessage *initMessage, PdGraph *graph);
     ~DspSignal();
   
-    static const char *getObjectLabel() { return "sig~"; }
-    string toString();
+    static const char *getObjectLabel();
+    std::string toString();
   
   private:
     static void processScalar(DspObject *dspObject, int fromIndex, int toIndex);
@@ -42,5 +42,9 @@ class DspSignal : public DspObject {
   
     float constant;
 };
+
+inline const char *DspSignal::getObjectLabel() {
+  return "sig~";
+}
 
 #endif // _DSP_SIGNAL_H_

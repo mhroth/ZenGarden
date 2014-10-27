@@ -33,13 +33,21 @@ class DspBang : public DspObject {
     DspBang(PdMessage *initMessage, PdGraph *graph);
     ~DspBang();
     
-    static const char *getObjectLabel() { return "bang~"; }
-    string toString() { return string(getObjectLabel()); }
+    static const char *getObjectLabel();
+    std::string toString();
   
     ConnectionType getConnectionType(int outletIndex) { return MESSAGE; }
     
   private:
     static void processDsp(DspObject *dspObject, int fromIndex, int toIndex);
 };
+
+inline std::string DspBang::toString() {
+  return DspBang::getObjectLabel();
+}
+
+inline const char *DspBang::getObjectLabel() {
+  return "bang~";
+}
 
 #endif // _DSP_BANG_H_

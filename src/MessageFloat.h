@@ -34,11 +34,20 @@ class MessageFloat : public MessageObject {
     ~MessageFloat();
   
     static const char *getObjectLabel();
+    std::string toString();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
     
     float constant;
 };
+
+inline const char *MessageFloat::getObjectLabel() {
+  return "float";
+}
+
+inline std::string MessageFloat::toString() {
+  return MessageFloat::getObjectLabel();
+}
 
 #endif // _MESSAGE_FLOAT_H_

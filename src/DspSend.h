@@ -33,15 +33,32 @@ class DspSend : public DspObject {
     DspSend(PdMessage *initMessage, PdGraph *graph);
     ~DspSend();
     
-    const char *getName() { return name; }
-    static const char *getObjectLabel() { return "send~"; }
-    string toString() { return string(getObjectLabel()) + " " + string(name); }
-    ObjectType getObjectType() { return DSP_SEND; }
+    const char *getName();
+    static const char *getObjectLabel();
+    std::string toString();
+  
+    ObjectType getObjectType();
     
   private:
     static void processSignal(DspObject *dspObject, int fromIndex, int toIndex);
   
     char *name;
 };
+
+inline std::string DspSend::toString() {
+  return string(DspSend::getObjectLabel()) + " " + string(name);
+}
+
+inline const char *DspSend::getName() {
+  return name;
+}
+
+inline const char *DspSend::getObjectLabel() {
+  return "send~";
+}
+
+inline ObjectType DspSend::getObjectType() {
+  return DSP_SEND;
+}
 
 #endif // _DSP_SEND_H_

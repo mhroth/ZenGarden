@@ -35,10 +35,6 @@ MessageLogicalOr::~MessageLogicalOr() {
   // nothing to do
 }
 
-const char *MessageLogicalOr::getObjectLabel() {
-  return "||";
-}
-
 void MessageLogicalOr::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {

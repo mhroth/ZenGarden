@@ -34,10 +34,6 @@ MessagePowToDb::~MessagePowToDb() {
   // nothing to do
 }
 
-const char *MessagePowToDb::getObjectLabel() {
-  return "powtodb";
-}
-
 void MessagePowToDb::processMessage(int inletIndex, PdMessage *message) {
   if (message->isFloat(0)) {
     PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);

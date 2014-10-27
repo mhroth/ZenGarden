@@ -34,9 +34,18 @@ class MessageDbToPow : public MessageObject {
     ~MessageDbToPow();
 
     static const char *getObjectLabel();
+    std::string toString();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
 };
+
+inline const char *MessageDbToPow::getObjectLabel() {
+  return "dbtopow";
+}
+
+inline std::string MessageDbToPow::toString() {
+  return MessageDbToPow::getObjectLabel();
+}
 
 #endif // _MESSAGE_DBTOPOW_H_

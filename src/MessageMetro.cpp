@@ -37,10 +37,6 @@ MessageMetro::~MessageMetro() {
   // nothign to do. pendingMessage object is owned by context.
 }
 
-const char *MessageMetro::getObjectLabel() {
-  return "metro";
-}
-
 string MessageMetro::toString() {
   char str[snprintf(NULL, 0, "%s %g", getObjectLabel(), intervalInMs)+1];
   snprintf(str, sizeof(str), "%s %g", getObjectLabel(), intervalInMs);

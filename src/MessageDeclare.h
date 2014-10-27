@@ -39,10 +39,19 @@ class MessageDeclare : public MessageObject {
     ~MessageDeclare();
     
     static const char *getObjectLabel();
+    std::string toString();
     
   private:
     char *target;
     char *argument;
 };
+
+inline const char *MessageDeclare::getObjectLabel() {
+  return "declare";
+}
+
+inline std::string MessageDeclare::toString() {
+  return MessageDeclare::getObjectLabel();
+}
 
 #endif // _MESSAGE_DECLARE_H_

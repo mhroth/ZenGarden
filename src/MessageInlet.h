@@ -33,7 +33,9 @@ class MessageInlet : public MessageObject {
     MessageInlet(PdGraph *graph);
     ~MessageInlet();
     
-    static const char *getObjectLabel() { return "inlet"; }
+    static const char *getObjectLabel();
+    std::string toString();
+  
     ObjectType getObjectType();
   
     list<DspObject *> getProcessOrder();
@@ -41,5 +43,13 @@ class MessageInlet : public MessageObject {
   
     void receiveMessage(int inletIndex, PdMessage *message);
 };
+
+inline const char *MessageInlet::getObjectLabel() {
+  return "inlet";
+}
+
+inline std::string MessageInlet::toString() {
+  return MessageInlet::getObjectLabel();
+}
 
 #endif // _MESSAGE_INLET_H_

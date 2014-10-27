@@ -39,19 +39,39 @@ class DspInlet : public DspObject {
     DspInlet(PdGraph *graph);
     ~DspInlet();
   
-    static const char *getObjectLabel() { return "inlet~"; }
-    string toString() { return string(getObjectLabel()); }
-    ObjectType getObjectType() { return DSP_INLET; }
+    static const char *getObjectLabel();
+    std::string toString();
+    ObjectType getObjectType();
   
     list<DspObject *> getProcessOrder();
     list<DspObject *> getProcessOrderFromInlet();
   
     // [inlet~] does nothing with audio
-    bool doesProcessAudio() { return false; }
+    bool doesProcessAudio();
   
     void setDspBufferAtInlet(float *buffer, unsigned int inletIndex);
-    bool canSetBufferAtOutlet(unsigned int outletIndex) { return false; }
+    bool canSetBufferAtOutlet(unsigned int outletIndex);
     float *getDspBufferAtOutlet(int outletIndex);
 };
+
+inline bool DspInlet::canSetBufferAtOutlet(unsigned int outletIndex) {
+  return false;
+}
+
+inline bool DspInlet::doesProcessAudio() {
+  return false;
+}
+
+inline std::string DspInlet::toString() {
+  return DspInlet::getObjectLabel();
+}
+
+inline const char *DspInlet::getObjectLabel() {
+  return "inlet~";
+}
+
+inline ObjectType DspInlet::getObjectType() {
+  return DSP_INLET;
+}
 
 #endif // _DSP_INLET_H_

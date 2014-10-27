@@ -39,10 +39,6 @@ MessagePrint::~MessagePrint() {
   free(name);
 }
 
-const char *MessagePrint::getObjectLabel() {
-  return "print";
-}
-
 void MessagePrint::processMessage(int inletIndex, PdMessage *message) {
   char *out = message->toString();
   if (name != NULL) {

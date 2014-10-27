@@ -38,18 +38,6 @@ DspTableRead::~DspTableRead() {
   free(name);
 }
 
-const char *DspTableRead::getObjectLabel() {
-  return "tabread~";
-}
-
-ObjectType DspTableRead::getObjectType() {
-  return DSP_TABLE_READ;
-}
-
-char *DspTableRead::getName() {
-  return name;
-}
-
 void DspTableRead::setTable(MessageTable *aTable) {
   table = aTable;
 }

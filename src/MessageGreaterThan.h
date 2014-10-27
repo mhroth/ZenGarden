@@ -35,6 +35,7 @@ class MessageGreaterThan : public MessageObject {
     ~MessageGreaterThan();
 
     static const char *getObjectLabel();
+    std::string toString();
 
   private:
     void init(float constant);
@@ -43,5 +44,10 @@ class MessageGreaterThan : public MessageObject {
     float constant;
     float lastOutput;
 };
+
+inline const char *MessageGreaterThan::getObjectLabel() {
+  return ">";
+}
+
 
 #endif // _MESSAGE_GREATERTHAN_H_

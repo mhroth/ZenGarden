@@ -34,9 +34,18 @@ class MessageStripNote : public MessageObject {
     ~MessageStripNote();
     
     static const char *getObjectLabel();
+    std::string toString();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
 };
+
+inline const char *MessageStripNote::getObjectLabel() {
+  return "stripnote";
+}
+
+inline std::string MessageStripNote::toString() {
+  return MessageStripNote::getObjectLabel();
+}
 
 #endif // _MESSAGE_STRIP_NOTE_H_

@@ -34,10 +34,6 @@ MessageSpigot::~MessageSpigot() {
   // nothing to do
 }
 
-const char *MessageSpigot::getObjectLabel() {
-  return "spigot";
-}
-
 void MessageSpigot::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {

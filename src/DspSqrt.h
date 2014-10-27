@@ -34,11 +34,19 @@ class DspSqrt : public DspObject {
     DspSqrt(PdMessage *initMessage, PdGraph *graph);
     ~DspSqrt();
     
-    static const char *getObjectLabel() { return "sqrt~"; }
-    string toString() { return string(getObjectLabel()); }
+    static const char *getObjectLabel();
+    std::string toString();
   
   private:
     static void processSignal(DspObject *dspObject, int fromIndex, int toIndex);
 };
+
+inline const char *DspSqrt::getObjectLabel() {
+  return "sqrt~";
+}
+
+inline std::string DspSqrt::toString() {
+  return DspSqrt::getObjectLabel();
+}
 
 #endif // _DSP_SQRT_H_

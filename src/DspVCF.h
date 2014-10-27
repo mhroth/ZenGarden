@@ -34,6 +34,7 @@ class DspVCF : public DspObject {
     ~DspVCF();
   
     static const char *getObjectLabel();
+    std::string toString();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
@@ -51,5 +52,9 @@ class DspVCF : public DspObject {
     float tap_0;
     float tap_1;
 };
+
+inline std::string DspVCF::toString() {
+  return DspVCF::getObjectLabel();
+}
 
 #endif // _DSP_VCF_H_

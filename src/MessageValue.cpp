@@ -40,10 +40,6 @@ MessageValue::~MessageValue() {
   free(name);
 }
 
-string MessageValue::toString() {
-  return string(getObjectLabel()) + name;
-}
-
 void MessageValue::processMessage(int inletIndex, PdMessage *message) {
   switch (message->getType(0)) {
     case FLOAT: {

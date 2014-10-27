@@ -34,11 +34,21 @@ class MessageOutlet : public MessageObject {
     ~MessageOutlet();
     
     static const char *getObjectLabel();
+    std::string toString();
+  
     ObjectType getObjectType();
   
     bool isLeafNode();
   
     void receiveMessage(int inletIndex, PdMessage *message);
 };
+
+inline const char *MessageOutlet::getObjectLabel() {
+  return "outlet";
+}
+
+inline std::string MessageOutlet::toString() {
+  return MessageOutlet::getObjectLabel();
+}
 
 #endif // _MESSAGE_OUTLET_H_

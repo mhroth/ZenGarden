@@ -34,9 +34,18 @@ class MessageSamplerate : public MessageObject {
     ~MessageSamplerate();
     
     static const char *getObjectLabel();
+    std::string toString();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
 };
+
+inline const char *MessageSamplerate::getObjectLabel() {
+  return "samplerate~";
+}
+
+inline std::string MessageSamplerate::toString() {
+  return MessageSamplerate::getObjectLabel();
+}
 
 #endif // _MESSAGE_SAMPLERATE_H_

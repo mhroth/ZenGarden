@@ -38,8 +38,9 @@ class DspDelayRead : public DelayReceiver {
     DspDelayRead(PdMessage *initString, PdGraph *graph);
     ~DspDelayRead();
   
-    static const char *getObjectLabel() { return "delread~"; }
-    ObjectType getObjectType() { return DSP_DELAY_READ; }
+    static const char *getObjectLabel();
+    std::string toString();
+    ObjectType getObjectType();
   
     void onInletConnectionUpdate(unsigned int inletIndex);
   
@@ -49,5 +50,17 @@ class DspDelayRead : public DelayReceiver {
   
     float delayInSamples;
 };
+
+inline std::string DspDelayRead::toString() {
+  return DspDelayRead::getObjectLabel();
+}
+
+inline const char *DspDelayRead::getObjectLabel() {
+  return "delread~";
+}
+
+inline ObjectType DspDelayRead::getObjectType() {
+  return DSP_DELAY_READ;
+}
 
 #endif // _DSP_DELAY_READ_H_

@@ -36,10 +36,6 @@ MessageDelay::~MessageDelay() {
   // nothing to do
 }
 
-const char *MessageDelay::getObjectLabel() {
-  return "delay";
-}
-
 void MessageDelay::cancelScheduledMessageIfExists() {
   if (scheduledMessage != NULL) {
     graph->cancelMessage(this, 0, scheduledMessage);

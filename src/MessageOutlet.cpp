@@ -37,10 +37,6 @@ MessageOutlet::~MessageOutlet() {
   // nothing to do
 }
 
-const char *MessageOutlet::getObjectLabel() {
-  return "outlet";
-}
-
 bool MessageOutlet::isLeafNode() {
   return true;
 }

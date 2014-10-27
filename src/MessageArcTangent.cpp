@@ -34,10 +34,6 @@ MessageArcTangent::~MessageArcTangent() {
   // nothing to do
 }
 
-const char *MessageArcTangent::getObjectLabel() {
-  return "atan";
-}
-
 void MessageArcTangent::processMessage(int inletIndex, PdMessage *message) {
   if (message->isFloat(0)) {
     PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);

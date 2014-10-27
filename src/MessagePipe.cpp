@@ -35,10 +35,6 @@ MessagePipe::~MessagePipe() {
   // nothing to do
 }
 
-const char *MessagePipe::getObjectLabel() {
-  return "pipe";
-}
-
 bool MessagePipe::shouldDistributeMessageToInlets() {
   return false;
 }

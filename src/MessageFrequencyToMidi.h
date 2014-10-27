@@ -34,9 +34,18 @@ class MessageFrequencyToMidi : public MessageObject {
     ~MessageFrequencyToMidi();
 
     static const char *getObjectLabel();
+    std::string toString();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
 };
+
+inline const char *MessageFrequencyToMidi::getObjectLabel() {
+  return "ftom";
+}
+
+inline std::string MessageFrequencyToMidi::toString() {
+  return MessageFrequencyToMidi::getObjectLabel();
+}
 
 #endif // _MESSAGE_FREQUENCYTOMIDI_H_

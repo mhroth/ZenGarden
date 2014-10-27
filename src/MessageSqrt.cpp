@@ -34,10 +34,6 @@ MessageSqrt::~MessageSqrt() {
   // nothing to do
 }
 
-const char *MessageSqrt::getObjectLabel() {
-  return "sqrt";
-}
-
 void MessageSqrt::processMessage(int inletIndex, PdMessage *message) {
   if (message->isFloat(0)) {
     PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);

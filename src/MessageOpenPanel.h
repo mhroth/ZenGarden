@@ -34,9 +34,18 @@ class MessageOpenPanel : public MessageObject {
     ~MessageOpenPanel();
     
     static const char *getObjectLabel();
+    std::string toString();
     
   private:
   void processMessage(int inletIndex, PdMessage *message);
 };
+
+inline const char *MessageOpenPanel::getObjectLabel() {
+  return "openpanel";
+}
+
+inline std::string MessageOpenPanel::toString() {
+  return MessageOpenPanel::getObjectLabel();
+}
 
 #endif // _MESSAGE_OPENPANEL_H_

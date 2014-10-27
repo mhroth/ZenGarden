@@ -38,10 +38,6 @@ MessageSoundfiler::~MessageSoundfiler() {
   // nothing to do
 }
 
-const char *MessageSoundfiler::getObjectLabel() {
-  return "soundfiler";
-}
-
 void MessageSoundfiler::processMessage(int inletIndex, PdMessage *message)
 {
   if (message->isSymbol(0, "read"))

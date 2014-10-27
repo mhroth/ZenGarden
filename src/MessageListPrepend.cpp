@@ -30,10 +30,6 @@ MessageListPrepend::~MessageListPrepend() {
   prependMessage->freeMessage();
 }
 
-const char *MessageListPrepend::getObjectLabel() {
-  return "list prepend";
-}
-
 void MessageListPrepend::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {

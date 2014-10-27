@@ -35,10 +35,6 @@ MessageModulus::~MessageModulus() {
   // nothing to do
 }
 
-const char *MessageModulus::getObjectLabel() {
-  return "mod";
-}
-
 void MessageModulus::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
@@ -70,4 +66,10 @@ void MessageModulus::processMessage(int inletIndex, PdMessage *message) {
       break;
     }
   }
+}
+
+std::string MessageModulus::toString() {
+  char str[snprintf(NULL, 0, "mod %g", constant)+1];
+  snprintf(str, sizeof(str), "mod %g", constant);
+  return str;
 }

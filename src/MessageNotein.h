@@ -34,6 +34,7 @@ class MessageNotein : public RemoteMessageReceiver {
     ~MessageNotein();
     
     static const char *getObjectLabel();
+    std::string toString();
     ObjectType getObjectType();
   
     /** Returns the zero-indexed midi channel which this object outputs. -1 if omni. */
@@ -45,5 +46,17 @@ class MessageNotein : public RemoteMessageReceiver {
 
     int channel;
 };
+
+inline const char *MessageNotein::getObjectLabel() {
+  return "notein";
+}
+
+inline std::string MessageNotein::toString() {
+  return MessageNotein::getObjectLabel();
+}
+
+inline ObjectType MessageNotein::getObjectType() {
+  return MESSAGE_NOTEIN;
+}
 
 #endif // _MESSAGE_NOTEIN_H_

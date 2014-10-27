@@ -59,10 +59,6 @@ MessageWrap::~MessageWrap() {
   // nothing to do
 }
 
-const char *MessageWrap::getObjectLabel() {
-  return "wrap";
-}
-
 void MessageWrap::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {

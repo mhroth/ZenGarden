@@ -34,10 +34,6 @@ MessageRemainder::~MessageRemainder() {
   // nothing to do
 }
 
-const char *MessageRemainder::getObjectLabel() {
-  return "%";
-}
-
 void MessageRemainder::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
@@ -59,4 +55,10 @@ void MessageRemainder::processMessage(int inletIndex, PdMessage *message) {
       break;
     }
   }
+}
+
+std::string MessageRemainder::toString() {
+  char str[snprintf(NULL, 0, "% %g", constant)+1];
+  snprintf(str, sizeof(str), "% %g", constant);
+  return string(str);
 }

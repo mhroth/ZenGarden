@@ -32,8 +32,8 @@ class DspAdc : public DspObject {
     DspAdc(PdGraph *graph);
     ~DspAdc();
   
-    static const char *getObjectLabel() { return "adc~"; }
-    string toString() { return string(DspAdc::getObjectLabel()); }
+    static const char *getObjectLabel();
+    std::string toString();
   
     // This object doesn't do anything with audio, it only provides buffers. It should not be included
     // in the dsp list
@@ -43,5 +43,13 @@ class DspAdc : public DspObject {
   
     float *getDspBufferAtOutlet(int outletIndex);
 };
+
+inline const char *DspAdc::getObjectLabel() {
+  return "adc~";
+}
+
+inline std::string DspAdc::toString() {
+  return DspAdc::getObjectLabel();
+}
 
 #endif // _DSP_ADC_H_

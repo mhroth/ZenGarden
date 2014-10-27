@@ -36,7 +36,8 @@ class MessageRandom : public MessageObject {
     MessageRandom(PdMessage *initMessage, PdGraph *graph);
     ~MessageRandom();
 
-    static const char *getObjectLabel() { return "random"; }
+    static const char *getObjectLabel();
+    std::string toString();
 
     bool shouldDistributeMessageToInlets() { return false; }
 
@@ -47,5 +48,13 @@ class MessageRandom : public MessageObject {
     int max_inc; // random output is in range [0, max_inc]
     MTRand *twister;
 };
+
+inline const char *MessageRandom::getObjectLabel() {
+  return "random";
+}
+
+inline std::string MessageRandom::toString() {
+  return MessageRandom::getObjectLabel();
+}
 
 #endif // _MESSAGE_RANDOM_H_

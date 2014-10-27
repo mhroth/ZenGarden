@@ -33,8 +33,9 @@ class MessageSend : public MessageObject {
     MessageSend(PdMessage *initMessage, PdGraph *graph);
     ~MessageSend();
     
-    static const char *getObjectLabel() { return "send"; }
-    ObjectType getObjectType() { return MESSAGE_SEND; }
+    static const char *getObjectLabel();
+    std::string toString();
+    ObjectType getObjectType();
   
     void receiveMessage(int inletIndex, PdMessage *message);
   
@@ -42,5 +43,17 @@ class MessageSend : public MessageObject {
     char *name;
   
 };
+
+inline const char *MessageSend::getObjectLabel() {
+  return "send";
+}
+
+inline std::string MessageSend::toString() {
+  return std::string(MessageSend::getObjectLabel()) + " " + name;
+}
+
+inline ObjectType MessageSend::getObjectType() {
+  return MESSAGE_SEND;
+}
 
 #endif // _MESSAGE_SEND_H_

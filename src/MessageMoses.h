@@ -34,11 +34,20 @@ class MessageMoses : public MessageObject {
     ~MessageMoses();
 
     static const char *getObjectLabel();
+    std::string toString();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
 
     float constant;
 };
+
+inline const char *MessageMoses::getObjectLabel() {
+  return "moses";
+}
+
+inline std::string MessageMoses::toString() {
+  return MessageMoses::getObjectLabel();
+}
 
 #endif // _MESSAGE_MOSES_H_

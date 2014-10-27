@@ -34,12 +34,17 @@ class MessageUnpack : public MessageObject {
     ~MessageUnpack();
 
     static const char *getObjectLabel();
-    string toString();
+    std::string toString();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
   
     PdMessage *templateMessage;
 };
+
+inline const char *MessageUnpack::getObjectLabel() {
+  return "unpack";
+}
+
 
 #endif // _MESSAGE_UNPACK_H_

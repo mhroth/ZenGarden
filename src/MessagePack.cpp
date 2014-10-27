@@ -41,12 +41,8 @@ MessagePack::~MessagePack() {
   outgoingMessage->freeMessage();
 }
 
-const char *MessagePack::getObjectLabel() {
-  return "pack";
-}
-
 string MessagePack::toString() {
-  string out = string(getObjectLabel());
+  std::string out = MessagePack::getObjectLabel();
   for (int i = 0; i < outgoingMessage->getNumElements(); i++) {
     switch (outgoingMessage->getType(i)) {
       case FLOAT: out += " f"; break;

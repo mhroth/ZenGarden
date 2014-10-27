@@ -40,6 +40,7 @@ class MessageDelay : public MessageObject {
     ~MessageDelay();
   
     static const char *getObjectLabel();
+    std::string toString();
   
     void sendMessage(int outletIndex, PdMessage *message);
     
@@ -51,5 +52,13 @@ class MessageDelay : public MessageObject {
     double delayMs;
     PdMessage *scheduledMessage;
 };
+
+inline const char *MessageDelay::getObjectLabel() {
+  return "delay";
+}
+
+inline std::string MessageDelay::toString() {
+  return MessageDelay::getObjectLabel();
+}
 
 #endif // _MESSAGE_DELAY_H_

@@ -34,9 +34,18 @@ class MessageLog : public MessageObject {
     ~MessageLog();
 
     static const char *getObjectLabel();
-
+    std::string toString();
+  
   private:
     void processMessage(int inletIndex, PdMessage *message);
 };
+
+inline const char *MessageLog::getObjectLabel() {
+  return "log";
+}
+
+inline std::string MessageLog::toString() {
+  return MessageLog::getObjectLabel();
+}
 
 #endif // _MESSAGE_LOG_H_
