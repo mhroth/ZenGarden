@@ -159,7 +159,7 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
             newGraph = new PdGraph(graph->getArguments(), graph, context, graph->getGraphId(), canvasName);
           } else {
             // a graph made as an abstraction
-            newGraph = new PdGraph(initMsg, graph, context, context->getNextGraphId(), rootPath+fileName);
+            newGraph = new PdGraph(initMsg, graph, context, context->getNextGraphId(), (rootPath+fileName).c_str());
             isSubPatch = true;
           }
           graph->addObject(0, 0, newGraph); // add the new graph to the current one as an object
