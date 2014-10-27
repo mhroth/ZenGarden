@@ -344,9 +344,6 @@ void PdGraph::attachToContext(bool isAttached) {
         pdGraph->attachToContext(isAttached);
       }
     }
-    // force dsp ordering as the last step
-    // some graphs may not have any connections (only abstractions), and thus may appear to do nothing
-    computeDeepLocalDspProcessOrder();
   }
 }
 
