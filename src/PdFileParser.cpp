@@ -106,6 +106,7 @@ string PdFileParser::nextLine() {
     if ((commaIndex = line.find_last_of(",")) != std::string::npos && commaIndex > 0 && line[commaIndex - 1] != '\\') {
       line = line.substr(0, commaIndex) + ";";
     }
+
     return line;
   }
 }
@@ -283,31 +284,27 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
         char *objectInitString = strtok(NULL, ";"); // get the object initialisation string
         char resBuffer[RESOLUTION_BUFFER_LENGTH];
         initMessage->initWithSARb(4, objectInitString, graph->getArguments(), resBuffer, RESOLUTION_BUFFER_LENGTH);
-        lastArrayCreated = reinterpret_cast<MessageTable *>(
-          context->newObject("table", initMessage, graph));
+        lastArrayCreated = reinterpret_cast<MessageTable *>(context->newObject("table", initMessage, graph));
         lastArrayCreatedIndex = 0;
         graph->addObject(0, 0, lastArrayCreated);
         context->printStd("PdFileParser: Replacer array with table, name: '%s'", initMessage->getSymbol(0));
       } else if (!strcmp(objectType, "coords")) {
-        // NOTE(mhroth): not really sure what this object type does, but it doesn't seem to have
-        // any effect on the function of the patch (i.e. it seems to be purely cosmetic).
         continue;
       } else {
         context->printErr("Unrecognised #X object type: \"%s\"", message.c_str());
       }
     } else if (!strcmp(hashType, "#A")) {
-      if (!lastArrayCreated)
+      if (lastArrayCreated == NULL) {
         context->printErr("#A line but no array were created");
-      else {
+      } else {
         int bufferLength = 0;
         float *buffer = lastArrayCreated->getBuffer(&bufferLength);
-        char *token;
+        char *token = NULL;
         
         int index = atoi(strtok(NULL, " ;"));
         while ((token = strtok(NULL, " ;")) != NULL) {
           if (index >= bufferLength) {
-            context->printErr("#A trying to add value at index %d \
-              while buffer length is %d", index, bufferLength);
+            context->printErr("#A trying to add value at index %d while buffer length is %d", index, bufferLength);
             break;
           }
           buffer[index] = atof(token);
