@@ -125,6 +125,7 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
   
   string message;
   MessageTable *lastArrayCreated = NULL;  // used to know on which table the #A line values have to be set
+  int lastArrayCreatedIndex = 0;
   while (!(message = nextMessage()).empty()) {
     // create a non-const copy of message such that strtok can modify it
     char line[message.size()+1];
@@ -284,6 +285,7 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
         initMessage->initWithSARb(4, objectInitString, graph->getArguments(), resBuffer, RESOLUTION_BUFFER_LENGTH);
         lastArrayCreated = reinterpret_cast<MessageTable *>(
           context->newObject("table", initMessage, graph));
+        lastArrayCreatedIndex = 0;
         graph->addObject(0, 0, lastArrayCreated);
         context->printStd("PdFileParser: Replacer array with table, name: '%s'", initMessage->getSymbol(0));
       } else if (!strcmp(objectType, "coords")) {
@@ -310,6 +312,11 @@ PdGraph *PdFileParser::execute(PdMessage *initMsg, PdGraph *graph, PdContext *co
           }
           buffer[index] = atof(token);
           ++index;
+          ++lastArrayCreatedIndex;
+        }
+        if (lastArrayCreatedIndex == bufferLength) {
+          lastArrayCreated = NULL;
+          lastArrayCreatedIndex = 0;
         }
       }
     } else {
