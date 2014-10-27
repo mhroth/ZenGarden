@@ -206,6 +206,7 @@ void PdContext::attachGraph(PdGraph *graph) {
   lock();
   graphList.push_back(graph);
   graph->attachToContext(true);
+  graph->computeDeepLocalDspProcessOrder();
   unlock();
 }
 
