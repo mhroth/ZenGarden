@@ -35,10 +35,6 @@ MessageRoute::~MessageRoute() {
   routeMessage->freeMessage();
 }
 
-const char *MessageRoute::getObjectLabel() {
-  return "route";
-}
-
 void MessageRoute::processMessage(int inletIndex, PdMessage *message) {
   int numRouteChecks = routeMessage->getNumElements();
   int outletIndex = numRouteChecks; // by default, send the message out of the right outlet

@@ -27,21 +27,24 @@
 
 /** [clip~ float float] */
 class DspClip : public DspObject {
-  
   public:
-    static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
+   static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     DspClip(PdMessage *initMessage, PdGraph *graph);
     ~DspClip();
-  
-    static const char *getObjectLabel() { return "clip~"; }
-    string toString();
+
+    static const char *getObjectLabel();
+    std::string toString();
 
   private:
-    static void processScalar(DspObject *dspObject, int fromIndex, int toIndex);
-    void processMessage(int inletIndex, PdMessage *message);
-    
-    float lowerBound;
-    float upperBound;
+   static void processScalar(DspObject *dspObject, int fromIndex, int toIndex);
+   void processMessage(int inletIndex, PdMessage *message);
+
+   float lowerBound;
+   float upperBound;
 };
+
+inline const char *DspClip::getObjectLabel() {
+  return "clip~";
+}
 
 #endif // _DSP_CLIP_H_

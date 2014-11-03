@@ -37,10 +37,6 @@ MessageSelect::~MessageSelect() {
   selectorMessage->freeMessage();
 }
 
-const char *MessageSelect::getObjectLabel() {
-  return "select";
-}
-
 void MessageSelect::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {

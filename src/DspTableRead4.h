@@ -38,6 +38,7 @@ class DspTableRead4 : public DspObject, public TableReceiverInterface {
     ~DspTableRead4();
   
     static const char *getObjectLabel();
+    std::string toString();
     ObjectType getObjectType();
   
     char *getName();
@@ -51,5 +52,21 @@ class DspTableRead4 : public DspObject, public TableReceiverInterface {
     char *name;
     MessageTable *table;
 };
+
+inline std::string DspTableRead4::toString() {
+  return DspTableRead4::getObjectLabel();
+}
+
+inline const char *DspTableRead4::getObjectLabel() {
+  return "tabread4~";
+}
+
+inline ObjectType DspTableRead4::getObjectType() {
+  return DSP_TABLE_READ4;
+}
+
+inline char *DspTableRead4::getName() {
+  return name;
+}
 
 #endif // _DSP_TABLE_READ4_H_

@@ -34,10 +34,6 @@ MessageExp::~MessageExp() {
   // nothing to do
 }
 
-const char *MessageExp::getObjectLabel() {
-  return "exp";
-}
-
 void MessageExp::processMessage(int inletIndex, PdMessage *message) {
   if (message->isFloat(0)) {
     PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);

@@ -34,11 +34,20 @@ class MessagePrint : public MessageObject {
     ~MessagePrint();
   
     static const char *getObjectLabel();
+    std::string toString();
   
   private:
     void processMessage(int inletIndex, PdMessage *message);
   
     char *name;
 };
+
+inline const char *MessagePrint::getObjectLabel() {
+  return "print";
+}
+
+inline std::string MessagePrint::toString() {
+  return std::string(MessagePrint::getObjectLabel()) + " " + name;
+}
 
 #endif // _MESSAGE_PRINT_H_

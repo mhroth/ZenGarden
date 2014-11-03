@@ -35,6 +35,7 @@ class MessageRemainder : public MessageObject {
     ~MessageRemainder();
 
     static const char *getObjectLabel();
+    std::string toString();
 
   private:
     void init(float constant);
@@ -42,5 +43,9 @@ class MessageRemainder : public MessageObject {
 
     int constant;
 };
+
+inline const char *MessageRemainder::getObjectLabel() {
+  return "%";
+}
 
 #endif // _MESSAGE_REMAINDER_H_

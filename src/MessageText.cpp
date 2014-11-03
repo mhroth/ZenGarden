@@ -33,9 +33,3 @@ MessageText::MessageText(PdMessage *initMessage, PdGraph *graph) : MessageObject
 MessageText::~MessageText() {
   free(comment);
 }
-
-string MessageText::toString() {
-  char str[snprintf(NULL, 0, "%s %s", getObjectLabel(), comment)+1];
-  snprintf(str, sizeof(str), "%s %s", getObjectLabel(), comment);
-  return string(str);
-}

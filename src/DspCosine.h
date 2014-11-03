@@ -33,8 +33,8 @@ class DspCosine : public DspObject {
     DspCosine(PdMessage *initMessage, PdGraph *graph);
     ~DspCosine();
 
-    static const char *getObjectLabel() { return "cos~"; }
-    string toString() { return string(getObjectLabel()); }
+    static const char *getObjectLabel();
+    std::string toString();
 
   private:
     static void procesSignal(DspObject *dspObject, int fromIndex, int toIndex);
@@ -43,5 +43,13 @@ class DspCosine : public DspObject {
     static float *cos_table; // the Cosine lookup table
     static int refCount; // a reference counter for Cosine table. Now we know when to free it.
 };
+
+inline std::string DspCosine::toString() {
+  return DspCosine::getObjectLabel();
+}
+
+inline const char *DspCosine::getObjectLabel() {
+  return "cos~";
+}
 
 #endif // _DSP_COSINE_H_

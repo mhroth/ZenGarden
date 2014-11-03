@@ -35,10 +35,6 @@ MessageEqualsEquals::~MessageEqualsEquals() {
   // nothing to do
 }
 
-const char *MessageEqualsEquals::getObjectLabel() {
-  return "==";
-}
-
 void MessageEqualsEquals::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {

@@ -33,13 +33,24 @@ class MessageText : public MessageObject {
     MessageText(PdMessage *initMessage, PdGraph *graph);
     ~MessageText();
     
-    static const char *getObjectLabel() { return "text"; }
-    string toString();
+    static const char *getObjectLabel();
+    std::string toString();
   
     const char *getComment() { return comment; }
   
   private:
     char *comment;
 };
+
+inline const char *MessageText::getObjectLabel() {
+  return "text";
+}
+
+inline std::string MessageText::toString() {
+  return std::string(MessageText::getObjectLabel())
+    + " '"
+    + comment
+    + "'";
+}
 
 #endif // _MESSAGE_TEXT_H_

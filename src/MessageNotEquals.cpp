@@ -35,10 +35,6 @@ MessageNotEquals::~MessageNotEquals() {
   // nothing to do
 }
 
-const char *MessageNotEquals::getObjectLabel() {
-  return "!=";
-}
-
 void MessageNotEquals::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
@@ -69,4 +65,10 @@ void MessageNotEquals::processMessage(int inletIndex, PdMessage *message) {
       break;
     }
   }
+}
+
+std::string MessageNotEquals::toString() {
+  char str[snprintf(NULL, 0, "!= %g", constant)+1];
+  snprintf(str, sizeof(str), "!= %g", constant);
+  return string(str);
 }

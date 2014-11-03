@@ -35,6 +35,7 @@ class MessageLessThan : public MessageObject {
     ~MessageLessThan();
 
     static const char *getObjectLabel();
+    std::string toString();
 
   private:
     void init(float constant);
@@ -43,5 +44,9 @@ class MessageLessThan : public MessageObject {
     float constant;
     float lastOutput;
 };
+
+inline const char *MessageLessThan::getObjectLabel() {
+  return "<";
+}
 
 #endif // _MESSAGE_LESSTHAN_H_

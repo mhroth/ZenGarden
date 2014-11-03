@@ -34,10 +34,6 @@ MessageArcTangent2::~MessageArcTangent2() {
   // nothing to do
 }
 
-const char *MessageArcTangent2::getObjectLabel() {
-  return "atan2";
-}
-
 void MessageArcTangent2::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {

@@ -34,6 +34,7 @@ class MessageGreaterThanOrEqualTo : public MessageObject {
     ~MessageGreaterThanOrEqualTo();
 
     static const char *getObjectLabel();
+    std::string toString();
 
   private:
     void init(float constant);
@@ -42,5 +43,9 @@ class MessageGreaterThanOrEqualTo : public MessageObject {
     float constant;
     float lastOutput;
 };
+
+inline const char *MessageGreaterThanOrEqualTo::getObjectLabel() {
+  return ">=";
+}
 
 #endif // _MESSAGE_GREATERTHANOREQUALTO_H_

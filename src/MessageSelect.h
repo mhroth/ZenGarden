@@ -34,11 +34,20 @@ class MessageSelect : public MessageObject {
     ~MessageSelect();
   
     static const char *getObjectLabel();
+    std::string toString();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
    
     PdMessage *selectorMessage;
 };
+
+inline const char *MessageSelect::getObjectLabel() {
+  return "select";
+}
+
+inline std::string MessageSelect::toString() {
+  return MessageSelect::getObjectLabel();
+}
 
 #endif // _MESSAGE_SELECT_H_

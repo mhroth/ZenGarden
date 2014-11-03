@@ -37,14 +37,6 @@ MessageTableWrite::~MessageTableWrite() {
   free(name);
 }
 
-const char *MessageTableWrite::getObjectLabel() {
-  return "tabwrite";
-}
-
-ObjectType MessageTableWrite::getObjectType() {
-  return MESSAGE_TABLE_WRITE;
-}
-
 char *MessageTableWrite::getName() {
   return name;
 }

@@ -34,10 +34,6 @@ MessageInteger::~MessageInteger() {
   // nothing to do
 }
 
-const char *MessageInteger::getObjectLabel() {
-  return "int";
-}
-
 void MessageInteger::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {

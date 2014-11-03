@@ -35,6 +35,7 @@ class DspRifft : public DspObject {
     ~DspRifft();
     
     static const char *getObjectLabel();
+    std::string toString();
     
   private:
     void processDspWithIndex(int fromIndex, int toIndex);
@@ -45,5 +46,14 @@ class DspRifft : public DspObject {
     #endif // __APPLE__
   
 };
+
+inline std::string DspRifft::toString() {
+  return DspRifft::getObjectLabel();
+}
+
+inline const char *DspRifft::getObjectLabel() {
+  return "rifft~";
+}
+
 
 #endif // _DSP_RIFFT_H_

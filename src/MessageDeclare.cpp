@@ -35,7 +35,3 @@ MessageDeclare::~MessageDeclare() {
   free(target);
   free(argument);
 }
-
-const char *MessageDeclare::getObjectLabel() {
-  return "declare";
-}

@@ -34,10 +34,6 @@ MessageFloat::~MessageFloat() {
   // nothing to do
 }
 
-const char *MessageFloat::getObjectLabel() {
-  return "float";
-}
-
 void MessageFloat::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {

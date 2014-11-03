@@ -34,9 +34,18 @@ class MessageExp : public MessageObject {
     ~MessageExp();
 
     static const char *getObjectLabel();
+    std::string toString();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
 };
+
+inline const char *MessageExp::getObjectLabel() {
+  return "exp";
+}
+
+inline std::string MessageExp::toString() {
+  return MessageExp::getObjectLabel();
+}
 
 #endif // _MESSAGE_EXP_H_

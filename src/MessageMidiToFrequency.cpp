@@ -34,10 +34,6 @@ MessageMidiToFrequency::~MessageMidiToFrequency() {
   // nothing to do
 }
 
-const char *MessageMidiToFrequency::getObjectLabel() {
-  return "mtof";
-}
-
 void MessageMidiToFrequency::processMessage(int inletIndex, PdMessage *message) {
   if (message->isFloat(0)) {
     PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);

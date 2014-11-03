@@ -36,12 +36,21 @@ class DspLowpassFilter : public DspFilter {
     DspLowpassFilter(PdMessage *initMessage, PdGraph *graph);
     ~DspLowpassFilter();
   
-    static const char *getObjectLabel() { return "lop~"; }
+    static const char *getObjectLabel();
+    std::string toString();
   
     void processMessage(int inletIndex, PdMessage *message);
   
   private:
     void calcFiltCoeff(float cutoffFrequency);
 };
+
+inline const char *DspLowpassFilter::getObjectLabel() {
+  return "lop~";
+}
+
+inline std::string DspLowpassFilter::toString() {
+  return DspLowpassFilter::getObjectLabel();
+}
 
 #endif // _DSP_LOW_PASS_FILTER_H_

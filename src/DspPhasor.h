@@ -33,10 +33,9 @@ class DspPhasor : public DspObject {
     DspPhasor(PdMessage *initMessage, PdGraph *graph); // and Phasorillator of default zero frequency
     ~DspPhasor();
 
-    static const char *getObjectLabel() { return "phasor~"; }
-    string toString();
-  
     void onInletConnectionUpdate(unsigned int inletIndex);
+    static const char *getObjectLabel();
+    std::string toString();
 
   private:
     static void processSignal(DspObject *dspObject, int fromIndex, int toIndex);
@@ -50,5 +49,9 @@ class DspPhasor : public DspObject {
     __m64 indicies; // the table lookup indicies
     #endif
 };
+
+inline const char *DspPhasor::getObjectLabel() {
+  return "phasor~";
+}
 
 #endif // _DSP_PHASOR_H_

@@ -46,14 +46,6 @@ MessageNotein::~MessageNotein() {
   free(name);
 }
 
-const char *MessageNotein::getObjectLabel() {
-  return "notein";
-}
-
-ObjectType MessageNotein::getObjectType() {
-  return MESSAGE_NOTEIN;
-}
-
 int MessageNotein::getChannel() {
   return channel;
 }

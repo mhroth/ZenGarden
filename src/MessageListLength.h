@@ -33,9 +33,18 @@ class MessageListLength : public MessageObject {
     ~MessageListLength();
   
     static const char *getObjectLabel();
+    std::string toString();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
 };
+
+inline const char *MessageListLength::getObjectLabel() {
+  return "list length";
+}
+
+inline std::string MessageListLength::toString() {
+  return MessageListLength::getObjectLabel();
+}
 
 #endif // _MESSAGE_LIST_LENGTH_H_

@@ -35,11 +35,20 @@ class MessageCputime : public MessageObject {
     ~MessageCputime();
     
     static const char *getObjectLabel();
+    std::string toString();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
   
     timeval start;
 };
+
+inline const char *MessageCputime::getObjectLabel() {
+  return "cputime";
+}
+
+inline std::string MessageCputime::toString() {
+  return MessageCputime::getObjectLabel();
+}
 
 #endif // _MESSAGE_CPUTIME_H_

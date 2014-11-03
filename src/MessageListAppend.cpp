@@ -66,10 +66,6 @@ MessageListAppend::~MessageListAppend() {
   appendMessage->freeMessage();
 }
 
-const char *MessageListAppend::getObjectLabel() {
-  return "list append";
-}
-
 bool MessageListAppend::shouldDistributeMessageToInlets() {
   return false;
 }

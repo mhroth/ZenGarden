@@ -34,10 +34,6 @@ MessageSine::~MessageSine() {
   // nothing to do
 }
 
-const char *MessageSine::getObjectLabel() {
-  return "sin";
-}
-
 void MessageSine::processMessage(int inletIndex, PdMessage *message) {
   if (message->isFloat(0)) {
     PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);

@@ -36,7 +36,3 @@ MessageLoadbang::MessageLoadbang(PdGraph *graph) : MessageObject(0, 1, graph) {
 MessageLoadbang::~MessageLoadbang() {
   // nothing to do
 }
-
-const char *MessageLoadbang::getObjectLabel() {
-  return "loadbang";
-}

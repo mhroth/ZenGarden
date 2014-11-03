@@ -34,9 +34,18 @@ class MessageBang : public MessageObject {
     ~MessageBang();
 
     static const char *getObjectLabel();
+    std::string toString();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
 };
+
+inline std::string MessageBang::toString() {
+  return MessageBang::getObjectLabel();
+}
+
+inline const char *MessageBang::getObjectLabel() {
+  return "bang";
+}
 
 #endif // _MESSAGE_BANG_H_

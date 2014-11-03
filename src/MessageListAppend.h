@@ -34,6 +34,7 @@ class MessageListAppend : public MessageObject {
     ~MessageListAppend();
     
     static const char *getObjectLabel();
+    std::string toString();
   
     bool shouldDistributeMessageToInlets();
     
@@ -42,5 +43,13 @@ class MessageListAppend : public MessageObject {
   
     PdMessage *appendMessage;
 };
+
+inline const char *MessageListAppend::getObjectLabel() {
+  return "list append";
+}
+
+inline std::string MessageListAppend::toString() {
+  return MessageListAppend::getObjectLabel();
+}
 
 #endif // _MESSAGE_LIST_APPEND_H_

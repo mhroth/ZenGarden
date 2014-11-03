@@ -35,10 +35,11 @@ class MessageLine : public MessageObject {
     MessageLine(PdMessage *initMessage, PdGraph *graph);
     ~MessageLine();
   
-    bool shouldDistributeMessageToInlets() { return false; }
+    bool shouldDistributeMessageToInlets();
     void sendMessage(int outletIndex, PdMessage *message);
   
-    static const char *getObjectLabel() { return "line"; }
+    static const char *getObjectLabel();
+    std::string toString();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
@@ -53,5 +54,17 @@ class MessageLine : public MessageObject {
     float targetValue;
     PdMessage *pendingMessage;
 };
+
+inline bool MessageLine::shouldDistributeMessageToInlets() {
+  return false;
+}
+
+inline const char *MessageLine::getObjectLabel() {
+  return "line";
+}
+
+inline std::string MessageLine::toString() {
+  return MessageLine::getObjectLabel();
+}
 
 #endif // _MESSAGE_LINE_H_

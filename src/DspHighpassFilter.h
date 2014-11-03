@@ -36,11 +36,20 @@ class DspHighpassFilter : public DspFilter {
     DspHighpassFilter(PdMessage *initMessage, PdGraph *graph);
     ~DspHighpassFilter();
   
-    static const char *getObjectLabel() { return "hip~"; }
+    static const char *getObjectLabel();
+    std::string toString();
   
   private:
     void processMessage(int inletIndex, PdMessage *message);
     void calcFiltCoeff(float cutoffFrequency);
 };
+
+inline std::string DspHighpassFilter::toString() {
+  return DspHighpassFilter::getObjectLabel();
+}
+
+inline const char *DspHighpassFilter::getObjectLabel() {
+  return "hip~";
+}
 
 #endif // _DSP_HIGH_PASS_FILTER_H_

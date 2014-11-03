@@ -34,11 +34,20 @@ class MessageSpigot : public MessageObject {
     ~MessageSpigot();
 
     static const char *getObjectLabel();
+    std::string toString();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
 
     float constant;
 };
+
+inline const char *MessageSpigot::getObjectLabel() {
+  return "spigot";
+}
+
+inline std::string MessageSpigot::toString() {
+  return MessageSpigot::getObjectLabel();
+}
 
 #endif // _MESSAGE_SPIGOT_H_

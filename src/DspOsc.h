@@ -33,8 +33,8 @@ class DspOsc : public DspObject {
     DspOsc(PdMessage *initMessage, PdGraph *graph); // and oscillator of default zero frequency
     ~DspOsc();
   
-    static const char *getObjectLabel() { return "osc~"; }
-    string toString();
+    static const char *getObjectLabel();
+    std::string toString();
   
     void onInletConnectionUpdate(unsigned int inletIndex);
   
@@ -54,5 +54,9 @@ class DspOsc : public DspObject {
     __m128i indicies; // the table lookup indicies
     #endif
 };
+
+inline const char *DspOsc::getObjectLabel() {
+  return "osc~";
+}
 
 #endif // _DSP_OSC_H_

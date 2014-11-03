@@ -30,10 +30,6 @@ MessageListTrim::~MessageListTrim() {
   // nothing to do
 }
 
-const char *MessageListTrim::getObjectLabel() {
-  return "list trim";
-}
-
 void MessageListTrim::processMessage(int inletIndex, PdMessage *message) {
   sendMessage(0, message);
 }

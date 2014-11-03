@@ -34,10 +34,6 @@ MessageCosine::~MessageCosine() {
   // nothing to do
 }
 
-const char *MessageCosine::getObjectLabel() {
-  return "cos";
-}
-
 void MessageCosine::processMessage(int inletIndex, PdMessage *message) {
   if (message->isFloat(0)) {
     PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);

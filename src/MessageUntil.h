@@ -36,11 +36,20 @@ class MessageUntil : public MessageObject {
     ~MessageUntil();
     
     static const char *getObjectLabel();
+    std::string toString();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
     
     unsigned int maxIterations;
 };
+
+inline const char *MessageUntil::getObjectLabel() {
+  return "until";
+}
+
+inline std::string MessageUntil::toString() {
+  return MessageUntil::getObjectLabel();
+}
 
 #endif // _MESSAGE_UNTIL_H_

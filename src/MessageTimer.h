@@ -34,11 +34,20 @@ class MessageTimer : public MessageObject {
     ~MessageTimer();
   
     static const char *getObjectLabel();
+    std::string toString();
   
   private:
     void processMessage(int inletIndex, PdMessage *message);
   
     double timestampStart;
 };
+
+inline const char *MessageTimer::getObjectLabel() {
+  return "timer";
+}
+
+inline std::string MessageTimer::toString() {
+  return MessageTimer::getObjectLabel();
+}
 
 #endif // _MESSAGE_TIMER_H_

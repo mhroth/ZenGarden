@@ -33,6 +33,7 @@ class MessagePipe : public MessageObject {
     ~MessagePipe();
   
     static const char *getObjectLabel();
+    std::string toString();
   
     bool shouldDistributeMessageToInlets();
   
@@ -46,5 +47,13 @@ class MessagePipe : public MessageObject {
     double delayMs; // the delay in milliseconds
     list<PdMessage *> scheduledMessagesList;
 };
+
+inline const char *MessagePipe::getObjectLabel() {
+  return "pipe";
+}
+
+inline std::string MessagePipe::toString() {
+  return MessagePipe::getObjectLabel();
+}
 
 #endif // _MESSAGE_PIPE_H_

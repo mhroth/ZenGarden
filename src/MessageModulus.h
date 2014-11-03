@@ -34,6 +34,7 @@ class MessageModulus : public MessageObject {
     ~MessageModulus();
 
     static const char *getObjectLabel();
+    std::string toString();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
@@ -41,5 +42,9 @@ class MessageModulus : public MessageObject {
     float constant;
     float lastOutput;
 };
+
+inline const char *MessageModulus::getObjectLabel() {
+  return "mod";
+}
 
 #endif // _MESSAGE_MODULUS_H_

@@ -34,6 +34,7 @@ class MessageLogicalOr : public MessageObject {
     ~MessageLogicalOr();
     
     static const char *getObjectLabel();
+    std::string toString();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
@@ -41,5 +42,13 @@ class MessageLogicalOr : public MessageObject {
     float left;
     float right;
 };
+
+inline const char *MessageLogicalOr::getObjectLabel() {
+  return "||";
+}
+
+inline std::string MessageLogicalOr::toString() {
+  return MessageLogicalOr::getObjectLabel();
+}
 
 #endif // _MESSAGE_LOGICAL_OR_H_

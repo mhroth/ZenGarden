@@ -39,9 +39,18 @@ class MessageSwitch : public MessageObject {
     ~MessageSwitch();
 
     static const char *getObjectLabel();
+    std::string toString();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
 };
+
+inline const char *MessageSwitch::getObjectLabel() {
+  return "switch~";
+}
+
+inline std::string MessageSwitch::toString() {
+  return MessageSwitch::getObjectLabel();
+}
 
 #endif // _MESSAGE_SWITCH_H_

@@ -34,6 +34,7 @@ class MessageInteger : public MessageObject {
     ~MessageInteger();
 
     static const char *getObjectLabel();
+    std::string toString();
 
   private:
     void init(float constant);
@@ -41,5 +42,13 @@ class MessageInteger : public MessageObject {
 
     float constant;
 };
+
+inline const char *MessageInteger::getObjectLabel() {
+  return "int";
+};
+
+inline std::string MessageInteger::toString() {
+  return MessageInteger::getObjectLabel();
+}
 
 #endif // _MESSAGE_INTEGER_H_

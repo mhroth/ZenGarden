@@ -34,9 +34,18 @@ class MessageRmsToDb : public MessageObject {
     ~MessageRmsToDb();
 
     static const char *getObjectLabel();
+    std::string toString();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
 };
+
+inline const char *MessageRmsToDb::getObjectLabel() {
+  return "rmstodb";
+}
+
+inline std::string MessageRmsToDb::toString() {
+  return MessageRmsToDb::getObjectLabel();
+}
 
 #endif // _MESSAGE_RMSTODB_H_

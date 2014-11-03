@@ -46,12 +46,8 @@ MessageUnpack::~MessageUnpack() {
   templateMessage->freeMessage();
 }
 
-const char *MessageUnpack::getObjectLabel() {
-  return "unpack";
-}
-
 string MessageUnpack::toString() {
-  string out = string(getObjectLabel());
+  std::string out = MessageUnpack::getObjectLabel();
   for (int i = 0; i < templateMessage->getNumElements(); i++) {
     switch (templateMessage->getType(i)) {
       case FLOAT: out += " f"; break;

@@ -34,10 +34,6 @@ MessageStripNote::~MessageStripNote() {
   // nothing to do
 }
 
-const char *MessageStripNote::getObjectLabel() {
-  return "stripnote";
-}
-
 void MessageStripNote::processMessage(int inletIndex, PdMessage *message) {
   if (inletIndex == 0) {
     if (message->isFloat(0) && message->isFloat(1) && message->getFloat(1) > 0.0f) {

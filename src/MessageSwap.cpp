@@ -35,10 +35,6 @@ MessageSwap::~MessageSwap() {
   // nothing to do
 }
 
-const char *MessageSwap::getObjectLabel() {
-  return "swap";
-}
-
 void MessageSwap::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {

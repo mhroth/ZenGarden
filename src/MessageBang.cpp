@@ -34,10 +34,6 @@ MessageBang::~MessageBang() {
   // nothing to do
 }
 
-const char *MessageBang::getObjectLabel() {
-  return "bang";
-}
-
 void MessageBang::processMessage(int inletIndex, PdMessage *message) {
   PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);
   outgoingMessage->initWithTimestampAndBang(message->getTimestamp());

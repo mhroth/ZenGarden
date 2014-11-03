@@ -31,10 +31,6 @@ MessageListSplit::~MessageListSplit() {
   // nothing to do
 }
 
-const char *MessageListSplit::getObjectLabel() {
-  return "list split";
-}
-
 void MessageListSplit::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {

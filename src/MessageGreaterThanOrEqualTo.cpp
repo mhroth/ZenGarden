@@ -35,10 +35,6 @@ MessageGreaterThanOrEqualTo::~MessageGreaterThanOrEqualTo() {
   // nothing to do
 }
 
-const char *MessageGreaterThanOrEqualTo::getObjectLabel() {
-  return ">=";
-}
-
 void MessageGreaterThanOrEqualTo::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
@@ -69,4 +65,10 @@ void MessageGreaterThanOrEqualTo::processMessage(int inletIndex, PdMessage *mess
       break;
     }
   }
+}
+
+std::string MessageGreaterThanOrEqualTo::toString() {
+  char str[snprintf(NULL, 0, ">= %g", constant)+1];
+  snprintf(str, sizeof(str), ">= %g", constant);
+  return string(str);
 }

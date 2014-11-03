@@ -35,10 +35,6 @@ MessageOpenPanel::~MessageOpenPanel() {
   // nothing to do
 }
 
-const char *MessageOpenPanel::getObjectLabel() {
-  return "openpanel";
-}
-
 void MessageOpenPanel::processMessage(int inletIndex, PdMessage *message) {
   graph->printErr("Object \"openpanel\" has not yet been implemented. It does nothing.");
   switch (message->getType(0)) {

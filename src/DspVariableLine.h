@@ -33,11 +33,11 @@ class DspVariableLine : public DspObject {
     DspVariableLine(PdMessage *initMessage, PdGraph *graph);
     ~DspVariableLine();
     
-    static const char *getObjectLabel() { return "vline~"; }
-    string toString() { return string(getObjectLabel()); }
+    static const char *getObjectLabel();
+    std::string toString();
   
     // this implementation assumes that all messages arrive only on the left-most inlet
-    bool shouldDistributeMessageToInlets() { return false; }
+    bool shouldDistributeMessageToInlets();
   
     // override sendMessage in order to update path
     void sendMessage(int outletIndex, PdMessage *message);
@@ -62,5 +62,17 @@ class DspVariableLine : public DspObject {
     // a list of pending path messages
     list<PdMessage *> messageList;
 };
+
+inline std::string DspVariableLine::toString() {
+  return DspVariableLine::getObjectLabel();
+}
+
+inline const char *DspVariableLine::getObjectLabel() {
+  return "vline~";
+}
+
+inline bool DspVariableLine::shouldDistributeMessageToInlets() {
+  return false;
+}
 
 #endif // _DSP_VARIABLE_LINE_H_

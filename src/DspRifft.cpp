@@ -43,10 +43,6 @@ DspRifft::~DspRifft() {
   #endif // __APPLE__
 }
 
-const char *DspRifft::getObjectLabel() {
-  return "rifft~";
-}
-
 void DspRifft::processDspWithIndex(int fromIndex, int toIndex) {
   #if __APPLE__
   DSPSplitComplex inputVector;

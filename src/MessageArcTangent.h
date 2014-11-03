@@ -34,10 +34,19 @@ class MessageArcTangent : public MessageObject {
     ~MessageArcTangent();
 
     static const char *getObjectLabel();
+    std::string toString();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
 };
+
+inline std::string MessageArcTangent::toString() {
+  return MessageArcTangent::getObjectLabel();
+}
+
+inline const char *MessageArcTangent::getObjectLabel() {
+  return "atan";
+}
 
 #endif // _MESSAGE_ARCTANGENT_H_
 

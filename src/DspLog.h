@@ -33,7 +33,8 @@ class DspLog : public DspObject {
     DspLog(PdMessage *initMessage, PdGraph *graph);
     ~DspLog();
   
-    static const char *getObjectLabel() { return "log~"; }
+    static const char *getObjectLabel();
+    std::string toString();
   
     void onInletConnectionUpdate(unsigned int inletIndex);
   
@@ -50,5 +51,13 @@ class DspLog : public DspObject {
   
     float invLog2Base; // 1/log2(base)
 };
+
+inline std::string DspLog::toString() {
+  return DspLog::getObjectLabel();
+}
+
+inline const char *DspLog::getObjectLabel() {
+  return "log~";
+}
 
 #endif // _DSP_LOG_H_

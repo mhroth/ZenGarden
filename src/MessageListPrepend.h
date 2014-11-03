@@ -33,11 +33,20 @@ class MessageListPrepend : public MessageObject {
     ~MessageListPrepend();
     
     static const char *getObjectLabel();
+    std::string toString();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
     
     PdMessage *prependMessage;
 };
+
+inline const char *MessageListPrepend::getObjectLabel() {
+  return "list prepend";
+}
+
+inline std::string MessageListPrepend::toString() {
+  return MessageListPrepend::getObjectLabel();
+}
 
 #endif // _MESSAGE_LIST_PREPEND_H_

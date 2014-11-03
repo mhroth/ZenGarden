@@ -43,12 +43,8 @@ MessageTrigger::~MessageTrigger() {
   castMessage->freeMessage();
 }
 
-const char *MessageTrigger::getObjectLabel() {
-  return "trigger";
-}
-
 string MessageTrigger::toString() {
-  string out = string(getObjectLabel());
+  std::string out = MessageTrigger::getObjectLabel();
   for (int i = 0; i < castMessage->getNumElements(); i++) {
     switch (castMessage->getType(i)) {
       case FLOAT: out += " f"; break;

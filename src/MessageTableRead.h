@@ -35,6 +35,7 @@ class MessageTableRead : public MessageObject, public TableReceiverInterface {
     ~MessageTableRead();
     
     static const char *getObjectLabel();
+    std::string toString();
     ObjectType getObjectType();
     
     char *getName();
@@ -46,5 +47,17 @@ class MessageTableRead : public MessageObject, public TableReceiverInterface {
     char *name;
     MessageTable *table;
 };
+
+inline const char *MessageTableRead::getObjectLabel() {
+  return "tabread";
+}
+
+inline ObjectType MessageTableRead::getObjectType() {
+  return MESSAGE_TABLE_READ;
+}
+
+inline std::string MessageTableRead::toString() {
+  return std::string(MessageTableRead::getObjectLabel()) + " " + name;
+}
 
 #endif // _MESSAGE_TABLE_READ_H_

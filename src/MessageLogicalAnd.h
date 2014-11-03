@@ -34,6 +34,7 @@ class MessageLogicalAnd : public MessageObject {
     ~MessageLogicalAnd();
   
     static const char *getObjectLabel();
+    std::string toString();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
@@ -41,5 +42,13 @@ class MessageLogicalAnd : public MessageObject {
     float left;
     float right;
 };
+
+inline const char *MessageLogicalAnd::getObjectLabel() {
+  return "&&";
+}
+
+inline std::string MessageLogicalAnd::toString() {
+  return MessageLogicalAnd::getObjectLabel();
+}
 
 #endif // _MESSAGE_LOGICAL_AND_H_

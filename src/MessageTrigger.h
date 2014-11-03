@@ -37,7 +37,7 @@ class MessageTrigger : public MessageObject {
     ~MessageTrigger();
   
     static const char *getObjectLabel();
-    string toString();
+    std::string toString();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
@@ -48,5 +48,9 @@ class MessageTrigger : public MessageObject {
     /** A list of the message types to cast the outlet of each outlet to. */
     PdMessage *castMessage;
 };
+
+inline const char *MessageTrigger::getObjectLabel() {
+  return "trigger";
+}
 
 #endif // _MESSAGE_TRIGGER_H_

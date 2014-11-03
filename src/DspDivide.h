@@ -32,8 +32,8 @@ class DspDivide : public DspObject {
     DspDivide(PdMessage *initMessage, PdGraph *graph);
     ~DspDivide();
 
-    static const char *getObjectLabel() { return "/~"; }
-    string toString();
+    static const char *getObjectLabel();
+    std::string toString();
 
   private:
     static void processSignal(DspObject *dspObject, int fromIndex, int toIndex);
@@ -44,5 +44,9 @@ class DspDivide : public DspObject {
   
     float constant;
 };
+
+inline const char *DspDivide::getObjectLabel() {
+  return "/~";
+}
 
 #endif // _DSP_DIVIDE_H_

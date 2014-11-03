@@ -40,8 +40,8 @@ class DspEnvelope : public DspObject {
     DspEnvelope(PdMessage *initMessage, PdGraph *graph);
     ~DspEnvelope();
   
-    static const char *getObjectLabel() { return "env~"; }
-    string toString();
+    static const char *getObjectLabel();
+    std::string toString();
 
     ConnectionType getConnectionType(int outletIndex) { return MESSAGE; }
   
@@ -61,5 +61,9 @@ class DspEnvelope : public DspObject {
     float *signalBuffer;
     float *hanningCoefficients;
 };
+
+inline const char *DspEnvelope::getObjectLabel() {
+  return "env~";
+}
 
 #endif // _DSP_ENVELOPE_H_

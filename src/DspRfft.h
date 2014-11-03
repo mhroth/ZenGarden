@@ -34,7 +34,8 @@ class DspRfft : public DspObject {
     DspRfft(PdMessage *initMessage, PdGraph *graph);
     ~DspRfft();
     
-    static const char *getObjectLabel() { return "rfft~"; }
+    static const char *getObjectLabel();
+    std::string toString();
   
   private:
     static void processSignal(DspObject *dspObject, int fromIndex, int toIndex);
@@ -46,5 +47,13 @@ class DspRfft : public DspObject {
     #endif // __APPLE__
   
 };
+
+inline const char *DspRfft::getObjectLabel() {
+  return "rfft~";
+}
+
+inline std::string DspRfft::toString() {
+  return DspRfft::getObjectLabel();
+}
 
 #endif // _DSP_RFFT_H_

@@ -40,10 +40,10 @@ DspClip::~DspClip() {
   // nothing to do
 }
 
-string DspClip::toString() {
+std::string DspClip::toString() {
   char str[snprintf(NULL, 0, "%s %g %g", getObjectLabel(), lowerBound, upperBound)+1];
   snprintf(str, sizeof(str), "%s %g %g", getObjectLabel(), lowerBound, upperBound);
-  return string(str);
+  return str;
 }
 
 void DspClip::processMessage(int inletIndex, PdMessage *message) {

@@ -35,6 +35,7 @@ class DspTablePlay : public DspObject, public TableReceiverInterface {
     ~DspTablePlay();
   
     static const char *getObjectLabel();
+    std::string toString();
     ObjectType getObjectType();
   
     ConnectionType getConnectionType(int outletIndex);
@@ -64,5 +65,21 @@ class DspTablePlay : public DspObject, public TableReceiverInterface {
     char *name;
     MessageTable *table;
 };
+
+inline std::string DspTablePlay::toString() {
+  return DspTablePlay::getObjectLabel();
+}
+
+inline const char *DspTablePlay::getObjectLabel() {
+  return "tabplay~";
+}
+
+inline ObjectType DspTablePlay::getObjectType() {
+  return DSP_TABLE_PLAY;
+}
+
+inline char *DspTablePlay::getName() {
+  return name;
+}
 
 #endif // _DSP_TABLE_PLAY_H_

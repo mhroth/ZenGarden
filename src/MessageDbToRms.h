@@ -34,9 +34,18 @@ class MessageDbToRms : public MessageObject {
     ~MessageDbToRms();
 
     static const char *getObjectLabel();
+    std::string toString();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
 };
+
+inline const char *MessageDbToRms::getObjectLabel() {
+  return "dbtorms";
+}
+
+inline std::string MessageDbToRms::toString() {
+  return MessageDbToRms::getObjectLabel();
+}
 
 #endif // _MESSAGE_DBTORMS_H_

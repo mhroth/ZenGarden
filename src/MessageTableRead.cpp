@@ -36,14 +36,6 @@ MessageTableRead::~MessageTableRead() {
   free(name);
 }
 
-const char *MessageTableRead::getObjectLabel() {
-  return "tabread";
-}
-
-ObjectType MessageTableRead::getObjectType() {
-  return MESSAGE_TABLE_READ;
-}
-
 char *MessageTableRead::getName() {
   return name;
 }

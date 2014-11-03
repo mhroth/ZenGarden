@@ -33,10 +33,19 @@ class DspReciprocalSqrt : public DspObject {
     DspReciprocalSqrt(PdMessage *initMessage, PdGraph *graph);
     ~DspReciprocalSqrt();
     
-    static const char *getObjectLabel() { return "rsqrt~"; }
+    static const char *getObjectLabel();
+    std::string toString();
   
   private:
     static void processSignal(DspObject *dspObject, int fromIndex, int toIndex);
 };
+
+inline std::string DspReciprocalSqrt::toString() {
+  return DspReciprocalSqrt::getObjectLabel();
+}
+
+inline const char *DspReciprocalSqrt::getObjectLabel() {
+  return "rsqrt~";
+}
 
 #endif // _DSP_RSQRT_H_

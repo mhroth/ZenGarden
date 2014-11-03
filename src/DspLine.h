@@ -33,8 +33,9 @@ class DspLine : public DspObject {
     DspLine(PdMessage *initMessage, PdGraph *graph);
     ~DspLine();
   
-    static const char *getObjectLabel() { return "line~"; }
-    
+    static const char *getObjectLabel();
+    std::string toString();
+  
   private:
     void processMessage(int inletIndex, PdMessage *message);
     void processDspWithIndex(int fromIndex, int toIndex);
@@ -44,5 +45,13 @@ class DspLine : public DspObject {
     float numSamplesToTarget;
     float lastOutputSample;
 };
+
+inline const char *DspLine::getObjectLabel() {
+  return "line~";
+}
+
+inline std::string DspLine::toString() {
+  return DspLine::getObjectLabel();
+}
 
 #endif // _DSP_LINE_H_

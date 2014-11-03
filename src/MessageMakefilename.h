@@ -33,13 +33,21 @@ class MessageMakefilename : public MessageObject {
     MessageMakefilename(PdMessage *initMessage, PdGraph *graph);
     ~MessageMakefilename();
     
-    static const char *getObjectLabel() { return "makefilename"; }
-    string toString() { return string(getObjectLabel()); }
+    static const char *getObjectLabel();
+    std::string toString();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
     
     char *format;
 };
+
+inline const char *MessageMakefilename::getObjectLabel() {
+  return "makefilename";
+}
+
+inline std::string MessageMakefilename::toString() {
+  return MessageMakefilename::getObjectLabel();
+}
 
 #endif // _MESSAGE_MAKEFILENAME_H_

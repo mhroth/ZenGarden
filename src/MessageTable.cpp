@@ -49,14 +49,6 @@ MessageTable::~MessageTable() {
   free(buffer);
 }
 
-const char *MessageTable::getObjectLabel() {
-  return "table";
-}
-
-ObjectType MessageTable::getObjectType() {
-  return MESSAGE_TABLE;
-}
-
 float *MessageTable::getBuffer(int *bufferLength) {
   *bufferLength = this->bufferLength;
   return buffer;

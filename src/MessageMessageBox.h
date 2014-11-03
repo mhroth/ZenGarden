@@ -29,13 +29,14 @@ typedef std::pair<char *, PdMessage *> MessageNamedDestination;
 
 /** Implements the functionality of Pd's message box. */
 class MessageMessageBox : public MessageObject {
-    
+
   public:
     static MessageObject *newObject(PdMessage *initMessage, PdGraph *graph);
     MessageMessageBox(char *initString, PdGraph *graph);
     ~MessageMessageBox();
   
-    static const char *getObjectLabel() { return "msg"; }
+    static const char *getObjectLabel();
+    std::string toString();
   
   private:
     void processMessage(int inletIndex, PdMessage *message);
@@ -43,5 +44,13 @@ class MessageMessageBox : public MessageObject {
     vector<PdMessage *> localMessageList;
     vector<MessageNamedDestination> remoteMessageList;
 };
+
+inline const char *MessageMessageBox::getObjectLabel() {
+  return "msg";
+}
+
+inline std::string MessageMessageBox::toString() {
+  return MessageMessageBox::getObjectLabel();
+}
 
 #endif // _MESSAGE_MESSAGE_BOX_H_

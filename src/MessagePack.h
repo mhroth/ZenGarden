@@ -34,7 +34,7 @@ class MessagePack : public MessageObject {
     ~MessagePack();
   
     static const char *getObjectLabel();
-    string toString();
+    std::string toString();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
@@ -44,5 +44,9 @@ class MessagePack : public MessageObject {
   
     PdMessage *outgoingMessage;
 };
+
+inline const char *MessagePack::getObjectLabel() {
+  return "pack";
+}
 
 #endif // _MESSAGE_PACK_H_

@@ -40,18 +40,6 @@ DspTablePlay::~DspTablePlay() {
   free(name);
 }
 
-const char *DspTablePlay::getObjectLabel() {
-  return "tabplay~";
-}
-
-ObjectType DspTablePlay::getObjectType() {
-  return DSP_TABLE_PLAY;
-}
-
-char *DspTablePlay::getName() {
-  return name;
-}
-
 void DspTablePlay::setTable(MessageTable *aTable) {
   table = aTable;
 }

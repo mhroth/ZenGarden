@@ -40,9 +40,18 @@ class MessageListTrim : public MessageObject {
     ~MessageListTrim();
     
     static const char *getObjectLabel();
+    std::string toString();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
 };
+
+inline const char *MessageListTrim::getObjectLabel() {
+  return "list trim";
+}
+
+inline std::string MessageListTrim::toString() {
+  return MessageListTrim::getObjectLabel();
+}
 
 #endif // _MESSAGE_LIST_TRIM_H_

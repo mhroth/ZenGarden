@@ -34,9 +34,18 @@ class MessageMidiToFrequency : public MessageObject {
     ~MessageMidiToFrequency();
 
     static const char *getObjectLabel();
+    std::string toString();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
 };
+
+inline const char *MessageMidiToFrequency::getObjectLabel() {
+  return "mtof";
+}
+
+inline std::string MessageMidiToFrequency::toString() {
+  return MessageMidiToFrequency::getObjectLabel();
+}
 
 #endif // _MESSAGE_MIDITOFREQUENCY_H_

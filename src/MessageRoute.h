@@ -34,11 +34,20 @@ class MessageRoute : public MessageObject {
     ~MessageRoute();
   
     static const char *getObjectLabel();
+    std::string toString();
     
   private:
     void processMessage(int inletIndex, PdMessage *message);
   
     PdMessage *routeMessage;
 };
+
+inline const char *MessageRoute::getObjectLabel() {
+  return "route";
+}
+
+inline std::string MessageRoute::toString() {
+  return MessageRoute::getObjectLabel();
+}
 
 #endif // _MESSAGE_ROUTE_H_

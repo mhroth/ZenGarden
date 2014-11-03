@@ -32,8 +32,8 @@ class DspSubtract : public DspObject {
     DspSubtract(PdMessage *initMessage, PdGraph *graph);
     ~DspSubtract();
 
-    static const char *getObjectLabel() { return "-~"; }
-    string toString();
+    static const char *getObjectLabel();
+    std::string toString();
   
     void onInletConnectionUpdate(unsigned int inletIndex);
 
@@ -44,5 +44,9 @@ class DspSubtract : public DspObject {
   
     float constant;
 };
+
+inline const char *DspSubtract::getObjectLabel() {
+  return "-~";
+}
 
 #endif // _DSP_SUBTRACT_H_

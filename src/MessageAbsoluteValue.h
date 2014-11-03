@@ -34,9 +34,18 @@ class MessageAbsoluteValue : public MessageObject {
     ~MessageAbsoluteValue();
 
     static const char *getObjectLabel();
+    std::string toString();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
 };
+
+inline std::string MessageAbsoluteValue::toString() {
+  return MessageAbsoluteValue::getObjectLabel();
+}
+
+inline const char *MessageAbsoluteValue::getObjectLabel() {
+  return "abs";
+}
 
 #endif // _MESSAGE_ABSOLUTEVALUE_H_

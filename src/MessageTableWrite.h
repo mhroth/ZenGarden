@@ -35,6 +35,7 @@ class MessageTableWrite : public MessageObject, public TableReceiverInterface {
     ~MessageTableWrite();
     
     static const char *getObjectLabel();
+    std::string toString();
     ObjectType getObjectType();
     
     char *getName();
@@ -48,5 +49,17 @@ class MessageTableWrite : public MessageObject, public TableReceiverInterface {
     MessageTable *table;
     int index;
 };
+
+inline const char *MessageTableWrite::getObjectLabel() {
+  return "tabwrite";
+}
+
+inline ObjectType MessageTableWrite::getObjectType() {
+  return MESSAGE_TABLE_WRITE;
+}
+
+inline std::string MessageTableWrite::toString() {
+  return std::string(MessageTableWrite::getObjectLabel()) + " " + name;
+}
 
 #endif // _MESSAGE_TABLE_WRITE_H_

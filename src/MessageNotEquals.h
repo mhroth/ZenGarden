@@ -34,6 +34,7 @@ class MessageNotEquals : public MessageObject {
     ~MessageNotEquals();
 
     static const char *getObjectLabel();
+    std::string toString();
 
   private:
     void processMessage(int inletIndex, PdMessage *message);
@@ -41,5 +42,9 @@ class MessageNotEquals : public MessageObject {
     float constant;
     float lastOutput;
 };
+
+inline const char *MessageNotEquals::getObjectLabel() {
+  return "!=";
+}
 
 #endif // _MESSAGE_NOTEQUALS_H_

@@ -35,10 +35,6 @@ MessageSamplerate::~MessageSamplerate() {
   // nothing to do
 }
 
-const char *MessageSamplerate::getObjectLabel() {
-  return "samplerate~";
-}
-
 void MessageSamplerate::MessageSamplerate::processMessage(int inletIndex, PdMessage *message) {
   if (message->isBang(0)) {
     PdMessage *outgoingMessage = PD_MESSAGE_ON_STACK(1);

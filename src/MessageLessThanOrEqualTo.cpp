@@ -35,10 +35,6 @@ MessageLessThanOrEqualTo::~MessageLessThanOrEqualTo() {
   // nothing to do
 }
 
-const char *MessageLessThanOrEqualTo::getObjectLabel() {
-  return "<=";
-}
-
 void MessageLessThanOrEqualTo::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
@@ -69,4 +65,10 @@ void MessageLessThanOrEqualTo::processMessage(int inletIndex, PdMessage *message
       break;
     }
   }
+}
+
+std::string MessageLessThanOrEqualTo::toString() {
+  char str[snprintf(NULL, 0, "<= %g", constant)+1];
+  snprintf(str, sizeof(str), "<= %g", constant);
+  return string(str);
 }

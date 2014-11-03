@@ -35,6 +35,7 @@ class MessageLessThanOrEqualTo : public MessageObject {
     ~MessageLessThanOrEqualTo();
 
     static const char *getObjectLabel();
+    std::string toString();
 
   private:
     void init(float constant);
@@ -43,5 +44,9 @@ class MessageLessThanOrEqualTo : public MessageObject {
     float constant;
     float lastOutput;
 };
+
+inline const char *MessageLessThanOrEqualTo::getObjectLabel() {
+  return "<=";
+}
 
 #endif // _MESSAGE_LessThanOrEqualToOREQUALTO_H_

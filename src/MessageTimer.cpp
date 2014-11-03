@@ -34,10 +34,6 @@ MessageTimer::~MessageTimer() {
   // nothing to do
 }
 
-const char *MessageTimer::getObjectLabel() {
-  return "timer";
-}
-
 void MessageTimer::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {

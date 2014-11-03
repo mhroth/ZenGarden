@@ -35,10 +35,6 @@ MessageMaximum::~MessageMaximum() {
   // nothing to do
 }
 
-const char *MessageMaximum::getObjectLabel() {
-  return "max";
-}
-
 void MessageMaximum::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {

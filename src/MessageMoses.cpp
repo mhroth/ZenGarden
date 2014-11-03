@@ -34,10 +34,6 @@ MessageMoses::~MessageMoses() {
   // nothing to do
 }
 
-const char *MessageMoses::getObjectLabel() {
-  return "moses";
-}
-
 void MessageMoses::processMessage(int inletIndex, PdMessage *message) {
   switch (inletIndex) {
     case 0: {
