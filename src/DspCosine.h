@@ -35,7 +35,7 @@ class DspCosine : public DspObject {
 
     static const char *getObjectLabel();
     std::string toString();
-  
+
   private:
     static void procesSignal(DspObject *dspObject, int fromIndex, int toIndex);
   
